@@ -1,9 +1,0 @@
-pool: %BUCKET9% 1
-pool: %BUCKET4% 1
-
-property: %BUCKET9% != 6
-
-%BUCKET9% := 9
-%BUCKET4% := 4
-%BUCKET9% = %BUCKET9% - (4 - %BUCKET4%)
-%BUCKET4% = %BUCKET4% - (9 - %BUCKET9%

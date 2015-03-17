@@ -1,7 +1,0 @@
-pool: %STATE% 1
-
-property: %STATE% < 25
-
-%STATE% := 0
-%STATE% = %STATE% + 1
-print ~%STATE%
