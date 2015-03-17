@@ -1,0 +1,750 @@
+  File "/nfs/guille/groce/users/alex/harness-maker/src/sut.py", line 4903, in check
+    assert d.scoreFor(self.p_PLAYER[0],self.p_GAME[0]) < 10
+Random testing using config=Config(depth=1000, seed=None, maxtests=-1, timeout=3600)
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+STARTING NEW TEST
+Property failed!
+TEST:
+self.p_CHOICE[2] = 17 
+self.p_SUPPLY[2] = 11 
+self.p_POS[0] = 2 
+self.p_SUPPLY[3] = 15 
+self.p_CHOICE[1] = 15 
+self.p_SUPPLY[0] = 2 
+self.p_SEED[0] = 17 
+self.p_SUPPLY[4] = 17 
+self.p_SUPPLY[1] = 11 
+self.p_CHOICE[0] = -1 
+self.p_PLAYER[0] = 0 
+self.p_CARDSET[0] = ["Adventurer", "Ambassador", "Baron", "Council Room", "Cutpurse", "Embargo", "Feast", "Gardens", "Great Hall", "Mine"] 
+self.p_PLAYERS[0] = 2 
+self.p_GAME[0] = d.initializeGame(self.p_PLAYERS[0],self.p_CARDSET[0],self.p_SEED[0]) 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+self.p_SUPPLY[3] = 15 
+self.p_SUPPLY[4] = 6 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 0 
+self.p_POS[0] = 5 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[0] = 19 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 7 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 8 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 6 
+self.p_POS[0] = 0 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_POS[0] = 5 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 19 
+self.p_POS[0] = 7 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 10 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[0] = -1 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_SUPPLY[4] = 16 
+self.p_CHOICE[0] = 15 
+self.p_SUPPLY[2] = 15 
+self.p_CHOICE[2] = 6 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 2 
+self.p_POS[0] = 3 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_POS[0] = 9 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[2] = -1 
+self.p_CHOICE[0] = 9 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 15 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+self.p_SUPPLY[3] = 11 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 5 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_SUPPLY[4] = 5 
+self.p_CHOICE[0] = 1 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_POS[0] = 2 
+d.buyCard(self.p_SUPPLY[0],self.p_GAME[0]) 
+d.getWinners(self.p_GAME[0]) 
+d.isGameOver(self.p_GAME[0]) 
+self.p_SUPPLY[0] = 15 
+self.p_CHOICE[0] = 4 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_POS[0] = 1 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 16 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_POS[0] = 8 
+self.p_CHOICE[2] = 17 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 12 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[1] = -1 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+self.p_SUPPLY[3] = 15 
+self.p_POS[0] = 4 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 8 
+self.p_CHOICE[1] = 0 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 14 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+d.isGameOver(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.getWinners(self.p_GAME[0]) 
+self.p_SUPPLY[4] = 12 
+self.p_CHOICE[0] = 6 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_POS[0] = 1 
+self.p_SUPPLY[3] = 19 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 16 
+self.p_POS[0] = 8 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[1] = 3 
+self.p_CHOICE[0] = 5 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 18 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[0] = 15 
+self.p_CHOICE[1] = 10 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_SUPPLY[4] = 6 
+self.p_POS[0] = 3 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 7 
+self.p_CHOICE[0] = 0 
+self.p_CHOICE[2] = 15 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_POS[0] = 6 
+self.p_CHOICE[2] = 7 
+d.endTurn(self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[2],self.p_GAME[0]) 
+d.getWinners(self.p_GAME[0]) 
+self.p_SUPPLY[2] = 11 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[0] = 13 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+self.p_CHOICE[2] = 12 
+self.p_CHOICE[1] = 0 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_SUPPLY[3] = 6 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 13 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 6 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+self.p_CHOICE[1] = 15 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 5 
+self.p_SUPPLY[4] = 17 
+self.p_SUPPLY[3] = 5 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = -1 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 18 
+self.p_CHOICE[2] = 1 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 0 
+self.p_CHOICE[0] = 2 
+self.p_POS[0] = 0 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 19 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[2] = 13 
+self.p_CHOICE[1] = 1 
+self.p_POS[0] = 7 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = -1 
+self.p_CHOICE[1] = 16 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_SUPPLY[4] = 5 
+self.p_CHOICE[0] = 0 
+self.p_POS[0] = 8 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_POS[0] = 6 
+d.buyCard(self.p_SUPPLY[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 5 
+self.p_SUPPLY[0] = 2 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.isGameOver(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.getWinners(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[0] = 1 
+self.p_CHOICE[2] = -1 
+self.p_CHOICE[1] = 2 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[0] = 2 
+d.buyCard(self.p_SUPPLY[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_SUPPLY[2] = 19 
+d.buyCard(self.p_SUPPLY[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 17 
+self.p_SUPPLY[1] = 10 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 17 
+self.p_POS[0] = 1 
+d.getWinners(self.p_GAME[0]) 
+d.isGameOver(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 13 
+self.p_POS[0] = 5 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 3 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[0] = 1 
+self.p_CHOICE[1] = 18 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 15 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 5 
+self.p_CHOICE[1] = -1 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[0] = 18 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 16 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_POS[0] = 6 
+d.endTurn(self.p_GAME[0]) 
+self.p_CHOICE[0] = 13 
+d.buyCard(self.p_SUPPLY[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_SUPPLY[0] = 1 
+self.p_CHOICE[0] = 0 
+self.p_POS[0] = 8 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_SUPPLY[3] = 3 
+self.p_SUPPLY[4] = 15 
+self.p_CHOICE[1] = 3 
+self.p_POS[0] = 3 
+self.p_CHOICE[2] = 16 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_POS[0] = 9 
+self.p_CHOICE[1] = 17 
+d.getWinners(self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_SUPPLY[2] = 3 
+self.p_CHOICE[1] = 16 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 13 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 4 
+self.p_CHOICE[2] = 0 
+self.p_POS[0] = 4 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[0] = 2 
+d.buyCard(self.p_SUPPLY[2],self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_SUPPLY[2] = 3 
+self.p_CHOICE[0] = 0 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 6 
+self.p_SUPPLY[1] = 17 
+self.p_CHOICE[2] = 2 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+d.getWinners(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 10 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[2] = -1 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.isGameOver(self.p_GAME[0]) 
+self.p_POS[0] = 0 
+self.p_CHOICE[1] = -1 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 15 
+self.p_CHOICE[0] = 9 
+self.p_POS[0] = 9 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_POS[0] = 4 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 10 
+d.endTurn(self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+self.p_CHOICE[0] = 9 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[0] = 9 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 13 
+self.p_POS[0] = 3 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+d.getWinners(self.p_GAME[0]) 
+d.getWinners(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[0] = 0 
+self.p_CHOICE[2] = 11 
+self.p_POS[0] = 8 
+self.p_CHOICE[1] = 15 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[2] = 19 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_POS[0] = 6 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_POS[0] = 9 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = -1 
+self.p_CHOICE[1] = 9 
+self.p_POS[0] = 8 
+self.p_CHOICE[2] = 15 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[0] = 15 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+d.isGameOver(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[1] = 0 
+d.getWinners(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 16 
+self.p_CHOICE[0] = 7 
+self.p_POS[0] = 7 
+self.p_CHOICE[2] = -1 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 14 
+self.p_CHOICE[0] = 12 
+d.isGameOver(self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 1 
+self.p_POS[0] = 6 
+self.p_CHOICE[0] = 9 
+d.buyCard(self.p_SUPPLY[2],self.p_GAME[0]) 
+self.p_SUPPLY[2] = 10 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+self.p_POS[0] = 8 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[1] = 18 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_SUPPLY[4] = 0 
+self.p_POS[0] = 10 
+self.p_CHOICE[2] = 15 
+d.getWinners(self.p_GAME[0]) 
+self.p_CHOICE[0] = 18 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_POS[0] = 5 
+self.p_CHOICE[2] = 16 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 10 
+d.buyCard(self.p_SUPPLY[4],self.p_GAME[0]) 
+self.p_POS[0] = 4 
+self.p_CHOICE[1] = 14 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+d.getWinners(self.p_GAME[0]) 
+self.p_SUPPLY[4] = 13 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 9 
+self.p_CHOICE[0] = 19 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_POS[0] = 2 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 2 
+self.p_CHOICE[2] = 13 
+self.p_POS[0] = 8 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_POS[0] = 0 
+self.p_CHOICE[0] = 19 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = 1 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = -1 
+self.p_CHOICE[0] = 11 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[2] = 3 
+self.p_POS[0] = 9 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 12 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_SUPPLY[1] = 6 
+self.p_CHOICE[2] = 18 
+self.p_POS[0] = 5 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[0] = 0 
+self.p_CHOICE[1] = 16 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 19 
+self.p_POS[0] = 7 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 4 
+self.p_POS[0] = 9 
+d.buyCard(self.p_SUPPLY[1],self.p_GAME[0]) 
+self.p_SUPPLY[1] = 16 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[1] = 17 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_POS[0] = 8 
+self.p_CHOICE[0] = 1 
+d.endTurn(self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[2],self.p_GAME[0]) 
+self.p_SUPPLY[2] = 8 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[2],self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+self.p_POS[0] = 0 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+d.isGameOver(self.p_GAME[0]) 
+self.p_CHOICE[0] = 2 
+self.p_POS[0] = 8 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_CHOICE[1] = 7 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[1],self.p_CHOICE[1],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[1],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[2] = 18 
+self.p_CHOICE[1] = 3 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+d.isGameOver(self.p_GAME[0]) 
+self.p_SUPPLY[3] = 14 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[1],self.p_GAME[0]) 
+self.p_SUPPLY[3] = 1 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+d.playCard(self.p_POS[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[2] = -1 
+d.playCard(self.p_POS[0],self.p_CHOICE[1],self.p_CHOICE[2],self.p_CHOICE[0],self.p_GAME[0]) 
+self.p_CHOICE[0] = 1 
+self.p_CHOICE[1] = 12 
+d.playCard(self.p_POS[0],self.p_CHOICE[2],self.p_CHOICE[0],self.p_CHOICE[2],self.p_GAME[0]) 
+self.p_CHOICE[2] = 19 
+d.buyCard(self.p_SUPPLY[0],self.p_GAME[0]) 
+484
+REDUCING...
+self.p_SUPPLY[3] = 15 
+self.p_SUPPLY[0] = 2 
+self.p_SEED[0] = 17 
+self.p_PLAYER[0] = 0 
+self.p_CARDSET[0] = ["Adventurer", "Ambassador", "Baron", "Council Room", "Cutpurse", "Embargo", "Feast", "Gardens", "Great Hall", "Mine"] 
+self.p_PLAYERS[0] = 2 
+self.p_GAME[0] = d.initializeGame(self.p_PLAYERS[0],self.p_CARDSET[0],self.p_SEED[0]) 
+d.buyCard(self.p_SUPPLY[3],self.p_GAME[0]) 
+self.p_SUPPLY[2] = 15 
+d.endTurn(self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[2],self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+d.endTurn(self.p_GAME[0]) 
+d.buyCard(self.p_SUPPLY[0],self.p_GAME[0]) 
+17
+EXITING DUE TO FAILED TEST

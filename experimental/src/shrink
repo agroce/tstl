@@ -1,0 +1,123 @@
+  File "/nfs/guille/groce/users/alex/harness-maker/src/sut.py", line 511, in check
+    assert len(self.p_VALS[0]) < 12
+Random testing using config=Config(depth=100, seed=None, maxtests=-1, timeout=3600)
+STARTING NEW TEST
+NEW VALUE FOR V: None
+NEW VALUE FOR V: 5
+NEW VALUE FOR V: 0
+NEW VALUE FOR V: 15
+NEW VALUE FOR V: 7
+NEW VALUE FOR V: 16
+NEW VALUE FOR V: 2
+NEW VALUE FOR V: 4
+NEW VALUE FOR V: 12
+NEW VALUE FOR V: 14
+NEW VALUE FOR V: 13
+NEW VALUE FOR V: 11
+[0, 2, 4, 5, 7, 12, 13, 14, 15, 16]
+[0, 2, 4, 5, 7, 12, 13, 14, 15, 16]
+NEW VALUE FOR V: 9
+NEW VALUE FOR V: 10
+NEW VALUE FOR V: 17
+NEW VALUE FOR V: 3
+NEW VALUE FOR V: 20
+NEW VALUE FOR V: 6
+Property failed!
+TEST:
+self.p_V[0] = 5 
+self.p_VALS[0] = set() 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 0 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 15 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 7 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 16 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 2 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 2 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 7 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 4 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 16 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 2 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 12 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 4 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 14 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 13 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 11 
+guardedPrint(self.p_VALS[0]) 
+guardedPrint(self.p_VALS[0]) 
+self.p_VALS[0] = set() 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 9 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 13 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 2 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 16 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 11 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 12 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 10 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 14 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 16 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 14 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 17 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 3 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 3 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 20 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 20 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 6 
+self.p_VALS[0].add(self.p_V[0]) 
+68
+REDUCING...
+self.p_VALS[0] = set() 
+self.p_V[0] = 9 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 13 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 2 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 16 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 11 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 12 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 10 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 14 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 17 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 3 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 20 
+self.p_VALS[0].add(self.p_V[0]) 
+self.p_V[0] = 6 
+self.p_VALS[0].add(self.p_V[0]) 
+25
+EXITING DUE TO FAILED TEST

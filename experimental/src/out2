@@ -1,0 +1,64 @@
+Random testing using config=Config(uncaught=False, depth=100, seed=500, maxtests=-1, timeout=60)
+Covered additional 7 lines:
+self.p_SCHARS[1] = ''
+[{0: None, 1: None, 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: None, 1: None, 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: None, 1: None, 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: None, 1: '', 2: None, 3: None}, {0: True, 1: False, 2: True, 3: True}, {0: None, 1: None, 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: None, 1: None, 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: None, 1: None, 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}]
+Covered additional 10 lines:
+self.p_XML[2] = handledParse(self.p_STRING[2])
+[{0: 'a', 1: 'a', 2: 'c', 3: None}, {0: True, 1: False, 2: False, 3: True}, {0: '<>', 1: '<>', 2: None, 3: None}, {0: False, 1: False, 2: True, 3: True}, {0: <>///</>, 1: None, 2: None, 3: None}, {0: False, 1: False, 2: True, 3: True}, {0: '', 1: 'ba', 2: '', 3: None}, {0: True, 1: False, 2: False, 3: True}, {0: None, 1: '///', 2: '', 3: None}, {0: True, 1: False, 2: False, 3: True}, {0: 'c', 1: '<', 2: '/', 3: None}, {0: False, 1: False, 2: True, 3: True}, {0: None, 1: None, 2: , 3: None}, {0: True, 1: True, 2: False, 3: True}]
+Covered additional 6 lines:
+self.p_XML[1] = handledParse(self.p_STRING[1])
+[{0: 'a', 1: 'a', 2: 'c', 3: None}, {0: True, 1: False, 2: False, 3: True}, {0: '<>', 1: '<>', 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: <>///</>, 1: None, 2: <<>///c</>>///c</<>///c</>>, 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: '', 1: 'ba', 2: 'a', 3: None}, {0: True, 1: False, 2: False, 3: True}, {0: None, 1: '///c', 2: '<>///c</>', 3: None}, {0: True, 1: False, 2: False, 3: True}, {0: '<', 1: '<', 2: '/', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1: None, 2: , 3: None}, {0: True, 1: False, 2: True, 3: True}]
+Covered additional 26 lines:
+self.p_XML[1] = handledParse(self.p_STRING[1])
+[{0: 'a', 1: 'b', 2: 'b', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1: '<bcc>', 2: '<b>', 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: <>b</>, 1: None, 2: <>b</>, 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1: None, 2: 'bcc', 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: None, 1: '<b><bcc><bcc><bcc>bb/b</b></bcc></bcc></bcc>', 2: '<b><bcc><bcc><bcc><bcc>bb/b</b></bcc></bcc></b></bcc>', 3: None}, {0: True, 1: False, 2: False, 3: True}, {0: '<', 1: 'c', 2: '<', 3: None}, {0: False, 1: False, 2: True, 3: True}, {0: None, 1: None, 2: , 3: None}, {0: False, 1: False, 2: True, 3: True}]
+Covered additional 6 lines:
+self.p_XML[1] = handledParse(self.p_STRING[0])
+[{0: 'a', 1: 'b', 2: 'a', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: '<>', 1: '<b>', 2: '<>', 3: None}, {0: False, 1: True, 2: False, 3: True}, {0: <><b>//</b><</>, 1: None, 2: <<b>//</b><><b>//</b><</<b>//</b><>, 3: None}, {0: False, 1: True, 2: False, 3: True}, {0: None, 1: 'bbb', 2: 'b', 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: '<b>//</b><', 1: '<b>//</b></', 2: None, 3: None}, {0: False, 1: False, 2: True, 3: True}, {0: '/', 1: '<', 2: '<', 3: None}, {0: True, 1: False, 2: True, 3: True}, {0: , 1: None, 2: None, 3: None}, {0: False, 1: False, 2: True, 3: True}]
+Covered additional 18 lines:
+self.p_XML[1] = handledParse(self.p_STRING[1])
+[{0: 'a', 1: 'c', 2: 'a', 3: None}, {0: False, 1: True, 2: False, 3: True}, {0: '<b>', 1: None, 2: '<bbc>', 3: None}, {0: True, 1: True, 2: False, 3: True}, {0: <<b><b</b>><b><b</b></<b><b</b>>, 1: <<b><b</<b>, 2: <<b><b</<b>, 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1: 'bbc', 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: None, 1: '<b><b><b></b></b></b><b><b><b></b></b></b>', 2: '<b><b><b></b></b></b>', 3: None}, {0: True, 1: False, 2: False, 3: True}, {0: '/', 1: '<', 2: '<', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1:   <b>
+    <b>
+      <b />
+    </b>
+  </b>
+  <b>
+    <b>
+      <b />
+    </b>
+  </b>, 2: None, 3: None}, {0: False, 1: False, 2: True, 3: True}]
+Covered additional 1 lines:
+self.p_XML[1] = handledParse(self.p_STRING[1])
+[{0: 'a', 1: 'c', 2: 'b', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1: '<c>', 2: '<c>', 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: None, 1: None, 2: <<c><c><c></c></c></c>><c><c><c></c></c></c></<c><c><c></c></c></c>>, 3: None}, {0: True, 1: True, 2: False, 3: True}, {0: 'c', 1: None, 2: None, 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: '<c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c>', 1: '<c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c>', 2: None, 3: None}, {0: False, 1: False, 2: True, 3: True}, {0: '<', 1: 'c', 2: '/', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1:   <c>
+    <c>
+      <c>
+        <c />
+      </c>
+    </c>
+  </c>
+  <c>
+    <c>
+      <c>
+        <c />
+      </c>
+    </c>
+  </c>
+  <c>
+    <c>
+      <c>
+        <c />
+      </c>
+    </c>
+  </c>, 2: None, 3: None}, {0: True, 1: False, 2: True, 3: True}]
+Covered additional 1 lines:
+self.p_XML[1] = handledParse(self.p_STRING[1])
+[{0: 'a', 1: 'c', 2: 'b', 3: None}, {0: True, 1: False, 2: True, 3: True}, {0: None, 1: '<c>', 2: '<c>', 3: None}, {0: True, 1: True, 2: True, 3: True}, {0: <<c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></<c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><>, 1: <<c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c>><c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c></<c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c>>, 2: <<c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c>><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></<c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c>>, 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: 'cbaa', 1: None, 2: '', 3: None}, {0: True, 1: True, 2: False, 3: True}, {0: '<c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><', 1: '<c><c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><</c>', 2: '<c><c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><<c><c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c></c><c><c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></c></c><</c></c>', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: 'c', 1: 'c', 2: '/', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1: None, 2:   <<c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c>><c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c></<c><c><c><c></c></c></c></c><c><c><c><c></c></c></c></c>>, 3: None}, {0: True, 1: False, 2: False, 3: True}]
+Covered additional 2 lines:
+self.p_XML[0] = handledParse(self.p_STRING[0])
+[{0: 'a', 1: None, 2: 'c', 3: None}, {0: False, 1: True, 2: False, 3: True}, {0: None, 1: None, 2: '<>', 3: None}, {0: True, 1: True, 2: False, 3: True}, {0: None, 1: None, 2: None, 3: None}, {0: False, 1: False, 2: False, 3: True}, {0: None, 1: '', 2: 'ccc', 3: None}, {0: True, 1: True, 2: False, 3: True}, {0: '<b>////></b><b>////</b><<b><b><b>////></b><b>////</b></b></b>', 1: '<b>////></b><b>////</b><', 2: None, 3: None}, {0: False, 1: False, 2: True, 3: True}, {0: '/', 1: '/', 2: '>', 3: None}, {0: False, 1: False, 2: False, 3: True}, {0:   <b>////></b>
+  <b>////</b>
+  <b>
+    <b>////></b>
+    <b>////</b>
+  </b>, 1: None, 2: None, 3: None}, {0: False, 1: False, 2: False, 3: True}]
+EXITING DUE TO TIMEOUT
+67 EXECUTED

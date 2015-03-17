@@ -1,0 +1,18 @@
+
+pool: %V% 1
+pool: %VALS% 1
+
+log: %V%
+
+@def guardedPrint(v):
+@    if len(v) != 10:
+@       return False
+@    %COMMIT%
+@    print list(v)
+
+property: len(%VALS%) < 12
+
+%V% := %[0..20]%
+%VALS% := set()
+~%VALS%.add(%V%)
+guardedPrint(%VALS%)

@@ -1,0 +1,7 @@
+pool: %THING% 1 REF
+
+%THING% := int(1)
+%THING% := int(0)
+
+reference: int\(1\) ==> True
+reference: int\(0\) ==> False

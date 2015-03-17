@@ -1,0 +1,39 @@
+@import dominion as d
+
+pool: %GAME% 1
+pool: %PLAYERS% 1
+pool: %CARDSET% 1
+pool: %SEED% 1
+pool: %POS% 1
+pool: %CHOICE% 3
+pool: %SUPPLY% 5
+pool: %PLAYER% 1
+
+property: d.scoreFor(%PLAYER%,%GAME%) < 10
+
+log: %GAME%.whoseTurn
+log: 1 %GAME%.hand[%[0..1]%]
+log: 1 %GAME%.deck[%[0..1]%]
+log: 1 %GAME%.discard[%[0..1]%]
+
+%SUPPLY% := %[0..3]%
+%SUPPLY% := %[2..3]%
+%SUPPLY% := %[5..19]%
+%SUPPLY% := 5
+%SUPPLY% := 5
+%SUPPLY% := 5
+%SUPPLY% := 6
+%SUPPLY% := 6
+%POS% := %[0..10]%
+%CHOICE% := %[-1..1]%
+%CHOICE% := %[-1..19]%
+%SEED% := %[1..20]%
+%PLAYERS% := 2
+%PLAYER% := %[0..1]%
+%GAME% := d.initializeGame(~%PLAYERS%,~%CARDSET%,~%SEED%)
+%CARDSET% := ["Adventurer", "Ambassador", "Baron", "Council Room", "Cutpurse", "Embargo", "Feast", "Gardens", "Great Hall", "Mine"]
+{IndexError} d.playCard(%POS%,%CHOICE%,~%CHOICE%,~%CHOICE%,~%GAME%)
+d.endTurn(~%GAME%)
+{KeyError} d.buyCard(%SUPPLY%,~%GAME%)
+d.isGameOver(~%GAME%)
+d.getWinners(~%GAME%)

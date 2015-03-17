@@ -1,0 +1,17 @@
+pool: %BUCKETS% 1
+pool: %INIT0% 1
+pool: %INIT1% 1
+
+property: %BUCKETS%[0] != 6
+
+%INIT0% := 0
+%INIT0% := 9
+%INIT1% := 4
+%INIT1% := 0
+%BUCKETS% := (%INIT0%,%INIT1%)
+%BUCKETS% = (max(0,%BUCKETS%[0]-(4-%BUCKETS%[1])),min(4,%BUCKETS%[1]+%BUCKETS%[0]))
+%BUCKETS% = ((min(9,%BUCKETS%[0]+%BUCKETS%[1])),max(0,%BUCKETS%[1]-(9-%BUCKETS%[0])))
+%BUCKETS% = (%INIT0%,%BUCKETS%[1])
+%BUCKETS% = (%BUCKETS%[0],%INIT1%)
+
+

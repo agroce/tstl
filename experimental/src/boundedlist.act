@@ -1,0 +1,16 @@
+@def guardedAppend(l,item,limit):
+@  if len(l) >= limit:
+@    return False
+@  %COMMIT%
+@  l.append(item)
+
+property: (len(%LIST%) < 10) or (6 not in %LIST%)
+property: %VAL% != -1
+
+pool: %LIST% 1
+pool: %VAL% 1
+
+%LIST% := []
+guardedAppend(~%LIST%,%VAL%,10)
+%VAL% := %[1..10]%
+print %LIST%

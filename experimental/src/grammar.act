@@ -1,0 +1,11 @@
+pool: %EXPR% 7
+pool: %NUM% 5
+%NUM% := '%[0..9]%'
+~%NUM% += '%[0..9]%'
+%EXPR% := %NUM%
+~%EXPR% = '(' + %EXPR% + ')'
+~%EXPR% = ~%EXPR% + '+' + ~%EXPR%
+~%EXPR% = ~%EXPR% + '*' + ~%EXPR%
+~%EXPR% = ~%EXPR% + '-' + ~%EXPR%
+~%EXPR% = ~%EXPR% + '/' + ~%EXPR%
+print %EXPR%

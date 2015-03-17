@@ -1,0 +1,713 @@
+import copy
+import traceback
+import re
+import sys
+import coverage
+def guardedPrint(v, SPECULATIVE_CALL = False):
+    if len(v) < 10:
+       return False
+if SPECULATIVE_CALL: return True
+    print list(v)
+class t(object):
+   def act0(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 0
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard0(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act1(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 1
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard1(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act2(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 2
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard2(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act3(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 3
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard3(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act4(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 4
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard4(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act5(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 5
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard5(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act6(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 6
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard6(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act7(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 7
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard7(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act8(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 8
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard8(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act9(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 9
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard9(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act10(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 10
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard10(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act11(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 11
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard11(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act12(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 12
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard12(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act13(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 13
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard13(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act14(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 14
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard14(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act15(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 15
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard15(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act16(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 16
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard16(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act17(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 17
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard17(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act18(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 18
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard18(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act19(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 19
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard19(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act20(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_V[0] = 20
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=False
+   def guard20(self):
+      return (((self.p_V_used[0]) or (self.p_V[0] == None)))
+   def act21(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_VALS[0] = set()
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_VALS_used[0]=False
+   def guard21(self):
+      return (((self.p_VALS_used[0]) or (self.p_VALS[0] == None)))
+   def act22(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         self.p_VALS[0].add(self.p_V[0])
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_V_used[0]=True
+   def guard22(self):
+      return (self.p_VALS[0] != None) and (self.p_V[0] != None)
+   def act23(self):
+      if self.__collectCov:
+         self.__cov.start()
+      try:
+         guardedPrint(self.p_VALS[0])
+
+      finally:
+         if self.__collectCov:
+            self.__cov.stop()
+            self.__updateCov()
+      self.p_VALS_used[0]=True
+   def guard23(self):
+      return (self.p_VALS[0] != None) and (guardedPrint(self.p_VALS[0],True))
+   def __init__(self):
+      self.__features = []
+      self.__cov = coverage.coverage(branch=True, source=[])
+      self.__collectCov = True
+      self.__allBranches = set()
+      self.__allStatements = set()
+      self.__newBranches = set()
+      self.__newStatements = set()
+      self.__currBranches = set()
+      self.__currStatements = set()
+      self.__newCurrBranches = set()
+      self.__newCurrStatements = set()
+      self.p_VALS = {}
+      self.p_VALS_used = {}
+      self.p_VALS[0] = None
+      self.p_VALS_used[0] = True
+      self.p_VALS[1] = None
+      self.p_VALS_used[1] = True
+      self.p_V = {}
+      self.p_V_used = {}
+      self.p_V[0] = None
+      self.p_V_used[0] = True
+      self.p_V[1] = None
+      self.p_V_used[1] = True
+      self.__actions = []
+      self.__names = {}
+      self.__failure = None
+      self.__log = None
+      self.__logAction = self.logPrint
+      self.__actions.append(('''self.p_V[0] = 0 ''',self.guard0,self.act0))
+
+      self.__names['''self.p_V[0] = 0 '''] = ('''self.p_V[0] = 0 ''',self.guard0,self.act0)
+
+      self.__actions.append(('''self.p_V[0] = 1 ''',self.guard1,self.act1))
+
+      self.__names['''self.p_V[0] = 1 '''] = ('''self.p_V[0] = 1 ''',self.guard1,self.act1)
+
+      self.__actions.append(('''self.p_V[0] = 2 ''',self.guard2,self.act2))
+
+      self.__names['''self.p_V[0] = 2 '''] = ('''self.p_V[0] = 2 ''',self.guard2,self.act2)
+
+      self.__actions.append(('''self.p_V[0] = 3 ''',self.guard3,self.act3))
+
+      self.__names['''self.p_V[0] = 3 '''] = ('''self.p_V[0] = 3 ''',self.guard3,self.act3)
+
+      self.__actions.append(('''self.p_V[0] = 4 ''',self.guard4,self.act4))
+
+      self.__names['''self.p_V[0] = 4 '''] = ('''self.p_V[0] = 4 ''',self.guard4,self.act4)
+
+      self.__actions.append(('''self.p_V[0] = 5 ''',self.guard5,self.act5))
+
+      self.__names['''self.p_V[0] = 5 '''] = ('''self.p_V[0] = 5 ''',self.guard5,self.act5)
+
+      self.__actions.append(('''self.p_V[0] = 6 ''',self.guard6,self.act6))
+
+      self.__names['''self.p_V[0] = 6 '''] = ('''self.p_V[0] = 6 ''',self.guard6,self.act6)
+
+      self.__actions.append(('''self.p_V[0] = 7 ''',self.guard7,self.act7))
+
+      self.__names['''self.p_V[0] = 7 '''] = ('''self.p_V[0] = 7 ''',self.guard7,self.act7)
+
+      self.__actions.append(('''self.p_V[0] = 8 ''',self.guard8,self.act8))
+
+      self.__names['''self.p_V[0] = 8 '''] = ('''self.p_V[0] = 8 ''',self.guard8,self.act8)
+
+      self.__actions.append(('''self.p_V[0] = 9 ''',self.guard9,self.act9))
+
+      self.__names['''self.p_V[0] = 9 '''] = ('''self.p_V[0] = 9 ''',self.guard9,self.act9)
+
+      self.__actions.append(('''self.p_V[0] = 10 ''',self.guard10,self.act10))
+
+      self.__names['''self.p_V[0] = 10 '''] = ('''self.p_V[0] = 10 ''',self.guard10,self.act10)
+
+      self.__actions.append(('''self.p_V[0] = 11 ''',self.guard11,self.act11))
+
+      self.__names['''self.p_V[0] = 11 '''] = ('''self.p_V[0] = 11 ''',self.guard11,self.act11)
+
+      self.__actions.append(('''self.p_V[0] = 12 ''',self.guard12,self.act12))
+
+      self.__names['''self.p_V[0] = 12 '''] = ('''self.p_V[0] = 12 ''',self.guard12,self.act12)
+
+      self.__actions.append(('''self.p_V[0] = 13 ''',self.guard13,self.act13))
+
+      self.__names['''self.p_V[0] = 13 '''] = ('''self.p_V[0] = 13 ''',self.guard13,self.act13)
+
+      self.__actions.append(('''self.p_V[0] = 14 ''',self.guard14,self.act14))
+
+      self.__names['''self.p_V[0] = 14 '''] = ('''self.p_V[0] = 14 ''',self.guard14,self.act14)
+
+      self.__actions.append(('''self.p_V[0] = 15 ''',self.guard15,self.act15))
+
+      self.__names['''self.p_V[0] = 15 '''] = ('''self.p_V[0] = 15 ''',self.guard15,self.act15)
+
+      self.__actions.append(('''self.p_V[0] = 16 ''',self.guard16,self.act16))
+
+      self.__names['''self.p_V[0] = 16 '''] = ('''self.p_V[0] = 16 ''',self.guard16,self.act16)
+
+      self.__actions.append(('''self.p_V[0] = 17 ''',self.guard17,self.act17))
+
+      self.__names['''self.p_V[0] = 17 '''] = ('''self.p_V[0] = 17 ''',self.guard17,self.act17)
+
+      self.__actions.append(('''self.p_V[0] = 18 ''',self.guard18,self.act18))
+
+      self.__names['''self.p_V[0] = 18 '''] = ('''self.p_V[0] = 18 ''',self.guard18,self.act18)
+
+      self.__actions.append(('''self.p_V[0] = 19 ''',self.guard19,self.act19))
+
+      self.__names['''self.p_V[0] = 19 '''] = ('''self.p_V[0] = 19 ''',self.guard19,self.act19)
+
+      self.__actions.append(('''self.p_V[0] = 20 ''',self.guard20,self.act20))
+
+      self.__names['''self.p_V[0] = 20 '''] = ('''self.p_V[0] = 20 ''',self.guard20,self.act20)
+
+      self.__actions.append(('''self.p_VALS[0] = set() ''',self.guard21,self.act21))
+
+      self.__names['''self.p_VALS[0] = set() '''] = ('''self.p_VALS[0] = set() ''',self.guard21,self.act21)
+
+      self.__actions.append(('''self.p_VALS[0].add(self.p_V[0]) ''',self.guard22,self.act22))
+
+      self.__names['''self.p_VALS[0].add(self.p_V[0]) '''] = ('''self.p_VALS[0].add(self.p_V[0]) ''',self.guard22,self.act22)
+
+      self.__actions.append(('''guardedPrint(self.p_VALS[0]) ''',self.guard23,self.act23))
+
+      self.__names['''guardedPrint(self.p_VALS[0]) '''] = ('''guardedPrint(self.p_VALS[0]) ''',self.guard23,self.act23)
+
+      self.__actions_backup = list(self.__actions)
+   def restart(self):
+      self.__currBranches = set()
+      self.__currStatements = set()
+      self.__newCurrBranches = set()
+      self.__newCurrStatements = set()
+      self.p_VALS = {}
+      self.p_VALS_used = {}
+      self.p_VALS[0] = None
+      self.p_VALS_used[0] = True
+      self.p_VALS[1] = None
+      self.p_VALS_used[1] = True
+      self.p_V = {}
+      self.p_V_used = {}
+      self.p_V[0] = None
+      self.p_V_used[0] = True
+      self.p_V[1] = None
+      self.p_V_used[1] = True
+   def log(self):
+      pass
+   def state(self):
+      return [ copy.deepcopy(self.p_VALS),copy.deepcopy(self.p_VALS_used),copy.deepcopy(self.p_V),copy.deepcopy(self.p_V_used)]
+   def backtrack(self,old):
+      self.p_VALS = copy.deepcopy(old[0])
+      self.p_VALS_used = copy.deepcopy(old[1])
+      self.p_V = copy.deepcopy(old[2])
+      self.p_V_used = copy.deepcopy(old[3])
+   def check(self):
+      return True
+   def enabled(self):
+       return filter(lambda (s, g, a): g(), self.__actions)
+   
+   def features(self):
+       return self.__features
+   
+   def actions(self):
+       return self.__actions
+   
+   def disable(self,f):
+       newActions = []
+       for (name,act,guard) in self.__actions:
+           if not re.match(f,name):
+               newActions.append((name,act,guard))
+       self.__actions = newActions
+   
+   def enableAll(self):
+       self.__actions = self.__actions_backup
+   
+   def serializable(self, step):
+       return step[0]
+   
+   def playable(self, name):
+       return self.__names[name]
+   
+   def safely(self, act):
+       try:
+           act()
+       except:
+           self.__failure = sys.exc_info()
+           return False
+       return True
+   
+   def failure(self):
+       return self.__failure
+   
+   def replay(self, test, catchUncaught = False):
+       self.restart()
+       for (name, guard, act) in test:
+           if guard():
+               if catchUncaught:
+                   try:
+                       act()
+                   except:
+                       pass
+               else:
+                   act()
+           if not self.check():
+               return False
+       return True
+   
+   def replayUntil(self, test, pred, catchUncaught = False):
+       self.restart()
+       newt = []
+       if pred():
+           return newt
+   
+       for (name, guard, act) in test:
+   
+           newt.append((name, guard, act))
+           if guard():
+               if catchUncaught:
+                   try:
+                       act()
+                   except:
+                       pass
+               else:
+                   act()
+           if pred():
+               return newt
+           if not self.check():
+               return False
+       return None
+   
+   def failsCheck(self, test):
+       try:
+           return not self.replay(test, catchUncaught = True)
+       except:
+           return True
+       return False
+   
+   def fails(self, test):
+       try:
+           return not self.replay(test)
+       except:
+           return True
+       return False
+   
+   def __candidates(self, t, n):
+       candidates = []
+       s = len(t) / n
+       for i in xrange(0,n):
+           tc = t[0:i*s]
+           tc.extend(t[(i+1)*s:])
+           candidates.append(tc)
+       return candidates
+   
+   def logOff(self):
+       self.__log = None
+   
+   def logAll(self):
+       self.__log = 'All'
+   
+   def setLog(self, level):
+       self.__log = level
+   
+   def setLogAction(self, f):
+       self.__logAction = f
+   
+   def logPrint(self, code, text):
+       print "[LOG " + str(code) + "] " + str(text)
+   
+   def reduce(self, test, pred, pruneGuards = False, keepLast = True):
+       if keepLast:
+           tb = test[:-1]
+           addLast = [test[-1]]
+       else:
+           tb = test
+           addLast = []
+       n = 2
+       count = 0
+       while True:
+           count += 1
+           c = self.__candidates(tb, n)
+           reduced = False
+           for tc in c:
+               if pred(tc + addLast):
+                   tb = tc
+                   n = 2
+                   if pruneGuards:
+                       self.restart()
+                       newtb = []
+                       for a in tb:
+                           if a[1]():
+                               newtb.append(a)
+                               try:
+                                   a[2]()
+                               except:
+                                   pass
+                       tb = newtb
+                   reduced = True
+                   break
+           if not reduced:
+               if n == len(tb):
+                   return tb + addLast
+               n = min(n*2, len(tb))
+           elif len(tb) == 1:
+               if pred([] + addLast):
+                   return ([] + addLast)
+               else:
+                   return (tb + addLast)
+   def __updateCov(self):
+       self.__newBranches = set()
+       self.__newStatements = set()
+       self.__newCurrBranches = set()
+       self.__newCurrStatements = set()
+       for src_file, arcs in self.__cov.collector.get_arc_data().iteritems():
+           for arc in arcs:
+               branch = (src_file, arc)
+               if branch not in self.__allBranches:
+                   self.__allBranches.add(branch)
+                   self.__newBranches.add(branch)
+               if branch not in self.__currBranches:
+                   self.__currBranches.add(branch)
+                   self.__newCurrBranches.add(branch)
+       for src_file, lines in self.__cov.collector.get_line_data().iteritems():
+           for line in lines:
+               statement = (src_file, line)
+               if statement not in self.__allStatements:
+                   self.__allStatements.add(statement)
+                   self.__newStatements.add(statement)
+               if statement not in self.__currStatements:
+                   self.__currStatements.add(branch)
+                   self.__newCurrStatements.add(branch)        
+   
+   def resetCov(self):
+       self.__cov.collector.reset()
+   
+   def report(self):
+       self.__cov.html_report()
+   
+   def allBranches(self):
+       return self.__allBranches
+   
+   def allStatements(self):
+       return self.__allStatements
+   
+   def currBranches(self):
+       return self.__currBranches
+   
+   def currStatements(self):
+       return self.__currStatements
+   
+   def newBranches(self):
+       return self.__newBranches
+   
+   def newStatements(self):
+       return self.__newStatements
+   
+   def newCurrBranches(self):
+       return self.__newCurrBranches
+   
+   def newCurrStatements(self):
+       return self.__newCurrStatements
+   
+   def startCoverage(self):
+       self.__collectCov = True
+   
+   def stopCoverage(self):
+       self.__collectCov = False    
+   
+   def coversBranches(self, branches, catchUncaught=False):
+       def coverPred(test):
+           try:
+               self.replay(test, catchUncaught)
+           except:
+               pass
+           cb = self.currBranches()
+           for b in branches:
+               if b not in cb:
+                   return False
+           return True
+       return coverPred
+   
+   def coversStatements(self, statements, catchUnCaught=False):
+       def coverPred(test):
+           try:
+               self.replay(test, catchUnCaught)
+           except:
+               pass
+           cs = self.currStatements()
+           for s in statements:
+               if s not in cs:
+                   return False
+           return True
+       return coverPred

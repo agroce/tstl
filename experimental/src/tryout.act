@@ -1,0 +1,10 @@
+pool: %N% 1
+
+property: %N% < 10
+
+# this is just to say
+
+%N% := 0
+*4 %N% += 1
+%N% -= 1
+print %N%

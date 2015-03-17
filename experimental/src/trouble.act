@@ -1,0 +1,7 @@
+pool: %STATE% 1
+
+property: %STATE% < 50
+
+%STATE% := 0
+%STATE% = %STATE% + 1
+print ~%STATE%

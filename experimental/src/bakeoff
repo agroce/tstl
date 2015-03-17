@@ -1,0 +1,20 @@
+Random testing using config=Config(uncaught=False, depth=100, seed=None, maxtests=100)
+GENERATING TESTS...
+REDUCING...
+REDUCER Alex TIME: 1365.97371006 AVG: 5.28625954198 MIN: 2 MAX: 17 TOTAL: 5764
+REDUCER Alex(pruning) TIME: 1189.91031003 AVG: 5.25156141568 MIN: 2 MAX: 15 TOTAL: 5764
+REDUCER Zeller
+Traceback (most recent call last):
+  File "buildtests.py", line 91, in <module>
+    red = r((test,t.coversBranches([b])))
+  File "buildtests.py", line 53, in <lambda>
+    zellerDD = lambda (test, pred): SUTDD.DDreduce(t, test, pred, keepLast = False)
+  File "/nfs/guille/groce/users/alex/harness-maker/src/SUTDD.py", line 59, in DDreduce
+    c = mydd.ddmin(deltas)              # Invoke DDMIN
+  File "/nfs/guille/groce/users/alex/harness-maker/src/DD.py", line 719, in ddmin
+    return self.ddgen(c, 1, 0)
+  File "/nfs/guille/groce/users/alex/harness-maker/src/DD.py", line 607, in ddgen
+    outcome = self._dd(c, n)
+  File "/nfs/guille/groce/users/alex/harness-maker/src/DD.py", line 625, in _dd
+    assert tc == self.FAIL or tc == self.UNRESOLVED
+AssertionError

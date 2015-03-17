@@ -1,0 +1,18 @@
+@import math
+@def foo(x):
+@    return -x
+
+pool: %N% 2 REF
+
+property: %N% < 10
+property: %N% in [1,5,7]
+
+%N% := int(0)
+%N% += 1
+print "hello",%N%
+foo(%N%)
+
+reference: int\((\S+)\) ==> float(\1)
+compare: f
+compare: bar
+reference: OSU ==> UofO

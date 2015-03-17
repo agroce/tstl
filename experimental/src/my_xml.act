@@ -1,0 +1,36 @@
+@import my_xml
+
+@def checkMakeNode(s1,s2):
+@  if s1 == "":
+@     return None
+@  return my_xml.MyNode(s1,s2)
+
+source: my_xml.py
+
+pool: %XML% 3
+pool: %STRING% 3
+pool: %TAG% 3
+pool: %CHAR% 3
+pool: %SCHAR% 3
+pool: %SCHARS% 3
+pool: %NODE% 3
+
+%CHAR% := '<'
+%CHAR% := '>'
+%CHAR% := '/'
+%CHAR% := ~%SCHAR%
+%SCHAR% := 'a'
+%SCHAR% := 'b'
+%SCHAR% := 'c'
+%SCHARS% := ''
+~%SCHARS% += %SCHAR%
+%TAG% := '<' + %SCHARS% + '>'
+%STRING% := ''
+~%STRING% += %CHAR%
+~%STRING% = ~%STRING% + ~%STRING%
+~%STRING% = %TAG% + ~%STRING% + %TAG%.replace('<','</')
+{IndexError,my_xml.MyXmlError} %XML% := my_xml.parse(~%STRING%)
+{KeyError} %XML%[~%STRING%]
+%NODE% := checkMakeNode(~%STRING%,~%STRING%)
+{AttributeError} ~%XML%.add(%NODE%)
+print ~%STRING%

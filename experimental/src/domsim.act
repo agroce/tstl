@@ -1,0 +1,58 @@
+@import domsim as d
+
+pool: %DECK% 3
+pool: %DISCARD% 3
+pool: %HAND% 3
+pool: %TURN% 2
+pool: %SUPPLY% 3
+
+source: domsim.py
+
+init: d.r.seed(1)
+
+(%DECK%,%DISCARD%,%TURN%) := d.setup()
+%SUPPLY% := d.setup_supply(2)
+%HAND% := d.draw(%DECK%, %DISCARD%, 5)
+%DISCARD% += %HAND%
+%TURN% += 1
+d.chapel(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.smithy(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.big_money(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.witch(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.adventurer(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.baron(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.baron_estate(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.chancellor(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.chancellor_b(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.multi_chapel(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.chapel_lab(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.courtyard(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.council_room(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.envoy(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.laboratory(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.market(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.militia(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.mine_copper(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.mine_silver(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.minion(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.moat(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.wharf(%DECK%, %DISCARD%, %HAND%, %TURN%, %SUPPLY%)
+d.gain(d.CHAPEL, %SUPPLY%, %DISCARD%)
+d.gain(d.SMITHY, %SUPPLY%, %DISCARD%)
+d.gain(d.WITCH, %SUPPLY%, %DISCARD%)
+d.gain(d.GOLD, %SUPPLY%, %DISCARD%)
+d.gain(d.SILVER, %SUPPLY%, %DISCARD%)
+d.gain(d.COPPER, %SUPPLY%, %DISCARD%)
+d.gain(d.ADVENTURER, %SUPPLY%, %DISCARD%)
+d.gain(d.BARON, %SUPPLY%, %DISCARD%)
+d.gain(d.CHANCELLOR, %SUPPLY%, %DISCARD%)
+d.gain(d.LABORATORY, %SUPPLY%, %DISCARD%)
+d.gain(d.COURTYARD, %SUPPLY%, %DISCARD%)
+d.gain(d.ENVOY, %SUPPLY%, %DISCARD%)
+d.gain(d.LABORATORY, %SUPPLY%, %DISCARD%)
+d.gain(d.MARKET, %SUPPLY%, %DISCARD%)
+d.gain(d.MILITIA, %SUPPLY%, %DISCARD%)
+d.gain(d.MINE, %SUPPLY%, %DISCARD%)
+d.gain(d.MINION, %SUPPLY%, %DISCARD%)
+d.gain(d.MOAT, %SUPPLY%, %DISCARD%)
+d.gain(d.WHARF, %SUPPLY%, %DISCARD%)

@@ -1,0 +1,19 @@
+pool: %THING% 1 REF
+
+@def id(x):
+@    return x
+
+@def otherid(x):
+@    if x:
+@       return -1
+@    else:
+@       return 0
+
+%THING% := int(-1)
+%THING% := int(0)
+id(%THING%)
+
+reference: int\(\-1\) ==> True
+reference: int\(0\) ==> False
+reference: id ==> otherid
+compare: id

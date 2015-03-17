@@ -1,0 +1,47 @@
+@import avl
+@import math
+
+@def heightOk(tree):
+@    h = tree.tree_height()
+@    l = len(tree.inorder_traverse())
+@    if (l == 0):
+@       return True
+@    m = math.log(l,2)
+@    return h <= (m + 1)
+
+@def items(s):
+@    l = []
+@    for i in s:
+@       l.append(i)
+@    return sorted(l)
+
+source: avl.py
+
+pool: %INT% 4
+pool: %AVL% 2 REF
+pool: %LIST% 1
+
+log: 3 %AVL%.inorder_traverse()
+
+property: heightOk(%AVL%) 
+property: %AVL%.check_balanced()
+property: len(%AVL%.inorder_traverse()) < 19
+
+%LIST%:=[]
+~%LIST%.append(%INT%) 
+%INT%:=%[1..20]%
+%AVL%:=avl.AVLTree()
+%AVL%:=avl.AVLTree(%LIST%)
+~%AVL%.insert(%INT%)
+~%AVL%.delete(%INT%)
+~%AVL%.find(%INT%)
+%AVL%.inorder_traverse()
+
+reference: avl.AVLTree ==> set
+reference: insert ==> add
+reference: delete ==> discard
+reference: find ==> __contains__
+reference: (\S+)\.inorder_traverse\(\) ==> items(\1)
+
+compare: find
+compare: inorder_traverse

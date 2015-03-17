@@ -1,0 +1,18 @@
+@import ldominion as mydom
+@import ldominion2 as otherdom
+@kingdomCards = [7,8,9,10,11,12,13,14,15,16]
+@mydominit = mydom.initializeGame(2, kingdomCards, 10)
+@otherdominit = otherdom.initializeGame(2, kingdomCards, 10)
+source: dominion.py
+
+pool: %CARD% 1
+pool: %GAME% 1 REF
+pool: %PLAYER% 1
+pool: %BONUS% 1
+pool: %HPOS% 1
+%CARD% := 5
+%PLAYER% := 0
+%BONUS% := 2
+%HPOS% := 3
+%GAME% := mydominit
+reference: mydominit ==> otherdominit

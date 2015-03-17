@@ -1,0 +1,48 @@
+import sut as SUT
+import random
+import time
+import sys
+import traceback
+
+TEST_LENGTH = 100
+
+timeout = int(sys.argv[1])
+if len(sys.argv) > 2:
+    random.seed(int(sys.argv[2]))
+
+start = time.time()
+elapsed = time.time()-start
+
+t = SUT.t()
+
+ntests = 0
+while elapsed < timeout:
+    ntests += 1
+
+    t.restart()
+    test = []
+
+    for s in xrange(0,TEST_LENGTH):
+        a = random.choice(t.enabled())
+        test.append(a[0])
+        try:
+            a[2]()
+        except:
+            pass
+        try:
+            t.check()
+        except:
+            _,_,tb = sys.exc_info()
+            traceback.print_tb(tb)
+            tbInfo = traceback.extract_tb(tb)
+            filename,line,func,text = tbInfo[-1]
+            print "TEST: ", test
+            print "EXITING"
+            sys.exit(0)
+            
+        elapsed = time.time() - start
+        if elapsed > timeout:
+            break
+
+print ntests, "EXECUTED"
+

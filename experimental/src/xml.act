@@ -1,0 +1,37 @@
+@import xml.dom.minidom
+@def handledParse(string):
+@  try:
+@    retval = xml.dom.minidom.parseString(string)
+@  except xml.parsers.expat.ExpatError:
+@    return None
+@  print "parsed:",string
+@  return retval
+
+pool: %DOMTREE% 3
+pool: %STRING% 3
+pool: %TAG% 3
+pool: %COLLECTION% 3
+pool: %CHAR% 3
+pool: %SCHAR% 3
+pool: %SCHARS% 3
+pool: %QUERY% 3
+
+property: len(%QUERY%) < 2
+
+%CHAR% := '<'
+%CHAR% := '>'
+%CHAR% := '/'
+%CHAR% := ~%SCHAR%
+%SCHAR% := 'a'
+%SCHAR% := 'b'
+%SCHAR% := 'c'
+%SCHARS% := ''
+~%SCHARS% += %SCHAR%
+%TAG% := '<' + %SCHARS% + '>'
+%STRING% := ''
+~%STRING% += %CHAR%
+~%STRING% = ~%STRING% + ~%STRING%
+~%STRING% = %TAG% + ~%STRING% + %TAG%.replace('<','</')
+%DOMTREE% := handledParse(~%STRING%)
+%COLLECTION% := %DOMTREE%.documentElement
+%QUERY% := %COLLECTION%.getElementsByTagName(%STRING%)

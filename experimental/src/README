@@ -1,0 +1,7 @@
+To compile a .act file, you need to run harnessmaker.py
+
+For example:
+
+python harnessmaker.py -a <actfile> -t <python file to generate> -c <classname>
+
+For the most part the tools here expect you to use the defaults for -t and -c

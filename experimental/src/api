@@ -1,0 +1,16 @@
+    def __init__(self,p):
+def initializeGame(players,cardset,seed):
+def shuffle(player,state):
+def drawCard(player,state):
+def updateCoins(player, state, bonus):
+def gainCard(card,state,toFlag,player):
+def discardCard(card,player,state,trashFlag):
+def getCost(card):
+def buyCard(position,state):
+def endTurn(state):
+def playCard(pos,choice1, choice2,choice3,state):
+def cardEffect(card,c1,c2,c3,state,bonus):
+def isGameOver(state):
+def getWinners(state):
+def score(set):
+def scoreFor(player,state):

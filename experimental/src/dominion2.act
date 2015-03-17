@@ -1,0 +1,37 @@
+@import dominion2
+@import dominion3
+
+source: dominion2.py
+
+
+pool: %INT% 4
+pool: %SINT% 4
+pool: %PNUM% 4
+pool: %CARDS% 4
+pool: %DOM% 2 REF
+pool: %LIST% 1
+
+
+%LIST%:=[]
+~%LIST%.append(%INT%) 
+%INT%:=%[0..20]%
+%SINT%:=%[0..10]%
+%CARDS%:=%[0..16]%
+%PNUM%:=%[2..5]%
+%DOM%:=dominion.initializeGame(%PNUM%, [7, 8, 9, 10, 11, 12, 13, 14, 15, 16], %INT%)
+dominion.buyCard(%CARDS%,%DOM%)
+dominion.endTurn(%DOM%)
+dominion.isGameOver(%DOM%)
+dominion.whoseTurn(%DOM%)
+dominion.scoreFor(%PNUM%,%DOM%)
+dominion.playCard(%SINT%,%CARDS%,%CARDS%,%CARDS%,%DOM%)
+
+reference: dominion ==> dominion2
+
+compare: buyCard
+compare: endTurn
+compare: isGameOver
+compare: whoseTurn
+compare: scoreFor
+compare: playCard
+

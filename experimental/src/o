@@ -1,0 +1,237 @@
+  File "randreduce.py", line 60, in <module>
+    a[2]()
+  File "/nfs/guille/groce/users/alex/harness-maker/src/sut.py", line 1373, in act214
+    self.p_XML[0].add(self.p_NODE[1])
+  File "/nfs/guille/groce/users/alex/harness-maker/src/my_xml.py", line 432, in add
+    for sub_node in node.values():
+  File "/nfs/guille/groce/users/alex/harness-maker/src/my_xml.py", line 269, in __getattr__
+    raise AttributeError, ("%s is not an attribute of MyXml" % name)
+Random testing using config=Config(uncaught=True, depth=100, seed=None, maxtests=-1, timeout=3600)
+STEP: self.p_SCHAR[2] = 'a'
+STEP: self.p_SCHAR[1] = 'a'
+STEP: self.p_CHAR[2] = '>'
+STEP: self.p_CHAR[0] = '<'
+STEP: self.p_CHAR[1] = '>'
+STEP: self.p_SCHAR[0] = 'b'
+STEP: self.p_SCHARS[1] = ''
+STEP: self.p_SCHARS[1] += self.p_SCHAR[0]
+STEP: self.p_SCHAR[0] = 'a'
+STEP: self.p_STRING[2] = ''
+STEP: self.p_STRING[0] = ''
+STEP: self.p_STRING[0] += self.p_CHAR[2]
+STEP: self.p_STRING[0] = self.p_STRING[0] + self.p_STRING[0]
+STEP: self.p_STRING[2] = self.p_STRING[0] + self.p_STRING[2]
+STEP: self.p_NODE[2] = checkMakeNode(self.p_STRING[2],self.p_STRING[2])
+STEP: self.p_TAG[1] = '<' + self.p_SCHARS[1] + '>'
+STEP: self.p_TAG[0] = '<' + self.p_SCHARS[1] + '>'
+STEP: self.p_CHAR[2] = self.p_SCHAR[1]
+STEP: self.p_STRING[2] += self.p_CHAR[1]
+STEP: self.p_CHAR[1] = self.p_SCHAR[0]
+STEP: self.p_STRING[2] += self.p_CHAR[0]
+STEP: self.p_STRING[0] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[2] = self.p_TAG[1] + self.p_STRING[0] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[0] += self.p_CHAR[2]
+STEP: self.p_STRING[2] = self.p_STRING[0] + self.p_STRING[0]
+STEP: self.p_STRING[0] += self.p_CHAR[0]
+STEP: self.p_STRING[0] = self.p_STRING[0] + self.p_STRING[2]
+STEP: self.p_STRING[0] = self.p_TAG[0] + self.p_STRING[2] + self.p_TAG[0].replace('<','</')
+STEP: self.p_NODE[1] = checkMakeNode(self.p_STRING[2],self.p_STRING[2])
+STEP: self.p_NODE[0] = checkMakeNode(self.p_STRING[0],self.p_STRING[0])
+STEP: self.p_STRING[0] += self.p_CHAR[2]
+STEP: self.p_STRING[2] = self.p_STRING[0] + self.p_STRING[2]
+STEP: self.p_SCHARS[1] += self.p_SCHAR[1]
+STEP: self.p_TAG[1] = '<' + self.p_SCHARS[1] + '>'
+STEP: self.p_STRING[2] = self.p_STRING[2] + self.p_STRING[0]
+STEP: self.p_STRING[0] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[2] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[2] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[2] += self.p_CHAR[2]
+STEP: self.p_STRING[0] += self.p_CHAR[0]
+STEP: self.p_STRING[2] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_CHAR[2] = '/'
+STEP: self.p_CHAR[0] = '<'
+STEP: self.p_STRING[0] = self.p_STRING[2] + self.p_STRING[2]
+STEP: self.p_STRING[0] += self.p_CHAR[1]
+STEP: self.p_SCHARS[1] += self.p_SCHAR[2]
+STEP: self.p_SCHAR[2] = 'a'
+STEP: self.p_SCHARS[1] += self.p_SCHAR[2]
+STEP: self.p_XML[2] = handledParse(self.p_STRING[0])
+PARSING: <b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b><b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b>a
+STEP: self.p_STRING[2] = self.p_TAG[0] + self.p_STRING[2] + self.p_TAG[1].replace('<','</')
+STEP: self.p_CHAR[1] = self.p_SCHAR[2]
+STEP: self.p_STRING[2] += self.p_CHAR[2]
+STEP: self.p_STRING[2] = self.p_STRING[2] + self.p_STRING[0]
+STEP: self.p_CHAR[2] = '>'
+STEP: self.p_STRING[1] = ''
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[2] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[0] = self.p_STRING[1] + self.p_STRING[1]
+STEP: self.p_STRING[0] = self.p_STRING[2] + self.p_STRING[0]
+STEP: self.p_STRING[0] = self.p_STRING[2] + self.p_STRING[2]
+STEP: self.p_STRING[0] = self.p_STRING[0] + self.p_STRING[1]
+STEP: self.p_STRING[2] = self.p_STRING[2] + self.p_STRING[0]
+STEP: self.p_STRING[0] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[2] = self.p_TAG[1] + self.p_STRING[2] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[1] = self.p_TAG[0] + self.p_STRING[1] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[1] = self.p_TAG[1] + self.p_STRING[1] + self.p_TAG[1].replace('<','</')
+STEP: self.p_XML[0] = handledParse(self.p_STRING[2])
+PARSING: <ba><b><b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b></ba>/<b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b><b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b>a<b><b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b></ba>/<b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b><b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b>a<b><b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b></ba>/<b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b><b><b><b><b><b>>></b></b>a<b><b>>></b></b>a</b>a</b><</b>a</b>
+STEP: self.p_STRING[2] = self.p_TAG[0] + self.p_STRING[1] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[2] = self.p_TAG[1] + self.p_STRING[1] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[2] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[1] = self.p_TAG[1] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[2] = self.p_TAG[0] + self.p_STRING[2] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[0] = self.p_STRING[1] + self.p_STRING[2]
+STEP: self.p_STRING[2] = self.p_STRING[2] + self.p_STRING[0]
+STEP: self.p_STRING[2] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[0] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[0] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[1] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[1] = self.p_STRING[1] + self.p_STRING[1]
+STEP: self.p_STRING[1] = self.p_STRING[0] + self.p_STRING[0]
+STEP: self.p_STRING[1] += self.p_CHAR[1]
+STEP: self.p_STRING[2] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[1] = self.p_TAG[0] + self.p_STRING[0] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[1] = self.p_TAG[0] + self.p_STRING[1] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[1] = self.p_STRING[1] + self.p_STRING[0]
+STEP: self.p_STRING[1] = self.p_STRING[2] + self.p_STRING[2]
+STEP: self.p_STRING[2] = self.p_TAG[1] + self.p_STRING[1] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[2] = self.p_STRING[2] + self.p_STRING[1]
+STEP: self.p_STRING[2] += self.p_CHAR[1]
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[0] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[0] = self.p_STRING[0] + self.p_STRING[2]
+STEP: self.p_STRING[1] = self.p_TAG[1] + self.p_STRING[2] + self.p_TAG[1].replace('<','</')
+STEP: self.p_XML[1] = handledParse(self.p_STRING[1])
+PARSING: <ba><ba><b><ba><ba><ba><ba><ba><ba><b></b></ba></b></ba></ba><b><ba><ba><b></b></ba></b></b></b></b></ba><b><ba><ba><ba><ba><ba><ba><b></b></ba></b></ba></ba><b><ba><ba><b></b></ba></b></b></b></b></ba></ba><b><ba><ba><ba><ba><ba><ba><b></b></ba></b></ba></ba><b><ba><ba><b></b></ba></b></b></b></b></ba><b><ba><ba><ba><ba><ba><ba><b></b></ba></b></ba></ba><b><ba><ba><b></b></ba></b></b></b></b></ba>a</ba>
+STEP: self.p_STRING[1] = self.p_TAG[0] + self.p_STRING[2] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[2] + self.p_TAG[1].replace('<','</')
+STEP: self.p_STRING[0] = self.p_STRING[1] + self.p_STRING[1]
+STEP: self.p_STRING[1] = self.p_STRING[0] + self.p_STRING[2]
+STEP: self.p_STRING[1] = self.p_TAG[1] + self.p_STRING[1] + self.p_TAG[0].replace('<','</')
+STEP: self.p_STRING[0] = self.p_TAG[1] + self.p_STRING[0] + self.p_TAG[0].replace('<','</')
+STEP: self.p_CHAR[1] = '<'
+STEP: self.p_STRING[0] = ''
+STEP: self.p_XML[0] = handledParse(self.p_STRING[0])
+PARSING: 
+parsed: 
+STEP: self.p_CHAR[2] = '<'
+STEP: self.p_SCHAR[2] = 'a'
+STEP: self.p_STRING[0] += self.p_CHAR[1]
+STEP: handledLookup(self.p_XML[0],self.p_STRING[0])
+LOOKING UP: <
+STEP: self.p_XML[1] = handledParse(self.p_STRING[0])
+PARSING: <
+STEP: self.p_STRING[1] = ''
+STEP: self.p_NODE[2] = checkMakeNode(self.p_STRING[1],self.p_STRING[0])
+STEP: self.p_NODE[1] = checkMakeNode(self.p_STRING[0],self.p_STRING[1])
+STEP: self.p_SCHAR[0] = 'b'
+STEP: self.p_XML[0].add(self.p_NODE[1])
+TEST:
+self.p_CHAR[1] = '<'
+self.p_STRING[0] = ''
+self.p_XML[0] = handledParse(self.p_STRING[0])
+self.p_CHAR[2] = '<'
+self.p_SCHAR[2] = 'a'
+self.p_STRING[0] += self.p_CHAR[1]
+handledLookup(self.p_XML[0],self.p_STRING[0])
+self.p_XML[1] = handledParse(self.p_STRING[0])
+self.p_STRING[1] = ''
+self.p_NODE[2] = checkMakeNode(self.p_STRING[1],self.p_STRING[0])
+self.p_NODE[1] = checkMakeNode(self.p_STRING[0],self.p_STRING[1])
+self.p_SCHAR[0] = 'b'
+self.p_XML[0].add(self.p_NODE[1])
+EXITING DUE TO FAILED TEST
+PARSING: 
+parsed: 
+PARSING: 
+parsed: 
+LOOKING UP: 
+PARSING: 
+parsed: 
+PARSING: 
+parsed: 
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: 
+PARSING: 
+parsed: 
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: 
+PARSING: 
+parsed: 
+PARSING: 
+parsed: 
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: 
+parsed: 
+LOOKING UP: 
+PARSING: 
+parsed: 
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: 
+PARSING: 
+parsed: 
+PARSING: 
+parsed: 
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+PARSING: 
+parsed: 
+LOOKING UP: <
+PARSING: <
+REDUCED:
+self.p_CHAR[1] = '<'
+self.p_STRING[0] = ''
+self.p_XML[0] = handledParse(self.p_STRING[0])
+self.p_CHAR[2] = '<'
+self.p_SCHAR[2] = 'a'
+self.p_STRING[0] += self.p_CHAR[1]
+handledLookup(self.p_XML[0],self.p_STRING[0])
+self.p_XML[1] = handledParse(self.p_STRING[0])
+self.p_STRING[1] = ''
+self.p_NODE[2] = checkMakeNode(self.p_STRING[1],self.p_STRING[0])
+self.p_NODE[1] = checkMakeNode(self.p_STRING[0],self.p_STRING[1])
+self.p_SCHAR[0] = 'b'
+self.p_XML[0].add(self.p_NODE[1])

@@ -1,0 +1,38 @@
+@import dominion as mydom
+@import dominion_patkarp as otherdom
+@from cardnames import *
+@kingdomCards = [adventurer, ambassador, baron, council_room, cutpurse, embargo, feast, gardens, great_hall, mine]
+@mydominit = mydom.initializeGame(2, kingdomCards, 10)
+@otherdominit = otherdom.initializeGame(2, kingdomCards, 10)
+source: dominion.py
+
+pool: %CARD% 1
+pool: %GAME% 1 REF
+pool: %PLAYER% 1
+pool: %BONUS% 1
+pool: %HPOS% 1
+%CARD% := silver
+%PLAYER% := 0
+%BONUS% := 2
+%HPOS% := 3
+%GAME% := mydominit
+mydom.drawCard(%PLAYER%,%GAME%)
+
+mydom.buyCard(%CARD%, %GAME%)
+mydom.updateCoins(%PLAYER%,%GAME%,%BONUS%)
+mydom.discardCard(%HPOS%, %PLAYER%, %GAME%, 2)
+mydom.getCost(%CARD%)
+mydom.endTurn(%GAME%)
+mydom.scoreFor (%PLAYER%,%GAME%)
+mydom.isGameOver(%GAME%)
+mydom.getWinners(%GAME%)
+reference: mydominit ==> otherdominit
+compare: drawCard
+compare: buyCard
+compare: updateCoins
+compare: discardCard
+compare: getCost
+compare: endTurn
+compare: scoreFor
+compare: isGameOver
+compare: getWinners
