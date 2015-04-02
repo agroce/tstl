@@ -1,0 +1,13 @@
+The difficulty of writing test harnesses is a major obstacle to the
+adoption of automated testing and model checking.  Languages designed
+for harness definition are usually tied to a particular tool and
+unfamiliar to programmers; moreover, such languages can limit
+expressiveness.  Writing a harness directly in the language of the
+software under test (SUT) makes it hard to change testing algorithms,
+offers no support for the common testing idioms, and tends to
+produce repetitive, hard-to-read code.  This makes harness
+generation a natural fit for the use of an unusual kind of domain-specific language (DSL). This paper defines a \emph{template
+scripting} testing language, TSTL, and shows how it can be used to
+produce succinct, readable definitions of state spaces.  The concepts
+underlying TSTL are demonstrated in Python but are not tied to it.
+

@@ -1,0 +1,16 @@
+set terminal postscript eps enhanced monochrome
+
+set style line 1 lt 1 lw 3 pt 3 linecolor rgb 'black
+set style line 2 lt 1 lw 3 pt 3 linecolor rgb 'dark-gray'
+set style line 3 lt 1 lw 3 pt 3 linecolor rgb 'gray'
+
+set xlabel "Time(s)"
+set ylabel "Branches"
+
+set output "explore.eps"
+
+set key bottom right
+
+set yrange [250:550]
+
+plot "dom.300.data" with lp ls 2 title "random testing", "dom10k.300.data" with lp ls 1 title "k = 10", "dom50k.300.data" with lp ls 3 title "k = 50"
