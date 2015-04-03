@@ -55,7 +55,7 @@
 %\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{Demo: TSTL: A Language and Tool for Testing}
+\title{Demo: TSTL: a Language and Tool for Testing}
 %
 % You need the command \numberofauthors to handle the 'placement
 % and alignment' of the authors beneath the title.
@@ -116,23 +116,86 @@ email: {\texttt{jsmith@affiliation.org}}) and Julius P.~Kumquat
 
 \maketitle
 \begin{abstract}
-This is a paper about tools.
+
+Writing a test harness is a difficult and repetitive programming task,
+and the lack of tool support for customized automated testing is an
+obstacle to the adoption of more sophisticated testing in industry.
+This paper presents TSTL, a language (and tool) allowing users to
+specify the general form of valid tests in a simple but expressive
+language.  TSTL is a minimal language, using the language of the
+Software Under Test (SUT) to support most operations, but adding
+idioms and automatic expansion into an interface for testing.  TSTL,
+provides a common testing interface that hides that details of the
+SUT, making it possible to write universal testing tools (such as
+random testers or model checkers).  TSTL is currently available for
+Python, but easily adapted to other languages as well.
+
 \end{abstract}
 
 % A category with the (minimum) three required fields
-\category{H.4}{Information Systems Applications}{Miscellaneous}
+%\category{H.4}{Information Systems Applications}{Miscellaneous}
 %A category including the fourth, optional field follows...
-\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
+\category{D.2.5}{Software Engineering}{Testing and Debugging}
 
-\terms{Theory}
+\terms{Reliability}
 
-\keywords{ACM proceedings, \LaTeX, text tagging}
+\keywords{Domain specific languages, testing tools}
 
 \section{Introduction}
 
-Stuff is true \cite{NFM15}.
+TSTL \cite{NFM15} is a language (and tool) intended to make these
+difficulties less onerous.
 
+\begin{code}
+@import avl
+@import math
 
+@def heightOk(tree):
+@    h = tree.tree\_height()
+@    l = len(tree.inorder\_traverse())
+@    if (l == 0):
+@       return True
+@    m = math.log(l,2)
+@    return h <= (m + 1)
+
+@def items(s):
+@    l = []
+@    for i in s:
+@       l.append(i)
+@    return sorted(l)
+
+source: avl.py
+
+pool: %INT% 4
+pool: %AVL% 2 REF
+pool: %LIST% 1
+
+log: 3 %AVL%.inorder\_traverse()
+
+property: heightOk(%AVL%) 
+property: %AVL%.check\_balanced()
+
+%LIST%:=[]
+~%LIST%.append(%INT%) 
+%INT%:=%[1..20]%
+%AVL%:=avl.AVLTree()
+%AVL%:=avl.AVLTree(%LIST%)
+~%AVL%.insert(%INT%)
+~%AVL%.delete(%INT%)
+~%AVL%.find(%INT%)
+%AVL%.inorder\_traverse()
+
+reference: avl.AVLTree ==> set
+reference: insert ==> add
+reference: delete ==> discard
+reference: find ==> \_\_contains\_\_
+reference: (\S+)\.inorder\_traverse\(\) ==> items(\1)
+
+compare: find
+compare: inorder\_traverse
+\end{code}
+
+\bibliographystyle{abbrv}
 \bibliography{bibliography}
 
 \end{document}
