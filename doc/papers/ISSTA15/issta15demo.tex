@@ -123,13 +123,14 @@ Writing a test harness is a difficult and repetitive programming task,
 and the lack of tool support for customized automated testing is an
 obstacle to the adoption of more sophisticated testing in industry.
 This paper presents TSTL, a language (and tool) allowing users to
-specify the general form of valid tests in a simple but expressive
-language.  TSTL is a minimal language, using the language of the
+specify the general form of valid tests for a system in a simple (but expressive)
+language.  TSTL is a minimal template-based language, using the language of the
 Software Under Test (SUT) to support most operations, but adding
-idioms and automatic expansion into an interface for testing.  TSTL,
-provides a common testing interface that hides that details of the
-SUT, making it possible to write universal testing tools (such as
-random testers or model checkers).  TSTL is currently available for
+declaratve idioms for testing.  TSTL compiles to
+a common testing interface that hides that details of the
+SUT, making it easy to write universal testing tools (such as
+random testers or model checkers) that apply to all TSTL-defined
+testing problems.  TSTL is currently available for
 Python, but easily adapted to other languages as well.
 
 \end{abstract}
@@ -145,13 +146,33 @@ Python, but easily adapted to other languages as well.
 
 \section{Introduction}
 
+Automated testing often requires a user to write a \emph{test harness}
+--- essentially a program that defines and generates the set of valid
+tests for the Software Under Test (SUT).  Such harnesses are common to
+random testing, many kinds of model checking, and various
+machine-learning influenced approaches \cite{woda12}.  Unfortunately,
+these harnesses themselves are complex software artifacts and it is
+all too easy to spend valuable testing time hunting down bugs in the
+test harness and not the SUT.  Harness code is often highly repetitive
+(choosing between a set of available API calls to make, and assigning
+values to parameters in those calls, for example) and is almost always
+tightly coupled to one particular test generation method.
 TSTL \cite{NFM15} is a language (and tool) intended to make these
 difficulties less onerous.
+
+First, TSTL allows a harness to be defined in a declarative style,
+and provides support for many common testing idioms.  Second, the
+declarative approach allows TSTL to output a generalized interface for
+testing:  a class that allows a testing tool to determine available
+test actions, check for success or failure of tests as they progress,
+and even automatically produce logging, collect and analyze code
+coverage, and delta-debug failed tests.
+
 
 \begin{code}
 @import avl
 @import math
-
+\vspace{0.1in}
 @<
 def heightOk(tree):
      h = tree.tree\_height()
@@ -161,24 +182,24 @@ def heightOk(tree):
      m = math.log(l,2)
      return h <= (m + 1)
 
- def items(s):
+ def it(s):
      l = []
      for i in s:
         l.append(i)
      return sorted(l)
 @>
-
+\vspace{0.1in}
 source: avl.py
-
+\vspace{0.1in}
 pool: %INT% 4
 pool: %AVL% 2 REF
 pool: %LIST% 1
-
+\vspace{0.1in}
 log: 3 %AVL%.inorder\_traverse()
-
+\vspace{0.1in}
 property: heightOk(%AVL%) 
 property: %AVL%.check\_balanced()
-
+\vspace{0.1in}
 %LIST%:=[]
 ~%LIST%.append(%INT%) 
 %INT%:=%[1..20]%
@@ -188,13 +209,13 @@ property: %AVL%.check\_balanced()
 ~%AVL%.delete(%INT%)
 ~%AVL%.find(%INT%)
 %AVL%.inorder\_traverse()
-
+\vspace{0.1in}
 reference: avl.AVLTree ==> set
 reference: insert ==> add
 reference: delete ==> discard
 reference: find ==> \_\_contains\_\_
-reference: (\\S+)\\.inorder\_traverse\\(\\) ==> items(\\1)
-
+reference: (\\S+)\\.inorder\_traverse\\(\\) ==> it(\\1)
+\vspace{0.1in}
 compare: find
 compare: inorder\_traverse
 \end{code}
