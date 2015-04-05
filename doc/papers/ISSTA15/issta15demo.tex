@@ -223,6 +223,34 @@ compare: find
 compare: inorder\_traverse
 \end{code}
 
+\section{Related Work}
+
+
+To our knowledge, there has been no previous tool providing similar
+functionality.  
+There exist various testing tools and languages of a somewhat
+different flavor: e.g. Korat \cite{Korat}, which has a much more fixed
+input domain specification, or the tools built to support the Next
+Generation Air Transportation System (NextGen) software
+\cite{TameInputs}.  The closest of these is the UDITA language
+\cite{UDITA}, a Java extension with non-deterministic choice
+operators and {\tt assume}, which yields a different language but
+that shares some of TSTL's goal.  TSTL aims more at the \emph{generation} of
+tests than the \emph{filtering} of tests (as defined in the UDITA
+paper), while UDITA supports both approaches.  This goal of UDITA (and
+resulting need for first-class {\tt assume}) means that it is hosted
+inside a complex (and sometimes non-trivial to install/use) tool, JPF
+\cite{JPF2}, rather than generating a stand-alone simple interface to
+an SUT.  Building ``UDITA'' for a new language is
+far more challenging than porting TSTL.  UDITA also supports many fewer
+constructs to assist test harness development; e.g., users must
+implement their own logging, delta-debugging, etc..
+Work at JPL on languages for analyzing spacecraft telemetry
+logs in testing \cite{scriptstospecs} is another example of a working example of a
+Python-based declarative language for testing purposes.  The pool
+approach to test case construction is derived from work on canonical
+forms and enumeration of unit tests \cite{AndrewsTR}.
+
 \bibliographystyle{abbrv}
 \bibliography{bibliography}
 
