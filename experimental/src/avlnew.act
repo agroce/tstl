@@ -8,6 +8,7 @@ def heightOk(tree):
     if (l == 0):
        return True
     m = math.log(l,2)
+    assert(PRE[tree.inorder_traverse()] == tree.inorder_traverse())
     return h <= (m + 1)
 >@
 

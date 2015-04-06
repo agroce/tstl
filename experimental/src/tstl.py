@@ -90,6 +90,9 @@ if not config.nocover:
 code = []
 import_modules = []  # we will call reload on these during restart
 inside_literal_block = False
+inside_function = False
+function_code = []
+baseIndent = "    "
 
 with open(config.act, 'r') as fp:
     for l in fp:
@@ -108,15 +111,44 @@ with open(config.act, 'r') as fp:
                 l = l[1:]
             if l.find("def guarded") == 0:
                 # guarded function, append the speculation argument and continue
-                outf.write(l.replace("):",", SPECULATIVE_CALL = False):")[1:])
+                if function_code != []:
+                    if anyPRE:
+                        outf.write(baseIndent + "__pre = {}\n")
+                    for fl in function_code:
+                        outf.write(fl)
+                outf.write(l.replace("):",", SPECULATIVE_CALL = False):"))
+                inside_function = True
+                anyPRE = False
+                function_code = []
+            elif l.find("def ") == 0:
+                if function_code != []:
+                    if anyPRE:
+                        outf.write(baseIndent + "__pre = {}\n")
+                    for fl in function_code:
+                        outf.write(fl)                
+                outf.write(l)
+                inside_function = True
+                anyPRE = False
+                function_code = []
             elif l.find("import") == 0:
                 outf.write(l)
                 # import, so set up reloading
                 module_names = parse_import_line(l)
                 import_modules += module_names
-            elif l.find("%COMMIT%") != -1:
+            elif inside_function:
+                if l.find("%COMMIT%") != -1:
                 # commit point in a guarded function definition
-                outf.write(l.replace("%COMMIT%","if SPECULATIVE_CALL: return True"))
+                    function_code.append(l.replace("%COMMIT%","if SPECULATIVE_CALL: return True"))
+                    continue
+                m = re.match(r".*PRE\[(\S+)\].*",l)
+                while m:
+                    anyPRE = True
+                    pre_expr = m.groups()[0]
+                    spre_expr = "'''" + pre_expr + "'''"
+                    l = l.replace("PRE[" + pre_expr + "]", "__pre[" + spre_expr + "]", 1)
+                    function_code = [(baseIndent + "__pre[" + spre_expr + "] = " + pre_expr + "\n")] + function_code
+                    m = re.match(r".*PRE\[(\S+)\].*",l)
+                function_code.append(l)
             else:
                 outf.write(l)
         elif l[0] == "*": # include action multiple times
@@ -126,6 +158,13 @@ with open(config.act, 'r') as fp:
                 code.append(l[spos:])
         else:
             code.append(l)
+
+if function_code != []:
+    if anyPRE:
+        outf.write(baseIndent + "__pre = {}\n")
+    for fl in function_code:
+        outf.write(fl)          
+                        
 assert len(code) > 0, 'No non-comment lines found in .act file'
 
 # Build up the pool, initialization values
@@ -269,8 +308,6 @@ logSet = newLogs
 outf.write("class " + config.classname + "(object):\n")
 
 genCode = []
-
-baseIndent = "   "
 
 actCount = 0
 def genAct():
