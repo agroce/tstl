@@ -1,13 +1,15 @@
 @import avl
 @import math
 
-@def heightOk(tree):
-@    h = tree.tree_height()
-@    l = len(tree.inorder_traverse())
-@    if (l == 0):
-@       return True
-@    m = math.log(l,2)
-@    return h <= (m + 1)
+<@
+def heightOk(tree):
+    h = tree.tree_height()
+    l = len(tree.inorder_traverse())
+    if (l == 0):
+       return True
+    m = math.log(l,2)
+    return h <= (m + 1)
+>@
 
 @def items(s):
 @    l = []
