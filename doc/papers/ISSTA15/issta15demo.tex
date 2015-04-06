@@ -171,18 +171,34 @@ test actions, check for success or failure of tests as they progress,
 and even automatically produce logging, collect and analyze code
 coverage, and delta-debug failed tests.
 
+Figure \ref{fig:avl} shows a simple TSTL file, defining valid tests of
+an AVL tree implementation.  Most of the file is actually Python code.
+TSTL compiles such a file into Python code defining a class for
+testing tools to interface.  Figure \ref{fig:rt} shows an example of a
+simple random tester using that interface, concise but featuring delta
+debugging \cite{DD} and code coverage updates.  The key idea of TSTL is to
+take a definition of valid actions (typically API calls) that can
+be performed by the SUT and transform this into a class representing a
+graph with transitions between the states produced by performing those
+actions.  TSTL tracks code coverage, handles exceptions, and performs
+other book-keeping, resulting in a simple clean definition not only of
+test harnesses but of algorithms for searching their induced test graphs.
 
+\begin{figure}
 \begin{code}
 @import avl
 @import math
 \vspace{0.1in}
-@<
+<@
 def heightOk(tree):
      h = tree.tree\_height()
      l = len(tree.inorder\_traverse())
      if (l == 0):
         return True
      m = math.log(l,2)
+     \# Demonstrate PRE
+     assert (PRE[tree.inorder\_traverse()] 
+             == tree.inorder\_traverse())
      return h <= (m + 1)
 
  def it(s):
@@ -222,6 +238,62 @@ reference: (\\S+)\\.inorder\_traverse\\(\\) ==> it(\\1)
 compare: find
 compare: inorder\_traverse
 \end{code}
+\caption{A simple TSTL file to test an AVL tree implementation,
+  demonstrating various features of TSTL.}
+\label{fig:avl}
+\end{figure}
+
+\begin{figure}
+\begin{code}
+import sut
+import random
+
+sut = sut.sut()
+
+NUM\_TESTS = 1000
+TEST\_LENGTH = 200 
+
+for t in xrange(0,NUM\_TESTS):
+     sut.restart()
+     T = []
+     for s in xrange(0,TEST\_LENGTH): 
+         action = random.choice(sut.enabled())
+         T.append(action)
+         r = safely(action)
+         p = sut.check()
+         b = sut.newBranches()
+         if b != []
+            print 'COVERED NEW BRANCHES:', b
+         if not r:
+            print 'UNCAUGHT EXCEPTION:' 
+            print sut.error() 
+            print 'REDUCING:'
+            R = sut.reduce(T, sut.fails) 
+            print 'FAILING TEST:', R
+         if not p:
+            print 'PROPERTY CHECK FAILED:' 
+            print sut.error()
+            print 'REDUCING:'
+            R = sut.reduce(T, sut.failsCheck) 
+            print 'FAILING TEST:', R
+\end{code}
+\caption{A simple random tester using the interface provided by TSTL.}
+\label{fig:rt}
+\end{figure}
+
+In this paper there is no room to go into all the details of TSTL.  A
+NASA Formal Methods Symposium paper \cite{NFM15} appearing this year
+provides further information on the process of compiling TSTL
+harnesses, the core language, and the design choices behind TSTL.
+Since that paper was finalized, TSTL has been used in testing classes
+by over 150 students, and refined based on their feedback and our own
+work in practical testing problems and research.  New features include
+the ability to refer to the value of an expression at function entry
+with the construct {\tt PRE[expr]}, a logging facility, and a
+generalized delta debugging facility supporting arbitrary properties
+(e.g., reducing a test case so it keeps the same code coverage
+\cite{icst2014}) in addition to bug reduction.
+
 
 \section{Related Work}
 
