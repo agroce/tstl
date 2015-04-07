@@ -183,8 +183,7 @@ be performed by the SUT and transform this into a class representing a
 graph with transitions between the states produced by performing those
 actions.  This allows us to separate the problem of describing the set
 of valid tests of a program from the problem of actually choosing and
-executing some of those tests.  Figure \ref{fig:class} shows a small portion of the
-resulting Python class produced by TSTL.
+executing some of those tests.  
 TSTL tracks code coverage, handles exceptions, and performs
 other book-keeping (including providing easy-to-used state storage and
 backtracking), resulting in a simple clean definition not only of
@@ -251,33 +250,6 @@ $_{42}$ compare: inorder
 
 \begin{figure}
 \begin{code}
-...
-def heightOk(tree):
-    \_\_pre = \{\}
-    \_\_pre['tree.inorder()'] = tree.inorder()
-...
-    assert(\_\_pre['tree.inorder()'] 
-               == tree.inorder())
-...
-class t(object):
-    def act0(self):
-...
-        try:
-            self.p\_LIST[0]=[]
-...
-        self.p\_LIST\_used[0]=False
-    def guard0(self):
-        return (((self.p\_LIST\_used[0]) or 
-                   (self.p\_LIST[0] == None)))
-...
-
-\end{code}
-\caption{Output Python code for the AVL harness (a few excerpts).}
-\label{fig:class}
-\end{figure}
-
-\begin{figure}
-\begin{code}
 import sut
 import random
 
@@ -287,26 +259,24 @@ NUM\_TESTS = 1000
 TEST\_LENGTH = 200 
 
 for t in xrange(0,NUM\_TESTS):
-     sut.restart()
-     T = []
-     for s in xrange(0,TEST\_LENGTH): 
-         action = random.choice(sut.enabled())
-         T.append(action)
-         r = safely(action)
-         p = sut.check()
-         b = sut.newBranches()
-         if b != []
-            print 'COVERED NEW BRANCHES:', b
-         if not r:
-            print 'UNCAUGHT EXCEPTION:' 
-            print sut.error() 
-            R = sut.reduce(T, sut.fails) 
-            print 'FAILING TEST:', R
-         if not p:
-            print 'PROPERTY CHECK FAILED:' 
-            print sut.error()
-            R = sut.reduce(T, sut.failsCheck) 
-            print 'FAILING TEST:', R
+   sut.restart()
+   T = []
+   for s in xrange(0,TEST\_LENGTH): 
+       action = random.choice(sut.enabled())
+       T.append(action)
+       r = safely(action)
+       if sut.newBranches() != []
+          print 'NEW BRANCHES:'
+          print sut.newBranches()
+       if not r:
+          print 'EXCEPTION:', sut.error() 
+          R = sut.reduce(T, sut.fails) 
+          print 'FAILING TEST:', R
+       elif not sut.check():
+          print 'PROPERTY FAILED:'
+          print sut.error()  
+          R = sut.reduce(T, sut.failsCheck) 
+          print 'FAILING TEST:', R
 \end{code}
 \caption{A simple random tester using the interface provided by TSTL.}
 \label{fig:rt}
@@ -392,9 +362,7 @@ after each test action:  first, the height of every AVL tree must be
 ok, as defined by our Python function, and second the AVL
 implementation's own function for ensuring it is balanced must return
 {\tt True}.  Recall that our harness maintains two AVL pool values, so
-these checks must be performed for each AVL tree --- if we defined a
-property over the {\tt INT} pool, it would have to be satisfied for
-all four integers.
+these checks must be performed for each AVL tree.
 
 \subsection{Section 3: Actions}
 \label{sec:actions}
@@ -402,7 +370,7 @@ all four integers.
 Lines 27-34 are the heart of the harness definition, the actual steps
 that can be taken in a valid test.  Lines 27-28 allow the construction
 of arbitrary length lists of integers.  Line 29 defines the range of
-integers allowed in the {\tt INT} pool, using the {\tt \%[ .. ]\%]}
+integers allowed in the {\tt INT} pool, using the {\tt \%[ .. ]\%}
 construct..  Lines 30 and 31 provide for initialization of AVL trees,
 either with the constructor for an empty tree or the constructor that
 takes a list and produces an AVL tree containing all elements in the
@@ -513,7 +481,7 @@ far more challenging than porting TSTL.  UDITA also supports many fewer
 constructs to assist test harness development; e.g., users must
 implement their own logging, delta-debugging, etc..
 Work at JPL on languages for analyzing spacecraft telemetry
-logs in testing \cite{scriptstospecs} is another example of a working example of a
+logs\cite{scriptstospecs} is another example of a working example of a
 Python-based declarative language for testing purposes.  The pool
 approach to test case construction is derived from work on canonical
 forms and enumeration of unit tests \cite{AndrewsTR}.
@@ -535,7 +503,17 @@ any SUTs for which a TSTL harness has been defined.  Writing
 meta-analysis tools to automatically apply multiple algorithms (or the
 same algorithm with different parameters) to TSTL SUTs and
 statistically analyze the results is fairly easy, and we have some
-rudimentary scripts for this purpose already in place in our own environment.
+rudimentary scripts for this purpose already in place in our own
+environment.
+
+The next step for TSTL is to move beyond Python to provide testing
+support for other languages.  Scala, Ruby, and other scripting
+languages are obvious targets (we believe a Scala implementation would
+be a relatively easy effort, and perhaps allow integration with
+sophisticated log analysis tools \cite{KlausTool}).  Java, C, and C++
+may require somewhat more complex implementations, but should also be
+possible.  Finally, we believe TSTL can also target harnesses for
+model checkers such as CBMC \cite{CBMCp} and SPIN \cite{SPIN}.
 
 {\bf Acknowledgments:} The authors would like to thank Klaus Havelund,
 Gerard Holzmann, Rajeev Joshi, John Regehr, Alan Fern, Martin Erwig,
@@ -620,5 +598,54 @@ Finally, the audience will be shown how to download TSTL and
 This demonstration will focus mostly on the basic idea of TSTL and its
 overall use, not the technical details of the language or tool.
 
+Figure \ref{fig:code} shows some of the actual code produced by
+running TSTL that will be shown to the audience.
+
+\begin{figure}
+\begin{code}
+import copy
+import traceback
+import re
+import sys
+import coverage
+import avl
+import math
+def heightOk(tree):
+    \_\_pre = {}
+    \_\_pre['tree.inorder()'] = tree.inorder()
+    h = tree.tree\_height()
+    l = len(tree.inorder())
+    if (l == 0):
+       return True
+    m = math.log(l,2)
+    assert(\_\_pre['tree.inorder()'] == 
+           tree.inorder())
+    return h <= (m + 1)
+def items(s):
+    l = []
+    for i in s:
+       l.append(i)
+    return sorted(l)
+class sut(object):
+    def act0(self):
+        if self.\_\_collectCov:
+            self.\_\_cov.start()
+        try:
+            self.p\_LIST[0]=[]
+
+        finally:
+            if self.\_\_collectCov:
+                self.\_\_cov.stop()
+                self.\_\_updateCov()
+        self.p\_LIST\_used[0]=False
+    def guard0(self):
+        return (((self.p\_LIST\_used[0]) or 
+               (self.p\_LIST[0] == None)))
+\end{code}
+\caption{Code from AVL harness.}
+\label{fig:code}
+\end{figure}
+
 \end{document}
+
 
