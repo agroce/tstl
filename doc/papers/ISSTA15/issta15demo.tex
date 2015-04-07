@@ -181,7 +181,11 @@ debugging \cite{DD} and code coverage updates.  The key idea of TSTL is to
 take a definition of valid actions (typically API calls) that can
 be performed by the SUT and transform this into a class representing a
 graph with transitions between the states produced by performing those
-actions.  TSTL tracks code coverage, handles exceptions, and performs
+actions.  This allows us to separate the problem of describing the set
+of valid tests of a program from the problem of actually choosing and
+executing some of those tests.  Figure \ref{fig:class} shows a small portion of the
+resulting Python class produced by TSTL.
+TSTL tracks code coverage, handles exceptions, and performs
 other book-keeping (including providing easy-to-used state storage and
 backtracking), resulting in a simple clean definition not only of
 test harnesses but of algorithms for searching their induced test graphs.
@@ -247,6 +251,33 @@ $_{42}$ compare: inorder
 
 \begin{figure}
 \begin{code}
+...
+def heightOk(tree):
+    \_\_pre = \{\}
+    \_\_pre['tree.inorder()'] = tree.inorder()
+...
+    assert(\_\_pre['tree.inorder()'] 
+               == tree.inorder())
+...
+class t(object):
+    def act0(self):
+...
+        try:
+            self.p\_LIST[0]=[]
+...
+        self.p\_LIST\_used[0]=False
+    def guard0(self):
+        return (((self.p\_LIST\_used[0]) or 
+                   (self.p\_LIST[0] == None)))
+...
+
+\end{code}
+\caption{Output Python code for the AVL harness (a few excerpts).}
+\label{fig:class}
+\end{figure}
+
+\begin{figure}
+\begin{code}
 import sut
 import random
 
@@ -269,13 +300,11 @@ for t in xrange(0,NUM\_TESTS):
          if not r:
             print 'UNCAUGHT EXCEPTION:' 
             print sut.error() 
-            print 'REDUCING:'
             R = sut.reduce(T, sut.fails) 
             print 'FAILING TEST:', R
          if not p:
             print 'PROPERTY CHECK FAILED:' 
             print sut.error()
-            print 'REDUCING:'
             R = sut.reduce(T, sut.failsCheck) 
             print 'FAILING TEST:', R
 \end{code}
@@ -292,7 +321,8 @@ has been used in testing classes by over 150 students, and refined
 based on their feedback and our own work in practical testing problems
 and research.  New features include the ability to refer to the value
 of an expression at function entry with the construct {\tt PRE[expr]},
-a logging facility, and a generalized delta debugging \cite{DD}
+a logging facility, support of serializing tests in order to save them
+to a file, and a generalized delta debugging \cite{DD}
 facility supporting arbitrary properties (e.g., reducing a test case
 so it keeps the same code coverage \cite{icst2014}) in addition to bug
 reduction.  While this tool paper focuses on TSTL's use in API-call
@@ -453,6 +483,8 @@ into {\tt sut.py}) by typing:
 python rt.py
 \end{verbatim}
 
+If the AVL tree code has a bug, it is likely the tool will quickly
+detect it and print out a short test case that exposes the problem.
 The TSTL release includes some simple testers, including a much more
 configurable random tester than is shown here, a rudimentary model
 checker, and some artificial-intelligence based algorithms for testing
@@ -497,7 +529,7 @@ advantage of the work of testing researchers, who will provide TSTL
 tools for their testing algorithms.  Second, we hope that TSTL can
 serve as a way for students to learn about automated testing, since
 Python is now one of the most popular introductory languages in
-computer science.  Finally, TSTL can provide a way for researchers to
+computer science \cite{PythonPop}.  Finally, TSTL can provide a way for researchers to
 rapidly prototype new testing algorithms, and apply them with ease to
 any SUTs for which a TSTL harness has been defined.  Writing
 meta-analysis tools to automatically apply multiple algorithms (or the
@@ -521,16 +553,72 @@ NSF CCF-1054876.
 
 \section{Tool Demonstration}
 
-As a demonstration of TSTL we will present the AVL tree example in the
-paper, going through the parts of the harness definition briefly.
-Then we will use a version of the random testing with slightly more
-user-friendly output to demonstrate measuring code coverage with
-TSTL.  Finally, we will modify the AVL tree code to introduce a subtle
-bug and show how the random tester finds the bug and then produces a
-minimal test case showing the bug.
+The demonstration will consist of several main parts, based on the AVL example
+given in the paper.
 
-Finally, the audience will be told how to download TSTL and invited to
-submit their own feature requests and example harnesses.
+The first portion of the demonstration will introduce the problem of
+writing a test harness.
+
+\begin{enumerate}
+\item First, we will show the audience a hand-created random tester
+  for the AVL tree, with some of the features of our example.  This
+  will show how hard to read and maintain such code is, as well as how
+  repetitive it tends to be.
+\item Then the TSTL harness will be displayed, and a brief explanation
+  of each section will be given, as in the paper.
+\end{enumerate}
+
+Next, we will explain that the declarative style allows us to write a
+testing tool that will work for more than one SUT, separating the
+problems of defining valid tests and actually choosing which tests to
+run.  This part will also show the ability of TSTL to automatically
+report coverage.
+
+\begin{enumerate}
+\item We will show the random tester from the paper, with a few
+  modifications to produce more readable output and to save tests in a
+  file (this is supported by TSTL).
+\item The demonstrator will compile the TSTL file, and quickly show
+  the resulting Python class.
+\item Next, we will run random testing on the TSTL file and show how
+  coverage increases rapidly at first, then increasingly slowly,
+  before saturating.
+\end{enumerate}
+
+Next, how to change the harness will be shown, and an example shown to
+explain further how TSTL works.
+
+\begin{enumerate}
+\item A quick change to the harness will blow up the range of
+  integers, and we will show how coverage increases more slowly in
+  this case.  
+\item Restoring the reasonable range of integer values is the next
+  step, followed by a brief discussion of TSTL's limitations with very
+  large branching factors.  The sizes of the compiled Python will be
+  compared.
+\end{enumerate}
+
+The final demonstration portion will show that TSTL can be used to
+debug a program, with delta debugging, logging, and other useful
+features.
+
+\begin{enumerate}
+\item Next, we will introduce a bug into the AVL tree code, possibly
+  guided by the audience.
+\item Running the random tester (without recompiling the TSTL harness)
+  will detect the bug.  We'll comment out reduction and show the
+  initial test size, then add reduction back in and discuss how easy
+  it is to use delta debugging with TSTL.
+\item Next, we'll demonstrate the logging facility by having tests
+  show the current tree contents at every step, by modifying the
+  random tester.
+\end{enumerate}
+
+Finally, the audience will be shown how to download TSTL and
+  invited to submit their own feature requests and example harnesses.
+
+This demonstration will focus mostly on the basic idea of TSTL and its
+overall use, not the technical details of the language or tool.
 
 \end{document}
 
