@@ -372,12 +372,14 @@ all four integers.
 Lines 27-34 are the heart of the harness definition, the actual steps
 that can be taken in a valid test.  Lines 27-28 allow the construction
 of arbitrary length lists of integers.  Line 29 defines the range of
-integers allowed in the {\tt INT} pool.  Lines 30 and 31 provide for
-initialization of AVL trees, either with the constructor for an empty
-tree or the constructor that takes a list and produces an AVL tree
-containing all elements in the list.  Lines 32-35 allow the basic AVL
-tree API calls --- insertion, deletion, searching, and inorder
-traversal. 
+integers allowed in the {\tt INT} pool, using the {\tt \%[ .. ]\%]}
+construct..  Lines 30 and 31 provide for initialization of AVL trees,
+either with the constructor for an empty tree or the constructor that
+takes a list and produces an AVL tree containing all elements in the
+list.  Lines 32-35 allow the basic AVL tree API calls --- insertion,
+deletion, searching, and inorder traversal.  Note that code can be
+preceeded by a list (in curly braces) of exceptions to be expected as possible valid
+behavior.
 
 In large part, this section of the harness is just Python
 code, with one line for each action.  The TSTL compiler is responsible
