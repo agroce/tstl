@@ -105,7 +105,7 @@ with open(config.act, 'r') as fp:
         if re.match("<@", l):
             inside_literal_block=True
             continue
-        if re.match(">@", l):
+        if re.match("@>", l):
             inside_literal_block=False
             continue
         if l[0] == "@" or inside_literal_block:

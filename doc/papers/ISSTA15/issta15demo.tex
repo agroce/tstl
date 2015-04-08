@@ -125,16 +125,16 @@ email: {\texttt{jsmith@affiliation.org}}) and Julius P.~Kumquat
   task, and the lack of tool support for customized automated testing
   is an obstacle to the adoption of more sophisticated testing in
   industry.  This paper presents TSTL, the Template Scripting Testing
-  Langauge, which allows users to specify the general form of valid
-  tests for a system in a simple (but expressive) language, and tools
+  Language, which allows users to specify the general form of valid
+  tests for a system in a simple but expressive language, and tools
   to support testing based on a TSTL definition.  TSTL is a minimal
   template-based domain-specific language, using the source language
   of the Software Under Test (SUT) to support most operations, but
-  adding declaratve idioms for testing.  TSTL compiles to a common
+  adding declarative idioms for testing.  TSTL compiles to a common
   testing interface that hides that details of the SUT and provides
-  support for logging, code coverage, delta-debugging, and other core
+  support for logging, code coverage, delta debugging, and other core
   testing functionality, making it easy to write universal testing
-  tools (such as random testers or model checkers) that apply to all
+  tools such as random testers or model checkers that apply to all
   TSTL-defined harnesses.  TSTL is currently available for
   Python, but easily adapted to other languages as well.
 
@@ -147,7 +147,7 @@ email: {\texttt{jsmith@affiliation.org}}) and Julius P.~Kumquat
 
 \terms{Reliability}
 
-\keywords{Domain-specific languages, testing tools}
+\keywords{Domain-specific languages, testing tools, Python}
 
 \section{Introduction}
 
@@ -162,23 +162,26 @@ test harness and not the SUT.  Harness code is often highly repetitive
 (choosing between a set of available API calls to make, and assigning
 values to parameters in those calls, for example) and is almost always
 tightly coupled to one particular test generation method.
-TSTL \cite{NFM15} is a language (and tool) intended to make these
+TSTL \cite{NFM15} is a language and tool intended to make these
 difficulties less onerous.
 
-First, TSTL allows a harness to be defined in a declarative style,
-and provides support for many common testing idioms.  Second, the
-declarative approach allows TSTL to output a generalized interface for
-testing:  a class that allows a testing tool to determine available
-test actions, check for success or failure of tests as they progress,
-and even automatically produce logging, collect and analyze code
-coverage, and delta-debug failed tests.
+First, TSTL allows a harness to be defined in a declarative style, and
+provides support for many common testing idioms.  Second, adapting a
+more declarative approach allows TSTL to output a generalized
+interface for testing: a class that allows a testing tool to determine
+available test actions, check for success or failure of tests as they
+progress, and even automatically produce logging, collect and analyze
+code coverage, and delta debug failed tests, without change for
+different SUTs, but without sacrificing the generality of a hand-built
+test generator: the definition of valid tests also encodes the
+idiosyncrasies of the SUT.
 
 Figure \ref{fig:avl} shows a simple TSTL file, defining valid tests of
 an AVL tree implementation.  Most of the file is actually Python code.
 TSTL compiles such a file into Python code defining a class for
 testing tools to interface.  Figure \ref{fig:rt} shows an example of a
 simple random tester using that interface, concise but featuring delta
-debugging \cite{DD} and code coverage updates.  The key idea of TSTL is to
+debugging \cite{DD} and branch coverage reporting.  The key idea of TSTL is to
 take a definition of valid actions (typically API calls) that can
 be performed by the SUT and transform this into a class representing a
 graph with transitions between the states produced by performing those
@@ -186,7 +189,7 @@ actions.  This allows us to separate the problem of describing the set
 of valid tests of a program from the problem of actually choosing and
 executing some of those tests.  
 TSTL tracks code coverage, handles exceptions, and performs
-other book-keeping (including providing easy-to-used state storage and
+other book-keeping (including providing easy-to-use state storage and
 backtracking), resulting in a simple clean definition not only of
 test harnesses but of algorithms for searching their induced test graphs.
 
@@ -207,6 +210,7 @@ $_{10}$     \# Demonstrate PRE
 $_{11}$     assert (PRE[tree.inorder()] 
 $_{12}$             == tree.inorder())
 $_{13}$     return h <= (m + 1)
+\vspace{0.1in}
 $_{14}$ def it(s):
 $_{15}$     l = []
 $_{16}$     for i in s:
@@ -228,8 +232,10 @@ $_{26}$ property: %AVL%.check\_balanced()
 $_{27}$ %LIST%:=[]
 $_{28}$ ~%LIST%.append(%INT%) 
 $_{29}$ %INT%:=%[1..20]%
+\vspace{0.1in}
 $_{30}$ %AVL%:=avl.AVLTree()
 $_{31}$ %AVL%:=avl.AVLTree(%LIST%)
+\vspace{0.1in}
 $_{32}$ ~%AVL%.insert(%INT%)
 $_{33}$ ~%AVL%.delete(%INT%)
 $_{34}$ ~%AVL%.find(%INT%)
@@ -245,7 +251,7 @@ $_{41}$ compare: find
 $_{42}$ compare: inorder
 \end{code}
 \caption{A simple TSTL file to test an AVL tree implementation,
-  demonstrating various features of TSTL.}
+  demonstrating various features of TSTL.  The {\tt AVLTree} class defines methods including {\tt insert}, {\tt delete}, {\tt find}, etc.; it is not shown here due to lack of space.}
 \label{fig:avl}
 \end{figure}
 
@@ -283,28 +289,29 @@ for t in xrange(0,NUM\_TESTS):
 \label{fig:rt}
 \end{figure}
 
-In this paper there is no room to go into all the details of TSTL.  A
-NASA Formal Methods Symposium paper \cite{NFM15} appearing this year
-provides further information on the algorithm used to compile
+In this paper we demonstrate the current functionality of TSTL.  A
+more detailed description of TSTL \cite{NFM15} is available elsewhere,
+providing further information on the algorithm used to compile
 (really, expand) TSTL harnesses, the core TSTL language in BNF, and
 the design choices behind TSTL.  Since that paper was finalized, TSTL
-has been used in testing classes by over 150 students, and refined
-based on their feedback and our own work in practical testing problems
-and research.  New features include the ability to refer to the value
-of an expression at function entry with the construct {\tt PRE[expr]},
-a logging facility, support of serializing tests in order to save them
-to a file, and a generalized delta debugging \cite{DD}
-facility supporting arbitrary properties (e.g., reducing a test case
-so it keeps the same code coverage \cite{icst2014}) in addition to bug
-reduction.  While this tool paper focuses on TSTL's use in API-call
-based testing, TSTL can also support grammar-based testing, as shown
-in the NFM paper \cite{NFM15}.  TSTL is available from github
+has been used by over 100 students, and refined based on their
+feedback and our own work in practical testing problems and research.
+New features include the ability to refer to the value of an
+expression at function entry with the construct {\tt PRE[expr]}, a
+logging facility, support for serializing tests in order to save them
+to a file, a method for expecting certain changes in values from a
+call, and a generalized delta debugging \cite{DD} facility supporting
+arbitrary properties (e.g., reducing a test case so it keeps the same
+code coverage \cite{icst2014}) in addition to bug reduction.  While
+this tool paper focuses on TSTL's use in API-call based testing, TSTL
+can also support grammar-based testing, as shown in the NFM paper
+\cite{NFM15}.  TSTL is available from github
 (\url{https://github.com/agroce/tstl}) or as a package in Pypi.
 
 \section{A Brief TSTL Tutorial}
 
-In order to better understand what TSTL does and how to define a
-harness,  we present a section by section discussion of the AVL tree harness.
+We demonstrate TSTL's usage on a Python implementation of AVL trees as an example of a typical SUT.  In the following sections, we step through the harness definition shown in Figure \ref{fig:avl}.
+
 
 \subsection{Section 1: Python Code}
 
@@ -314,7 +321,7 @@ computation, and programmers do not want to learn a new language.
 TSTL is a template language that expands to source code in the SUT's
 language, and complex functionality is handled by using the underlying
 language, in this case Python.  The harness begins (lines 1-2) with
-{\tt import} statements to load any needed python modules, including
+{\tt import} statements to load any needed Python modules, including
 the actual SUT, the {\tt avl} module.  TSTL lines beginning with an
 ``@'' indicate raw Python code.  TSTL processes such lines in some
 cases (for example, reimporting any modules when the SUT is
@@ -323,14 +330,13 @@ reproduces them in compiled output.
 
 Lines 3-19 define two utility functions for testing.  The first of
 these checks that the AVL tree in question satisfies the AVL guarantee
-that a tree will be balanced. It also (though this is redundant with
-other checks provided later, and shown only to demonstrate the
-feature) checks that after the height computation the tree's inorder
-traversal is unchanged from its value at function entry.  TSTL
-automatically expands this into the equivalent Python code, caching
-{\tt PRE} expressions used multiple times in the body.  The {\tt it}
-function returns an ``inorder traversal'' of the set used as a
-reference implementation of the AVL tree, discussed below.
+that a tree will be balanced. It also checks that after the height
+computation, the tree's inorder traversal is unchanged from its value
+at function entry.  TSTL automatically expands this into the
+equivalent Python code, caching {\tt PRE} expressions used multiple
+times in the body.  The {\tt it} function returns an ``inorder
+traversal'' of the Python set used as a reference implementation for the AVL
+tree, discussed below.
 
 \subsection{Section 2: Preamble}
 
@@ -359,11 +365,11 @@ inorder traversal of every AVL pool should be printed after each test
 action.
 
 Lines 25 and 26 declare the properties that must be invariantly true
-after each test action:  first, the height of every AVL tree must be
+after each test action: first, the height of every AVL tree must be
 ok, as defined by our Python function, and second the AVL
 implementation's own function for ensuring it is balanced must return
 {\tt True}.  Recall that our harness maintains two AVL pool values, so
-these checks must be performed for each AVL tree.
+TSTL produces these for each AVL tree in the pool.
 
 \subsection{Section 3: Actions}
 \label{sec:actions}
@@ -371,13 +377,13 @@ these checks must be performed for each AVL tree.
 Lines 27-34 are the heart of the harness definition, the actual steps
 that can be taken in a valid test.  Lines 27-28 allow the construction
 of arbitrary length lists of integers.  Line 29 defines the range of
-integers allowed in the {\tt INT} pool, using the {\tt \%[ .. ]\%}
+integers allowed in the {\tt INT} pool, using the {\tt \%[..]\%}
 construct..  Lines 30 and 31 provide for initialization of AVL trees,
 either with the constructor for an empty tree or the constructor that
 takes a list and produces an AVL tree containing all elements in the
 list.  Lines 32-35 allow the basic AVL tree API calls --- insertion,
 deletion, searching, and inorder traversal.  Note that code can be
-preceeded by a list (in curly braces) of exceptions to be expected as possible valid
+proceeded by a list (in curly braces) of exceptions to be expected as possible valid
 behavior.
 
 In large part, this section of the harness is just Python
@@ -385,10 +391,10 @@ code, with one line for each action.  The TSTL compiler is responsible
 for producing a valid graph definition based on the pool values used
 from this code.  Actions using a pool value are not enabled until the
 pool is initialized --- lines with an assignment using {\tt :=} define
-initalizations.  Furthermore, a pool value cannot be re-initialized
+initializations.  Furthermore, a pool value cannot be re-initialized
 until it has been used in some other action, to avoid useless test
 sequences such as assigning first 1 and then 5 to the same {\tt INT}
-pool value.  The use of a ~ before a pool value use indicates that
+pool value.  The use of a ``\verb|~|'' before a pool value use indicates that
 this usage should not enable re-initialization.  Appending an item to
 a LIST, for example, does not ``use it up'' but constructing an AVL
 tree from a list allows that pool value to be re-initialized.  AVL
@@ -410,27 +416,27 @@ indicate, using textual patterns, how calls to the SUT are to be
 transformed into calls to a reference, and which return values from
 the SUT and reference should be compared for equivalence.
 
-Lines 36-40 show that to create a reference for an AVLTree, the same
-constructor (either taking no argument or a list) should be performed
-with Python's built-in {\tt set} class.  AVL insertion is handled by
-the {\tt add} method for sets, and deletion with {\tt discard}.
-AVLTree  {\tt find} is equivalent to the {\tt \_\_contains\_\_} method
+Lines 36-40 show that to create a reference for an AVLTree, the
+matching constructor (either taking no argument or a list) should be
+called in Python's built-in {\tt set} class.  AVL insertion is handled
+by the {\tt add} method for sets, and deletion with {\tt discard}.
+AVLTree {\tt find} is equivalent to the {\tt \_\_contains\_\_} method
 on Python sets, and an inorder traversal (sorted list of elements) is
 provided by our {\tt it} function.  Note that the last reference
 definition, on line 40, has to use regular expressions to transform an
 AVLTree method call into a function call on the reference set.  There
 is also syntactic sugar for this transformation ({\tt CALL}), but we
-show the regular expression equivalent to show that reference
-transformations can be perform considerable work.  In many cases, a
-reference function's return value has to be suitable transformed to
+show the regular expression equivalent to show that syntactic
+reference transformations can perform considerable work.  In many
+cases, a reference function's return value has to be transformed to
 match the SUT.  Finally, lines 41 and 42 tell TSTL that whenever an
 action containing a {\tt find} call or an {\tt inorder} call is
 performed, the return values for the operation on the SUT should be
 compared to the operation on the reference.  If there is no {\tt
-  compare:} indicator, return values of calls are not compared, the
-more typical case for many reference operations (AVL's
-{\tt add} does not return the same type as set's {\tt insert}, so
-comparison is not possible).
+compare:} indicator, return values of calls are not compared, the more
+typical case for many reference operations (e.g. our AVLTree's {\tt add} does not
+return the same type as set's {\tt insert}, so comparison is not
+possible).
 
 \subsection{Using the Harness}
 
@@ -438,15 +444,16 @@ In order to test {\tt avl.py},  a TSTL user would first compile the
 harness:
 
 \begin{verbatim}
-tstl avl.tstl
+tstl -a avl.tstl
 \end{verbatim}
 
 The {\tt tstl} tool takes several command line arguments, such as the
 class and Python file to output, but by default compiles the given
-file into {\tt sut.py} and makes a class called {\tt sut}.  If the
-random tester in Figure \ref{fig:rt} is in a file called {\tt rt.py} the
-user can then test the AVL implementation (or any other SUT compiled
-into {\tt sut.py}) by typing:
+file into {\tt sut.py} and makes a class called {\tt sut}.  The file
+{\tt sut.py} produced from our example harness is over 2,500 lines of
+Python code.  If the random tester in Figure \ref{fig:rt} is in a file called
+{\tt rt.py} the user can then test the AVL implementation (or any
+other SUT compiled into {\tt sut.py}) by typing:
 
 \begin{verbatim}
 python rt.py
@@ -457,7 +464,7 @@ detect it and print out a short test case that exposes the problem.
 The TSTL release includes some simple testers, including a much more
 configurable random tester than is shown here, a rudimentary model
 checker, and some artificial-intelligence based algorithms for testing
-(a variant of beam search, for example).
+(a variant of beam search \cite{NFM15}, for example).
 
 \section{Related Work}
 
@@ -475,37 +482,37 @@ that shares some of TSTL's goal.  TSTL aims more at the \emph{generation} of
 tests than the \emph{filtering} of tests (as defined in the UDITA
 paper), while UDITA supports both approaches.  This goal of UDITA (and
 resulting need for first-class {\tt assume}) means that it is hosted
-inside a complex (and sometimes non-trivial to install/use) tool, JPF
+inside a complex tool, JPF
 \cite{JPF2}, rather than generating a stand-alone simple interface to
-an SUT.  Building ``UDITA'' for a new language is
+an SUT.  Building a version of UDITA for a new language is
 far more challenging than porting TSTL.  UDITA also supports many fewer
 constructs to assist test harness development; e.g., users must
-implement their own logging, delta-debugging, etc..
+implement their own logging, delta debugging, etc..
 Work at JPL on languages for analyzing spacecraft telemetry
-logs\cite{scriptstospecs} is another example of a working example of a
+logs \cite{scriptstospecs} is another example of a working example of a
 Python-based declarative language for testing purposes.  The pool
 approach to test case construction is derived from work on canonical
 forms and enumeration of unit tests \cite{AndrewsTR}.
 
 \section{Conclusions and Future Work}
 
-TSTL is currently a (useful, working) prototype.  We expect that the
-experience of more users will introduce some changes in the language
-and interface.  Our hopes for TSTL are threefold:  first, we hope that
-it can provide an easy way for non-academic developers to use
-automated testing in their own work, without much effort, and to take
-advantage of the work of testing researchers, who will provide TSTL
-tools for their testing algorithms.  Second, we hope that TSTL can
-serve as a way for students to learn about automated testing, since
-Python is now one of the most popular introductory languages in
-computer science \cite{PythonPop}.  Finally, TSTL can provide a way for researchers to
-rapidly prototype new testing algorithms, and apply them with ease to
-any SUTs for which a TSTL harness has been defined.  Writing
-meta-analysis tools to automatically apply multiple algorithms (or the
-same algorithm with different parameters) to TSTL SUTs and
-statistically analyze the results is fairly easy, and we have some
-rudimentary scripts for this purpose already in place in our own
-environment.
+TSTL is currently a useful working prototype, capable of
+production-quality testing.  We do expect that the experience of more
+users will introduce some changes in the language and interface.  Our
+hopes for TSTL are threefold.  First, we hope that TSTL can provide an
+easy way for non-academic developers to use automated testing in their
+own work, without much effort, and to take advantage of the work of
+testing researchers, who will provide TSTL tools for their testing
+algorithms.  Second, we hope that TSTL can serve as a way for students
+to learn about automated testing, since Python is now one of the most
+popular introductory languages in computer science \cite{PythonPop}.
+Finally, TSTL can provide a way for researchers to rapidly prototype
+new testing algorithms, and apply them with ease to any SUTs for which
+a TSTL harness has been defined.  Writing meta-analysis tools to
+automatically apply multiple algorithms (or the same algorithm with
+different parameters) to TSTL SUTs and statistically analyze the
+results is fairly easy, and we have some rudimentary scripts for this
+purpose already in place in our own environment.
 
 The next step for TSTL is to move beyond Python to provide testing
 support for other languages.  Scala, Ruby, and other scripting
@@ -516,12 +523,11 @@ may require somewhat more complex implementations, but should also be
 possible.  Finally, we believe TSTL can also target harnesses for
 model checkers such as CBMC \cite{CBMCp} and SPIN \cite{SPIN}.
 
-{\bf Acknowledgments:} The authors would like to thank Klaus Havelund,
-Gerard Holzmann, Rajeev Joshi, John Regehr, Alan Fern, Martin Erwig,
-the students in CS362 and CS562 at Oregon State University in winter
-of 2015, and the anonymous NFM'15 reviewers for their comments and
-ideas.  A portion of this research was funded by NSF CCF-1217824 and
-NSF CCF-1054876.
+{\bf Acknowledgments:} The authors would like to thank the students
+  (especially Francis Vo) in winter term 2015 sections of CS 362 and
+  562 at Oregon State University for their comments, contributions,
+  and complaints about TSTL.  A portion of this research was funded by
+  NSF CCF-1217824 and NSF CCF-1054876.
 
 \bibliographystyle{abbrv}
 \bibliography{bibliography}
@@ -612,7 +618,7 @@ import coverage
 import avl
 import math
 def heightOk(tree):
-    \_\_pre = {}
+    \_\_pre = \{\}
     \_\_pre['tree.inorder()'] = tree.inorder()
     h = tree.tree\_height()
     l = len(tree.inorder())
