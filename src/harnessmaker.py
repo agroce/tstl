@@ -23,8 +23,8 @@ def parse_args():
     To parse command line arguments. Makes use of built-in python library argprase
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-a', '--act', type=str, default=None,
-                        help='Path to the .act file.')
+    parser.add_argument('tstl', metavar='N', type=str, default=None,
+                        help='Path to the .tstl file.')
     parser.add_argument('-t', '--target', type=str, default="sut.py",
                         help='Name of the file containing the generated harness core (default = sut.py)')
     parser.add_argument('-c', '--classname', type=str, default='t',
@@ -49,16 +49,16 @@ def make_config(pargs, parser):
     Process the raw arguments, returning a namedtuple object holding the
     entire configuration, if everything parses correctly.
     Example:
-    Config(target='sut.py', classname='t', nocover=False, act='youractfile.act',
+    Config(target='sut.py', classname='t', nocover=False, tstl='youractfile.tstl',
            debug=False, coverreload=False, coverinit=False)
     """
     pdict = pargs.__dict__
-    if pargs.act is None:
+    if pargs.tstl is None:
         parser.print_help()
-        raise ValueError('The .act file is not specified.')
-    elif not os.path.exists(pargs.act):
+        raise ValueError('The .tstl file is not specified.')
+    elif not os.path.exists(pargs.tstl):
         parser.print_help()
-        raise ValueError('Cannot locate the .act file at path={}'.format(pargs.target))
+        raise ValueError('Cannot locate the .tstl file at path={}'.format(pargs.target))
     
     if pargs.target is None:
         parser.print_help()
@@ -147,12 +147,12 @@ def expandRange(original):
 
     for index, line in enumerate(newVersion):
         for refPool in re.findall("%([^%,]*)\s*,\s*(\d+)%", line):
-            # it finds e.g., ('LIST', '2') if you have   ~%LIST,2%   in your .act file
+            # it finds e.g., ('LIST', '2') if you have   ~%LIST,2%   in your .tstl file
             poolName, refIndex = refPool
             
             # if you had 
             # ~%LIST% = ~%LIST% + [%INT%, %INT%]
-            # in your .act file, and in this particular line they were expanded to e.g., 
+            # in your .tstl file, and in this particular line they were expanded to e.g., 
             # ~%LIST% [2] = ~%LIST% [3] + [%INT% [0], %INT% [0]]
             # then poolOccurences will be ['2', '3']
             poolOccurences = re.findall("%"+poolName+"%\s*\[(\d+)\]", line)
@@ -250,7 +250,7 @@ def main():
     function_code = []
     anyPre = False
 
-    with open(config.act, 'r') as fp:
+    with open(config.tstl, 'r') as fp:
         for l in fp:
             if l[-1] != "\n":
                 l += "\n"
@@ -326,7 +326,7 @@ def main():
         for fl in function_code:
             outf.write(fl)       
                 
-    assert len(code) > 0, 'No non-comment lines found in .act file'
+    assert len(code) > 0, 'No non-comment lines found in .tstl file'
 
     # Build up the pool, initialization values
 
