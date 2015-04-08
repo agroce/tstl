@@ -4,6 +4,8 @@ import os
 import re
 from collections import namedtuple
 
+import pkg_resources
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--act', type=str, default=None,
