@@ -23,12 +23,12 @@ def parse_args():
     To parse command line arguments. Makes use of built-in python library argprase
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('tstl', metavar='N', type=str, default=None,
+    parser.add_argument('tstl', metavar='filename', type=str, default=None,
                         help='Path to the .tstl file.')
-    parser.add_argument('-t', '--target', type=str, default="sut.py",
-                        help='Name of the file containing the generated harness core (default = sut.py)')
-    parser.add_argument('-c', '--classname', type=str, default='t',
-                        help='Name of the class representing the SUT (default=t)')
+    parser.add_argument('-o', '--output', type=str, default="sut.py",
+                        help='Name of the file containing the generated harness code (default = sut.py)')
+    parser.add_argument('-c', '--classname', type=str, default='sut',
+                        help='Name of the class representing the SUT (default=sut)')
     parser.add_argument('-n', '--nocover', action='store_true',
                         help='Disable generating coverage collection support.')
     parser.add_argument('-r', '--coverreload', action='store_true',
@@ -49,7 +49,7 @@ def make_config(pargs, parser):
     Process the raw arguments, returning a namedtuple object holding the
     entire configuration, if everything parses correctly.
     Example:
-    Config(target='sut.py', classname='t', nocover=False, tstl='youractfile.tstl',
+    Config(output='sut.py', classname='sut', nocover=False, tstl='yourfile.tstl',
            debug=False, coverreload=False, coverinit=False)
     """
     pdict = pargs.__dict__
@@ -58,11 +58,11 @@ def make_config(pargs, parser):
         raise ValueError('The .tstl file is not specified.')
     elif not os.path.exists(pargs.tstl):
         parser.print_help()
-        raise ValueError('Cannot locate the .tstl file at path={}'.format(pargs.target))
+        raise ValueError('Cannot locate the .tstl file at path={}'.format(pargs.output))
     
-    if pargs.target is None:
+    if pargs.output is None:
         parser.print_help()
-        raise ValueError('The target file is not specified.')
+        raise ValueError('The output file is not specified.')
     
     # create a namedtuple object for fast attribute lookup
     key_list = pdict.keys()
@@ -231,7 +231,7 @@ def main():
         from pprint import pprint
 
     # sut.py (default)
-    outf = open(config.target,'w')
+    outf = open(config.output,'w')
 
     # Handle raw python, imports
     outf.write("import copy\n")
