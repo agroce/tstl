@@ -362,7 +362,10 @@ def main():
         elif cs[0] == "reference:":
             baseRefSplit = c.split("reference: ")[1]
             rs = baseRefSplit.split(" ==> ")
-            referenceMap[rs[0]] = rs[1][:-1]
+            refLeft = rs[0]
+            refRight = rs[1][:-1]
+            
+            referenceMap[refLeft] = refRight
         elif cs[0] == "feature:":
             featureSet.append(cs[1])
         elif cs[0] == "compare:":
