@@ -15,14 +15,14 @@ def parse_args():
                         help='Timeout in seconds (3600 default).')
     parser.add_argument('-s', '--seed', type=int, default=None,
                         help='Random seed (default = None).')
-    parser.add_argument('-m', '--maxtests', type=int, default=-1,
-                        help='Maximum #tests to run (-1 = infinite default).')
     parser.add_argument('-u', '--uncaught', action='store_true',
                         help='Allow uncaught exceptions in actions.')
     parser.add_argument('-i', '--ignoreprops', action='store_true',
                         help='Ignore properties.')
     parser.add_argument('-f', '--full', action='store_true',
                         help="Don't reduce -- report full failing test.")
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help="Verbose exploration.")
     parser.add_argument('-k', '--keep', action='store_true',
                         help="Keep last action the same when reducing.")
     parser.add_argument('-o', '--output', type=str, default=None,
@@ -98,35 +98,50 @@ start = time.time()
 elapsed = time.time()-start
 
 failCount = 0
+maxDepth = 0
 
 t = SUT.sut()
 if config.logging != None:
     t.setLog(config.logging)
 
-ntests = 0
-while (config.maxtests == -1) or (ntests < config.maxtests):
-    ntests += 1
 
-    t.restart()
-    test = []
-
-    for s in xrange(0,config.depth):
-        a = random.choice(t.enabled())
-        test.append(a)
-
-        stepOk = t.safely(a)
+stack = []
+visited = []
+test = []
+t.restart()
+stack.append((t.state(), test))
+while (stack != []):
+    (s, test) = stack.pop()
+    if len(test) > maxDepth:
+        maxDepth = len(test)
+    if s not in visited:
+        visited.append(s)
+        if config.verbose:
+            print len(visited), "NEW STATE:"
+            print s
+    else:
+        continue
+    if len(test) == config.depth:
+        continue
+    t.backtrack(s)
+    shuffleActs = t.enabled()
+    random.shuffle(shuffleActs)
+    for c in shuffleActs:
+        stepOk = t.safely(c)
+        thisBug = False
         if (not config.uncaught) and (not stepOk):
             handle_failure(test, "UNCAUGHT EXCEPTION", False)
             if not config.multiple:
                 print "STOPPING TESTING DUE TO FAILED TEST"
-            break
+            thisBug = True
                 
         if (not config.ignoreprops) and (not t.check()):
             handle_failure(test, "PROPERLY VIOLATION", True)
             if not config.multiple:
                 print "STOPPING TESTING DUE TO FAILED TEST"
-            break
-            
+            thisBug = True
+        if not thisBug:
+            stack.append((t.state(), test + [c]))
         elapsed = time.time() - start
         if config.running:
             if t.newBranches() != None:
@@ -134,7 +149,7 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
                     print elapsed,len(t.allBranches()),"New branch",b
         
         if elapsed > config.timeout:
-            print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+            print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
     if (not config.multiple) and (failCount > 0):
         break
@@ -148,7 +163,8 @@ if not config.nocover:
     if config.html:
         t.htmlReport(config.html)
             
-print ntests, "EXECUTED"
+print len(visited), "STATES VISITED"
+print maxDepth,"MAX SEARCH DEPTH"
 if config.multiple:
     print failCount,"FAILED"
 if not config.nocover:
