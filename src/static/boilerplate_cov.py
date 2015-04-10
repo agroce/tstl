@@ -25,8 +25,22 @@ def __updateCov(self):
 def resetCov(self):
     self.__cov.collector.reset()
 
-def report(self):
-    self.__cov.html_report()
+def report(self, filename):
+    outf = open(filename,'w')
+    r = -1
+    try:
+        r = self.__cov.report(morfs=self.__modules, file=outf)
+    finally:
+        outf.close()
+        return r
+
+def htmlReport(self, dir):
+    r = -1
+    try:
+        r = self.__cov.html_report(morfs=self.__modules, directory=dir,
+                                   title="TSTL Coverage Report")
+    finally:
+        return r
 
 def allBranches(self):
     return self.__allBranches

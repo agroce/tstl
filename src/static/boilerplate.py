@@ -50,7 +50,7 @@ def playable(self, name):
 
 def safely(self, act):
     try:
-        act()
+        act[2]()
     except:
         self.__failure = sys.exc_info()
         return False

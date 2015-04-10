@@ -202,13 +202,13 @@ def genInitialization():
             s += poolPrefix + p.replace("%","") + "_used[" + str(x) + "] = True"
             genCode.append(s + "\n")
     if (not config.nocover) and config.coverinit:
-        genCode.append(baseIndent + "if self.__collectCov: self.__cov.collector.start()\n")
+        genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     for i in initSet:
         s = baseIndent
         s += i
         genCode.append(s)
     if (not config.nocover) and config.coverinit:
-        genCode.append(baseIndent + "if self.__collectCov: self.__cov.collector.stop()\n")        
+        genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
 
 
@@ -629,6 +629,9 @@ def main():
     genCode.append(baseIndent + baseIndent + "test_before_all()\n")
     genCode.append(baseIndent + "except:\n")
     genCode.append(baseIndent + baseIndent + "pass\n")
+    genCode.append(baseIndent + "self.__modules = []\n")
+    for s in sourceSet:
+        genCode.append(baseIndent + 'self.__modules.append(r"' + s + '")\n')
     genCode.append(baseIndent + "self.__features = []\n")
     for f in featureSet:
         genCode.append(baseIndent + 'self.__features.append(r"' + f + '")\n')
@@ -669,12 +672,12 @@ def main():
         genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
         if config.coverreload:
-            genCode.append(baseIndent + "if self.__collectCov: self.__cov.collector.start()\n")
+            genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     for l in import_modules:
         s = baseIndent + 'reload({})\n'.format(l)
         genCode.append(s)
     if (not config.nocover) and config.coverreload:
-        genCode.append(baseIndent + "if self.__collectCov: self.__cov.collector.stop()\n")        
+        genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
     genInitialization()
 
