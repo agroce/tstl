@@ -364,7 +364,22 @@ def main():
             rs = baseRefSplit.split(" ==> ")
             refLeft = rs[0]
             refRight = rs[1][:-1]
-            
+            leftMeth = re.match(r"METHOD\((\S+)\)", refLeft)
+            if leftMeth:
+                method = leftMeth.groups()[0]
+                refLeft = r"(\S+)\."+ method + "\(\)"
+            leftCall = re.match(r"CALL\((\S+)\)", refLeft)
+            if leftCall:
+                function = leftCall.groups()[0]
+                refLeft = function + r"\((\S+)\)"
+            rightCall = re.match(r"CALL\((\S+)\)", refRight)
+            if rightCall:
+                function = rightCall.groups()[0]
+                refRight = function+r"(\1)"
+            rightMeth = re.match(r"METHOD\((\S+)\)", refRight)
+            if rightMeth:
+                method = rightMeth.groups()[0]
+                refRight = r"\1." + method + "()"
             referenceMap[refLeft] = refRight
         elif cs[0] == "feature:":
             featureSet.append(cs[1])
