@@ -8,7 +8,8 @@ def heightOk(tree):
     if (l == 0):
        return True
     m = math.log(l,2)
-    assert(PRE[tree.inorder()] == tree.inorder())
+    assert(PRE%(tree.inorder())% == tree.inorder())
+    assert PRE%(2)% == PRE%(1+1)%
     return h <= (m + 1)
 
 def items(s):
@@ -22,9 +23,9 @@ source: avl.py
 
 log: 1 %AVL%.inorder()
 
-pool: %INT% 4
+pool: %INT% 1
 pool: %AVL% 2 REF
-pool: %LIST% 2
+pool: %LIST% 1
 
 property: heightOk(%AVL%) 
 property: %AVL%.check_balanced()
@@ -34,16 +35,19 @@ property: %AVL%.check_balanced()
 %INT%:=%[1..20]%
 %AVL%:=avl.AVLTree()
 %AVL%:=avl.AVLTree(%LIST%)
-~%AVL%.insert(%INT%)
-~%AVL%.delete(%INT%)
+~%AVL%.insert(%INT%) => (len(%AVL,1%.inorder()) == PRE%(len(%AVL,1%.inorder()))%+1) or PRE%(%AVL,1%.find(%INT,1%))%
+~%AVL%.delete(%INT%) => (len(%AVL,1%.inorder()) == PRE%(len(%AVL,1%.inorder()))%-1) or not PRE%((%AVL,1%.find(%INT,1%)))%
 ~%AVL%.find(%INT%)
 %AVL%.inorder()
+len(%AVL,1%.inorder()) > 5 -> ~%AVL%.display() => True
 
 reference: avl.AVLTree ==> set
 reference: insert ==> add
 reference: delete ==> discard
 reference: find ==> __contains__
-reference: (\S+)\.inorder\(\) ==> items(\1)
+#reference: (\S+)\.inorder\(\) ==> items(\1)
+reference: METHOD(inorder) ==> CALL(items)
+reference: METHOD(display) ==> CALL(print)
 
 compare: find
 compare: inorder

@@ -302,14 +302,14 @@ def main():
                     
                         # commit point in a guarded function definition
                         outf.write(l.replace("%COMMIT%","if SPECULATIVE_CALL: return True"))
-                    m = re.match(r".*PRE\[(\S+)\].*",l)
+                    m = re.match(r".*PRE%\((\S+)\)%.*",l)
                     while m:
                         anyPRE = True
                         pre_expr = m.groups()[0]
                         spre_expr = "'''" + pre_expr + "'''"
-                        l = l.replace("PRE[" + pre_expr + "]", "__pre[" + spre_expr + "]", 1)
+                        l = l.replace("PRE%(" + pre_expr + ")%", "__pre[" + spre_expr + "]", 1)
                         function_code = [(baseIndent + "__pre[" + spre_expr + "] = " + pre_expr + "\n")] + function_code
-                        m = re.match(r".*PRE\[(\S+)\].*",l)
+                        m = re.match(r".*PRE%\((\S+)\)%.*",l)
                     function_code.append(l)                    
                 else:
                     outf.write(l)
@@ -544,6 +544,30 @@ def main():
         newC = newC.replace(":=","=")
         newC = newC.replace("~"+poolPrefix,poolPrefix)
 
+        if newC.find(" -> ") > -1:
+            inlineGuardSplit = newC.split(" -> ")
+            guardConds.append(inlineGuardSplit[0])
+            newC = inlineGuardSplit[1]
+
+        postCode = None
+        if newC.find(" => ") > -1:
+            print "EXPAND",newC
+            postCodeSplit = newC.split(" => ")
+            newC = postCodeSplit[0] + "\n"
+            postCode = postCodeSplit[1].rstrip('\n')        
+
+        preSet = []
+        if postCode:
+            m = re.match(r".*PRE%\((\S+)\)%.*",postCode)
+            while m:
+                pre_expr = m.groups()[0]
+                spre_expr = "'''" + pre_expr + "'''"
+                postCode = postCode.replace("PRE%(" + pre_expr + ")%", "__pre[" + spre_expr + "]", 1)
+                if preSet == []:
+                    preSet.append("__pre = {}\n")
+                preSet.append("__pre[" + spre_expr + "] = " + pre_expr + "\n")
+                m = re.match(r".*PRE%\((\S+)\)%.*",postCode)
+            
         expectCode = None
         if newC.find(" ==> ") > -1:
             codeExpectkSplit = newC.split(" ==> ")
@@ -579,6 +603,9 @@ def main():
         genCode.append("def " + act + "(self):\n")
         if logSet != []:
             genCode.append(baseIndent + "self.log()\n")
+        if preSet != []:
+            for p in preSet:
+                genCode.append(baseIndent + p)
         if not config.nocover:
             genCode.append(baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + "self.__cov.start()\n")
@@ -615,6 +642,8 @@ def main():
             genCode.append(baseIndent + refC + "\n")
             if comparing:
                 genCode.append(baseIndent + "assert __result == __result_REF, \" (%s) == (%s) \" % (__result, __result_REF)\n")
+            if postCode:
+                genCode.append(baseIndent + "assert " + postCode + "\n")
         for ch in changes:
             genCode.append(baseIndent + ch + "\n")
 
