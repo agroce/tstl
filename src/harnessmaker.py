@@ -250,12 +250,22 @@ def main():
     inside_function = False         # Are we inside a function def, so need to consider PRE?
     function_code = []
     anyPre = False
-
+    continuedLine = False
+    contLine = ""
+    
     with open(config.tstl, 'r') as fp:
         for l in fp:
             if l[-1] != "\n":
                 l += "\n"
-
+            if len(l)>1:
+                if l[-2] == "\\":
+                    continuedLine = True
+                    contLine += l[:-2]
+                    continue
+                elif continuedLine:
+                    l = contLine + l
+                    contLine = ""
+                    continuedLine = False
             if l[0] == "#":
                 continue # COMMENT
 

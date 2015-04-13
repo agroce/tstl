@@ -23,8 +23,8 @@ source: avl.py
 
 log: 1 %AVL%.inorder()
 
-pool: %INT% 2
-pool: %AVL% 2 REF
+pool: %INT% 4
+pool: %AVL% 3 REF
 pool: %LIST% 1
 
 property: heightOk(%AVL%) 
@@ -35,11 +35,16 @@ property: %AVL%.check_balanced()
 %INT%:=%[1..20]%
 %AVL%:=avl.AVLTree()
 %AVL%:=avl.AVLTree(%LIST%)
-~%AVL%.insert(%INT%) => (len(%AVL,1%.inorder()) == PRE%(len(%AVL,1%.inorder()))%+1) or PRE%(%AVL,1%.find(%INT,1%))%
-~%AVL%.delete(%INT%) => (len(%AVL,1%.inorder()) == PRE%(len(%AVL,1%.inorder()))%-1) or not PRE%((%AVL,1%.find(%INT,1%)))%
+~%AVL%.insert(%INT%) => \
+   (len(%AVL,1%.inorder()) == PRE%(len(%AVL,1%.inorder()))%+1) \
+   or PRE%(%AVL,1%.find(%INT,1%))%
+~%AVL%.delete(%INT%) => \
+   (len(%AVL,1%.inorder()) == PRE%(len(%AVL,1%.inorder()))%-1) \
+   or not PRE%((%AVL,1%.find(%INT,1%)))%
 ~%AVL%.find(%INT%)
 %AVL%.inorder()
-len(%AVL,1%.inorder()) > 5 -> ~%AVL%.display() => True
+len(%AVL,1%.inorder()) > 5 -> ~%AVL%.display()
+~%AVL% == ~%AVL%
 
 reference: avl.AVLTree ==> set
 reference: insert ==> add
