@@ -115,7 +115,10 @@ def expandPool(original):
     newVersion = []
     for c in original:
         for p in poolSet:
-            pexpr = p + " [%[0.." + str(poolSet[p]-1) + "]%]"
+            if poolSet[p] == 1:
+                pexpr = p + " [0]"
+            else:
+                pexpr = p + " [%[0.." + str(poolSet[p]-1) + "]%]"
             c = c.replace(p, pexpr)
         newVersion.append(c)
     return newVersion
@@ -149,20 +152,18 @@ def expandRange(original):
         for refPool in re.findall("%([^%,]*)\s*,\s*(\d+)%", line):
             # it finds e.g., ('LIST', '2') if you have   ~%LIST,2%   in your .tstl file
             poolName, refIndex = refPool
-            
             # if you had 
             # ~%LIST% = ~%LIST% + [%INT%, %INT%]
             # in your .tstl file, and in this particular line they were expanded to e.g., 
             # ~%LIST% [2] = ~%LIST% [3] + [%INT% [0], %INT% [0]]
             # then poolOccurences will be ['2', '3']
             poolOccurences = re.findall("%"+poolName+"%\s*\[(\d+)\]", line)
-
+            
             # refIndex is 2, so the actual pool used for the secons %LIST% is poolOccurences[1]
             actualPoolUsed = poolOccurences[int(refIndex)-1]
-            
             # replace   ~%LIST,2%    with    self.p_LIST[3]
-            line = re.sub(r"~?%([^%,]*)\s*,\s*(\d+)%", poolPrefix+"\\1["+actualPoolUsed+"]", line)
             
+            line = re.sub("~?%("+poolName+")\s*,\s*("+refIndex+")%", poolPrefix+"\\1["+actualPoolUsed+"]", line)
             newVersion[index] = line
 
     return newVersion
@@ -551,7 +552,6 @@ def main():
 
         postCode = None
         if newC.find(" => ") > -1:
-            print "EXPAND",newC
             postCodeSplit = newC.split(" => ")
             newC = postCodeSplit[0] + "\n"
             postCode = postCodeSplit[1].rstrip('\n')        

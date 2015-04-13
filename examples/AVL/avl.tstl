@@ -23,7 +23,7 @@ source: avl.py
 
 log: 1 %AVL%.inorder()
 
-pool: %INT% 1
+pool: %INT% 2
 pool: %AVL% 2 REF
 pool: %LIST% 1
 
