@@ -1,16 +1,38 @@
 tstl: A template scripting testing language
 ===========================================
 
-TSTL is a langauge that greatly simplifies testing a system using multiple testing approaches and generating a test harness quickly.
-It simplifies the definition of system under test.
+TSTL is a langauge that greatly simplifies testing a system using
+multiple testing approaches, by expanding a Template written partly
+inthe language of the system under test and partly using a declarative
+idiom for describing valid tests.  The goal of TSTL is to make
+generating test automatically for Python programs easy.  For some
+background on an earlier version of the language, see the NASA Formal
+Methods 2015 paper at http://www.cs.cmu.edu/~agroce/NFM15.pdf.
 
-TSTL is based on the research done by [Dr. Alex Groce](http://eecs.oregonstate.edu/people/groce-alex) and Jervis Pinto. School of Electrical Engineering and Computer Science, Oregon State University. The origial code can be found here: [harness-maker](https://code.google.com/p/harness-maker/). TSTL was taught in `CS562 Applied Softwre Engineering` Winter 2015 (at Oregon State University). The current repository packages the original code into a python package so that it can be installed easily and used conveniently by the name `tstl`
+TSTL produces a simple, universal interface for test generators to use
+-- it essentially turns a definition of valid tests into a graph with
+transitions, backtrack, replay, automatic reduction, and code coverage support.
+
+TSTL is based on the research done by
+[Dr. Alex Groce](http://eecs.oregonstate.edu/people/groce-alex) and
+Jervis Pinto in the School of Electrical Engineering and Computer
+Science, Oregon State University. The origial code can be found here:
+[harness-maker](https://code.google.com/p/harness-maker/). TSTL was
+taught in `CS562 Applied Softwre Engineering` Winter 2015 (at Oregon
+State University). The current repository packages the original code
+into a python package so that it can be installed easily and used
+conveniently by the name `tstl`
 
 There is not much documentation yet but that should change soon.
 
-`harnessmaker.py` is renamed as `tstl` and once package is installed there is no need to write `python harnessmaker.py`.
-You can simply use `tstl` instead.
+`harnessmaker.py` is renamed as `tstl` and once package is installed
+there is no need to write `python harnessmaker.py`.  You can simply
+use `tstl` instead.
 
+Note that documentation below is preliminary.  A better guide to usage
+might be to examine the examples directory and see real TSTL test
+harnesses.  The generators directory includes some simple but useful
+testing tools for finding bugs in systems defined in TSTL.
 
 Installation
 ------------
