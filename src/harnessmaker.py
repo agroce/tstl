@@ -1,3 +1,10 @@
+# harnessmaker.py -- TSTL core language
+# Core code by Alex Groce (http://www.cs.cmu.edu/~agroce), 2013-2015
+# Additional features by Jervis Pinto, Pooria Azimi, and Pranjal Mittal
+# Research performed at Oregon State University, Corvallis, Oregon
+# See NASA Formal Methods 2015 paper, "A Little Language for Testing" for
+# core concepts behind TSTL; note language definition has changed, however.
+
 import sys
 import argparse
 import os
