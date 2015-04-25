@@ -107,9 +107,6 @@ if config.logging != None:
 
 tacts = t.actions()
     
-#ntriesMax = 0
-#ntriesTotal = 0
-#ntriesTimes = 0
 ntests = 0
 while (config.maxtests == -1) or (ntests < config.maxtests):
     ntests += 1
@@ -119,38 +116,14 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
 
     for s in xrange(0,config.depth):
 
-#        ntries = 0
-#        ntriesTimes += 1
         chosen = False
         acts = tacts
         while True:
-#            ntries += 1
             p = R.randint(0,len(acts)-1)
             a = acts[p]
             if a[1]():
                 break
             acts = acts[:p] + acts[p+1:]
-
-#        ntriesTotal += ntries
-#        if ntries > ntriesMax:
-#            ntriesMax = ntries
-            
-#        ntries = 0
-#        chosen = False
-#        while not chosen:
-#            ntries += 1
-#            a = R.choice(t.actions())
-#            chosen = a[1]()
-#        if ntries > ntries_max:
-#            ntries_max = ntries
-
-#        a = R.choice(t.enabled())
-
-#        acts = t.actions()
-#        R.shuffle(acts)
-#        for a in acts:
-#            if a[1]():
-#                break
 
         test.append(a)
 
@@ -188,8 +161,6 @@ if not config.nocover:
     if config.html:
         t.htmlReport(config.html)
 
-#print (ntriesTotal*1.0)/(ntriesTimes), "AVERAGE TRIES BEFORE HITTING ENABLED GUARD"
-#print ntriesMax, "MAXIMUM TRIES BEFORE HITTING ENABLED GUARD"        
 print ntests, "EXECUTED"
 if config.multiple:
     print failCount,"FAILED"
