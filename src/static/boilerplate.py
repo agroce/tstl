@@ -123,8 +123,11 @@ def setLog(self, level):
 def setLogAction(self, f):
     self.__logAction = f
 
-def logPrint(self, code, text):
-    print "[LOG " + str(code) + "] " + str(text)
+def logPrint(self, name, code, text, after):
+    print "[",
+    if after:
+        print "POST ",
+    print "LOG " + name + "  :  " + str(code) + "] " + str(text)
 
 def __candidates(self, t, n):
     candidates = []
@@ -176,9 +179,17 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
                 break
         if not reduced:
             if n == len(tb):
+                try:
+                    test_after_reduce()
+                except:
+                    pass
                 return tb + addLast
             n = min(n*2, len(tb))
         elif len(tb) == 1:
+            try:
+                test_after_reduce()
+            except:
+                pass
             if pred([] + addLast):
                 return ([] + addLast)
             else:

@@ -619,7 +619,7 @@ def main():
 
         genCode.append("def " + act + "(self):\n")
         if logSet != []:
-            genCode.append(baseIndent + "self.log()\n")
+            genCode.append(baseIndent + "self.log('''" + newC[:-1] + "''')\n")
         if preSet != []:
             for p in preSet:
                 genCode.append(baseIndent + p)
@@ -659,8 +659,10 @@ def main():
             genCode.append(baseIndent + refC + "\n")
             if comparing:
                 genCode.append(baseIndent + "assert __result == __result_REF, \" (%s) == (%s) \" % (__result, __result_REF)\n")
-            if postCode:
-                genCode.append(baseIndent + "assert " + postCode + "\n")
+        if postCode:
+            genCode.append(baseIndent + "assert " + postCode + "\n")
+        if logSet != []:
+            genCode.append(baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
         for ch in changes:
             genCode.append(baseIndent + ch + "\n")
 
@@ -745,12 +747,14 @@ def main():
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
     genInitialization()
 
-    genCode.append("def log(self):\n")
+    genCode.append("def log(self, name):\n")
     if logSet != []:
         genCode.append(baseIndent + "if self.__log == None:\n")
         genCode.append(baseIndent + baseIndent + "return\n")
         for l in logSet:
             ls = l.split()
+            if ls[0] == "POST":
+                continue
             try:
                 level = int(ls[0])
                 lcode = l[l.find(ls[1]):]
@@ -759,7 +763,32 @@ def main():
                 lcode = l
             genCode.append(baseIndent + "if (self.__log == 'All') or (self.__log >= " + str(level) + "):\n")
             genCode.append(baseIndent + baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + baseIndent + "self.__logAction(" + '"""' + lcode[:-1] + '""",' + lcode[:-1] + ")\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + "self.__logAction(name," + '"""' + lcode[:-1] + '""",' + lcode[:-1] + ",False)\n")
+            genCode.append(baseIndent + baseIndent + "except:\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + "pass\n")
+            
+    else:
+        genCode.append(baseIndent + "pass\n")
+
+    genCode.append("def logPost(self, name):\n")
+    if logSet != []:
+        genCode.append(baseIndent + "if self.__log == None:\n")
+        genCode.append(baseIndent + baseIndent + "return\n")
+        for lv in logSet:
+            ls = lv.split()
+            if ls[0] != "POST":
+                continue
+            l = lv.replace("POST ","")
+            ls = ls[1:]
+            try:
+                level = int(ls[0])
+                lcode = l[l.find(ls[1]):]
+            except ValueError:
+                level = 0
+                lcode = l
+            genCode.append(baseIndent + "if (self.__log == 'All') or (self.__log >= " + str(level) + "):\n")
+            genCode.append(baseIndent + baseIndent + "try:\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + "self.__logAction(name," + '"""' + lcode[:-1] + '""",' + lcode[:-1] + ",True)\n")
             genCode.append(baseIndent + baseIndent + "except:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "pass\n")
             

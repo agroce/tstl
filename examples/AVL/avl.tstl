@@ -9,7 +9,6 @@ def heightOk(tree):
        return True
     m = math.log(l,2)
     assert(PRE%(tree.inorder())% == tree.inorder())
-    assert PRE%(2)% == PRE%(1+1)%
     return h <= (m + 1)
 
 def items(s):
@@ -22,6 +21,7 @@ def items(s):
 source: avl.py
 
 log: 1 %AVL%.inorder()
+log: POST 1 %AVL%.inorder()
 
 pool: %INT% 4
 pool: %AVL% 3 REF
@@ -43,7 +43,7 @@ property: %AVL%.check_balanced()
    or not PRE%((%AVL,1%.find(%INT,1%)))%
 ~%AVL%.find(%INT%)
 %AVL%.inorder()
-len(%AVL,1%.inorder()) > 5 -> ~%AVL%.display()
+#len(%AVL,1%.inorder()) > 5 -> ~%AVL%.display()
 ~%AVL% == ~%AVL%
 
 reference: avl.AVLTree ==> set
