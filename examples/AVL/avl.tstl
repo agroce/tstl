@@ -1,5 +1,6 @@
 @import avl
 @import math
+@import time
 
 <@
 def heightOk(tree):
@@ -16,6 +17,9 @@ def items(s):
     for i in s:
        l.append(i)
     return sorted(l)
+
+def test_after_reduce(sut):
+    sut.setLog(2)
 @>
 
 source: avl.py
@@ -29,6 +33,7 @@ pool: %LIST% 1
 
 property: heightOk(%AVL%) 
 property: %AVL%.check_balanced()
+property: len(%AVL%.inorder()) < 12
 
 %LIST%:=[]
 ~%LIST%.append(%INT%) 

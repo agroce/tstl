@@ -126,7 +126,7 @@ def setLogAction(self, f):
 def logPrint(self, name, code, text, after):
     print "[",
     if after:
-        print "POST ",
+        print "POST",
     print "LOG " + name + "  :  " + str(code) + "] " + str(text)
 
 def __candidates(self, t, n):
@@ -145,7 +145,7 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
     So that the user does not have to go through redundant steps to generate the bug.
     """
     try:
-        test_before_reduce()
+        test_before_reduce(self)
     except:
         pass
     if keepLast:
@@ -180,14 +180,14 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
         if not reduced:
             if n == len(tb):
                 try:
-                    test_after_reduce()
+                    test_after_reduce(self)
                 except:
                     pass
                 return tb + addLast
             n = min(n*2, len(tb))
         elif len(tb) == 1:
             try:
-                test_after_reduce()
+                test_after_reduce(self)
             except:
                 pass
             if pred([] + addLast):

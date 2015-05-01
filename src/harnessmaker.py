@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument('-o', '--output', type=str, default="sut.py",
                         help='Name of the file containing the generated harness code (default = sut.py)')
     parser.add_argument('-c', '--classname', type=str, default='sut',
-                        help='Name of the class representing the SUT (default=sut)')
+                        help='Name of the class representing the SUT (default = sut)')
     parser.add_argument('-n', '--nocover', action='store_true',
                         help='Disable generating coverage collection support.')
     parser.add_argument('-r', '--coverreload', action='store_true',
@@ -628,7 +628,7 @@ def main():
             genCode.append(baseIndent + baseIndent + "self.__cov.start()\n")
 
             genCode.append(baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + "test_before_each()\n")
+            genCode.append(baseIndent + baseIndent + "test_before_each(self)\n")
             genCode.append(baseIndent + "except:\n")
             genCode.append(baseIndent + baseIndent + "pass\n")
 
@@ -647,7 +647,7 @@ def main():
 
             genCode.append(baseIndent + "finally:\n")
             genCode.append(baseIndent + baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + baseIndent + "test_after_each()\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + "test_after_each(self)\n")
             genCode.append(baseIndent + baseIndent + "except:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "pass\n")
             genCode.append(baseIndent + baseIndent + "if self.__collectCov:\n")
@@ -692,7 +692,7 @@ def main():
     # ------------------------------------------ #
     genCode.append("def __init__(self):\n")
     genCode.append(baseIndent + "try:\n")
-    genCode.append(baseIndent + baseIndent + "test_before_all()\n")
+    genCode.append(baseIndent + baseIndent + "test_before_all(self)\n")
     genCode.append(baseIndent + "except:\n")
     genCode.append(baseIndent + baseIndent + "pass\n")
     genCode.append(baseIndent + "self.__modules = []\n")
