@@ -31,6 +31,8 @@ def parse_args():
                         help="Allow multiple failures.")
     parser.add_argument('-l', '--logging', type=int, default=None,
                         help="Set logging level")
+    parser.add_argument('-F', '--failedLogging', type=int, default=None,
+                        help="Set failed test case logging level")        
     parser.add_argument('-r', '--running', action='store_true',
                         help="Produce running branch coverage report.")
     parser.add_argument('-n', '--nocover', action='store_true',
@@ -82,8 +84,11 @@ def handle_failure(test, msg, checkFail):
         outf = open(outname,'w')
     else:
         outf = None
+    if config.failedLogging != None:
+        t.setLog(config.failedLogging)        
     for s in test:
         print "STEP",i,s[0]
+        t.safely(s)
         i += 1
         if outf != None:
             outf.write(t.serializeable(s)+"\n")
