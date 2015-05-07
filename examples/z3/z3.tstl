@@ -1,0 +1,56 @@
+@from z3 import *
+
+pool: %SOLVER% 2
+pool: %MODEL% 3
+pool: %INTVAR% 4
+pool: %BOOLVAR% 2
+pool: %FORMULA% 4
+pool: %INTCONST% 4
+pool: %INTEXPR% 4
+pool: %BOOLEXPR% 4
+
+%INTCONST% := %[-20..20]%
+
+%INTVAR% := Int('A')
+%INTVAR% := Int('B')
+%INTVAR% := Int('C')
+%INTVAR% := Int('D')
+%INTVAR% := Int('E')
+%INTVAR% := Int('F')
+%INTVAR% := Int('G')
+%INTVAR% := Int('H')
+
+%BOOLVAR% := Bool('P')
+%BOOLVAR% := Bool('Q')
+%BOOLVAR% := Bool('R')
+
+%INTEXPR% := %INTVAR%
+%INTEXPR% := %INTCONST%
+%INTEXPR% := %INTEXPR% + %INTEXPR%
+%INTEXPR% := %INTEXPR% - %INTEXPR%
+{ZeroDivisionError} %INTEXPR% := %INTEXPR% / %INTEXPR%
+%INTEXPR% := %INTEXPR% * %INTEXPR%
+
+%BOOLEXPR% := %INTEXPR% > %INTEXPR%
+%BOOLEXPR% := %INTEXPR% < %INTEXPR%
+%BOOLEXPR% := %INTEXPR% <= %INTEXPR%
+%BOOLEXPR% := %INTEXPR% >= %INTEXPR%
+%BOOLEXPR% := %INTEXPR% == %INTEXPR%
+
+%FORMULA% := %BOOLEXPR%
+%FORMULA% := %BOOLVAR%
+%FORMULA% := %BOOLVAR% == %BOOLEXPR%
+%FORMULA% = And(~%FORMULA%,~%FORMULA%)
+%FORMULA% = Or(~%FORMULA%,~%FORMULA%)
+%FORMULA% = Not(~%FORMULA%)
+%FORMULA% = Implies(~%FORMULA%,~%FORMULA%)
+
+%SOLVER% := Solver()
+
+print "%SOLVER,1%:", ; print %SOLVER%.check()
+print "%SOLVER,1%:", ; print "ADDING ", %FORMULA,1% ; ~%SOLVER%.add(%FORMULA%)
+
+str(%SOLVER,1%.check()) == "sat" -> %MODEL% := %SOLVER%.model()
+
+print %MODEL%
+
