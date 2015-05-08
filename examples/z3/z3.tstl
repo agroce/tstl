@@ -1,6 +1,6 @@
 @from z3 import *
 
-pool: %SOLVER% 1
+pool: %SOLVER% 3
 pool: %MODEL% 3
 pool: %INTVAR% 4
 pool: %BOOLVAR% 3
