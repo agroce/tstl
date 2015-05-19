@@ -451,22 +451,23 @@ possible).
 
 \subsection{Using the Harness}
 
-In order to test {\tt avl.py},  a TSTL user would first compile the
-harness by typing: {\tt tstl avl.tstl}.
-The {\tt tstl} tool takes several command line arguments, such as the
-class and Python file to output, but by default compiles the given
-file into {\tt sut.py} and makes a class called {\tt sut}.  The file
-{\tt sut.py} produced from our example harness is over 2,500 lines of
-Python code.  If the random tester in Figure \ref{fig:rt} is in a file called
-{\tt rt.py} the user can then test the AVL implementation (or any
-other SUT compiled into {\tt sut.py}) by typing:
-{\tt python rt.py}.
-If the AVL tree code has a bug, it is likely the tool will quickly
-detect it and print out a short test case that exposes the problem.
-The TSTL release includes some simple testers, including a much more
-configurable random tester than is shown here, a rudimentary model
-checker, and some artificial-intelligence based algorithms for testing
-(a variant of beam search \cite{NFM15}, for example).
+In order to test {\tt avl.py}, a TSTL user would first compile the
+harness by typing: {\tt tstl avl.tstl}.  The {\tt tstl} tool takes
+several command line arguments, such as the class and Python file to
+output, and whether to include code coverage instrumentation, but by
+default compiles the given file into {\tt sut.py} and makes a class
+called {\tt sut}.  The self-contained file {\tt sut.py} produced from
+our example harness is over 7,000 lines of Python code (this includes
+actual testing code plus support code common to all TSTL-generated
+harnesses).  If the random tester in Figure \ref{fig:rt} is in a file
+called {\tt rt.py} the user can then test the AVL implementation (or
+any other SUT compiled into {\tt sut.py}) by typing: {\tt python
+  rt.py}.  If the AVL tree code has a bug, it is likely the tool will
+quickly detect it and print out a short test case that exposes the
+problem.  The TSTL release includes some simple testers, including a
+much more configurable random tester than is shown here, a rudimentary
+model checker, and some artificial-intelligence based algorithms for
+testing (a variant of beam search \cite{NFM15}, for example).
 
 \section{Related Work}
 
