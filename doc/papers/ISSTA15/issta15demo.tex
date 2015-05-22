@@ -347,7 +347,7 @@ at function entry.  TSTL automatically expands this into the
 equivalent Python code, caching {\tt PRE} expressions used multiple
 times in the body.  The {\tt it} function returns an ``inorder
 traversal'' of the Python set used as a reference implementation for the AVL
-tree, discussed below.
+tree.
 
 \subsection{Section 2: Preamble}
 
@@ -380,7 +380,7 @@ after each test action: first, the height of every AVL tree must be
 ok, as defined by our Python function, and second the AVL
 implementation's own function for ensuring it is balanced must return
 {\tt True}.  Recall that our harness maintains two AVL pool values, so
-TSTL produces these for each AVL tree in the pool.
+TSTL checks these properties for each AVL tree in the pool.
 
 \subsection{Section 3: Actions}
 \label{sec:actions}
@@ -389,17 +389,21 @@ Lines 27-34 are the heart of the harness definition, the actual steps
 that can be taken in a valid test.  Lines 27-28 allow the construction
 of arbitrary length lists of integers.  Line 29 defines the range of
 integers allowed in the {\tt INT} pool, using the {\tt \%[..]\%}
-construct..  Lines 30 and 31 provide for initialization of AVL trees,
+construct.  Lines 30 and 31 provide for initialization of AVL trees,
 either with the constructor for an empty tree or the constructor that
 takes a list and produces an AVL tree containing all elements in the
 list.  Lines 32-36 allow the basic AVL tree API calls --- insertion,
 deletion, searching, inorder traversal, and printing.  Note that code can be
 proceeded by a list (in curly braces) of exceptions to be expected as possible valid
-behavior.  The two most interesting features shown here are 1) that
+behavior.  The two most interesting recently added features shown here are 1) that
 guards can be defined by a user, limiting the conditions in which an
-action is enabled, by the syntax {\tt guard -> action} and 2) a check
+action is enabled, using the syntax {\tt guard -> action} and 2) a check
 to perform after an action has been performed (which can include use
-of {\tt PRE} can be provided, using the syntax {\tt action => check}.
+of {\tt PRE}) can be provided, using the syntax {\tt action =>
+  check}.  This code also uses the ability to back (or forward)
+reference the pool variable chosen in an expansion, e.g. {\tt \%INT,1\%}
+is expanded to the same INT used in the first ``normal'' pool
+reference in the action.
 
 In large part, this section of the harness is just Python
 code, with one line for each action.  The TSTL compiler is responsible
@@ -412,7 +416,7 @@ sequences such as assigning first 1 and then 5 to the same {\tt INT}
 pool value.  The use of a ``\verb|~|'' before a pool value use indicates that
 this usage should not enable re-initialization.  Appending an item to
 a LIST, for example, does not ``use it up'' but constructing an AVL
-tree from a list allows that pool value to be re-initialized.  AVL
+tree from a list allows that list pool value to be re-initialized.  AVL
 trees cannot be over-written until they have been traversed at least
 once.
 
@@ -467,8 +471,8 @@ any other SUT compiled into {\tt sut.py}) by typing: {\tt python
 quickly detect it and print out a short test case that exposes the
 problem.  The TSTL release includes some simple testers, including a
 much more configurable random tester than is shown here, a rudimentary
-model checker, and some artificial-intelligence based algorithms for
-testing (a variant of beam search \cite{NFM15}, for example).
+model checker, and machine-learning-based algorithms for
+testing (e.g. a variant of beam search \cite{NFM15}).
 
 \section{Related Work}
 
@@ -482,7 +486,7 @@ Generation Air Transportation System (NextGen) software
 \cite{TameInputs}.  The closest of these is the UDITA language
 \cite{UDITA}, a Java extension with non-deterministic choice
 operators and {\tt assume}, which yields a different language but
-that shares some of TSTL's goal.  TSTL aims more at the \emph{generation} of
+shares some of TSTL's goals.  TSTL aims more at the \emph{generation} of
 tests than the \emph{filtering} of tests (as defined in the UDITA
 paper), while UDITA supports both approaches.  This goal of UDITA (and
 resulting need for first-class {\tt assume}) means that it is hosted
@@ -491,9 +495,10 @@ inside a complex tool, JPF
 an SUT.  Building a version of UDITA for a new language is
 far more challenging than porting TSTL.  UDITA also supports many fewer
 constructs to assist test harness development; e.g., users must
-implement their own logging, delta debugging, etc..
+implement their own logging, delta-debugging, and must write what
+looks like harness code.
 Work at JPL on languages for analyzing spacecraft telemetry
-logs \cite{scriptstospecs} is another example of a working example of a
+logs \cite{scriptstospecs} is a working example of a
 Python-based declarative language for testing purposes.  The pool
 approach to test case construction is derived from work on canonical
 forms and enumeration of unit tests \cite{AndrewsTR}.
