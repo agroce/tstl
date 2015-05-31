@@ -11,6 +11,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--depth', type=int, default=100,
                         help='Maximum search depth (100 default).')
+    parser.add_argument('-w', '--width', type=int, default=10,
+                        help='Randomized beam search width (10 default).')
     parser.add_argument('-t', '--timeout', type=int, default=3600,
                         help='Timeout in seconds (3600 default).')
     parser.add_argument('-s', '--seed', type=int, default=None,
@@ -121,38 +123,51 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
 
     for s in xrange(0,config.depth):
 
+        count = 0
+        newCover = False
         acts = tacts
-        while True:
-            p = R.randint(0,len(acts)-1)
-            a = acts[p]
-            if a[1]():
+        old = t.state()
+        while (count <= config.width):
+            count += 1
+            while True:
+                p = R.randint(0,len(acts)-1)
+                a = acts[p]
+                if a[1]():
+                    break
+                acts = acts[:p] + acts[p+1:]
+
+            test.append(a)
+
+            stepOk = t.safely(a)
+            if (not config.uncaught) and (not stepOk):
+                handle_failure(test, "UNCAUGHT EXCEPTION", False)
+                if not config.multiple:
+                    print "STOPPING TESTING DUE TO FAILED TEST"
                 break
-            acts = acts[:p] + acts[p+1:]
 
-        test.append(a)
+            if (not config.ignoreprops) and (not t.check()):
+                handle_failure(test, "PROPERLY VIOLATION", True)
+                if not config.multiple:
+                    print "STOPPING TESTING DUE TO FAILED TEST"
+                break
 
-        stepOk = t.safely(a)
-        if (not config.uncaught) and (not stepOk):
-            handle_failure(test, "UNCAUGHT EXCEPTION", False)
-            if not config.multiple:
-                print "STOPPING TESTING DUE TO FAILED TEST"
-            break
-                
-        if (not config.ignoreprops) and (not t.check()):
-            handle_failure(test, "PROPERLY VIOLATION", True)
-            if not config.multiple:
-                print "STOPPING TESTING DUE TO FAILED TEST"
-            break
-            
-        elapsed = time.time() - start
-        if config.running:
+            elapsed = time.time() - start
             if t.newBranches() != None:
-                for b in t.newBranches():
-                    print elapsed,len(t.allBranches()),"New branch",b
-        
+                if config.running:
+                    for b in t.newBranches():
+                        print elapsed,len(t.allBranches()),"New branch",b
+                break # Continue with this choice if new branch exposed
+
+            if elapsed > config.timeout:
+                break
+
+            test = test[:-1]
+            t.backtrack(old)
+
         if elapsed > config.timeout:
             print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
-            break
+            break            
+    
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:
