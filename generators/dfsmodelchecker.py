@@ -99,7 +99,7 @@ def handle_failure(test, msg, checkFail):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random testing using config={}'.format(config))
+print('DFS exploration using config={}'.format(config))
 
 start = time.time()
 elapsed = time.time()-start
