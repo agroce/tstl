@@ -30,7 +30,9 @@ def parse_args():
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
     parser.add_argument('-D', '--deterministic', action='store_true',
-                        help="Force deterministic transition ordering (no shuffle).")    
+                        help="Force deterministic transition ordering (no shuffle).")
+    parser.add_argument('-N', '--novisited', action='store_true',
+                        help="Don't track visited states.")     
     parser.add_argument('-l', '--logging', type=int, default=None,
                         help="Set logging level")
     parser.add_argument('-F', '--failedLogging', type=int, default=None,
@@ -121,8 +123,9 @@ while (stack != []):
     (s, test) = stack.pop()
     if len(test) > maxDepth:
         maxDepth = len(test)
-    if s not in visited:
-        visited.append(s)
+    if config.novisited or (s not in visited):
+        if not config.novisited:
+            visited.append(s)
         if config.verbose:
             print len(visited), "NEW STATE:"
             print s
