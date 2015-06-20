@@ -29,6 +29,8 @@ def parse_args():
                         help="Filename to save failing test(s).")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
+    parser.add_argument('-D', '--deterministic', action='store_true',
+                        help="Force deterministic transition ordering (no shuffle).")    
     parser.add_argument('-l', '--logging', type=int, default=None,
                         help="Set logging level")
     parser.add_argument('-F', '--failedLogging', type=int, default=None,
@@ -130,7 +132,8 @@ while (stack != []):
         continue
     t.backtrack(s)
     shuffleActs = t.enabled()
-    random.shuffle(shuffleActs)
+    if not config.deterministic:
+        random.shuffle(shuffleActs)
     for c in shuffleActs:
         stepOk = t.safely(c)
         thisBug = False
