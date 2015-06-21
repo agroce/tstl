@@ -162,6 +162,7 @@ while (stack != []):
         if elapsed > config.timeout:
             print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
+        t.backtrack(s)
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:
