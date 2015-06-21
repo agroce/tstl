@@ -9,8 +9,10 @@ from collections import namedtuple
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--depth', type=int, default=100,
-                        help='Maximum search depth (100 default).')
+    parser.add_argument('-d', '--depth', type=int, default=1000,
+                        help='Maximum search depth (1000 default).')
+    parser.add_argument('-b', '--breadth', type=int, default=1000000,
+                        help='Maximum breadth (actually queue size) (1000000 default).')
     parser.add_argument('-t', '--timeout', type=int, default=3600,
                         help='Timeout in seconds (3600 default).')
     parser.add_argument('-s', '--seed', type=int, default=None,
@@ -33,6 +35,8 @@ def parse_args():
                         help="Force deterministic transition ordering (no shuffle).")
     parser.add_argument('-N', '--novisited', action='store_true',
                         help="Don't track visited states.")
+    parser.add_argument('-O', '--forget', type=float, default=0.0,
+                        help='Probability of forgetting new states (default = 0.0).')
     parser.add_argument('-l', '--logging', type=int, default=None,
                         help="Set logging level")
     parser.add_argument('-F', '--failedLogging', type=int, default=None,
@@ -103,6 +107,8 @@ parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
 print('BFS exploration using config={}'.format(config))
 
+R = random.Random(config.seed)
+
 start = time.time()
 elapsed = time.time()-start
 
@@ -128,21 +134,12 @@ while (queue != []):
     if len(test) > maxDepth:
         maxDepth = len(test)
         print "REACHED DEPTH",maxDepth,"QUEUE SIZE",len(queue)+1
-    if config.novisited or (s not in visited):
-        if not config.novisited:
-            visited.append(s)
-        if config.verbose:
-            print len(visited), "NEW STATE:"
-            print s
-    else:
-        continue
     if len(test) == config.depth:
         continue
     t.backtrack(s)
     shuffleActs = t.enabled()
-
     if not config.deterministic:    
-        random.shuffle(shuffleActs)
+        R.shuffle(shuffleActs)
     for c in shuffleActs:
         stepOk = t.safely(c)
         thisBug = False
@@ -157,17 +154,28 @@ while (queue != []):
             if not config.multiple:
                 print "STOPPING TESTING DUE TO FAILED TEST"
             thisBug = True
+        ns = t.state()
         if not thisBug:
-            queue.append((t.state(), test + [c]))
+            if config.novisited or (ns not in visited):
+                if (random.random() < config.forget) and (not (queue == [])):
+                    break
+                if len(queue) >= config.breadth:
+                    break
+                if not config.novisited:
+                    visited.append(s)
+                    if config.verbose:
+                        print len(visited), "NEW STATE:"
+                        print s
+                queue.append((ns, test + [c]))
         elapsed = time.time() - start
         if config.running:
             if t.newBranches() != None:
                 for b in t.newBranches():
                     print elapsed,len(t.allBranches()),"New branch",b
-        
         if elapsed > config.timeout:
             print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
+        t.backtrack(s)
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:

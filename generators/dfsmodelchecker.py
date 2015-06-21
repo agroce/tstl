@@ -103,6 +103,8 @@ parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
 print('DFS exploration using config={}'.format(config))
 
+R = random.Random(config.seed)
+
 start = time.time()
 elapsed = time.time()-start
 
@@ -136,7 +138,7 @@ while (stack != []):
     t.backtrack(s)
     shuffleActs = t.enabled()
     if not config.deterministic:
-        random.shuffle(shuffleActs)
+        R.shuffle(shuffleActs)
     for c in shuffleActs:
         stepOk = t.safely(c)
         thisBug = False
@@ -151,14 +153,20 @@ while (stack != []):
             if not config.multiple:
                 print "STOPPING TESTING DUE TO FAILED TEST"
             thisBug = True
+        ns = t.state()
         if not thisBug:
-            stack.append((t.state(), test + [c]))
+            if config.novisited or (ns not in visited):
+                if not config.novisited:
+                    visited.append(s)
+                    if config.verbose:
+                        print len(visited), "NEW STATE:"
+                        print s
+                stack.append((ns, test + [c]))
         elapsed = time.time() - start
         if config.running:
             if t.newBranches() != None:
                 for b in t.newBranches():
                     print elapsed,len(t.allBranches()),"New branch",b
-        
         if elapsed > config.timeout:
             print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
