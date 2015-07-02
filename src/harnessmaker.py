@@ -732,6 +732,10 @@ def main():
     genCode.append(baseIndent + "self.__actions_backup = list(self.__actions)\n")
 
     genCode.append("def restart(self):\n")
+    genCode.append(baseIndent + "try:\n")
+    genCode.append(baseIndent + baseIndent + "test_before_restart(self)\n")
+    genCode.append(baseIndent + "except:\n")
+    genCode.append(baseIndent + baseIndent + "pass\n")    
     if not config.nocover:
         genCode.append(baseIndent + "self.__currBranches = set()\n")
         genCode.append(baseIndent + "self.__currStatements = set()\n")
@@ -746,7 +750,11 @@ def main():
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
     genInitialization()
-
+    genCode.append(baseIndent + "try:\n")
+    genCode.append(baseIndent + baseIndent + "test_after_restart(self)\n")
+    genCode.append(baseIndent + "except:\n")
+    genCode.append(baseIndent + baseIndent + "pass\n")    
+    
     genCode.append("def log(self, name):\n")
     if logSet != []:
         genCode.append(baseIndent + "if self.__log == None:\n")
