@@ -11,6 +11,28 @@ t.enabled()
 t.actions()
 """
 
+def setReplayBacktrack(self, val):
+    self.__replayBacktrack = val
+
+def test(self):
+    """
+    Returns the current test as a sequence of (name, guard, actions)
+    """
+    return self.__test
+
+def captureReplay(self, test):
+    captured = ""
+    for step in test:
+        captured += self.serializable(step)
+        captured += "#!#!"
+    return captured[:-4]
+
+def replayable(self,stest):
+    steps = stest.split("#!#!")
+    if steps == ['']:
+        return []
+    return map(self.playable, steps)
+
 def enabled(self):
     """
     Returns all enabled action objects.

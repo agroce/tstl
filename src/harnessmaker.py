@@ -42,6 +42,8 @@ def parse_args():
                         help='Generate coverage for module reload behavior.')
     parser.add_argument('-i', '--coverinit', action='store_true',
                         help='Generate coverage for SUT initialization behavior.')
+    parser.add_argument('-R', '--defaultreplay', action='store_true',
+                        help='Backtracking defaults to replay method.')
 
     # Useful to print internal variables iteratively
     parser.add_argument('--debug', dest='debug', action='store_true', help='Toggle debug mode on')
@@ -195,6 +197,7 @@ def genInitialization():
     """
     Generate initialization from configuration, poolSet
     """
+    genCode.append(baseIndent + "self.__test = []\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%","") + " = {}"
@@ -618,6 +621,11 @@ def main():
             checkSig = re.sub('([^\(]+)\(', "\\1_check(__before_res, __after_res, ", expectCode, count=1)
 
         genCode.append("def " + act + "(self):\n")
+        d = "self.__test.append(("
+        d += "'''" + newC[:-1] +" ''',"
+        d += "self." + guard + ","
+        d += "self." + act + "))\n"
+        genCode.append(baseIndent + d)
         if logSet != []:
             genCode.append(baseIndent + "self.log('''" + newC[:-1] + "''')\n")
         if preSet != []:
@@ -702,6 +710,10 @@ def main():
     for f in featureSet:
         genCode.append(baseIndent + 'self.__features.append(r"' + f + '")\n')
 
+    if not config.defaultreplay:
+        genCode.append(baseIndent + "self.__replayBacktrack = False\n")
+    else:
+        genCode.append(baseIndent + "self.__replayBacktrack = True\n")
     if not config.nocover:
         covc = baseIndent + "self.__cov = coverage.coverage(branch=True, source=["
         for s in sourceSet:
@@ -718,9 +730,7 @@ def main():
         genCode.append(baseIndent + "self.__currStatements = set()\n")
         genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
-
     genInitialization()
-        
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")
     genCode.append(baseIndent + "self.__failure = None\n")
@@ -728,7 +738,6 @@ def main():
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     for d in actDefs:
         genCode.append(baseIndent + d + "\n")
-
     genCode.append(baseIndent + "self.__actions_backup = list(self.__actions)\n")
 
     genCode.append("def restart(self):\n")
@@ -804,6 +813,8 @@ def main():
         genCode.append(baseIndent + "pass\n")
         
     genCode.append("def state(self):\n")
+    genCode.append(baseIndent + "if self.__replayBacktrack:\n")
+    genCode.append(baseIndent + baseIndent + "return self.captureReplay(self.__test)\n")    
     st = baseIndent + "return [ "
     for p in poolSet:
         st += "copy.deepcopy(" + poolPrefix + p.replace("%","") + "),"
@@ -812,6 +823,9 @@ def main():
     genCode.append(st + "]\n")
 
     genCode.append("def backtrack(self,old):\n")
+    genCode.append(baseIndent + "if self.__replayBacktrack:\n")
+    genCode.append(baseIndent + baseIndent + "self.replay(self.replayable(old))\n")
+    genCode.append(baseIndent + baseIndent + "return\n")
     n = 0
     for p in poolSet:
         genCode.append(baseIndent + poolPrefix + p.replace("%","") + " = copy.deepcopy(old[" + str(n) + "])\n")
