@@ -66,6 +66,8 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail):
+    print "TEST:", test
+    print "t.test:", t.test()
     global failCount
     failCount += 1
     print msg
@@ -142,6 +144,7 @@ while (queue != []):
         R.shuffle(shuffleActs)
     for c in shuffleActs:
         stepOk = t.safely(c)
+        test.append(c)
         thisBug = False
         if (not config.uncaught) and (not stepOk):
             handle_failure(test, "UNCAUGHT EXCEPTION", False)
@@ -176,6 +179,7 @@ while (queue != []):
             print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
         t.backtrack(s)
+        test = test[:-1]
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:

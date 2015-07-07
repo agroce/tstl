@@ -141,6 +141,7 @@ while (stack != []):
         R.shuffle(shuffleActs)
     for c in shuffleActs:
         stepOk = t.safely(c)
+        test.append(c)
         thisBug = False
         if (not config.uncaught) and (not stepOk):
             handle_failure(test, "UNCAUGHT EXCEPTION", False)
@@ -161,7 +162,7 @@ while (stack != []):
                     if config.verbose:
                         print len(visited), "NEW STATE:"
                         print s
-                stack.append((ns, test + [c]))
+                stack.append((ns, test))
         elapsed = time.time() - start
         if config.running:
             if t.newBranches() != None:
@@ -170,6 +171,7 @@ while (stack != []):
         if elapsed > config.timeout:
             print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
+        test = test [:-1]
         t.backtrack(s)
     if (not config.multiple) and (failCount > 0):
         break
