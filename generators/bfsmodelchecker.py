@@ -66,8 +66,6 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail):
-    print "TEST:", test
-    print "t.test:", t.test()
     global failCount
     failCount += 1
     print msg
@@ -169,7 +167,9 @@ while (queue != []):
                     if config.verbose:
                         print len(visited), "NEW STATE:"
                         print s
-                queue.append((ns, test + [c]))
+                queue.append((ns, test))
+        elif not config.multiple:
+            break                
         elapsed = time.time() - start
         if config.running:
             if t.newBranches() != None:

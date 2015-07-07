@@ -163,6 +163,8 @@ while (stack != []):
                         print len(visited), "NEW STATE:"
                         print s
                 stack.append((ns, test))
+        elif not config.multiple:
+            break
         elapsed = time.time() - start
         if config.running:
             if t.newBranches() != None:
