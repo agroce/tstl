@@ -1,0 +1,3 @@
+Name                                                                                               Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------------------------------------------------------------------------------------
+/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/numpy/core/numeric.py     523    520    166      0     1%   1-136, 182-2730
