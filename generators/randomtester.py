@@ -35,6 +35,10 @@ def parse_args():
                         help="Set failed test case logging level")    
     parser.add_argument('-r', '--running', action='store_true',
                         help="Produce running branch coverage report.")
+    parser.add_argument('-S', '--stutter', type=float, default=None,
+                        help="Repeat last action if still enabled with P = <stutter>.")
+    parser.add_argument('-g', '--greedyStutter', action='store_true',
+                        help="Repeat last action if it is enabled and improved coverage.")
     parser.add_argument('-n', '--nocover', action='store_true',
                         help="Don't produce a coverage report at the end.")
     parser.add_argument('-c', '--coverfile', type=str, default="coverage.out",
@@ -111,8 +115,12 @@ if config.logging != None:
     t.setLog(config.logging)
 
 tacts = t.actions()
-    
+a = None
+sawNew = False
+
+nops = 0
 ntests = 0
+optime = 0.0
 while (config.maxtests == -1) or (ntests < config.maxtests):
     ntests += 1
 
@@ -123,15 +131,35 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
 
         acts = tacts
         while True:
-            p = R.randint(0,len(acts)-1)
-            a = acts[p]
+            tryStutter = (a != None)
+            if tryStutter:
+                if (config.stutter == None) and (not config.greedyStutter):
+                    tryStutter = False
+            if tryStutter:
+                if (config.stutter == None) or (R.random() > config.stutter):
+                    tryStutter = False
+                if (config.greedyStutter) and sawNew:
+                    print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
+                    tryStutter = True
+            if not tryStutter:
+                p = R.randint(0,len(acts)-1)
+                a = acts[p]
             if a[1]():
                 break
+            else:
+                a = None
             acts = acts[:p] + acts[p+1:]
 
+        if tryStutter:
+            print "STUTTERING WITH",a[0]
         test.append(a)
+        nops += 1
 
+        opstart = time.time()
         stepOk = t.safely(a)
+        optime += (time.time()-opstart)
+        if tryStutter:
+            print "DONE STUTTERING"
         if (not config.uncaught) and (not stepOk):
             handle_failure(test, "UNCAUGHT EXCEPTION", False)
             if not config.multiple:
@@ -146,9 +174,13 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
             
         elapsed = time.time() - start
         if config.running:
-            if t.newBranches() != None:
+            if t.newBranches() != set([]):
+                print "ACTION:",a[0],tryStutter
                 for b in t.newBranches():
                     print elapsed,len(t.allBranches()),"New branch",b
+                sawNew = True
+            else:
+                sawNew = False
         
         if elapsed > config.timeout:
             print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
@@ -166,6 +198,8 @@ if not config.nocover:
         t.htmlReport(config.html)
 
 print ntests, "EXECUTED"
+print nops, "TOTAL TEST OPERATIONS"
+print optime, "TIME SPENT EXECUTING TEST OPERATIONS"
 if config.multiple:
     print failCount,"FAILED"
 if not config.nocover:

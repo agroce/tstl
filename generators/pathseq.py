@@ -11,8 +11,6 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--depth', type=int, default=100,
                         help='Maximum search depth (100 default).')
-    parser.add_argument('-w', '--width', type=int, default=10,
-                        help='Randomized beam search width (10 default).')
     parser.add_argument('-t', '--timeout', type=int, default=3600,
                         help='Timeout in seconds (3600 default).')
     parser.add_argument('-s', '--seed', type=int, default=None,
@@ -99,9 +97,89 @@ def handle_failure(test, msg, checkFail):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random variation of beam search using config={}'.format(config))
+print('Path sequencing using config={}'.format(config))
 
-R = random.Random(config.seed)
+width = 220
+
+currSeq = []
+currLoop = 1
+
+def incCurrSeq():
+    global currSeq
+    if currSeq == []:
+        currSeq = [1]
+        return
+    pos = 1
+    while pos <= len(currSeq):
+        if currSeq[-pos] < width:
+            currSeq[-pos] += 1
+            return
+        else:
+            currSeq[-pos] = 1
+            pos += 1
+    currSeq.append(1)
+
+def nextPath():
+    global currSeq, currLoop
+#    print "GENERATING PATH WITH",currLoop,currSeq
+    p = list(currSeq)
+    if currSeq != []:
+        if currLoop == currSeq[-1]:
+            currLoop += 1
+    while len(p) < config.depth:
+        p.append(currLoop)
+    currLoop += 1
+    if currLoop > width:
+        incCurrSeq()
+        currLoop = 1
+    return p
+
+def runPath(path):
+#    print "RUNNING", path
+    global start
+    global t
+    global tacts
+    opath = path
+    t.restart()
+    test = []
+    while len(path) > 0:
+        elapsed = time.time()-start
+        if elapsed > config.timeout:
+            print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+            return
+        n = path[0]
+        path = path[1:]
+        acts = tacts
+        while n > 0:
+            while (acts != []) and (not acts[0][1]()):
+                acts = acts[1:]
+            if len(acts) == 0:
+                return
+            n = n - 1
+            if n != 0:
+                acts = acts[1:]
+        a = acts[0]
+        test.append(a)
+        stepOk = t.safely(a)
+        if (not config.uncaught) and (not stepOk):
+            handle_failure(test, "UNCAUGHT EXCEPTION", False)
+            if not config.multiple:
+                print "STOPPING TESTING DUE TO FAILED TEST"
+            return
+                
+        if (not config.ignoreprops) and (not t.check()):
+            handle_failure(test, "PROPERLY VIOLATION", True)
+            if not config.multiple:
+                print "STOPPING TESTING DUE TO FAILED TEST"
+            return
+            
+        elapsed = time.time() - start
+        if config.running:
+            if t.newBranches() != None:
+                for b in t.newBranches():
+                    print elapsed,len(t.allBranches()),"New branch",b
+                    print opath
+                    print map(lambda x:x[0], test)
 
 start = time.time()
 elapsed = time.time()-start
@@ -117,60 +195,13 @@ tacts = t.actions()
 ntests = 0
 while (config.maxtests == -1) or (ntests < config.maxtests):
     ntests += 1
-
-    t.restart()
-    test = []
-
-    for s in xrange(0,config.depth):
-
-        count = 0
-        newCover = False
-        acts = tacts
-        old = t.state()
-        while (count <= config.width):
-            count += 1
-            while True:
-                p = R.randint(0,len(acts)-1)
-                a = acts[p]
-                if a[1]():
-                    break
-                acts = acts[:p] + acts[p+1:]
-
-            test.append(a)
-
-            stepOk = t.safely(a)
-            if (not config.uncaught) and (not stepOk):
-                handle_failure(test, "UNCAUGHT EXCEPTION", False)
-                if not config.multiple:
-                    print "STOPPING TESTING DUE TO FAILED TEST"
-                break
-
-            if (not config.ignoreprops) and (not t.check()):
-                handle_failure(test, "PROPERLY VIOLATION", True)
-                if not config.multiple:
-                    print "STOPPING TESTING DUE TO FAILED TEST"
-                break
-
-            elapsed = time.time() - start
-            if t.newBranches() != set([]):
-                if config.running:
-                    print "ACTION:",a[0]
-                    for b in t.newBranches():
-                        print elapsed,len(t.allBranches()),"New branch",b
-                break # Continue with this choice if new branch exposed
-
-            if elapsed > config.timeout:
-                break
-
-            test = test[:-1]
-            t.backtrack(old)
-
-        if elapsed > config.timeout:
-            print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
-            break            
     
+    path = nextPath()
+#    print ntests,path
+    runPath(path)
     if (not config.multiple) and (failCount > 0):
         break
+    elapsed = time.time()-start
     if elapsed > config.timeout:
         print "STOPPING TESTING DUE TO TIMEOUT"
         break        

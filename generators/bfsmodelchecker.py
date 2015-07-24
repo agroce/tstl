@@ -172,7 +172,8 @@ while (queue != []):
             break                
         elapsed = time.time() - start
         if config.running:
-            if t.newBranches() != None:
+            if t.newBranches() != (set[]):
+                print "ACTION:",action
                 for b in t.newBranches():
                     print elapsed,len(t.allBranches()),"New branch",b
         if elapsed > config.timeout:
