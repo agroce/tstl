@@ -267,12 +267,16 @@ def canonize(self, test, pred, pruneGuards = False, keepLast = True):
     # Now try reorderings
 
     #print "TEST:",len(test)
+
+    lastMover = len(test)
+    if keepLast:
+        lastMover = lastMover - 1
     
     anyMoved = True
     while anyMoved:
         anyMoved = False
-        for i in xrange(0,len(test)):
-            for j in xrange(i+1,len(test)):
+        for i in xrange(0,lastMover):
+            for j in xrange(i+1,lastMover):
                 step1 = (test[i])[0]
                 step2 = (test[j])[0]
                 if self.__orderings[step2] < self.__orderings[step1]:
