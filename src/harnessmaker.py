@@ -292,7 +292,7 @@ def main():
                 if l[0] == "@":
                     l = l[1:]
                 if re.match("import ", l):
-                    outf.write(l[:])
+                    #outf.write(l[:])
                     # import, so set up reloading
                     module_names = parse_import_line(l)
                     import_modules += module_names
