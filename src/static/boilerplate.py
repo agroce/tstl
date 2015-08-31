@@ -2,7 +2,6 @@
 BOILERPLATE METHODS OF SUT
 ==========================
 These are the set of methods available on each SUT by default (depending on whether they are required or not).
-If t = sut.t(), then methods in this file can be used on t in the tests file which uses the harness.
 
 Examples
 --------
@@ -162,9 +161,9 @@ def __candidates(self, t, n):
 
 def reduce(self, test, pred, pruneGuards = False, keepLast = True):
     """
-    When a user runs his tests file like random_tests.py, etc using the SUT generate and it gives an error,
-    This function uses test case minimization techniques to find the shortest sequence of actions that exhibit that bug.
-    So that the user does not have to go through redundant steps to generate the bug.
+    This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
+    pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
+    (this is useful for keeping the fault detected from changing).
     """
     try:
         test_before_reduce(self)
@@ -216,3 +215,77 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
                 return ([] + addLast)
             else:
                 return (tb + addLast)
+
+def poolUses(self,str):
+    uses = []
+    for p in self.__pools:
+        pos = str.find(p,0)
+        while pos != -1:
+            access  = str[pos:str.find("]",pos)+1]
+            if access not in uses:
+                uses.append((access,access[access.find("[")+1:access.find("]")]))
+            pos = str.find(p,pos+1)
+    return uses
+            
+def actionModify(self,action,old,new):
+    name = action[0]
+    newName = name.replace(old,new)
+    return self.__names[newName]
+            
+def canonize(self, test, pred, pruneGuards = False, keepLast = True):
+    """
+    Attempts to change the pools used with lower-numbered pools (and use as few pools as possible), and to re-order actions into a
+    fixed order.  Uses the reducer as a subprocedure to eliminate redundancies discovered during canonization.
+    """
+    try:
+        test_before_canonize(self)
+    except:
+        pass
+    pools = []
+    for s in test:
+        for p in self.poolUses(s[0]):
+            if p not in pools:
+                pools.append(p)
+    replacements = []
+    for (p,i) in pools:
+        for n in xrange(0,int(i)):
+            replacements.append((p,p.replace("["+i+"]","[" + str(n) + "]")))
+    anyReplaced = True
+    while anyReplaced:
+        anyReplaced = False
+        for (old,new) in replacements:
+            test2 = map(lambda x: self.actionModify(x,old,new), test)
+            if pred(test2):
+                #print "REPLACING",old,"WITH",new
+                anyReplaced = True
+                removals = [old]
+                test = test2
+                break
+        if anyReplaced:
+            replacements = filter(lambda x: x[0] not in removals, replacements)
+
+    # Now try reorderings
+
+    #print "TEST:",len(test)
+    
+    anyMoved = True
+    while anyMoved:
+        anyMoved = False
+        for i in xrange(0,len(test)):
+            for j in xrange(i+1,len(test)):
+                step1 = (test[i])[0]
+                step2 = (test[j])[0]
+                if self.__orderings[step2] < self.__orderings[step1]:
+                    frag1 = test[:i]
+                    frag2 = [test[j]]
+                    frag3 = test[i+1:j]
+                    frag4 = [test[i]]
+                    frag5 = test[j+1:]
+                    test2 = frag1 + frag2 + frag3 + frag4 + frag5
+                    if pred(test2):
+                        #print "SWAPPING",i,test[i][0],j,test[j][0]
+                        anyMoved = True
+                        test = test2
+                        break
+    
+    return test

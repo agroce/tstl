@@ -23,6 +23,8 @@ def parse_args():
                         help='Ignore properties.')
     parser.add_argument('-f', '--full', action='store_true',
                         help="Don't reduce -- report full failing test.")
+    parser.add_argument('-C', '--canonize', action='store_true',
+                        help="Canonize after reduction.")    
     parser.add_argument('-k', '--keep', action='store_true',
                         help="Keep last action the same when reducing.")
     parser.add_argument('-o', '--output', type=str, default=None,
@@ -79,6 +81,14 @@ def handle_failure(test, msg, checkFail):
         print "REDUCING..."
         startReduce = time.time()
         test = t.reduce(test, failProp, True, config.keep)
+        print "REDUCED:"
+        i = 0
+        for s in test:
+            print "STEP",i,s[0]
+            i += 1
+        if config.canonize:
+            print "CANONIZING..."
+            test = t.canonize(test, failProp, True, config.keep)
         reduceTime += time.time()-startReduce
         print "Reduced test has",len(test),"steps"
 

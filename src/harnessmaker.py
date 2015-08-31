@@ -198,12 +198,16 @@ def genInitialization():
     Generate initialization from configuration, poolSet
     """
     genCode.append(baseIndent + "self.__test = []\n")
+    genCode.append(baseIndent + "self.__pools = []\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%","") + " = {}"
         genCode.append(s + "\n")
         s = baseIndent
         s += poolPrefix + p.replace("%","") + "_used = {}"
+        genCode.append(s + "\n")
+        s = baseIndent
+        s += 'self.__pools.append("' + poolPrefix + p.replace("%","") + '")'
         genCode.append(s + "\n")
         for x in xrange(0,poolSet[p]+1):
             s = baseIndent
@@ -499,6 +503,7 @@ def main():
 
     # ------------------------------------------ #
     actDefs = []
+    nind = 0
 
     for corig in code:
         act = genAct()
@@ -694,6 +699,9 @@ def main():
         d += "'''" + newC[:-1] + " ''',"
         d += "self." + guard + ","
         d += "self." + act + ")\n"
+        actDefs.append(d)                
+        nind += 1
+        d = "self.__orderings[" + "'''" + newC[:-1] + " '''] = " + str(nind) + "\n"
         actDefs.append(d)
 
 
@@ -733,6 +741,7 @@ def main():
     genInitialization()
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")
+    genCode.append(baseIndent + "self.__orderings = {}\n")
     genCode.append(baseIndent + "self.__failure = None\n")
     genCode.append(baseIndent + "self.__log = None\n")
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
