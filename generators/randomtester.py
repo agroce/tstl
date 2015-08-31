@@ -62,7 +62,7 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail):
-    global failCount
+    global failCount, reduceTime
     failCount += 1
     print msg
     f = t.failure()
@@ -77,7 +77,9 @@ def handle_failure(test, msg, checkFail):
         else:
             failProp = t.failsCheck
         print "REDUCING..."
+        startReduce = time.time()
         test = t.reduce(test, failProp, True, config.keep)
+        reduceTime += time.time()-startReduce
         print "Reduced test has",len(test),"steps"
 
     i = 0
@@ -120,17 +122,32 @@ sawNew = False
 
 nops = 0
 ntests = 0
-optime = 0.0
+reduceTime = 0.0
+opTime = 0.0
+checkTime = 0.0
+guardTime = 0.0
+restartTime = 0.0
+
+checkResult = True
+
 while (config.maxtests == -1) or (ntests < config.maxtests):
     ntests += 1
 
+    startRestart = time.time()
     t.restart()
+    restartTime += time.time() - startRestart
     test = []
 
     for s in xrange(0,config.depth):
 
+        startGuard = time.time()
         acts = tacts
         while True:
+            elapsed = time.time() - start
+
+            if elapsed > config.timeout:
+                break
+            
             tryStutter = (a != None)
             if tryStutter:
                 if (config.stutter == None) and (not config.greedyStutter):
@@ -149,15 +166,20 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
             else:
                 a = None
             acts = acts[:p] + acts[p+1:]
-
+        guardTime += time.time()-startGuard
+        elapsed = time.time() - start
+        if elapsed > config.timeout:
+            print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+            break
+            
         if tryStutter:
             print "STUTTERING WITH",a[0]
         test.append(a)
         nops += 1
 
-        opstart = time.time()
+        startOp = time.time()
         stepOk = t.safely(a)
-        optime += (time.time()-opstart)
+        opTime += (time.time()-startOp)
         if tryStutter:
             print "DONE STUTTERING"
         if (not config.uncaught) and (not stepOk):
@@ -165,8 +187,12 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
             if not config.multiple:
                 print "STOPPING TESTING DUE TO FAILED TEST"
             break
-                
-        if (not config.ignoreprops) and (not t.check()):
+
+        startCheck = time.time()
+        if not config.ignoreprops:
+            checkResult = t.check()
+            checkTime += time.time()-startCheck
+        if not checkResult:
             handle_failure(test, "PROPERLY VIOLATION", True)
             if not config.multiple:
                 print "STOPPING TESTING DUE TO FAILED TEST"
@@ -199,7 +225,13 @@ if not config.nocover:
 
 print ntests, "EXECUTED"
 print nops, "TOTAL TEST OPERATIONS"
-print optime, "TIME SPENT EXECUTING TEST OPERATIONS"
+print opTime, "TIME SPENT EXECUTING TEST OPERATIONS"
+print guardTime, "TIME SPENT EVALUTING GUARDS AND CHOOSING ACTIONS"
+if not config.ignoreprops:
+    print checkTime, "TIME SPENT CHECKING PROPERTIES"
+    print (opTime + checkTime), "TOTAL TIME SPENT RUNNING SUT"
+print restartTime, "TIME SPENT RESTARTING"
+print reduceTime, "TIME SPENT REDUCING TEST CASES"
 if config.multiple:
     print failCount,"FAILED"
 if not config.nocover:

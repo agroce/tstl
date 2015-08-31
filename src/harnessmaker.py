@@ -15,7 +15,7 @@ from collections import namedtuple
 import pkg_resources
 
 ############## GLOBAL VARIABLES #############
-# These varaibles will be modified when needed
+# These variables will be modified when needed
 
 config = None
 poolSet = {}
