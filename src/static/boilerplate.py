@@ -277,8 +277,8 @@ def canonize(self, test, pred, pruneGuards = False, keepLast = True):
         anyMoved = False
         for i in xrange(0,lastMover):
             for j in xrange(i+1,lastMover):
-                step1 = (test[i])[0]
-                step2 = (test[j])[0]
+                step1 = test[i][0]
+                step2 = test[j][0]
                 if self.__orderings[step2] < self.__orderings[step1]:
                     frag1 = test[:i]
                     frag2 = [test[j]]
@@ -293,3 +293,32 @@ def canonize(self, test, pred, pruneGuards = False, keepLast = True):
                         break
     
     return test
+
+def simplify(self, test, pred, pruneGuards = False, keepLast = True):
+    """
+    Attempts to replace each action with all lower-ordered actions, which has effect of reducing numeric/complex values.
+    """
+    try:
+        test_before_simplify(self)
+    except:
+        pass
+
+    anyReplaced = True
+    while anyReplaced:
+        anyReplaced = False
+        for i in xrange(0,len(test)):
+            name = test[i][0]
+            for (name2,_,_) in self.__actions:
+                if self.__orderings[name] > self.__orderings[name2]:
+                    test2 = test[0:i] + [self.__names[name2]] + test[i+1:]
+                    if pred(test2):
+                        print "REPLACING",name,"WITH",name2
+                        anyReplaced = True
+                        test = test2
+                        test = self.reduce(test, pred, pruneGuards, keepLast)
+                        break
+            if anyReplaced:
+                break
+
+    return test
+
