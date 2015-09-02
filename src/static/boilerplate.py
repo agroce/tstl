@@ -232,96 +232,6 @@ def actionModify(self,action,old,new):
     newName = name.replace(old,new)
     return self.__names[newName]
             
-def canonize(self, test, pred, pruneGuards = False, keepLast = True):
-    """
-    Attempts to change the pools used with lower-numbered pools (and use as few pools as possible), and to re-order actions into a
-    fixed order.  Uses the reducer as a subprocedure to eliminate redundancies discovered during canonization.
-    """
-    try:
-        test_before_canonize(self)
-    except:
-        pass
-    pools = []
-    for s in test:
-        for p in self.poolUses(s[0]):
-            if p not in pools:
-                pools.append(p)
-    replacements = []
-    for (p,i) in pools:
-        for n in xrange(0,int(i)):
-            replacements.append((p,p.replace("["+i+"]","[" + str(n) + "]")))
-    anyReplaced = True
-    while anyReplaced:
-        anyReplaced = False
-        for (old,new) in replacements:
-            test2 = map(lambda x: self.actionModify(x,old,new), test)
-            if pred(test2):
-                #print "REPLACING",old,"WITH",new
-                anyReplaced = True
-                removals = [old]
-                test = test2
-                break
-        if anyReplaced:
-            replacements = filter(lambda x: x[0] not in removals, replacements)
-
-    # Now try reorderings
-
-    #print "TEST:",len(test)
-
-    lastMover = len(test)
-    if keepLast:
-        lastMover = lastMover - 1
-    
-    anyMoved = True
-    while anyMoved:
-        anyMoved = False
-        for i in xrange(0,lastMover):
-            for j in xrange(i+1,lastMover):
-                step1 = test[i][0]
-                step2 = test[j][0]
-                if self.__orderings[step2] < self.__orderings[step1]:
-                    frag1 = test[:i]
-                    frag2 = [test[j]]
-                    frag3 = test[i+1:j]
-                    frag4 = [test[i]]
-                    frag5 = test[j+1:]
-                    test2 = frag1 + frag2 + frag3 + frag4 + frag5
-                    if pred(test2):
-                        #print "SWAPPING",i,test[i][0],j,test[j][0]
-                        anyMoved = True
-                        test = test2
-                        break
-    
-    return self.reduce(test, pred, pruneGuards, keepLast)
-
-def simplify2(self, test, pred, pruneGuards = False, keepLast = True):
-    """
-    Attempts to replace each action with all lower-ordered actions, which has effect of reducing numeric/complex values.
-    """
-    try:
-        test_before_simplify(self)
-    except:
-        pass
-
-    anyReplaced = True
-    while anyReplaced:
-        anyReplaced = False
-        for i in xrange(0,len(test)):
-            name = test[i][0]
-            for (name2,_,_) in self.__actions:
-                if self.__orderings[name] > self.__orderings[name2]:
-                    test2 = test[0:i] + [self.__names[name2]] + test[i+1:]
-                    if pred(test2):
-                        print "REPLACING",name,"WITH",name2
-                        anyReplaced = True
-                        test = test2
-                        test = self.reduce(test, pred, pruneGuards, keepLast)
-                        break
-            if anyReplaced:
-                break
-
-    return test
-
 def simplify(self, test, pred, pruneGuards = False, keepLast = True):
     """
     Attempts to produce a 1-simplified test case
@@ -343,6 +253,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
             new = p.replace("["+i+"]","[" + str(n) + "]")
             testC = map(lambda x: self.actionModify(x,p,new), test)
             if pred(testC):
+                print "SIMPLIFIER: REPLACED",p,"WITH",new
                 return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
 
     # Next try to replace any action with a lower-numbered action
@@ -353,35 +264,38 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
             if self.__orderings[name1] > self.__orderings[name2]:
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
+                    print "SIMPLIFIER: REPLACED",name1,"WITH",name2
                     return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
 
-    # Swap two pool uses, if this lowers the minimal action ordering between them
+    # Swap two pool uses after position, if this lowers the minimal action ordering between them
 
     swaps = []
     for (p1,i1) in pools:
         for (p2,i2) in pools:
-            if (p1 != p2) and (p1.split("[")[0] == p2.split("[")[0]):
-                p1new = p1.replace("[" + i1 + "]", "[" + i2 + "]")
-                p2new = p2.replace("[" + i2 + "]", "[" + i1 + "]")
-                p2newTemp = p2.replace("[" + i2 + "]", "[**]")
-                tempTest = map(lambda x:(x[0].replace(p2,p2newTemp),x[1],x[2]), test)
-                tempTest2 = map(lambda x:(x[0].replace(p1,p1new),x[1],x[2]), tempTest)
-                testC = map(lambda x: self.actionModify(x,p2newTemp,p2new), tempTest2)
-                leastTestC = -1
-                leastTest = -1
-                for s in xrange(0,len(test)):
-                    if test[s] != testC[s]:
-                        ordTest = self.__orderings[test[s][0]]
-                        if (leastTest == -1) or (ordTest < leastTest):
-                            leastTest = ordTest
-                        ordTestC = self.__orderings[testC[s][0]]
-                        if (leastTestC == -1) or (ordTestC < leastTestC):
-                            leastTestC = ordTestC
-                if leastTestC < leastTest:
-                    if pred(testC):
-                        return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
-                
-                
+            for pos in xrange(0,len(test)):
+                if (p1 != p2) and (p1.split("[")[0] == p2.split("[")[0]):
+                    p1new = p1.replace("[" + i1 + "]", "[" + i2 + "]")
+                    p2new = p2.replace("[" + i2 + "]", "[" + i1 + "]")
+                    p2newTemp = p2.replace("[" + i2 + "]", "[**]")
+                    tempTest = map(lambda x:(x[0].replace(p2,p2newTemp),x[1],x[2]), test[pos:])
+                    tempTest2 = map(lambda x:(x[0].replace(p1,p1new),x[1],x[2]), tempTest)
+                    testC = test[:pos] + map(lambda x: self.actionModify(x,p2newTemp,p2new), tempTest2)
+                    assert (len(testC) == len(test))
+                    leastTestC = -1
+                    leastTest = -1
+                    for s in xrange(0,len(test)):
+                        if test[s] != testC[s]:
+                            ordTest = self.__orderings[test[s][0]]
+                            if (leastTest == -1) or (ordTest < leastTest):
+                                leastTest = ordTest
+                            ordTestC = self.__orderings[testC[s][0]]
+                            if (leastTestC == -1) or (ordTestC < leastTestC):
+                                leastTestC = ordTestC
+                    if leastTestC < leastTest:
+                        if pred(testC):
+                            print "SIMPLIFIER: SWAPPED",p1,"AND",p2,"AFTER STEP",pos
+                            return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
+
     # Finally try to swap any out-of-order actions
         
     lastMover = len(test)
@@ -400,6 +314,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                     frag5 = test[j+1:]
                     testC = frag1 + frag2 + frag3 + frag4 + frag5
                     if pred(testC):
+                        print "SIMPLIFIER: SWAPPED STEP",i,test[i][0],"WITH STEP",j,test[j][0]
                         return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
                                         
     # No changes, this is 1-simple (fix-point)
