@@ -256,7 +256,40 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                 print "SIMPLIFIER: REPLACED",p,"WITH",new
                 return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
 
-    # Next try to replace any action with a lower-numbered action
+    # If that fails, may still be possible to reduce number of pools but need to move assignment to a later position
+
+    for (p,i) in pools:
+        for n in xrange(0,int(i)):
+            new = p.replace("["+i+"]","[" + str(n) + "]")    
+            for pos in xrange(0,len(test)):
+                prefix = []
+                moved = []
+                for j in xrange(0,pos):
+                    if new in test[j][0]:
+                        moved.append(test[j])
+                    else:
+                        prefix.append(test[j])
+                suffix = moved + test[pos:]
+                testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
+                assert (len(testC) == len(test))
+                if pred(testC):
+                    print "SIMPLIFIER: REPLACED",p,"WITH",new," -- MOVED TO",pos
+                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)                
+                
+                                     
+        
+    # Replace ALL occurrences of an action with a lower-numbered action
+
+    for i in xrange(0,len(test)):
+        name1 = test[i][0]
+        for (name2,_,_) in self.__actions:
+            if self.__orderings[name1] > self.__orderings[name2]:
+                testC = map(lambda x: self.actionModify(x,name1,name2), test)
+                if pred(testC):
+                    print "SIMPLIFIER: REPLACED ALL",name1,"WITH",name2
+                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
+        
+    # Next try to replace any single action with a lower-numbered action
 
     for i in xrange(0,len(test)):
         name1 = test[i][0]
@@ -318,6 +351,11 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                         return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
                                         
     # No changes, this is 1-simple (fix-point)
+
+    try:
+        test_after_simplify(self)
+    except:
+        pass
     
     return test
 

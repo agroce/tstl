@@ -64,7 +64,7 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail):
-    global failCount, reduceTime
+    global failCount, reduceTime, repeatCount, failures
     failCount += 1
     print msg
     f = t.failure()
@@ -110,6 +110,12 @@ def handle_failure(test, msg, checkFail):
             outf.write(t.serializeable(s)+"\n")
     if outf != None:
         outf.close()
+    if config.multiple:
+        if test in failures:
+            print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
+            repeatCount += 1
+        else:
+            failures.append(test)
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
@@ -121,6 +127,8 @@ start = time.time()
 elapsed = time.time()-start
 
 failCount = 0
+repeatCount = 0
+failures = []
 
 t = SUT.sut()
 if config.logging != None:
@@ -244,6 +252,16 @@ print restartTime, "TIME SPENT RESTARTING"
 print reduceTime, "TIME SPENT REDUCING TEST CASES"
 if config.multiple:
     print failCount,"FAILED"
+    print repeatCount,"REPEATS OF FAILURES"
+    n = 0
+    for test in failures:
+        print "FAILURE",n
+        i = 0
+        for s in test:
+            print "STEP",i,s[0]
+            i += 1
+        n += 1
+        
 if not config.nocover:
     print len(t.allBranches()),"BRANCHES COVERED"
     print len(t.allStatements()),"STATEMENTS COVERED"
