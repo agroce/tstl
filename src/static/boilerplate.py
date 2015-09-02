@@ -292,9 +292,9 @@ def canonize(self, test, pred, pruneGuards = False, keepLast = True):
                         test = test2
                         break
     
-    return test
+    return self.reduce(test, pred, pruneGuards, keepLast)
 
-def simplify(self, test, pred, pruneGuards = False, keepLast = True):
+def simplify2(self, test, pred, pruneGuards = False, keepLast = True):
     """
     Attempts to replace each action with all lower-ordered actions, which has effect of reducing numeric/complex values.
     """
@@ -322,3 +322,65 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
 
     return test
 
+def simplify(self, test, pred, pruneGuards = False, keepLast = True):
+    """
+    Attempts to produce a 1-simplified test case
+    """
+    try:
+        test_before_simplify(self)
+    except:
+        pass
+
+    # First attempt to replace pools with lower-numbered pools
+    pools = []
+    for s in test:
+        for p in self.poolUses(s[0]):
+            if p not in pools:
+                pools.append(p)
+
+    replacements = []
+
+    for (p,i) in pools:
+        for n in xrange(0,int(i)):
+            replacements.append((p,p.replace("["+i+"]","[" + str(n) + "]")))
+
+    for (old,new) in replacements:
+        testC = map(lambda x: self.actionModify(x,old,new), test)
+        if pred(testC):
+            return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
+
+    # Next try to replace any action with a lower-numbered action
+
+    for i in xrange(0,len(test)):
+        name1 = test[i][0]
+        for (name2,_,_) in self.__actions:
+            if self.__orderings[name1] > self.__orderings[name2]:
+                testC = test[0:i] + [self.__names[name2]] + test[i+1:]
+                if pred(testC):
+                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
+    
+    # Finally try to swap any out-of-order actions
+        
+    lastMover = len(test)
+    if keepLast:
+        lastMover -= 1
+        
+    for i in xrange(0,lastMover):
+        for j in xrange(i+1,lastMover):
+            step1 = test[i][0]
+            step2 = test[j][0]
+            if self.__orderings[step2] < self.__orderings[step1]:
+                    frag1 = test[:i]
+                    frag2 = [test[j]]
+                    frag3 = test[i+1:j]
+                    frag4 = [test[i]]
+                    frag5 = test[j+1:]
+                    testC = frag1 + frag2 + frag3 + frag4 + frag5
+                    if pred(testC):
+                        return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
+
+    # No changes, this is 1-simple (fix-point)
+    
+    return test
+
+    
