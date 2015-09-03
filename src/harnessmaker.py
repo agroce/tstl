@@ -554,7 +554,7 @@ def main():
                 g = g.replace(" ","")
                 gval = g
                 g = g.replace("[", "_used[")
-                gguard = "((" + g + ") or (" + gval + " == None))"
+                gguard = "((" + g + ") or (" + gval + " == None) or (self.__relaxUsedRestriction))"
                 guardConds.append(gguard)
                 changes.append(g + "=False")
             for (used,twiddle) in prhs:
@@ -746,6 +746,7 @@ def main():
     genCode.append(baseIndent + "self.__failure = None\n")
     genCode.append(baseIndent + "self.__log = None\n")
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
+    genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
     for d in actDefs:
         genCode.append(baseIndent + d + "\n")
     genCode.append(baseIndent + "self.__actions_backup = list(self.__actions)\n")

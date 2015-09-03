@@ -241,6 +241,9 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
     except:
         pass
 
+    # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
+    self.__relaxUsedRestriction = True
+    
     # First attempt to replace pools with lower-numbered pools
     pools = []
     for s in test:
@@ -261,12 +264,12 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                         moved.append(test[j])
                     else:
                         prefix.append(test[j])
-                suffix = moved + test[pos:]
+                suffix = map(lambda x: self.actionModify(x,p,new), moved + test[pos:])
                 testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
                 assert (len(testC) == len(test))
                 if pred(testC):
                     print "SIMPLIFIER: REPLACED",p,"WITH",new," -- MOVED TO",pos
-                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)                
+                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
         
     # Replace ALL occurrences of an action with a lower-numbered action
 
@@ -346,6 +349,9 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
         test_after_simplify(self)
     except:
         pass
+
+    self.__relaxUsedRestriction = True
+    # restore normal TSTL semantics!
     
     return test
 
