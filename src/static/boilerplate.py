@@ -248,20 +248,12 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
             if p not in pools:
                 pools.append(p)
 
-    for (p,i) in pools:
-        for n in xrange(0,int(i)):
-            new = p.replace("["+i+"]","[" + str(n) + "]")
-            testC = map(lambda x: self.actionModify(x,p,new), test)
-            if pred(testC):
-                print "SIMPLIFIER: REPLACED",p,"WITH",new
-                return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
+    # Reduce number of pools but may need to move assignment to a later position
 
-    # If that fails, may still be possible to reduce number of pools but need to move assignment to a later position
-
-    for (p,i) in pools:
-        for n in xrange(0,int(i)):
-            new = p.replace("["+i+"]","[" + str(n) + "]")    
-            for pos in xrange(0,len(test)):
+    for pos in xrange(0,len(test)):
+        for (p,i) in pools:
+            for n in xrange(0,int(i)):
+                new = p.replace("["+i+"]","[" + str(n) + "]")    
                 prefix = []
                 moved = []
                 for j in xrange(0,pos):
@@ -275,8 +267,6 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                 if pred(testC):
                     print "SIMPLIFIER: REPLACED",p,"WITH",new," -- MOVED TO",pos
                     return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)                
-                
-                                     
         
     # Replace ALL occurrences of an action with a lower-numbered action
 

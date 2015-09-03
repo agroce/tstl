@@ -263,5 +263,5 @@ if config.multiple:
         n += 1
         
 if not config.nocover:
-    print len(bench t.allBranches()),"BRANCHES COVERED"
+    print len(t.allBranches()),"BRANCHES COVERED"
     print len(t.allStatements()),"STATEMENTS COVERED"
