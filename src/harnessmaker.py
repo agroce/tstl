@@ -645,29 +645,30 @@ def main():
             genCode.append(baseIndent + "except:\n")
             genCode.append(baseIndent + baseIndent + "pass\n")
 
-            genCode.append(baseIndent + "try:\n")
-            if expectCode:
-                genCode.append(baseIndent + baseIndent + "__before_res = " + beforeSig + "\n")
-            genCode.append(baseIndent + baseIndent + newC + "\n")
-            if expectCode:
-                genCode.append(baseIndent + baseIndent + "__after_res = " + afterSig + "\n")
-                genCode.append(baseIndent + baseIndent + "__check_res = " + checkSig + "\n")
-                genCode.append(baseIndent + baseIndent + "assert __check_res == True, \" check of (%s) for before and after values (%s) and (%s) failed\" % (\"" + expectCode + "\", __before_res, __after_res)\n")
+        genCode.append(baseIndent + "try:\n")
+        if expectCode:
+            genCode.append(baseIndent + baseIndent + "__before_res = " + beforeSig + "\n")
+        genCode.append(baseIndent + baseIndent + newC + "\n")
+        if expectCode:
+            genCode.append(baseIndent + baseIndent + "__after_res = " + afterSig + "\n")
+            genCode.append(baseIndent + baseIndent + "__check_res = " + checkSig + "\n")
+            genCode.append(baseIndent + baseIndent + "assert __check_res == True, \" check of (%s) for before and after values (%s) and (%s) failed\" % (\"" + expectCode + "\", __before_res, __after_res)\n")
 
-            if okExcepts != "":
-                genCode.append(baseIndent + "except (" + okExcepts + "):\n")
-                genCode.append(baseIndent + baseIndent + "pass\n")
+        if okExcepts != "":
+            genCode.append(baseIndent + "except (" + okExcepts + "):\n")
+            genCode.append(baseIndent + baseIndent + "pass\n")
 
-            genCode.append(baseIndent + "finally:\n")
-            genCode.append(baseIndent + baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + baseIndent + "test_after_each(self)\n")
-            genCode.append(baseIndent + baseIndent + "except:\n")
-            genCode.append(baseIndent + baseIndent + baseIndent + "pass\n")
+        genCode.append(baseIndent + "finally:\n")
+        genCode.append(baseIndent + baseIndent + "try:\n")
+        genCode.append(baseIndent + baseIndent + baseIndent + "test_after_each(self)\n")
+        genCode.append(baseIndent + baseIndent + "except:\n")
+        genCode.append(baseIndent + baseIndent + baseIndent + "pass\n")
+
+        if not config.nocover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__cov.stop()\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__updateCov()\n")
-        else:
-            genCode.append(baseIndent + newC + "\n")
+
         if refC != newC:
             genCode.append(baseIndent + refC + "\n")
             if comparing:
