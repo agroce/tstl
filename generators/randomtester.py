@@ -65,6 +65,9 @@ def make_config(pargs, parser):
 
 def handle_failure(test, msg, checkFail):
     global failCount, reduceTime, repeatCount, failures
+
+    sys.stdout.flush()
+    
     failCount += 1
     print msg
     f = t.failure()
@@ -89,6 +92,7 @@ def handle_failure(test, msg, checkFail):
         if config.canonize:
             print "SIMPLIFYING..."
             test = t.simplify(test, failProp, True, config.keep)
+            print "SIMPLIFIED:"
         reduceTime += time.time()-startReduce
         print "Reduced test has",len(test),"steps"
 
@@ -115,6 +119,7 @@ def handle_failure(test, msg, checkFail):
             print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
             repeatCount += 1
         else:
+            print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
             failures.append(test)
     
 parsed_args, parser = parse_args()
