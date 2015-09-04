@@ -243,8 +243,21 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
 
     # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
     self.__relaxUsedRestriction = True
-    
-    # First attempt to replace pools with lower-numbered pools
+
+    # If any action can be changed, resulting in a shorter test, that is first:
+
+    for i in xrange(0,len(test)):
+        name1 = test[i][0]
+        for name2 in self.__names:
+            if name1 != name2:
+                testC = test[0:i] + [self.__names[name2]] + test[i+1:]
+                if pred(testC):
+                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
+                    if len(rtestC) < len(test):
+                        print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
+                        return self.simplify(rtestC, pred, pruneGuards, keepLast)
+        
+    # Attempt to replace pools with lower-numbered pools
     pools = []
     for s in test:
         for p in self.poolUses(s[0]):
@@ -266,8 +279,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                         prefix.append(test[j])
                 suffix = map(lambda x: self.actionModify(x,p,new), moved + test[pos:])
                 testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
-                assert (len(testC) == len(test))
-                if pred(testC):
+                if (testC != test) and pred(testC):
                     print "SIMPLIFIER: REPLACED",p,"WITH",new," -- MOVED TO",pos
                     return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
         
@@ -290,7 +302,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
             if self.__orderings[name1] > self.__orderings[name2]:
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
-                    print "SIMPLIFIER: REPLACED",name1,"WITH",name2
+                    print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2
                     return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
 
     # Swap two pool uses after position, if this lowers the minimal action ordering between them
