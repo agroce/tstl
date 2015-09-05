@@ -232,7 +232,7 @@ def actionModify(self,action,old,new):
     newName = name.replace(old,new)
     return self.__names[newName]
             
-def simplify(self, test, pred, pruneGuards = False, keepLast = True):
+def simplify(self, test, pred, pruneGuards = False, keepLast = True, history = []):
     """
     Attempts to produce a 1-simplified test case
     """
@@ -241,22 +241,28 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
     except:
         pass
 
+    stest = self.captureReplay(test)
+    if stest in self.__simplifyCache:
+        print "SIMPLIFIER: FOUND TEST IN CACHED RESULTS"
+        result = self.__simplifyCache[stest]
+        for t in history:
+            self.__simplifyCache[self.captureReplay(t)] = result
+        return result
+    
     # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
     self.__relaxUsedRestriction = True
 
-    # If any action can be changed, resulting in a shorter test, that is first:
+    # Replace ALL occurrences of an action with a lower-numbered action
 
     for i in xrange(0,len(test)):
         name1 = test[i][0]
-        for name2 in self.__names:
-            if name1 != name2:
-                testC = test[0:i] + [self.__names[name2]] + test[i+1:]
+        for (name2,_,_) in self.__actions:
+            if self.__orderings[name1] > self.__orderings[name2]:
+                testC = map(lambda x: self.actionModify(x,name1,name2), test)
                 if pred(testC):
-                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
-                    if len(rtestC) < len(test):
-                        print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
-                        return self.simplify(rtestC, pred, pruneGuards, keepLast)
-        
+                    print "SIMPLIFIER: REPLACED ALL",name1,"WITH",name2
+                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+                            
     # Attempt to replace pools with lower-numbered pools
     pools = []
     for s in test:
@@ -264,7 +270,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
             if p not in pools:
                 pools.append(p)
 
-    # Reduce number of pools but may need to move assignment to a later position
+    # Reduce number of pools but may need to move assignment to a later position, or only change after the position
 
     for pos in xrange(0,len(test)):
         for (p,i) in pools:
@@ -281,19 +287,17 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                 testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
                 if (testC != test) and pred(testC):
                     print "SIMPLIFIER: REPLACED",p,"WITH",new," -- MOVED TO",pos
-                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
-        
-    # Replace ALL occurrences of an action with a lower-numbered action
-
-    for i in xrange(0,len(test)):
-        name1 = test[i][0]
-        for (name2,_,_) in self.__actions:
-            if self.__orderings[name1] > self.__orderings[name2]:
-                testC = map(lambda x: self.actionModify(x,name1,name2), test)
-                if pred(testC):
-                    print "SIMPLIFIER: REPLACED ALL",name1,"WITH",name2
-                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
-        
+                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+                # Not possible, try with only replacing between pos and pos2
+                for pos2 in xrange(len(test),pos,-1):
+                    prefix = test[:pos]
+                    suffix = map(lambda x: self.actionModify(x,p,new), test[pos:pos2])
+                    testC = prefix + suffix + test[pos2:]
+                    assert(len(test) == len(testC))
+                    if (testC != test) and pred(testC):
+                        print "SIMPLIFIER: REPLACED",p,"WITH",new,"BETWEEN",pos,"AND",pos2
+                        return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+                
     # Next try to replace any single action with a lower-numbered action
 
     for i in xrange(0,len(test)):
@@ -303,38 +307,39 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
                     print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2
-                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
+                    return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
 
-    # Swap two pool uses after position, if this lowers the minimal action ordering between them
+    # Swap two pool uses in between two positions, if this lowers the minimal action ordering between them
 
     swaps = []
     for (p1,i1) in pools:
         for (p2,i2) in pools:
-            for pos in xrange(0,len(test)):
-                if (p1 != p2) and (p1.split("[")[0] == p2.split("[")[0]):
-                    p1new = p1.replace("[" + i1 + "]", "[" + i2 + "]")
-                    p2new = p2.replace("[" + i2 + "]", "[" + i1 + "]")
-                    p2newTemp = p2.replace("[" + i2 + "]", "[**]")
-                    tempTest = map(lambda x:(x[0].replace(p2,p2newTemp),x[1],x[2]), test[pos:])
-                    tempTest2 = map(lambda x:(x[0].replace(p1,p1new),x[1],x[2]), tempTest)
-                    testC = test[:pos] + map(lambda x: self.actionModify(x,p2newTemp,p2new), tempTest2)
-                    assert (len(testC) == len(test))
-                    leastTestC = -1
-                    leastTest = -1
-                    for s in xrange(0,len(test)):
-                        if test[s] != testC[s]:
-                            ordTest = self.__orderings[test[s][0]]
-                            if (leastTest == -1) or (ordTest < leastTest):
-                                leastTest = ordTest
-                            ordTestC = self.__orderings[testC[s][0]]
-                            if (leastTestC == -1) or (ordTestC < leastTestC):
-                                leastTestC = ordTestC
-                    if leastTestC < leastTest:
-                        if pred(testC):
-                            print "SIMPLIFIER: SWAPPED",p1,"AND",p2,"AFTER STEP",pos
-                            return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
+            for pos1 in xrange(0,len(test)):
+                for pos2 in xrange(len(test),pos1,-1):
+                    if (p1 != p2) and (p1.split("[")[0] == p2.split("[")[0]):
+                        p1new = p1.replace("[" + i1 + "]", "[" + i2 + "]")
+                        p2new = p2.replace("[" + i2 + "]", "[" + i1 + "]")
+                        p2newTemp = p2.replace("[" + i2 + "]", "[**]")
+                        tempTest = map(lambda x:(x[0].replace(p2,p2newTemp),x[1],x[2]), test[pos1:pos2])
+                        tempTest2 = map(lambda x:(x[0].replace(p1,p1new),x[1],x[2]), tempTest)
+                        testC = test[:pos1] + map(lambda x: self.actionModify(x,p2newTemp,p2new), tempTest2) + test[pos2:]
+                        assert (len(testC) == len(test))
+                        leastTestC = -1
+                        leastTest = -1
+                        for s in xrange(0,len(test)):
+                            if test[s] != testC[s]:
+                                ordTest = self.__orderings[test[s][0]]
+                                if (leastTest == -1) or (ordTest < leastTest):
+                                    leastTest = ordTest
+                                ordTestC = self.__orderings[testC[s][0]]
+                                if (leastTestC == -1) or (ordTestC < leastTestC):
+                                    leastTestC = ordTestC
+                        if leastTestC < leastTest:
+                            if pred(testC):
+                                print "SIMPLIFIER: SWAPPED",p1,"AND",p2,"BETWEEN STEP",pos1,"AND",pos2
+                                return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
 
-    # Finally try to swap any out-of-order actions
+    # Try to swap any out-of-order actions
         
     lastMover = len(test)
     if keepLast:
@@ -353,8 +358,21 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
                     testC = frag1 + frag2 + frag3 + frag4 + frag5
                     if pred(testC):
                         print "SIMPLIFIER: SWAPPED STEP",i,test[i][0],"WITH STEP",j,test[j][0]
-                        return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast)
-                                        
+                        return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+
+    # If any single action can be changed, even to more complex, resulting in a shorter test, that is a simplification:
+
+    for i in xrange(0,len(test)):
+        name1 = test[i][0]
+        for name2 in self.__names:
+            if name1 != name2:
+                testC = test[0:i] + [self.__names[name2]] + test[i+1:]
+                if pred(testC):
+                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
+                    if len(rtestC) < len(test):
+                        print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
+                        return self.simplify(rtestC, pred, pruneGuards, keepLast, [test] + history)
+                                                                                
     # No changes, this is 1-simple (fix-point)
 
     try:
@@ -364,6 +382,9 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True):
 
     self.__relaxUsedRestriction = True
     # restore normal TSTL semantics!
+
+    for t in history:
+        self.__simplifyCache[self.captureReplay(t)] = test
     
     return test
 
