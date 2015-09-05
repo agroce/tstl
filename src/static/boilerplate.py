@@ -383,6 +383,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, history = [
     self.__relaxUsedRestriction = True
     # restore normal TSTL semantics!
 
+    self.__simplifyCache[self.captureReplay(test)] = test
     for t in history:
         self.__simplifyCache[self.captureReplay(t)] = test
     
