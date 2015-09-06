@@ -262,7 +262,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, history = [
                 if pred(testC):
                     print "SIMPLIFIER: REPLACED ALL",name1,"WITH",name2
                     return self.simplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
-                            
+
     # Attempt to replace pools with lower-numbered pools
     pools = []
     for s in test:
@@ -372,7 +372,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, history = [
                     if len(rtestC) < len(test):
                         print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
                         return self.simplify(rtestC, pred, pruneGuards, keepLast, [test] + history)
-                                                                                
+                        
     # No changes, this is 1-simple (fix-point)
 
     try:
