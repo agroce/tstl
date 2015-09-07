@@ -254,10 +254,17 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
 
 def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False):
     # Replace all occurrences of an action with a simpler action
+    enableChange = {}
+    for i in xrange(0,len(test)):
+        enableChange[i] = map(lambda x:x[0], self.enabled())
+        self.safely(test[i])
+
+    donePairs = []
     for i in xrange(0,len(test)):
         name1 = test[i][0]
-        for (name2,_,_) in self.__actions:
-            if self.__orderings[name1] > self.__orderings[name2]:
+        for name2 in enableChange[i]:
+            if (self.__orderings[name1] > self.__orderings[name2]) and ((name1,name2) not in donePairs):
+                donePairs.append((name1,name2))
                 testC = map(lambda x: self.actionModify(x,name1,name2), test)
                 if pred(testC):
                     if verbose:
@@ -296,7 +303,6 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
                     prefix = test[:pos]
                     suffix = map(lambda x: self.actionModify(x,p,new), test[pos:pos2])
                     testC = prefix + suffix + test[pos2:]
-                    assert(len(test) == len(testC))
                     if (testC != test) and pred(testC):
                         if verbose:
                             print "SIMPLIFIER: REPLACED",p,"WITH",new,"BETWEEN",pos,"AND",pos2
@@ -306,9 +312,14 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
 
 def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False):
     # Replace any single action with a lower-numbered action
+    enableChange = {}
+    for i in xrange(0,len(test)):
+        enableChange[i] = map(lambda x:x[0], self.enabled())
+        self.safely(test[i])
+    
     for i in xrange(0,len(test)):
         name1 = test[i][0]
-        for (name2,_,_) in self.__actions:
+        for name2 in enableChange[i]:
             if self.__orderings[name1] > self.__orderings[name2]:
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
@@ -337,7 +348,6 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
                         tempTest = map(lambda x:(x[0].replace(p2,p2newTemp),x[1],x[2]), test[pos1:pos2])
                         tempTest2 = map(lambda x:(x[0].replace(p1,p1new),x[1],x[2]), tempTest)
                         testC = test[:pos1] + map(lambda x: self.actionModify(x,p2newTemp,p2new), tempTest2) + test[pos2:]
-                        assert (len(testC) == len(test))
                         leastTestC = -1
                         leastTest = -1
                         for s in xrange(0,len(test)):
@@ -376,7 +386,7 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
                         if verbose:
                             print "SIMPLIFIER: SWAPPED STEP",i,test[i][0],"WITH STEP",j,test[j][0]
                         return (True, testC)
-    return (False, testC)
+    return (False, test)
 
 def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST"):
     """
@@ -411,8 +421,10 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
 
     changed = True
     while changed:
+        stest = self.captureReplay(test)
         changed = False
         for s in simplifiers:
+            oldTest = test
             (changed, test) = s(test, pred, pruneGuards, keepLast, verbose)
             if changed:
                 test = self.reduce(test, pred, pruneGuards, keepLast)

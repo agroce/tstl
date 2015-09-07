@@ -253,6 +253,7 @@ if not config.nocover:
     if config.html:
         t.htmlReport(config.html)
 
+print time.time()-start, "TOTAL RUNTIME"
 print ntests, "EXECUTED"
 print nops, "TOTAL TEST OPERATIONS"
 print opTime, "TIME SPENT EXECUTING TEST OPERATIONS"
