@@ -378,7 +378,7 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
                         return (True, testC)
     return (False, testC)
 
-def simplify(self, test, pred, pruneGuards = False, keepLast = True, history = [], verbose = True, speed = "FAST"):
+def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST"):
     """
     Attempts to produce a 1-simplified test case
     """
