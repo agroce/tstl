@@ -232,28 +232,8 @@ def actionModify(self,action,old,new):
     newName = name.replace(old,new)
     return self.__names[newName]
 
-def simplify(self, test, pred, pruneGuards = False, keepLast = True, history = []):
-    """
-    Attempts to produce a 1-simplified test case
-    """
-    try:
-        test_before_simplify(self)
-    except:
-        pass
-
-    stest = self.captureReplay(test)
-    if stest in self.__simplifyCache:
-        print "SIMPLIFIER: FOUND TEST IN CACHED RESULTS"
-        result = self.__simplifyCache[stest]
-        for t in history:
-            self.__simplifyCache[self.captureReplay(t)] = result
-        return result
-    
-    # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
-    self.__relaxUsedRestriction = True
-
-    # If any single action can be changed, even to more complex, resulting in a shorter test, that is a simplification:
-
+def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False):
+    # Replace any action with another action, if that allows test to be further reduced
     enableChange = {}
     for i in xrange(0,len(test)):
         enableChange[i] = map(lambda x:x[0], self.enabled())
@@ -267,43 +247,26 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, history = [
                 if pred(testC):
                     rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
                     if len(rtestC) < len(test):
-                        print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
-                        return self.fastSimplify(rtestC, pred, pruneGuards, keepLast, [test] + history)
-                    
-    return self.fastSimplify(test, pred, pruneGuards, keepLast)
-            
-def fastSimplify(self, test, pred, pruneGuards = False, keepLast = True, history = []):
-    """
-    Attempts to produce a 1-simplified test case
-    """
-    try:
-        test_before_simplify(self)
-    except:
-        pass
+                        if verbose:
+                            print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
+                        return (True, rtestC)
+    return (False, test)
 
-    stest = self.captureReplay(test)
-    if stest in self.__simplifyCache:
-        print "SIMPLIFIER: FOUND TEST IN CACHED RESULTS"
-        result = self.__simplifyCache[stest]
-        for t in history:
-            self.__simplifyCache[self.captureReplay(t)] = result
-        return result
-    
-    # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
-    self.__relaxUsedRestriction = True
-    
-    # Replace ALL occurrences of an action with a lower-numbered action
-
+def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False):
+    # Replace all occurrences of an action with a simpler action
     for i in xrange(0,len(test)):
         name1 = test[i][0]
         for (name2,_,_) in self.__actions:
             if self.__orderings[name1] > self.__orderings[name2]:
                 testC = map(lambda x: self.actionModify(x,name1,name2), test)
                 if pred(testC):
-                    print "SIMPLIFIER: REPLACED ALL",name1,"WITH",name2
-                    return self.fastSimplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+                    if verbose:
+                        print "SIMPLIFIER: REPLACED ALL",name1,"WITH",name2
+                    return (True, testC)
+    return (False, test)
 
-    # Attempt to replace pools with lower-numbered pools
+def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False):
+    # Replace pools with lower-numbered pools
     pools = []
     for s in test:
         for p in self.poolUses(s[0]):
@@ -311,7 +274,6 @@ def fastSimplify(self, test, pred, pruneGuards = False, keepLast = True, history
                 pools.append(p)
 
     # Reduce number of pools but may need to move assignment to a later position, or only change after the position
-
     for pos in xrange(0,len(test)):
         for (p,i) in pools:
             for n in xrange(0,int(i)):
@@ -326,8 +288,9 @@ def fastSimplify(self, test, pred, pruneGuards = False, keepLast = True, history
                 suffix = map(lambda x: self.actionModify(x,p,new), moved + test[pos:])
                 testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
                 if (testC != test) and pred(testC):
-                    print "SIMPLIFIER: REPLACED",p,"WITH",new," -- MOVED TO",pos
-                    return self.fastSimplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+                    if verbose:
+                        print "SIMPLIFIER: REPLACED",p,"WITH",new," -- MOVED TO",pos
+                    return (True, testC)
                 # Not possible, try with only replacing between pos and pos2
                 for pos2 in xrange(len(test),pos,-1):
                     prefix = test[:pos]
@@ -335,22 +298,33 @@ def fastSimplify(self, test, pred, pruneGuards = False, keepLast = True, history
                     testC = prefix + suffix + test[pos2:]
                     assert(len(test) == len(testC))
                     if (testC != test) and pred(testC):
-                        print "SIMPLIFIER: REPLACED",p,"WITH",new,"BETWEEN",pos,"AND",pos2
-                        return self.fastSimplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
-                
-    # Next try to replace any single action with a lower-numbered action
+                        if verbose:
+                            print "SIMPLIFIER: REPLACED",p,"WITH",new,"BETWEEN",pos,"AND",pos2
+                        return (True, testC)
+    return (False, test)
 
+
+def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False):
+    # Replace any single action with a lower-numbered action
     for i in xrange(0,len(test)):
         name1 = test[i][0]
         for (name2,_,_) in self.__actions:
             if self.__orderings[name1] > self.__orderings[name2]:
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
-                    print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2
-                    return self.fastSimplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+                    if verbose:
+                        print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2
+                    return (True, testC)
+    return (False, test)
 
+def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False):
     # Swap two pool uses in between two positions, if this lowers the minimal action ordering between them
-
+    pools = []
+    for s in test:
+        for p in self.poolUses(s[0]):
+            if p not in pools:
+                pools.append(p)
+    
     swaps = []
     for (p1,i1) in pools:
         for (p2,i2) in pools:
@@ -376,11 +350,13 @@ def fastSimplify(self, test, pred, pruneGuards = False, keepLast = True, history
                                     leastTestC = ordTestC
                         if leastTestC < leastTest:
                             if pred(testC):
-                                print "SIMPLIFIER: SWAPPED",p1,"AND",p2,"BETWEEN STEP",pos1,"AND",pos2
-                                return self.fastSimplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+                                if verbose:
+                                    print "SIMPLIFIER: SWAPPED",p1,"AND",p2,"BETWEEN STEP",pos1,"AND",pos2
+                                return (True, testC)
+    return (False, test)
 
+def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False):
     # Try to swap any out-of-order actions
-        
     lastMover = len(test)
     if keepLast:
         lastMover -= 1
@@ -397,29 +373,61 @@ def fastSimplify(self, test, pred, pruneGuards = False, keepLast = True, history
                     frag5 = test[j+1:]
                     testC = frag1 + frag2 + frag3 + frag4 + frag5
                     if pred(testC):
-                        print "SIMPLIFIER: SWAPPED STEP",i,test[i][0],"WITH STEP",j,test[j][0]
-                        return self.fastSimplify(self.reduce(testC, pred, pruneGuards, keepLast), pred, pruneGuards, keepLast, [test] + history)
+                        if verbose:
+                            print "SIMPLIFIER: SWAPPED STEP",i,test[i][0],"WITH STEP",j,test[j][0]
+                        return (True, testC)
+    return (False, testC)
 
-    # If any single action can be changed, even to more complex, resulting in a shorter test, that is a simplification:
+def simplify(self, test, pred, pruneGuards = False, keepLast = True, history = [], verbose = True, speed = "FAST"):
+    """
+    Attempts to produce a 1-simplified test case
+    """
+    try:
+        test_before_simplify(self)
+    except:
+        pass
 
-    enableChange = {}
-    for i in xrange(0,len(test)):
-        enableChange[i] = map(lambda x:x[0], self.enabled())
-        self.safely(test[i])
-    
-    for i in xrange(0,len(test)):
-        name1 = test[i][0]
-        for name2 in enableChange[i]:
-            if name1 != name2:
-                testC = test[0:i] + [self.__names[name2]] + test[i+1:]
-                if pred(testC):
-                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
-                    if len(rtestC) < len(test):
-                        print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
-                        return self.fastSimplify(rtestC, pred, pruneGuards, keepLast, [test] + history)
-                                            
+    # Check the cache
+    stest = self.captureReplay(test)
+    if stest in self.__simplifyCache:
+        if verbose:
+            print "SIMPLIFIER: FOUND TEST IN CACHED RESULTS"
+        return self.__simplifyCache[stest]
+    history = [stest]
+        
+    # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
+    self.__relaxUsedRestriction = True
+             
+    # Default speed is fast, if speed not recognized
+    simplifiers = [self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep, self.reduceLengthStep]
+    if speed == "SLOW":
+        simplifiers = [self.reduceLengthStep, self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep]
+    elif speed == "MEDIUM":
+        # Runs one attempt at length reduction before normal simplification
+        (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose)
+        if changed:
+            stest = self.captureReplay(test)
+            history.append(stest)
+
+    changed = True
+    while changed:
+        changed = False
+        for s in simplifiers:
+            (changed, test) = s(test, pred, pruneGuards, keepLast, verbose)
+            if changed:
+                test = self.reduce(test, pred, pruneGuards, keepLast)
+                stest = self.captureReplay(test)
+                if stest in self.__simplifyCache:
+                    if verbose:
+                        print "SIMPLIFIER: FOUND TEST IN CACHED RESULTS"
+                    result = self.__simplifyCache[stest]
+                    for t in history:
+                        self.__simplifyCache[t] = result
+                    return result                
+                history.append(stest)
+                break
+
     # No changes, this is 1-simple (fix-point)
-
     try:
         test_after_simplify(self)
     except:
@@ -428,10 +436,8 @@ def fastSimplify(self, test, pred, pruneGuards = False, keepLast = True, history
     self.__relaxUsedRestriction = True
     # restore normal TSTL semantics!
 
-    self.__simplifyCache[self.captureReplay(test)] = test
+    # Update the simplification cache and return
     for t in history:
-        self.__simplifyCache[self.captureReplay(t)] = test
-    
+        self.__simplifyCache[t] = test    
     return test
-
     

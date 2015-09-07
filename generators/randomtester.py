@@ -84,17 +84,20 @@ def handle_failure(test, msg, checkFail):
         print "REDUCING..."
         startReduce = time.time()
         test = t.reduce(test, failProp, True, config.keep)
-        print "REDUCED:"
+        print "Reduced test has",len(test),"steps"
+        print "REDUCED IN",time.time()-startReduce,"SECONDS"
         i = 0
         for s in test:
             print "STEP",i,s[0]
             i += 1
+        sys.stdout.flush()
         if config.canonize:
+            startSimplify = time.time()
             print "SIMPLIFYING..."
             test = t.simplify(test, failProp, True, config.keep)
-            print "SIMPLIFIED:"
+            print "Simplified test has",len(test),"steps"
+            print "SIMPLIFIED IN",time.time()-startSimplify,"SECONDS"
         reduceTime += time.time()-startReduce
-        print "Reduced test has",len(test),"steps"
 
     i = 0
     if config.output != None:
@@ -112,6 +115,7 @@ def handle_failure(test, msg, checkFail):
         i += 1
         if outf != None:
             outf.write(t.serializeable(s)+"\n")
+    sys.stdout.flush()
     if outf != None:
         outf.close()
     if config.multiple:
@@ -119,8 +123,9 @@ def handle_failure(test, msg, checkFail):
             print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
             repeatCount += 1
         else:
-            print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
             failures.append(test)
+            print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
+
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
@@ -266,6 +271,21 @@ if config.multiple:
             print "STEP",i,s[0]
             i += 1
         n += 1
+    i = -1
+    for test1 in failures:
+        i += 1
+        j = -1
+        for test2 in failures:
+            j += 1
+            if (j > i):
+                print "COMPARING FAILURE",i,"AND FAILURE",j
+                for k in xrange(0,max(len(test1),len(test2))):
+                    if k >= len(test1):
+                        print "STEP",k,"-->",test2[k][0]
+                    elif k >= len(test2):
+                        print "STEP",k,test1[k][0],"-->"                        
+                    elif test1[k] != test2[k]:
+                        print "STEP",k,test1[k][0],"-->",test2[k][0]
         
 if not config.nocover:
     print len(t.allBranches()),"BRANCHES COVERED"
