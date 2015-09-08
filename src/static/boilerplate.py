@@ -412,6 +412,13 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
     simplifiers = [self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep, self.reduceLengthStep]
     if speed == "SLOW":
         simplifiers = [self.reduceLengthStep, self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep]
+    elif speed == "ONEREDUCE":
+        # Runs one attempt at length reduction before normal simplification, without reduction step
+        (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose)
+        if changed:
+            stest = self.captureReplay(test)
+            history.append(stest)
+        simplifiers = [self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep]
     elif speed == "MEDIUM":
         # Runs one attempt at length reduction before normal simplification
         (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose)
