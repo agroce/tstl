@@ -31,8 +31,10 @@ def parse_args():
                         help="Keep last action the same when reducing.")
     parser.add_argument('-o', '--output', type=str, default=None,
                         help="Filename to save failing test(s).")
-    parser.add_argument('-R', '--replayable', action='store_false',
+    parser.add_argument('-R', '--replayable', action='store_true',
                         help="Keep replayable file of current test, in case of crash.")
+    parser.add_argument('-T', '--total', action='store_true',
+                        help="Keep a file with ALL TESTING ACTIONS in case of crash.")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
     parser.add_argument('-l', '--logging', type=int, default=None,
@@ -162,6 +164,9 @@ restartTime = 0.0
 
 checkResult = True
 
+if config.total:
+    fulltest = open("fulltest.txt",'w')
+
 while (config.maxtests == -1) or (ntests < config.maxtests):
     ntests += 1
 
@@ -170,6 +175,9 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     restartTime += time.time() - startRestart
     test = []
 
+    if config.total:
+        fulltest.write("<<RESTART>>\n")
+    
     if config.replayable:
         currtest = open("currtest.txt",'w')
 
@@ -215,6 +223,10 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         if config.replayable:
             currtest.write(a[0] + "\n")
             currtest.flush()
+
+        if config.total:
+            fulltest.write(a[0] + "\n")
+            fulltest.flush()            
         
         startOp = time.time()
         stepOk = t.safely(a)
@@ -258,6 +270,9 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         print "STOPPING TESTING DUE TO TIMEOUT"
         break        
 
+if config.total:
+    fulltest.close()
+    
 if not config.nocover:
     print t.report(config.coverfile),"PERCENT COVERED"
 
