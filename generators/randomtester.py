@@ -31,6 +31,8 @@ def parse_args():
                         help="Keep last action the same when reducing.")
     parser.add_argument('-o', '--output', type=str, default=None,
                         help="Filename to save failing test(s).")
+    parser.add_argument('-R', '--replayable', action='store_false',
+                        help="Keep replayable file of current test, in case of crash.")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
     parser.add_argument('-l', '--logging', type=int, default=None,
@@ -168,6 +170,9 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     restartTime += time.time() - startRestart
     test = []
 
+    if config.replayable:
+        currtest = open("currtest.txt",'w')
+
     for s in xrange(0,config.depth):
 
         startGuard = time.time()
@@ -207,6 +212,10 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         test.append(a)
         nops += 1
 
+        if config.replayable:
+            currtest.write(a[0] + "\n")
+            currtest.flush()
+        
         startOp = time.time()
         stepOk = t.safely(a)
         opTime += (time.time()-startOp)
@@ -241,6 +250,8 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         if elapsed > config.timeout:
             print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
+    if config.replayable:
+        currtest.close()
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:
