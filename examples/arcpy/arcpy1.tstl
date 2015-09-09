@@ -1,0 +1,34 @@
+@import arcpy
+@import subprocess
+
+@def test_after_simplify(self):
+@   self.setLog(1)
+
+pool: %LAYERFILE% 1
+pool: %NEWLAYER% 1
+pool: %LAYER% 3
+pool: %VAL% 2
+pool: %DESC% 1
+pool: %SPREF% 3
+pool: %PRJFILE% 2
+
+init: subprocess.call(["cp C:\Arctmp\USAbackup.lyr C:\Arctmp\USA.lyr"], shell=True)
+log: 1 arcpy.GetMessages()
+
+%LAYERFILE% := "C:\Arctmp\USA.lyr"
+%NEWLAYER% := "C:\Arctmp\USAnew.lyr"
+%PRJFILE% := "C:\Program Files (x86)\ArcGIS\Desktop10.3\Reference Systems\International Map of the World.prj"
+%PRJFILE% := "C:\Program Files (x86)\ArcGIS\Desktop10.3\Reference Systems\utm.prj"
+%PRJFILE% := "C:\Program Files (x86)\ArcGIS\Desktop10.3\Reference Systems\usgs250q.prj"
+%LAYER% := "l1"
+%LAYER% := "l2"
+%LAYER% := "l3"
+%VAL% := 100
+%VAL% := 1000
+%VAL% := 10000
+%DESC% := arcpy.Describe(%LAYERFILE%)
+%SPREF% := %DESC%.spatialReference
+%SPREF% := arcpy.SpatialReference(%PRJFILE%)
+
+not arcpy.Exists(%LAYER,1%) -> arcpy.MakeFeatureLayer_management(%LAYERFILE%, %LAYER%)
+arcpy.Project_management(%LAYERFILE%, %NEWLAYER%, %SPREF%)
