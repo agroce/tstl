@@ -23,6 +23,10 @@ def sandboxReplay(test):
             print "TEST SUCCEEDS"
             return False
     print "TEST FAILS"
+    bestreduce = open("bestreduce.txt",'w')
+    for l in open("tmptest.txt"):
+        bestreduce.write(l)
+    bestreduce.close()
     return True
 
 t = SUT.sut()
