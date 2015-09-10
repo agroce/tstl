@@ -741,7 +741,7 @@ def main():
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
     genInitialization()
     genCode.append(baseIndent + "self.__actions = []\n")
-    genCode.append(baseIndent + 'self.__actions["<<RESTART>>"] = ("<<RESTART>>", lambda x: True, lambda x: self.restart())')
+    genCode.append(baseIndent + 'self.__actions["<<RESTART>>"] = ("<<RESTART>>", lambda x: True, lambda x: self.restart())\n')
     genCode.append(baseIndent + "self.__names = {}\n")
     genCode.append(baseIndent + "self.__orderings = {}\n")
     genCode.append(baseIndent + 'self.__orderings["<<RESTART>>"] = -1\n')
