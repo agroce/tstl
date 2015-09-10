@@ -1,6 +1,7 @@
 import sys
 import sut as SUT
 import subprocess
+import time
 
 infile = "fulltest.txt"
 outfile = "reduced.txt"
@@ -14,23 +15,26 @@ def sandboxReplay(test):
     for s in test:
         tmptest.write(s[0] + "\n")
     tmptest.close()
+    start = time.time()
     subprocess.call(["C:\\Python27\\ArcGIS10.3\\python.exe","replay.py","tmptest.txt"])
+    print "ELAPSED:",time.time()-start
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
-            print "TEST FAILS"
+            print "TEST SUCCEEDS"
             return False
-    print "TEST SUCCEEDS"
+    print "TEST FAILS"
     return True
 
 t = SUT.sut()
 
+print "READING TEST CASE..."
+
 test = []
 for l in open(infile):
     name = l[:-1]
-    if name == "<<RESTART>>":
-        test.append((name,lambda x:True,lambda x:True))
-    else:
-        test.append(t.playable(name))
+    test.append(t.playable(name))
+
+print "REDUCING..."
 
 reduced = t.reduce(test, sandboxReplay)
 
