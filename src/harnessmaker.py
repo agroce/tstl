@@ -743,7 +743,7 @@ def main():
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")
     genCode.append(baseIndent + 'self.__names["<<RESTART>>"] = ("<<RESTART>>", lambda x: True, lambda x: self.restart())\n')
-        genCode.append(baseIndent + "self.__orderings = {}\n")
+    genCode.append(baseIndent + "self.__orderings = {}\n")
     genCode.append(baseIndent + 'self.__orderings["<<RESTART>>"] = -1\n')
     genCode.append(baseIndent + "self.__failure = None\n")
     genCode.append(baseIndent + "self.__log = None\n")
