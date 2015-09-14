@@ -232,7 +232,23 @@ def actionModify(self,action,old,new):
     newName = name.replace(old,new)
     return self.__names[newName]
 
-def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False):
+def levDist(self,s1,s2):
+    if len(s1) > len(s2):
+        s1,s2 = s2,s1
+    distances = range(len(s1) + 1)
+    for index2,char2 in enumerate(s2):
+        newDistances = [index2+1]
+        for index1,char1 in enumerate(s1):
+            if char1 == char2:
+                newDistances.append(distances[index1])
+            else:
+                newDistances.append(1 + min((distances[index1],
+                                             distances[index1+1],
+                                             newDistances[-1])))
+        distances = newDistances
+    return distances[-1]
+
+def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     # Replace any action with another action, if that allows test to be further reduced
     enableChange = {}
     for i in xrange(0,len(test)):
@@ -246,6 +262,8 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
         name1 = test[i][0]
         for name2 in enableChange[i]:
             if name1 != name2:
+                if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
+                    continue
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
                     rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
@@ -255,7 +273,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
                         return (True, rtestC)
     return (False, test)
 
-def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False):
+def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     # Replace all occurrences of an action with a simpler action
     enableChange = {}
     for i in xrange(0,len(test)):
@@ -270,6 +288,8 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
         name1 = test[i][0]
         for name2 in enableChange[i]:
             if (self.__orderings[name1] > self.__orderings[name2]) and ((name1,name2) not in donePairs):
+                if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
+                    continue
                 donePairs.append((name1,name2))
                 testC = map(lambda x: self.actionModify(x,name1,name2), test)
                 if pred(testC):
@@ -278,7 +298,7 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
                     return (True, testC)
     return (False, test)
 
-def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False):
+def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     # Replace pools with lower-numbered pools
     pools = []
     for s in test:
@@ -316,7 +336,7 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
     return (False, test)
 
 
-def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False):
+def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     # Replace any single action with a lower-numbered action
     enableChange = {}
     for i in xrange(0,len(test)):
@@ -330,6 +350,8 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
         name1 = test[i][0]
         for name2 in enableChange[i]:
             if self.__orderings[name1] > self.__orderings[name2]:
+                if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
+                    continue
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
                     if verbose:
@@ -337,7 +359,7 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
                     return (True, testC)
     return (False, test)
 
-def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False):
+def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     # Swap two pool uses in between two positions, if this lowers the minimal action ordering between them
     pools = []
     for s in test:
@@ -374,7 +396,7 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
                                 return (True, testC)
     return (False, test)
 
-def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False):
+def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     # Try to swap any out-of-order actions
     lastMover = len(test)
     if keepLast:
@@ -397,7 +419,7 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
                         return (True, testC)
     return (False, test)
 
-def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False):
+def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None):
     """
     Attempts to produce a 1-simplified test case
     """
@@ -419,11 +441,13 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
              
     # Default speed is fast, if speed not recognized
     simplifiers = [self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep, self.reduceLengthStep]
+    # Default approach tries a reduce after any change
+    reduceOnChange = True
     if speed == "SLOW":
         simplifiers = [self.reduceLengthStep, self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep]
     elif speed == "ONEREDUCE":
         # Runs one attempt at length reduction before normal simplification, without reduction step
-        (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose, checkEnabled)
+        (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit)
         if changed:
             stest = self.captureReplay(test)
             history.append(stest)
@@ -434,6 +458,14 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
         if changed:
             stest = self.captureReplay(test)
             history.append(stest)
+    elif speed == "VERYFAST":
+        reduceOnChange = False
+        if distLimit == None:
+            distLimit = 3 # maximum of 3 char change when replacing actions!  allows numeric switches, simple pool modifications, but very few method changes
+    elif speed == "VERYFASTREDUCE":
+        reduceOnChange = True
+        if distLimit == None:
+            distLimit = 3 # maximum of 3 char change when replacing actions!  allows numeric switches, simple pool modifications, but very few method changes            
 
     changed = True
     while changed:
@@ -441,9 +473,10 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
         changed = False
         for s in simplifiers:
             oldTest = test
-            (changed, test) = s(test, pred, pruneGuards, keepLast, verbose)
+            (changed, test) = s(test, pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit)
             if changed:
-                test = self.reduce(test, pred, pruneGuards, keepLast)
+                if reduceOnChange:
+                    test = self.reduce(test, pred, pruneGuards, keepLast)
                 stest = self.captureReplay(test)
                 if stest in self.__simplifyCache:
                     if verbose:

@@ -115,6 +115,8 @@ def handle_failure(test, msg, checkFail):
         outf = None
     if config.failedLogging != None:
         t.setLog(config.failedLogging)
+    print
+    print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
     for s in test:
         print "STEP",i,s[0]
         t.safely(s)
