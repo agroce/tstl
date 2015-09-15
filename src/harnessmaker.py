@@ -44,6 +44,8 @@ def parse_args():
                         help='Generate coverage for SUT initialization behavior.')
     parser.add_argument('-R', '--defaultreplay', action='store_true',
                         help='Backtracking defaults to replay method.')
+    parser.add_argument('-a', '--ignoreangles', action='store_true',
+                        help='Do not use angle brackets as TSTL markers, for use with some languages.')    
 
     # Useful to print internal variables iteratively
     parser.add_argument('--debug', dest='debug', action='store_true', help='Toggle debug mode on')
@@ -81,6 +83,8 @@ def make_config(pargs, parser):
     return nt_config   
     
 def preprocess_angle_brackets(line):
+    if config.ignoreangles:
+        return line
     repLine = line.replace("<[","%[")
     repLine = repLine.replace("]>","]%")
     newLine = ""
