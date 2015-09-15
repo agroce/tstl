@@ -80,6 +80,30 @@ def make_config(pargs, parser):
     nt_config = Config(*arg_list)
     return nt_config   
     
+def preprocess_angle_brackets(line):
+    repLine = line.replace("<[","%[")
+    repLine = repLine.replace("]>","]%")
+    newLine = ""
+    sawLeft = False
+    alphaNumeric = ""
+    for c in repLine:
+        if sawLeft:
+            if (c.isalnum()) or (c == ","):
+                alphaNumeric += c
+            elif c == ">":
+                newLine += "%" + alphaNumeric + "%"
+                sawLeft = False
+            else:
+                newLine += "<" + alphaNumeric + c
+                sawLeft = False
+        else:
+            if c == "<":
+                alphaNumeric = ""
+                sawLeft = True
+            else:
+                newLine += c
+    return newLine
+            
 
 def parse_import_line(line):
     """
@@ -269,6 +293,7 @@ def main():
     
     with open(config.tstl, 'r') as fp:
         for l in fp:
+            l = preprocess_angle_brackets(l)
             if l[-1] != "\n":
                 l += "\n"
             if len(l)>1:
