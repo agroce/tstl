@@ -87,6 +87,13 @@ def preprocess_angle_brackets(line):
         return line
     repLine = line.replace("<[","%[")
     repLine = repLine.replace("]>","]%")
+    repLine = repLine.replace("PRE<","pre<")
+    prePos = repLine.find("pre<(")
+    while prePos != -1:
+        repLine = repLine.replace("pre<(","PRE%(",1)
+        closePos = repLine.find(")>",prePos)
+        repLine = repLine[0:closePos] + ")%" + repLine[closePos+2:]
+        prePos = repLine.find("pre<(")
     newLine = ""
     sawLeft = False
     alphaNumeric = ""

@@ -249,7 +249,7 @@ def levDist(self,s1,s2):
     return distances[-1]
 
 def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
-    if verbose:
+    if verbose == "VERY":
         print "STARTING REDUCE LENGTH STEP"
     # Replace any action with another action, if that allows test to be further reduced
     enableChange = {}
@@ -276,7 +276,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
     return (False, test)
 
 def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
-    if verbose:
+    if verbose == "VERY":
         print "STARTING REPLACE ALL STEP"    
     # Replace all occurrences of an action with a simpler action
     enableChange = {}
@@ -303,9 +303,9 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
     return (False, test)
 
 def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
-    # Replace pools with lower-numbered pools
-    if verbose:
+    if verbose == "VERY":
         print "STARTING REPLACE POOL STEP"        
+    # Replace pools with lower-numbered pools
     pools = []
     for s in test:
         for p in self.poolUses(s[0]):
@@ -343,7 +343,7 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
 
 
 def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
-    if verbose:
+    if verbose == "VERY":
         print "STARTING REPLACE SINGLE STEP"        
     # Replace any single action with a lower-numbered action
     enableChange = {}
@@ -368,7 +368,7 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
     return (False, test)
 
 def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
-    if verbose:
+    if verbose == "VERY":
         print "STARTING SWAP POOL STEP"        
     # Swap two pool uses in between two positions, if this lowers the minimal action ordering between them
     pools = []
@@ -407,7 +407,7 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
     return (False, test)
 
 def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
-    if verbose:
+    if verbose == "VERY":
         print "STARTING SWAP ACTION ORDER STEP"        
     # Try to swap any out-of-order actions
     lastMover = len(test)
