@@ -285,7 +285,7 @@ print time.time()-start, "TOTAL RUNTIME"
 print ntests, "EXECUTED"
 print nops, "TOTAL TEST OPERATIONS"
 print opTime, "TIME SPENT EXECUTING TEST OPERATIONS"
-print guardTime, "TIME SPENT EVALUTING GUARDS AND CHOOSING ACTIONS"
+print guardTime, "TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS"
 if not config.ignoreprops:
     print checkTime, "TIME SPENT CHECKING PROPERTIES"
     print (opTime + checkTime), "TOTAL TIME SPENT RUNNING SUT"
