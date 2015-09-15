@@ -25,6 +25,8 @@ def parse_args():
                         help="Don't reduce -- report full failing test.")
     parser.add_argument('-C', '--canonize', action='store_true',
                         help="Canonize/simplify after reduction.")
+    parser.add_argument('-G', '--generalize', action='store_true',
+                        help="Generalize tests.")
     parser.add_argument('-e', '--speed', type=str, default="FAST",
                         help='Canonization/simplification speed (default = FAST).')    
     parser.add_argument('-k', '--keep', action='store_true',
@@ -103,6 +105,11 @@ def handle_failure(test, msg, checkFail):
             test = t.simplify(test, failProp, True, config.keep, verbose = True, speed = config.speed)
             print "Simplified test has",len(test),"steps"
             print "SIMPLIFIED IN",time.time()-startSimplify,"SECONDS"
+        if config.generalize:
+            startGeneralize = time.time()
+            print "GENERALIZING..."
+            t.generalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
+            print "GENERALIZED IN",time.time()-startGeneralize,"SECONDS"            
         reduceTime += time.time()-startReduce
 
     i = 0

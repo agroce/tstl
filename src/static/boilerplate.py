@@ -513,4 +513,88 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
     for t in history:
         self.__simplifyCache[t] = test    
     return test
-    
+
+def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None):
+    canReplace = {}
+    canSwap = {}
+    for i in xrange(0,len(test)):
+        canSwap[i] = []
+    for i in xrange(0,len(test)):
+        canReplace[i] = []
+        for a in self.actions():
+            if a[0] != test[i][0]:
+                testC = test[:i] + [a] + test[i+1:]
+                if pred(testC):
+                    canReplace[i].append(a[0])
+        for j in xrange(i+1,len(test)):
+            if i == j or test[i][0] == test[j][0]:
+                continue
+            testC = test[:i]+[test[j]]+test[i+1:j]+[test[i]]+test[j+1:]
+            if pred(testC):
+                canSwap[i].append(j)
+                canSwap[j].append(i)
+    noOrder = []
+    endSwappable = -1
+    for i in xrange(0,len(test)):
+        if endSwappable >= i:
+            continue
+        foundSwap = False
+        for j in xrange(len(test)-1,i,-1):
+            allSwappable = True
+            for k1 in xrange(i,j+1):
+                for k2 in xrange(k1+1,j+1):
+                        if k2 not in canSwap[k1]:
+                                allSwappable = False
+                                break
+                if not allSwappable:
+                    break
+            if allSwappable:
+                noOrder.append((i,j))
+                #print "ALL BETWEEN",i,"AND",j,"ARE SWAPPABLE"
+                for k1 in xrange(i,j+1):
+                    for k2 in xrange(i,j+1):
+                        if k2 in canSwap[k1]:
+                            canSwap[k1].remove(k2)
+                endSwappable = j
+                break
+
+    for i in xrange(0,len(test)):
+        for (begin,end) in noOrder:
+            if i == begin:
+                print "["
+        print "STEP",i,test[i][0]
+        if canReplace[i] != []:
+            firstRep = None
+            lastRep = None
+            for rep in canReplace[i]:
+                if firstRep == None:
+                    firstRep = rep
+                    lastRep = rep
+                elif self.__orderings[rep] != (self.__orderings[lastRep] + 1):
+                    if firstRep == lastRep:
+                        print "  CAN BE REPLACED WITH",firstRep
+                    else:
+                        print "  CAN BE REPLACED WITH",firstRep
+                        print "               THROUGH",lastRep
+                    firstRep = rep
+                    lastRep = rep
+                else:
+                    lastRep = rep
+            if firstRep == lastRep:
+                print "  CAN BE REPLACED WITH",firstRep
+            else:
+                print "  CAN BE REPLACED WITH",firstRep
+                print "               THROUGH",lastRep
+        if canSwap[i] != []:
+            if len(canSwap[i]) == 1:
+                print "  CAN SWAP WITH STEP",
+            else:
+                print "  CAN SWAP WITH STEPS",
+            for j in canSwap[i]:
+                print j,
+            print
+        for (begin,end) in noOrder:
+            if i == end:
+                print "]"
+
+            
