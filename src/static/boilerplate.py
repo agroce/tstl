@@ -535,7 +535,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                         print "SKIPPING",a,test[i][0],"DUE TO LIMIT"
                 continue
             if a != test[i][0]:
-                testC = test[:i] + [a] + test[i+1:]
+                testC = test[:i] + [self.__names[a]] + test[i+1:]
                 if pred(testC):
                     canReplace[i].append(a)
         for j in xrange(i+1,len(test)):
