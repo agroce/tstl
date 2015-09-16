@@ -530,11 +530,11 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     for i in xrange(0,len(test)):
         canReplace[i] = []
         for a in enableChange[i]:
-            if (distLimit != None) and (self.levDist(a[0], test[i][0]) > distLimit):
+            if (distLimit != None) and (self.levDist(a, test[i][0]) > distLimit):
                 if verbose:
-                        print "SKIPPING",a[0],test[i][0],"DUE TO LIMIT"
+                        print "SKIPPING",a,test[i][0],"DUE TO LIMIT"
                 continue
-            if a[0] != test[i][0]:
+            if a != test[i][0]:
                 testC = test[:i] + [a] + test[i+1:]
                 if pred(testC):
                     canReplace[i].append(a[0])
