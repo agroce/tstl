@@ -537,7 +537,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             if a != test[i][0]:
                 testC = test[:i] + [a] + test[i+1:]
                 if pred(testC):
-                    canReplace[i].append(a[0])
+                    canReplace[i].append(a)
         for j in xrange(i+1,len(test)):
             if i == j or test[i][0] == test[j][0]:
                 continue
