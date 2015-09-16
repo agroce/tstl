@@ -515,16 +515,26 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
     return test
 
 def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+    enableChange = {}
+    for i in xrange(0,len(test)):
+        if checkEnabled:
+            enableChange[i] = map(lambda x:x[0], self.enabled())
+            self.safely(test[i])
+        else:
+            enableChange[i] = map(lambda x:x[0], self.actions())
+    
     canReplace = {}
     canSwap = {}
     for i in xrange(0,len(test)):
         canSwap[i] = []
     for i in xrange(0,len(test)):
         canReplace[i] = []
-        for a in self.actions():
-            if (a[0] != test[i][0]) and ((distLimit == None)
-                                         or (self.levDist(a[0],test[i][0])
-                                             <= distLimit)):
+        for a in enableChange[i]:
+            if (distLimit != None) and (self.levDist(a[0], test[i][0]) > distLimit):
+                if verbose:
+                        print "SKIPPING",a[0],test[i][0],"DUE TO LIMIT"
+                continue
+            if a[0] != test[i][0]:
                 testC = test[:i] + [a] + test[i+1:]
                 if pred(testC):
                     canReplace[i].append(a[0])
@@ -552,7 +562,6 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                     break
             if allSwappable:
                 noOrder.append((i,j))
-                #print "ALL BETWEEN",i,"AND",j,"ARE SWAPPABLE"
                 for k1 in xrange(i,j+1):
                     for k2 in xrange(i,j+1):
                         if k2 in canSwap[k1]:
