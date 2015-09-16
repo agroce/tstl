@@ -1,7 +1,7 @@
 """
 BOILERPLATE METHODS OF SUT
 ==========================
-These are the set of methods available on each SUT by default (depending on whether they are required or not).
+These are the set of methods available on each SUT by default
 
 Examples
 --------
@@ -514,7 +514,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
         self.__simplifyCache[t] = test    
     return test
 
-def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None):
+def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     canReplace = {}
     canSwap = {}
     for i in xrange(0,len(test)):
@@ -522,7 +522,9 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     for i in xrange(0,len(test)):
         canReplace[i] = []
         for a in self.actions():
-            if a[0] != test[i][0]:
+            if (a[0] != test[i][0]) and ((distLimit == None)
+                                         or (self.levDist(a[0],test[i][0])
+                                             <= distLimit)):
                 testC = test[:i] + [a] + test[i+1:]
                 if pred(testC):
                     canReplace[i].append(a[0])
