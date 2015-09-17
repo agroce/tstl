@@ -778,6 +778,7 @@ def main():
     genInitialization()
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")
+    genCode.append(baseIndent + 'self.__poolPrefix = "' + poolPrefix + '"\n')
     genCode.append(baseIndent + 'self.__names["<<RESTART>>"] = ("<<RESTART>>", lambda x: True, lambda x: self.restart())\n')
     genCode.append(baseIndent + "self.__orderings = {}\n")
     genCode.append(baseIndent + 'self.__orderings["<<RESTART>>"] = -1\n')

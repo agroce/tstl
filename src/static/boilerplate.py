@@ -19,6 +19,19 @@ def test(self):
     """
     return self.__test
 
+def prettyName(self, name):
+    newName = name
+    for p in self.__pools:
+        pfind = newName.find(p)
+        while pfind != -1:
+            closePos = newName.find("]",pfind)
+            index = newName[newName.find("[",pfind)+1:closePos]
+            access = newName[pfind:newName.find("]",pfind)+1]
+            newAccess = p.replace(self.__poolPrefix,"") + index
+            newName = newName.replace(access, newAccess)
+            pfind = newName.find(p)
+    return newName
+
 def captureReplay(self, test):
     captured = ""
     for step in test:
@@ -573,7 +586,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
         for (begin,end) in noOrder:
             if i == begin:
                 print "["
-        print "STEP",i,test[i][0]
+        print "STEP",i,self.prettyName(test[i][0])
         if canReplace[i] != []:
             firstRep = None
             lastRep = None
@@ -583,19 +596,19 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                     lastRep = rep
                 elif self.__orderings[rep] != (self.__orderings[lastRep] + 1):
                     if firstRep == lastRep:
-                        print "  CAN BE REPLACED WITH",firstRep
+                        print "  CAN BE REPLACED WITH",self.prettyName(firstRep)
                     else:
-                        print "  CAN BE REPLACED WITH",firstRep
-                        print "               THROUGH",lastRep
+                        print "  CAN BE REPLACED WITH",self.prettyName(firstRep)
+                        print "               THROUGH",self.prettyName(lastRep)
                     firstRep = rep
                     lastRep = rep
                 else:
                     lastRep = rep
             if firstRep == lastRep:
-                print "  CAN BE REPLACED WITH",firstRep
+                print "  CAN BE REPLACED WITH",self.prettyName(firstRep)
             else:
-                print "  CAN BE REPLACED WITH",firstRep
-                print "               THROUGH",lastRep
+                print "  CAN BE REPLACED WITH",self.prettyName(firstRep)
+                print "               THROUGH",self.prettyName(lastRep)
         if canSwap[i] != []:
             if len(canSwap[i]) == 1:
                 print "  CAN SWAP WITH STEP",
