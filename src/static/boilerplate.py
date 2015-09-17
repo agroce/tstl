@@ -585,8 +585,10 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     for i in xrange(0,len(test)):
         for (begin,end) in noOrder:
             if i == begin:
-                print "["
-        print "STEP",i,self.prettyName(test[i][0])
+                print "#["
+        pn = self.prettyName(test[i][0])
+        spaces = " " * (90-len(pn)-len(" # STEP"))
+        print self.prettyName(test[i][0]),spaces,"# STEP",i
         if canReplace[i] != []:
             firstRep = None
             lastRep = None
@@ -596,29 +598,29 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                     lastRep = rep
                 elif self.__orderings[rep] != (self.__orderings[lastRep] + 1):
                     if firstRep == lastRep:
-                        print "  CAN BE REPLACED WITH",self.prettyName(firstRep)
+                        print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
                     else:
-                        print "  CAN BE REPLACED WITH",self.prettyName(firstRep)
-                        print "               THROUGH",self.prettyName(lastRep)
+                        print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
+                        print "#               THROUGH",self.prettyName(lastRep)
                     firstRep = rep
                     lastRep = rep
                 else:
                     lastRep = rep
             if firstRep == lastRep:
-                print "  CAN BE REPLACED WITH",self.prettyName(firstRep)
+                print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
             else:
-                print "  CAN BE REPLACED WITH",self.prettyName(firstRep)
-                print "               THROUGH",self.prettyName(lastRep)
+                print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
+                print "#               THROUGH",self.prettyName(lastRep)
         if canSwap[i] != []:
             if len(canSwap[i]) == 1:
-                print "  CAN SWAP WITH STEP",
+                print "#  CAN SWAP WITH STEP",
             else:
-                print "  CAN SWAP WITH STEPS",
+                print "#  CAN SWAP WITH STEPS",
             for j in canSwap[i]:
                 print j,
             print
         for (begin,end) in noOrder:
             if i == end:
-                print "]"
+                print "#] (STEPS IN BRACKETS CAN BE IN ANY ORDER)"
 
             
