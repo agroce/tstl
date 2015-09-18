@@ -288,6 +288,7 @@ def main():
     outf.write("import traceback\n")
     outf.write("import re\n")
     outf.write("import sys\n")
+    outf.write("from itertools import chain, combinations\n")    
 
     if not config.nocover:
         outf.write("import coverage\n")
@@ -318,6 +319,8 @@ def main():
                     continuedLine = False
             if l[0] == "#":
                 continue # COMMENT
+            if (l.split() != []) and (l.split()[0][0] == "#"):
+                continue # also COMMENT
 
             if re.match("<@", l):
                 #XXX: Any line with <@ will be ignored

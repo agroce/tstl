@@ -25,6 +25,8 @@ def parse_args():
                         help="Don't reduce -- report full failing test.")
     parser.add_argument('-C', '--canonize', action='store_true',
                         help="Canonize/simplify after reduction.")
+    parser.add_argument('-E', '--essentials', action='store_true',
+                        help="Determine essential elements in failing test.")
     parser.add_argument('-G', '--generalize', action='store_true',
                         help="Generalize tests.")
     parser.add_argument('-e', '--speed', type=str, default="FAST",
@@ -91,6 +93,7 @@ def handle_failure(test, msg, checkFail):
             failProp = t.failsCheck
         print "REDUCING..."
         startReduce = time.time()
+        original = test
         test = t.reduce(test, failProp, True, config.keep)
         print "Reduced test has",len(test),"steps"
         print "REDUCED IN",time.time()-startReduce,"SECONDS"
@@ -98,6 +101,16 @@ def handle_failure(test, msg, checkFail):
         for s in test:
             print "STEP",i,s[0]
             i += 1
+        if config.essentials:
+            print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
+            (canRemove, cannotRemove) = t.reduceEssentials(test, original, failProp, True, config.keep)
+            print len(canRemove),len(cannotRemove)
+            for (c,reducec) in canRemove:
+                print "CAN BE REMOVED:",map(lambda x:x[0], c)
+                i = 0
+                for s in reducec:
+                    print "STEP",i,s[0]
+                    i += 1
         sys.stdout.flush()
         if config.canonize:
             startSimplify = time.time()
@@ -108,7 +121,7 @@ def handle_failure(test, msg, checkFail):
         if config.generalize:
             startGeneralize = time.time()
             print "GENERALIZING..."
-            t.generalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
+            t.generalize(test, failProp, verbose = True)
             print "GENERALIZED IN",time.time()-startGeneralize,"SECONDS"            
         reduceTime += time.time()-startReduce
 

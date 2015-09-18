@@ -1,0 +1,31 @@
+import subprocess
+import sys
+
+prefix = sys.argv[1]
+repeats = int(sys.argv[2])
+configs = sys.argv[3]
+options = sys.argv[4:]
+
+runs = {}
+
+for l in open(configs):
+    ls = l.split()
+    runs[ls[0]] = (ls[1], ls[2:])
+
+print runs
+
+for i in xrange(0,repeats):
+    for name in runs:
+        out = prefix + "." + name + "." + str(i)
+        outf = open(out,'w')
+        print "GENERATING",out
+        (command, params) = runs[name]
+        cmd = "python "
+        cmd += command
+        for p in params:
+            cmd += " " + p
+        for p in options:
+            cmd += " " + p
+        subprocess.call([cmd],shell=True,stdout = outf,stderr = outf)
+        outf.close()
+        
