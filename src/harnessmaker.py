@@ -319,6 +319,8 @@ def main():
                     continuedLine = False
             if l[0] == "#":
                 continue # COMMENT
+            if (l.split() != []) and (l.split()[0][0] == "#"):
+                continue # also COMMENT
 
             if re.match("<@", l):
                 #XXX: Any line with <@ will be ignored

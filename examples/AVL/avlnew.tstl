@@ -78,6 +78,9 @@ property: <avl>.check_balanced()
 
 ~<avl> == ~<avl>
 
+# -> before an action indicates a user-defined guard
+len(<avl,1>.inorder()) > 5 -> <avl>.display()
+
 # reference keyword tells TSTL how to map SUT code into the equivalent for a reference object
 # here an AVL tree is compared with Python's built-in set
 
