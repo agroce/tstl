@@ -67,7 +67,7 @@ Example
 -----
 
 The easiest way to understand TSTL may be to examine
-examples/AVL/avlnew.tstl, which is a simple example file in the latest
+examples/AVL/avlnew.tstl (https://github.com/agroce/tstl/blob/master/examples/AVL/avlnew.tstl), which is a simple example file in the latest
 language format (easier to read).
 
 Developer Info
