@@ -239,6 +239,41 @@ def poolUses(self,str):
                 uses.append((access,access[access.find("[")+1:access.find("]")]))
             pos = str.find(p,pos+1)
     return uses
+
+def powerset(self,iterable):
+    xs = list(iterable)
+    return chain.from_iterable(combinations(xs,n) for n in range(len(xs)+1) )
+
+def reduceEssentials(self, test, original, pred, pruneGuards = False, keepLast = True):
+    possibleRemove = test
+    if keepLast:
+        possibleRemove = test[:-1]
+    removals = list(self.powerset(possibleRemove))
+    removals = sorted(removals, key=lambda x: len(x), reverse=True)
+    workingRemovals = []
+    failedRemovals = []
+    for rset in removals:
+        if rset == []:
+            continue
+        foundSuperset = False
+        for (w, _) in workingRemovals:
+            allPresent = True
+            for r in rset:
+                if r not in w:
+                    allPresent = False
+                    break
+            if allPresent:
+                foundSuperset = True
+                break
+        if foundSuperset:
+            continue
+        newOrig = filter(lambda x: x not in rset, original)
+        if pred(newOrig):
+            reduced = self.reduce(newOrig, pred, pruneGuards, keepLast)
+            workingRemovals.append((rset,reduced))
+        else:
+            failedRemovals.append(rset)
+    return (workingRemovals, failedRemovals)
             
 def actionModify(self,action,old,new):
     name = action[0]
@@ -527,6 +562,35 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
         self.__simplifyCache[t] = test    
     return test
 
+def freshSimpleVariants(self, name, previous):
+    return []
+    prevNames = map(lambda x:x[0], previous)
+    prevNames.reverse()
+    lastAppear = []
+    for p in self.__pools:
+        for n in prevNames:
+            if p in n:
+                lastAppear.append(n)
+                break
+    eqFind = name.find("=")
+    if eqFind != -1:
+        poolAssign = name[0:eqFind-1]
+    else:
+        poolAssign = None
+    pools = self.poolUses(name)
+    freshSimples = []
+    for (p,i) in pools:
+        if p == poolAssign:
+            continue
+        for n in self.__names:
+            if n in lastAppear:
+                continue
+            if (p + " = ") in n:
+                uses = self.poolUses(n[n.find("=")+1:])
+                if uses == []:
+                    freshSimples.append([self.__names[n],self.__names[name]])
+    return freshSimples
+
 def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     enableChange = {}
     for i in xrange(0,len(test)):
@@ -538,10 +602,12 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     
     canReplace = {}
     canSwap = {}
+    canMakeSimple = {}
     for i in xrange(0,len(test)):
         canSwap[i] = []
     for i in xrange(0,len(test)):
         canReplace[i] = []
+        canMakeSimple[i] = []
         for a in enableChange[i]:
             if (distLimit != None) and (self.levDist(a, test[i][0]) > distLimit):
                 if verbose:
@@ -558,6 +624,10 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             if pred(testC):
                 canSwap[i].append(j)
                 canSwap[j].append(i)
+        for v in self.freshSimpleVariants(test[i][0],test[:i]):
+            testC = test[:i] + v + test[i+1:]
+            if pred(testC):
+                canMakeSimple[i].append(v)
     noOrder = []
     endSwappable = -1
     for i in xrange(0,len(test)):
@@ -598,10 +668,10 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                     lastRep = rep
                 elif self.__orderings[rep] != (self.__orderings[lastRep] + 1):
                     if firstRep == lastRep:
-                        print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
+                        print "#  or",self.prettyName(firstRep)
                     else:
-                        print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
-                        print "#               THROUGH",self.prettyName(lastRep)
+                        print "#  or",self.prettyName(firstRep)
+                        print "#   -",self.prettyName(lastRep)
                     firstRep = rep
                     lastRep = rep
                 else:
@@ -611,16 +681,21 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             else:
                 print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
                 print "#               THROUGH",self.prettyName(lastRep)
+        if canMakeSimple[i] != []:
+            for v in canMakeSimple[i]:
+                print "# SIMPLE VARIANT:"
+                for s in v:
+                    print "# --> ",self.prettyName(s[0])
         if canSwap[i] != []:
             if len(canSwap[i]) == 1:
-                print "#  CAN SWAP WITH STEP",
+                print "#  swaps with step",
             else:
-                print "#  CAN SWAP WITH STEPS",
+                print "#  swaps with steps",
             for j in canSwap[i]:
                 print j,
             print
         for (begin,end) in noOrder:
             if i == end:
-                print "#] (STEPS IN BRACKETS CAN BE IN ANY ORDER)"
+                print "#] (steps can be in any order)"
 
             
