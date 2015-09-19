@@ -1,0 +1,10 @@
+self.p_DIM[2] = 100 
+self.p_SHAPE[0] = (self.p_DIM[2], self.p_DIM[2], self.p_DIM[2]) 
+self.p_ARRAY[1] = np.zeros(self.p_SHAPE[0]) 
+self.p_DIM[2] = 1 
+self.p_DIM[0] = 100 
+self.p_ARRAY[3] = self.p_ARRAY[1] * self.p_ARRAY[1] 
+self.p_ARRAY[0] = self.p_ARRAY[3].flatten() 
+self.p_SHAPE[1] = (self.p_DIM[0], self.p_DIM[0], self.p_DIM[2]) 
+self.p_ARRAY[1] = np.zeros(self.p_SHAPE[1]) 
+self.p_ARRAY[3] = self.p_ARRAY[1] - self.p_ARRAY[0] 
