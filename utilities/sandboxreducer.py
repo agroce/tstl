@@ -16,7 +16,7 @@ def sandboxReplay(test):
         tmptest.write(s[0] + "\n")
     tmptest.close()
     start = time.time()
-    subprocess.call(["C:\\Python27\\ArcGIS10.3\\python.exe","replay.py","tmptest.txt"])
+    subprocess.call(["python","../../utilities/replay.py","tmptest.txt"])
     print "ELAPSED:",time.time()-start
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
@@ -38,9 +38,13 @@ for l in open(infile):
     name = l[:-1]
     test.append(t.playable(name))
 
+t.generalize(test, sandboxReplay)
+    
+sys.exit(0)
+    
 print "REDUCING..."
 
-reduced = t.reduce(test, sandboxReplay)
+#reduced = t.reduce(test, sandboxReplay)
 
 reduceF = open(outfile,'w')
 print "REDUCED:"
@@ -50,7 +54,7 @@ for s in reduced:
     reduceF.write(s[0] + "\n")
 reduceF.close()
 
-simplified = t.simplify(test, sandboxReplay)
+#simplified = t.simplify(test, sandboxReplay, distLimit=3)
 simpF = open(simpfile,'w')
 i = 0
 for s in simplified:

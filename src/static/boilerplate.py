@@ -563,6 +563,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
     return test
 
 def freshSimpleVariants(self, name, previous):
+    # Disable for now since redundant, but critical to implement
     return []
     prevNames = map(lambda x:x[0], previous)
     prevNames.reverse()
@@ -677,10 +678,10 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 else:
                     lastRep = rep
             if firstRep == lastRep:
-                print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
+                print "#  or",self.prettyName(firstRep)
             else:
-                print "#  CAN BE REPLACED WITH",self.prettyName(firstRep)
-                print "#               THROUGH",self.prettyName(lastRep)
+                print "#  or",self.prettyName(firstRep)
+                print "#   -",self.prettyName(lastRep)
         if canMakeSimple[i] != []:
             for v in canMakeSimple[i]:
                 print "# SIMPLE VARIANT:"
@@ -696,6 +697,6 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             print
         for (begin,end) in noOrder:
             if i == end:
-                print "#] (steps can be in any order)"
+                print "#] (steps in [] can be in any order)"
 
             

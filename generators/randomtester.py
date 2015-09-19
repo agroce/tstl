@@ -99,7 +99,7 @@ def handle_failure(test, msg, checkFail):
         print "REDUCED IN",time.time()-startReduce,"SECONDS"
         i = 0
         for s in test:
-            print "STEP",i,s[0]
+            print "STEP",i,t.prettyName(s[0])
             i += 1
         if config.essentials:
             print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
@@ -109,7 +109,7 @@ def handle_failure(test, msg, checkFail):
                 print "CAN BE REMOVED:",map(lambda x:x[0], c)
                 i = 0
                 for s in reducec:
-                    print "STEP",i,s[0]
+                    print "STEP",i,t.prettyName(s[0])
                     i += 1
         sys.stdout.flush()
         if config.canonize:

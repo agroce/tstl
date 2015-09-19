@@ -11,20 +11,22 @@ i = 0
 for l in open(file):
     name = l[:-1]
     if name == "<<RESTART>>":
-        print "RESTART"
+        #print "RESTART"
         rout.write("RESTART\n")
         t.restart()
     else:
-        print "STEP",i,name
+        #print "STEP",i,name
         rout.write("STEP " + str(i) + name + "\n")
         action = t.playable(name)
         if action[1](): # check the guard
             stepOk = t.safely(action)
             if not stepOk:
-                print "FAILED STEP"
+                pass
+                #print "FAILED STEP"
         checkResult = t.check()
         if not checkResult:
-            print "FAILED PROPERTY"
+            pass
+            #print "FAILED PROPERTY"
     i += 1
 
 rout.write("TEST REPLAYED SUCCESSFULLY\n")
