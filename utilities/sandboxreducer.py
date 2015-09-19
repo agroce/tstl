@@ -38,13 +38,9 @@ for l in open(infile):
     name = l[:-1]
     test.append(t.playable(name))
 
-t.generalize(test, sandboxReplay)
-    
-sys.exit(0)
-    
 print "REDUCING..."
 
-#reduced = t.reduce(test, sandboxReplay)
+reduced = t.reduce(test, sandboxReplay)
 
 reduceF = open(outfile,'w')
 print "REDUCED:"
@@ -54,10 +50,13 @@ for s in reduced:
     reduceF.write(s[0] + "\n")
 reduceF.close()
 
-#simplified = t.simplify(test, sandboxReplay, distLimit=3)
+simplified = t.simplify(test, sandboxReplay)
 simpF = open(simpfile,'w')
 i = 0
 for s in simplified:
     print "STEP",i,s[0]
     simpF.write(s[0]+"\n")
 simpF.close()
+
+t.generalize(simplified, sandboxReplay)
+    
