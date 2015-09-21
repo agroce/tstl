@@ -4,10 +4,12 @@ def __updateCov(self):
     self.__newCurrBranches = set()
     self.__newCurrStatements = set()
     newCov = self.__cov.get_data()
+    if newCov.measured_files() == None:
+        return
     for src_file in newCov.measured_files():
         thisArcs = newCov.arcs(src_file)
         if thisArcs == None:
-            continue
+            continue # assume if we have arcs we have lines
         for arc in thisArcs:
             branch = (src_file, arc)
             if branch not in self.__allBranches:
@@ -23,10 +25,18 @@ def __updateCov(self):
                 self.__newStatements.add(statement)
             if statement not in self.__currStatements:
                 self.__currStatements.add(branch)
-                self.__newCurrStatements.add(branch)        
+                self.__newCurrStatements.add(branch)
 
 def resetCov(self):
-    self.__cov.collector.erase()
+    self.__cov.erase()
+    self.__allBranches = set()
+    self.__allStatements = set()
+    self.__newBranches = set()
+    self.__newStatements = set()
+    self.__currBranches = set()
+    self.__currStatements = set()
+    self.__newCurrBranches = set()
+    self.__newCurrStatements = set()    
 
 def report(self, filename):
     outf = open(filename,'w')
