@@ -293,6 +293,8 @@ def main():
     if not config.nocover:
         outf.write("import coverage\n")
 
+    outf.write("# BEGIN STANDALONE CODE\n")
+        
     code = []
     import_modules = []             # We will call reload on these during restart
     inside_literal_block = False    # To check whether we are inside raw python code
@@ -389,7 +391,9 @@ def main():
             outf.write(baseIndent + "__pre = {}\n")
         for fl in function_code:
             outf.write(fl)       
-                
+
+    outf.write("# END STANDALONE CODE\n")
+                            
     assert len(code) > 0, 'No non-comment lines found in .tstl file'
 
     # Build up the pool, initialization values
@@ -895,17 +899,23 @@ def main():
         if not config.nocover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__cov.start()\n")
+        genCode.append(baseIndent + baseIndent + "# BEGIN CHECK CODE\n")
+        checkGlobals = []
         for (p, u) in propSet:
             if u != []:
                 pr = baseIndent + baseIndent + "if True"
                 for use in u:
                     pr += " and (" + use + " != None)"
-                pr += ":\n"
+                    if use not in checkGlobals:
+                        genCode.append(baseIndent + baseIndent + "# GLOBAL " + use + "\n")
+                        checkGlobals.append(use)
+                pr += ": # CHECK POOL INIT\n"
                 genCode.append(pr)
                 
                 genCode.append(baseIndent + baseIndent + baseIndent + "assert " + p + "\n")
             else:
                 genCode.append (baseIndent + baseIndent + "assert " + p + "\n")
+        genCode.append(baseIndent + baseIndent + "# END CHECK CODE\n")
         genCode.append(baseIndent + "except:\n")
         genCode.append(baseIndent + baseIndent + "self.__failure = sys.exc_info()\n")
         genCode.append(baseIndent + baseIndent + "return False\n")

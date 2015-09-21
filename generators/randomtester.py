@@ -109,7 +109,7 @@ def handle_failure(test, msg, checkFail):
                 print "CAN BE REMOVED:",map(lambda x:x[0], c)
                 i = 0
                 for s in reducec:
-                    print "STEP",i,t.prettyName(s[0])
+                    print t.prettyName(s[0]),"# STEP",i
                     i += 1
         sys.stdout.flush()
         if config.canonize:
@@ -142,7 +142,7 @@ def handle_failure(test, msg, checkFail):
         t.safely(s)
         i += 1
         if outf != None:
-            outf.write(t.serializeable(s)+"\n")
+            outf.write(t.serializable(s)+"\n")
     sys.stdout.flush()
     if outf != None:
         outf.close()
