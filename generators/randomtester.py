@@ -280,6 +280,14 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
                 sawNew = True
             else:
                 sawNew = False
+            if t.newStatements() != set([]):
+                print "ACTION:",a[0],tryStutter
+                for s in t.newStatements():
+                    print elapsed,len(t.allStatements()),"New statement",s
+                sawNew = True
+            else:
+                sawNew = False                
+                
         
         if elapsed > config.timeout:
             print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)

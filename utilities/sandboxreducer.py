@@ -46,15 +46,15 @@ reduceF = open(outfile,'w')
 print "REDUCED:"
 i = 0
 for s in reduced:
-    print "STEP",i,s[0]
+    print t.prettyName(s[0]),"# STEP",i
     reduceF.write(s[0] + "\n")
 reduceF.close()
 
-simplified = t.simplify(test, sandboxReplay)
+simplified = t.simplify(reduced, sandboxReplay)
 simpF = open(simpfile,'w')
 i = 0
 for s in simplified:
-    print "STEP",i,s[0]
+    print t.prettyName(s[0]),"# STEP",i
     simpF.write(s[0]+"\n")
 simpF.close()
 
