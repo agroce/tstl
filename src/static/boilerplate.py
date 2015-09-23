@@ -19,15 +19,41 @@ def test(self):
     """
     return self.__test
 
+def getOkExceptions(self,name):
+    return self.__okExcepts[name]
+
+def getPreCode(self,name):
+    try:
+        return self.__preCode[name]
+    except:
+        return None
+
+def getRefCode(self,name):
+    try:
+        return self.__refCode[name]
+    except:
+        return None
+
+def getPropCode(self,name):
+    try:
+        return self.__propCode[name]
+    except:
+        return None        
+
+
 def prettyName(self, name):
     newName = name
     for p in self.__pools:
         pfind = newName.find(p)
         while pfind != -1:
             closePos = newName.find("]",pfind)
+            findRef = newName.find("_REF",pfind)
             index = newName[newName.find("[",pfind)+1:closePos]
             access = newName[pfind:newName.find("]",pfind)+1]
-            newAccess = p.replace(self.__poolPrefix,"") + index
+            if (findRef != -1) and (findRef < closePos):
+                newAccess = p.replace(self.__poolPrefix,"") + "_REF" + index                
+            else:
+                newAccess = p.replace(self.__poolPrefix,"") + index
             newName = newName.replace(access, newAccess)
             pfind = newName.find(p)
     return newName

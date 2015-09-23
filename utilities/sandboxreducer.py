@@ -4,8 +4,8 @@ import subprocess
 import time
 
 infile = "fulltest.txt"
-outfile = "reduced.txt"
-simpfile = "simplified.txt"
+outfile = "reduceddist4.txt"
+simpfile = "simplifieddist4.txt"
 
 print "REDUCING",infile,"TO",outfile,"THEN SIMPLIFYING TO",simpfile
 
@@ -50,7 +50,7 @@ for s in reduced:
     reduceF.write(s[0] + "\n")
 reduceF.close()
 
-simplified = t.simplify(reduced, sandboxReplay)
+simplified = t.simplify(reduced, sandboxReplay, distLimit=4)
 simpF = open(simpfile,'w')
 i = 0
 for s in simplified:
@@ -58,5 +58,5 @@ for s in simplified:
     simpF.write(s[0]+"\n")
 simpF.close()
 
-t.generalize(simplified, sandboxReplay)
+t.generalize(simplified, sandboxReplay, distLimit=4)
     
