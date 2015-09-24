@@ -130,6 +130,7 @@ def replay(self, test, catchUncaught = False):
                     pass
             else:
                 act()
+                
         if not self.check():
             return False
     return True
