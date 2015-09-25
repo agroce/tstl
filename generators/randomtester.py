@@ -55,6 +55,8 @@ def parse_args():
                         help="Don't produce a coverage report at the end.")
     parser.add_argument('-c', '--coverfile', type=str, default="coverage.out",
                         help="File to write coverage report to ('coverage.out' default).")
+    parser.add_argument('-q', '--quickTests', action='store_true',
+                        help="Produce quick tests for coverage.")
     parser.add_argument('-H', '--html', type=str, default=None,
                         help="Write HTML report (directory to write to, None default).")
     parsed_args = parser.parse_args(sys.argv[1:])
@@ -73,17 +75,24 @@ def make_config(pargs, parser):
     nt_config = Config(*arg_list)
     return nt_config   
 
-def handle_failure(test, msg, checkFail):
-    global failCount, reduceTime, repeatCount, failures
+def handle_failure(test, msg, checkFail, newCov = False):
+    global failCount, reduceTime, repeatCount, failures, quickCount
 
     sys.stdout.flush()
-    
-    failCount += 1
-    print msg
-    f = t.failure()
-    print "ERROR:",f
-    print "TRACEBACK:"
-    traceback.print_tb(f[2])
+
+    if not newCov:
+        failCount += 1
+        print msg
+        f = t.failure()
+        print "ERROR:",f
+        print "TRACEBACK:"
+        traceback.print_tb(f[2])
+    else:
+        print "Handling new coverage for quick testing"
+        for s in t.newCurrStatements():
+            print "NEW STATEMENT",s
+        for b in t.newCurrBranches():
+            print "NEW BRANCH",b
 
     print "Original test has",len(test),"steps"
     if not config.full:
@@ -91,6 +100,8 @@ def handle_failure(test, msg, checkFail):
             failProp = t.fails
         else:
             failProp = t.failsCheck
+        if newCov:
+            failProp = t.coversAll(t.newCurrStatements(),t.newCurrBranches())
         print "REDUCING..."
         startReduce = time.time()
         original = test
@@ -126,8 +137,11 @@ def handle_failure(test, msg, checkFail):
         reduceTime += time.time()-startReduce
 
     i = 0
-    if config.output != None:
+    if (config.output != None) or (config.quickTests):
         outname = config.output
+        if config.quickTests:
+            outname = "quicktest." + str(quickCount)
+            quickCount += 1
         if config.multiple:
             outname += ("." + str(failCount))
         outf = open(outname,'w')
@@ -165,6 +179,7 @@ start = time.time()
 elapsed = time.time()-start
 
 failCount = 0
+quickCount = 0
 repeatCount = 0
 failures = []
 
@@ -287,13 +302,16 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
                 sawNew = True
             else:
                 sawNew = False                
-                
-        
+
         if elapsed > config.timeout:
             print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
+        
     if config.replayable:
         currtest.close()
+    if config.quickTests:
+        if (t.newCurrBranches() != set([])) or (t.newCurrStatements() != set([])):
+            handle_failure(test, "NEW COVERAGE", False, newCov=True)
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:
@@ -304,6 +322,7 @@ if config.total:
     fulltest.close()
     
 if not config.nocover:
+    t.restart()
     print t.report(config.coverfile),"PERCENT COVERED"
 
     if config.html:

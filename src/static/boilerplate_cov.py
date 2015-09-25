@@ -1,8 +1,6 @@
 def __updateCov(self):
     self.__newBranches = set()
     self.__newStatements = set()
-    self.__newCurrBranches = set()
-    self.__newCurrStatements = set()
     newCov = self.__cov.get_data()
     if newCov.measured_files() == None:
         return
@@ -15,18 +13,31 @@ def __updateCov(self):
             if branch not in self.__allBranches:
                 self.__allBranches.add(branch)
                 self.__newBranches.add(branch)
+                self.__newCurrBranches.add(branch)
             if branch not in self.__currBranches:
                 self.__currBranches.add(branch)
-                self.__newCurrBranches.add(branch)
         for line in newCov.lines(src_file):
             statement = (src_file, line)
             if statement not in self.__allStatements:
                 self.__allStatements.add(statement)
                 self.__newStatements.add(statement)
+                self.__newCurrStatements.add(statement)
             if statement not in self.__currStatements:
-                self.__currStatements.add(branch)
-                self.__newCurrStatements.add(branch)
+                self.__currStatements.add(statement)
 
+def cleanCov(self):
+    if self.__oldCovData != None:
+        self.__oldCovData.update(self.__cov.get_data())
+    else:
+        self.__oldCovData = self.__cov.get_data()
+    self.__cov.erase()
+    self.__newBranches = set()
+    self.__newStatements = set()
+    self.__currBranches = set()
+    self.__currStatements = set()
+    self.__newCurrBranches = set()
+    self.__newCurrStatements = set()    
+                    
 def resetCov(self):
     self.__cov.erase()
     self.__allBranches = set()
@@ -98,15 +109,32 @@ def coversBranches(self, branches, catchUncaught=False):
         return True
     return coverPred
 
-def coversStatements(self, statements, catchUnCaught=False):
+def coversStatements(self, statements, catchUncaught=False):
     def coverPred(test):
         try:
-            self.replay(test, catchUnCaught)
+            self.replay(test, catchUncaught)
         except:
             pass
         cs = self.currStatements()
         for s in statements:
             if s not in cs:
+                return False
+        return True
+    return coverPred
+
+def coversAll(self, statements, branches, catchUncaught=False):
+    def coverPred(test):
+        try:
+            self.replay(test, catchUncaught)
+        except:
+            pass
+        cs = self.currStatements()
+        for s in statements:
+            if s not in cs:
+                return False
+        cb = self.currBranches()
+        for b in branches:
+            if b not in cb:
                 return False
         return True
     return coverPred

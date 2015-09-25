@@ -20,6 +20,7 @@ import pkg_resources
 config = None
 poolSet = {}
 initSet = []
+firstInit = True
 baseIndent = ""
 poolPrefix = None
 genCode = None
@@ -232,6 +233,7 @@ def genInitialization():
     """
     Generate initialization from configuration, poolSet
     """
+    global firstInit
     genCode.append(baseIndent + "self.__test = []\n")
     genCode.append(baseIndent + "self.__pools = []\n")
     for p in poolSet:
@@ -253,10 +255,15 @@ def genInitialization():
             genCode.append(s + "\n")
     if (not config.nocover) and config.coverinit:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
+    if firstInit:
+        genCode.append("# BEGIN INITIALIZATION CODE\n")
     for i in initSet:
         s = baseIndent
         s += i
         genCode.append(s)
+    if firstInit:
+        genCode.append("# END INITIALIZATION CODE\n")
+        firstInit = False    
     if (not config.nocover) and config.coverinit:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
@@ -264,12 +271,13 @@ def genInitialization():
 
 def main():
 
-    global config;
-    global poolSet;
-    global initSet;
-    global baseIndent;
-    global poolPrefix;
-    global genCode;
+    global config
+    global poolSet
+    global initSet
+    global firstInit
+    global baseIndent
+    global poolPrefix
+    global genCode
 
     baseIndent = "    "
     
@@ -346,6 +354,7 @@ def main():
                     if function_code != []:
                         if anyPRE:
                             outf.write(baseIndent + "__pre = {}\n")
+                            
                         for fl in function_code:
                             outf.write(fl)                    
                     # guarded function, append the speculation argument and continue
@@ -403,6 +412,7 @@ def main():
     sourceSet = []
 
     initSet = []
+    firstInit = True
     propSet = []
     refSet = []
     compareSet = []
@@ -622,7 +632,7 @@ def main():
         if newC.find(" => ") > -1:
             postCodeSplit = newC.split(" => ")
             newC = postCodeSplit[0] + "\n"
-            postCode = postCodeSplit[1].rstrip('\n')        
+            postCode = postCodeSplit[1].rstrip('\n')
 
         preSet = []
         if postCode:
@@ -679,6 +689,7 @@ def main():
         if preSet != []:
             for p in preSet:
                 genCode.append(baseIndent + p)
+                
         if not config.nocover:
             genCode.append(baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + "self.__cov.start()\n")
@@ -747,7 +758,29 @@ def main():
         nind += 1
         d = "self.__orderings[" + "'''" + newC[:-1] + " '''] = " + str(nind) + "\n"
         actDefs.append(d)
+        d = "self.__okExcepts[" + "'''" + newC[:-1] + " '''] = '''" + okExcepts + "'''\n"
+        actDefs.append(d)
 
+        if refC != newC:
+            d = "self.__refCode[" + "'''" + newC[:-1] + " '''] = []\n"
+            actDefs.append(d)
+            d = "self.__refCode[" + "'''" + newC[:-1] + " '''].append(r\"" + refC[:-1] + "\")\n"
+            actDefs.append(d)
+            if comparing:
+                d = "self.__refCode[" + "'''" + newC[:-1] + " '''].append(\"assert __result == __result_REF, \\\" (%s) == (%s) \\\" % (__result, __result_REF)\\n\")\n"
+                actDefs.append(d)
+            
+        
+        if postCode:
+            d = "self.__propCode[" + "'''" + newC[:-1] + " '''] = r\"" + postCode + "\"\n"
+            actDefs.append(d)
+        
+        if preSet != []:
+            d = "self.__preCode[" + "'''" + newC[:-1] + " '''] = []\n"
+            actDefs.append(d)
+            for p in preSet:
+                d = "self.__preCode[" + "'''" + newC[:-1] + " '''].append(r\"" + p[:-1] + "\")\n"
+                actDefs.append(d)
 
     # ------------------------------------------ #
     genCode.append("def __init__(self):\n")
@@ -782,12 +815,17 @@ def main():
         genCode.append(baseIndent + "self.__currStatements = set()\n")
         genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
+        genCode.append(baseIndent + "self.__oldCovData = None\n")
     genInitialization()
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")
     genCode.append(baseIndent + 'self.__poolPrefix = "' + poolPrefix + '"\n')
     genCode.append(baseIndent + 'self.__names["<<RESTART>>"] = ("<<RESTART>>", lambda x: True, lambda x: self.restart())\n')
     genCode.append(baseIndent + "self.__orderings = {}\n")
+    genCode.append(baseIndent + "self.__okExcepts = {}\n")
+    genCode.append(baseIndent + "self.__preCode = {}\n")
+    genCode.append(baseIndent + "self.__refCode = {}\n")
+    genCode.append(baseIndent + "self.__propCode = {}\n")
     genCode.append(baseIndent + 'self.__orderings["<<RESTART>>"] = -1\n')
     genCode.append(baseIndent + "self.__failure = None\n")
     genCode.append(baseIndent + "self.__log = None\n")
@@ -804,15 +842,18 @@ def main():
     genCode.append(baseIndent + "except:\n")
     genCode.append(baseIndent + baseIndent + "pass\n")    
     if not config.nocover:
-        genCode.append(baseIndent + "self.__currBranches = set()\n")
-        genCode.append(baseIndent + "self.__currStatements = set()\n")
-        genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
-        genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
+        genCode.append(baseIndent + "self.cleanCov()\n")
+        #genCode.append(baseIndent + "self.__currBranches = set()\n")
+        #genCode.append(baseIndent + "self.__currStatements = set()\n")
+        #genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
+        #genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
         if config.coverreload:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
+    genCode.append("# BEGIN RELOAD CODE\n")
     for l in import_modules:
         s = baseIndent + 'reload({})\n'.format(l)
         genCode.append(s)
+    genCode.append("# END RELOAD CODE\n")        
     if (not config.nocover) and config.coverreload:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
