@@ -2,6 +2,12 @@ def __updateCov(self):
     self.__newBranches = set()
     self.__newStatements = set()
     newCov = self.__cov.get_data()
+    if self.__oldCovData == None:
+        self.__oldCovData = newCov
+    else:
+        self.__oldCovData.write_file("bug_report.coverage")
+        self.__oldCovData.update(newCov)
+            
     if newCov.measured_files() == None:
         return
     for src_file in newCov.measured_files():
@@ -26,10 +32,6 @@ def __updateCov(self):
                 self.__currStatements.add(statement)
 
 def cleanCov(self):
-    if self.__oldCovData != None:
-        self.__oldCovData.update(self.__cov.get_data())
-    else:
-        self.__oldCovData = self.__cov.get_data()
     self.__cov.erase()
     self.__newBranches = set()
     self.__newStatements = set()
@@ -50,6 +52,8 @@ def resetCov(self):
     self.__newCurrStatements = set()    
 
 def report(self, filename):
+    self.__oldCovData.write_file(filename)
+    self.__cov.combine([filename])
     outf = open(filename,'w')
     r = -1
     try:
@@ -59,6 +63,8 @@ def report(self, filename):
         return r
 
 def htmlReport(self, dir):
+    self.__oldCovData.write_file(dir + "/.tmpcov")
+    self.__cov.combine([dir + "/.tmpcov"])    
     r = -1
     try:
         r = self.__cov.html_report(morfs=self.__modules, directory=dir,

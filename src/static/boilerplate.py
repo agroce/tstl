@@ -589,16 +589,31 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
         self.__simplifyCache[t] = test    
     return test
 
-def freshSimpleVariants(self, name, previous):
-    # Disable for now since redundant, but critical to implement
-    return []
+def freshSimpleVariants(self, name, previous, replacements):
     prevNames = map(lambda x:x[0], previous)
     prevNames.reverse()
     lastAppear = []
     for p in self.__pools:
+        i = len(prevNames)
         for n in prevNames:
-            if p in n:
+            i -= 1
+            foundAny = False
+            if n.find("=") == -1:
+                neq = ""
+            else:
+                neq = n[0:n.find("=")]
+            if p in neq:
                 lastAppear.append(n)
+                foundAny = True
+            for r in replacements[i]:
+                if r.find("=") == -1:
+                    req = ""
+                else:
+                    req = r[0:n.find("=")]
+                if p in req:
+                    lastAppear.append(r)
+                    foundAny = True
+            if foundAny:
                 break
     eqFind = name.find("=")
     if eqFind != -1:
@@ -652,7 +667,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             if pred(testC):
                 canSwap[i].append(j)
                 canSwap[j].append(i)
-        for v in self.freshSimpleVariants(test[i][0],test[:i]):
+        for v in self.freshSimpleVariants(test[i][0],test[:i],canReplace):
             testC = test[:i] + v + test[i+1:]
             if pred(testC):
                 canMakeSimple[i].append(v)
