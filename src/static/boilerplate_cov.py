@@ -4,10 +4,12 @@ def __updateCov(self):
     newCov = self.__cov.get_data()
     if self.__oldCovData == None:
         self.__oldCovData = newCov
-    else:
-        self.__oldCovData.write_file("bug_report.coverage")
-        self.__oldCovData.update(newCov)
-            
+    if False:
+        if self.__oldCovData == None:
+            self.__oldCovData = newCov
+        else:
+    #        self.__oldCovData.write_file("bug_report.coverage")
+            self.__oldCovData.update(newCov)
     if newCov.measured_files() == None:
         return
     for src_file in newCov.measured_files():

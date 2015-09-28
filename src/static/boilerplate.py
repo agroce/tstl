@@ -590,37 +590,42 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
     return test
 
 def freshSimpleVariants(self, name, previous, replacements):
+#    print "FINDING FRESH SIMPLES FOR",name
     prevNames = map(lambda x:x[0], previous)
     prevNames.reverse()
     lastAppear = []
-    for p in self.__pools:
-        i = len(prevNames)
-        for n in prevNames:
-            i -= 1
-            foundAny = False
-            if n.find("=") == -1:
-                neq = ""
-            else:
-                neq = n[0:n.find("=")]
-            if p in neq:
-                lastAppear.append(n)
-                foundAny = True
-            for r in replacements[i]:
-                if r.find("=") == -1:
-                    req = ""
-                else:
-                    req = r[0:n.find("=")]
-                if p in req:
-                    lastAppear.append(r)
-                    foundAny = True
-            if foundAny:
-                break
     eqFind = name.find("=")
     if eqFind != -1:
         poolAssign = name[0:eqFind-1]
     else:
         poolAssign = None
     pools = self.poolUses(name)
+    lastAppearMap = {}
+    for (p,i) in pools:
+        for n in prevNames:
+            if n.find(p + " = ") == -1:
+                continue
+            lastAppearMap[p] = [n]
+            break
+        skeys = replacements.keys()
+        skeys = filter(lambda x: x < len(previous), skeys)
+        skeys = sorted(skeys, reverse = True)
+        for i in skeys:
+#            print "i = ",i
+            foundAny = False
+            for r in replacements[i]:
+                if r.find(p + " = ") == -1:
+                    continue
+                foundAny = True
+                if p in lastAppearMap:
+                    lastAppearMap[p].append(r)
+                else:
+                    lastAppearMap[p] = [r]
+            if foundAny:
+                break
+    for n in lastAppearMap:
+        lastAppear.extend(lastAppearMap[n])
+#    print "LAST APPEAR = ",lastAppear
     freshSimples = []
     for (p,i) in pools:
         if p == poolAssign:
@@ -726,9 +731,11 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 print "#   -",self.prettyName(lastRep)
         if canMakeSimple[i] != []:
             for v in canMakeSimple[i]:
-                print "# SIMPLE VARIANT:"
-                for s in v:
-                    print "# --> ",self.prettyName(s[0])
+                print "#  or ("
+                for s in v[:-1]:
+                    print "#     ",self.prettyName(s[0]),";"
+                print "#     ",self.prettyName(v[-1][0])
+                print "#     )"
         if canSwap[i] != []:
             if len(canSwap[i]) == 1:
                 print "#  swaps with step",
