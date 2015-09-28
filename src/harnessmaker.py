@@ -236,6 +236,7 @@ def genInitialization():
     global firstInit
     genCode.append(baseIndent + "self.__test = []\n")
     genCode.append(baseIndent + "self.__pools = []\n")
+    genCode.append(baseIndent + "self.__consts = []\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%","") + " = {}"
@@ -246,6 +247,10 @@ def genInitialization():
         s = baseIndent
         s += 'self.__pools.append("' + poolPrefix + p.replace("%","") + '")'
         genCode.append(s + "\n")
+        if p in constSet:
+            s = baseIndent
+            s += 'self.__consts.append("' + poolPrefix + p.replace("%","") + '")'
+            genCode.append(s + "\n")            
         for x in xrange(0,poolSet[p]+1):
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "[" + str(x) + "] = None"
@@ -274,6 +279,7 @@ def main():
     global config
     global poolSet
     global initSet
+    global constSet
     global firstInit
     global baseIndent
     global poolPrefix
@@ -415,6 +421,7 @@ def main():
     firstInit = True
     propSet = []
     refSet = []
+    constSet = []
     compareSet = []
     featureSet = []
     logSet = []
@@ -437,6 +444,8 @@ def main():
             if (len(cs)>3) and (cs[3] == "REF"):
                 refSet.append(cs[1])
                 poolSet[cs[1]+"_REF"] = int(cs[2])
+            if (len(cs)>3) and ("CONST" in cs):
+                constSet.append(cs[1])
         elif cs[0] == "reference:":
             baseRefSplit = c.split("reference: ")[1]
             rs = baseRefSplit.split(" ==> ")

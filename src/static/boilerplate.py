@@ -603,8 +603,9 @@ def freshSimpleVariants(self, name, previous, replacements):
     lastAppearMap = {}
     for (p,i) in pools:
         for n in prevNames:
-            if n.find(p + " = ") == -1:
-                continue
+            if p[0:p.find("[")] in self.__consts:
+                if n.find(p + " = ") == -1:
+                    continue
             lastAppearMap[p] = [n]
             break
         skeys = replacements.keys()
@@ -614,8 +615,9 @@ def freshSimpleVariants(self, name, previous, replacements):
 #            print "i = ",i
             foundAny = False
             for r in replacements[i]:
-                if r.find(p + " = ") == -1:
-                    continue
+                if p[0:p.find("[")] in self.__consts:
+                    if r.find(p + " = ") == -1:
+                        continue
                 foundAny = True
                 if p in lastAppearMap:
                     lastAppearMap[p].append(r)
@@ -637,6 +639,7 @@ def freshSimpleVariants(self, name, previous, replacements):
                 uses = self.poolUses(n[n.find("=")+1:])
                 if uses == []:
                     freshSimples.append([self.__names[n],self.__names[name]])
+    freshSimples = sorted(freshSimples,key = lambda x:self.__orderings[x[0][0]])
     return freshSimples
 
 def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
