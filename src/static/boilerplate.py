@@ -661,8 +661,6 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
         canMakeSimple[i] = []
         for a in enableChange[i]:
             if (distLimit != None) and (self.levDist(a, test[i][0]) > distLimit):
-                if verbose:
-                        print "SKIPPING",a,test[i][0],"DUE TO LIMIT"
                 continue
             if a != test[i][0]:
                 testC = test[:i] + [self.__names[a]] + test[i+1:]
