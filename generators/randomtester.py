@@ -152,7 +152,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
     print
     print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
     for s in test:
-        print "STEP",i,s[0]
+        print t.prettyName(s[0]), "  # STEP",i
         t.safely(s)
         i += 1
         if outf != None:
