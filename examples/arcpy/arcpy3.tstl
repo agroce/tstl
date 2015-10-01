@@ -5,31 +5,36 @@
 
 <@
 def cleanupFiles():
+    print "CLEANING UP"
     # First get rid of modified files
     for f in glob.glob("C:\\Arctmp\\*"):
         try:
-            arcpy.Delete_management(f)
+            shutil.rmtree(f)
         except:
             print "UNABLE TO REMOVE:",f
     # Now remove the old directory
-    try:
-        shutil.rmtree("C:\\Arctmp")
-    except:
-        pass
+    for i in xrange(0,1000000):
+        new_workspace = "C:\\Arctmp\\workspace." + str(i)
+        if not os.path.exists(new_workspace):
+            break             
+    print "NEW WORKSPACE IS",new_workspace
     # Now move in fresh copies
-    shutil.copytree("C:\\Arcbase","C:\\Arctmp")
-    for f in glob.glob("C:\\Arctmp\Arcbase\\*"):
-        shutil.move(f, "C:\\Arctmp")
+    shutil.copytree("C:\\Arcbase",new_workspace)
+    arcpy.env.workspace = new_workspace
 
 def fcsInGdb(gdb):
+    old_workspace = arcpy.env.workspace
     arcpy.env.workspace = gdb
     fcs = []
     for fds in arcpy.ListDatasets('','feature') + ['']:
         for fc in arcpy.ListFeatureClasses('','',fds):
-            fcs.append(os.path.join(fds,fc))
+            fcs.append(os.path.join(gdb,fds,fc))
+    arcpy.env.workspace = old_workspace
     return fcs
 
 def report():
+    return
+    print arcpy.env.workspace
     print arcpy.GetMessages()
 @>
 
@@ -87,25 +92,25 @@ init: cleanupFiles()
 
 log: 1 arcpy.GetMessages()
 
-#<layerfilelist> := glob.glob("C:\\Arctmp\\*.lyr")
+#<layerfilelist> := glob.glob(arcpy.env.workspace + "\\*.lyr")
 #len(<layerfilelist,1>) >= 1 -> <layerfile> := <layerfilelist> [0]
 #<layerfilelist> = <layerfilelist> [1:]
 
-<gdbfilelist> := glob.glob("C:\\Arctmp\\*.gdb")
+<gdbfilelist> := glob.glob(arcpy.env.workspace + "\\*.gdb")
 len(<gdbfilelist,1>) >= 1 -> <gdbfile> := <gdbfilelist> [0]
 <gdbfilelist> = <gdbfilelist> [1:]
 
-<shapefilelist> := glob.glob("C:\\Arctmp\\*.shp")
+<shapefilelist> := glob.glob(arcpy.env.workspace + "\\*.shp")
 len(<shapefilelist,1>) >= 1 -> <shapefile> := <shapefilelist> [0]
 <shapefilelist> = <shapefilelist> [1:]
 
-<layerfile> := "C:\\arctmp\\new1.lyr"
-<layerfile> := "C:\\arctmp\\new2.lyr"
-<layerfile> := "C:\\arctmp\\new3.lyr"
+<layerfile> := arcpy.env.workspace + "\\new1.lyr"
+<layerfile> := arcpy.env.workspace + "\\new2.lyr"
+<layerfile> := arcpy.env.workspace + "\\new3.lyr"
 
-<shapefile> := "C:\\arctmp\\new1.shp"
-<shapefile> := "C:\\arctmp\\new2.shp"
-<shapefile> := "C:\\arctmp\\new3.shp"
+<shapefile> := arcpy.env.workspace + "\\new1.shp"
+<shapefile> := arcpy.env.workspace + "\\new2.shp"
+<shapefile> := arcpy.env.workspace + "\\new3.shp"
 
 <prjfilelist> := glob.glob("C:\\Program Files (x86)\\ArcGIS\\Desktop10.3\\Reference Systems\\*.prj")
 len(<prjfilelist,1>) >= 1 -> <prjfile> := <prjfilelist> [0]
@@ -191,7 +196,7 @@ len(<gdbfeatureclasslist,1>) >= 1 -> <featureclass> := <gdbfeatureclasslist>[0]
 <val> := "100"
 <val> := "1000"
 
-<table> := "C:\\arctmp\\geomerr.dbf"
+<table> := arcpy.env.workspace + "\\geomerr.dbf"
 
 {IOError} <fieldlist> := arcpy.ListFields(<featureclass>)
 len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
@@ -242,7 +247,7 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 
 {arcpy.ExecuteError} arcpy.CheckGeometry_management(<featureclass>,~<table>); report()
 
-print arcpy.GetMessages(); report()
+#print arcpy.GetMessages(); report()
 
 #{arcpy.ExecuteError} arcpy.Delete_management(<featureclass>); report()
 
