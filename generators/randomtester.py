@@ -89,11 +89,29 @@ def handle_failure(test, msg, checkFail, newCov = False):
         traceback.print_tb(f[2])
     else:
         print "Handling new coverage for quick testing"
-        for s in t.newCurrStatements():
+        snew = t.newCurrStatements()
+        for s in snew:
             print "NEW STATEMENT",s
-        for b in t.newCurrBranches():
+        bnew = t.newCurrBranches()
+        for b in bnew:
             print "NEW BRANCH",b
-
+        trep = t.replay(test)
+        sremove = []
+        scov = t.currStatements()
+        for s in snew:
+            if s not in scov:
+                print "REMOVING",s
+                sremove.append(s)
+        for s in sremove:
+            snew.remove(s)
+        bremove = []
+        bcov = t.currBranches()
+        for b in bnew:
+            if b not in bcov:
+                print "REMOVING",b
+                bremove.append(b)
+        for b in bremove:
+            bnew.remove(b)
     print "Original test has",len(test),"steps"
     if not config.full:
         if not checkFail:
@@ -101,7 +119,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         else:
             failProp = t.failsCheck
         if newCov:
-            failProp = t.coversAll(t.newCurrStatements(),t.newCurrBranches())
+            failProp = t.coversAll(snew,bnew)
         print "REDUCING..."
         startReduce = time.time()
         original = test
@@ -152,7 +170,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
     print
     print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
     for s in test:
-        print t.prettyName(s[0]), "  # STEP",i
+        print t.prettyName(s[0]),"  # STEP",i
         t.safely(s)
         i += 1
         if outf != None:
