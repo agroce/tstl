@@ -112,6 +112,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
                 bremove.append(b)
         for b in bremove:
             bnew.remove(b)
+        beforeReduceS = set(t.allStatements())
+        beforeReduceB = set(t.allBranches())
     print "Original test has",len(test),"steps"
     if not config.full:
         if not checkFail:
@@ -158,6 +160,12 @@ def handle_failure(test, msg, checkFail, newCov = False):
     if (config.output != None) or (config.quickTests):
         outname = config.output
         if config.quickTests:
+            for s in t.allStatements():
+                if s not in beforeReduceS:
+                    print "NEW STATEMENT FROM REDUCTION",s
+            for b in t.allBranches():
+                if b not in beforeReduceB:
+                    print "NEW BRANCH FROM REDUCTION",b
             outname = "quicktest." + str(quickCount)
             quickCount += 1
         if config.multiple:
