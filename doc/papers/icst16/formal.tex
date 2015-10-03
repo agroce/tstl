@@ -1,0 +1,280 @@
+\section{A Brief Introduction to TSTL}
+
+\begin{figure}
+{\scriptsize
+\begin{code}
+@import avl
+
+pool: <int> 4 CONST
+pool: <avl> 3
+
+property: <avl>.check\_balanced()
+
+<int> := <[1..20]>
+<avl> := avl.AVLTree()
+
+<avl>.insert(<int>)
+<avl>.delete(<int>)
+<avl>.find(<int>)
+<avl>.inorder()
+\end{code}
+}
+\caption{Part of a TSTL definition of AVL tree tests}
+\label{fig:example}
+\end{figure}
+
+\begin{figure}
+{\scriptsize
+\begin{code}
+avl1 = avl.AVLTree()  
+int3 = 10  
+int1 = 11  
+avl1.insert(int1) 
+int1 = 1  
+avl1.insert(int3) 
+avl1.insert(int1) 
+int3 = 9  
+avl1.insert(int3) 
+int2 = 11  
+avl1.delete(int2) 
+\end{code}
+}
+\caption{An example TSTL-produced test}
+\label{fig:avlrun}
+\end{figure}
+
+TSTL \cite{NFM15,ISSTA15} is a language for defining the structure of
+test cases, and a set of tools for use in generating, manipulating,
+and understanding those test cases.  Figure \ref{fig:example} shows a
+simplified portion of a TSTL definition of tests of an AVL tree class,
+in the latest syntax for TSTL (which differs slightly from that in the
+cited papers introducing TSTL).  TSTL provides numerous features not
+shown in this small example, including automatic differential testing,
+complex logging, support for complex guards, and use of pre- and post-
+values.  Given a harness like the one in Figure \ref{fig:example},
+TSTL compiles it into a class file defining an interface for testing
+that provides features such as querying the set of available testing
+actions, restarting a test, replaying a test, collecting code coverage
+data, and so forth.  The TSTL release
+(\url{https://github.com/agroce/tstl}) also provides some testing
+tools that make use of this interface to generate tests and provide
+other debugging capabilities.
+
+The key point for our purposes is merely that a TSTL test harness
+defines a set of \emph{pools} that hold values produced and used
+during testing \cite{AndrewsTR} (a common approach to defining
+API-testing sequences) and a set of actions that are possible during
+testing, typically API calls and assignments to pool values.  In this
+example, there are two pools, one named {\tt int} and one named {\tt
+  avl}.  There are four instances of the {\tt int} pool, which means
+that a test in progress can store up to 4 {\tt int}s at one time (in
+variables named {\tt int0}, {\tt int1}, {\tt int2}, and {\tt int3}), and three
+instances of the {\tt avl} pool.  The actions defined here are setting
+the value of an {\tt int} pool to any integer in the range 1-20
+inclusive, setting the value of an {\tt avl} pool to a newly
+constructed AVL tree, and calling an AVL tree's {\tt insert}, {\tt
+  delete}, {\tt find} and {\tt inorder} methods.  Figure \ref{fig:avlrun}
+shows a valid test case produced by running a random test generator on
+the TSTL-compiled interface produced by this definition.  TSTL handles
+ensuring that tests are well-formed: for example, no pool instance
+(such as {\tt avl1} can appear in an action until it has been assigned
+a value), and no pool instance that has been assigned a value can be
+assigned a different value until it has been used in an action, to
+avoid degenerate sequences such as {\tt int3 = 10} followed by {\tt
+  int3 = 4}.  Each action in a test case is called a ``step'' --- the
+first step of the example test is storing a new AVL tree in {\tt
+  avl1}, for example.
+
+The definition of pools and actions in TSTL defines a \emph{total
+  order} on all actions.  First, actions are ordered by their position
+in the definition file.  All {\tt insert} actions are therefore before
+all {\tt delete} actions, and all {\tt delete} actions are before find
+actions.  Of course, one line of TSTL defines many actions, because of
+the choices for pools.  For example, the line {\tt
+  <avl>.insert(<int>)} defines 12 actions, one for each choice of {\tt
+  avl} and {\tt int} pool instance.  These are ordered lexically, in
+the obvious way ({\tt avl0} preceeds {\tt avl1}, etc.).  Value ranges
+such as in the {\tt int} initialization, are also ordered in the
+natural way, with lower values first.  Given this total order, each
+action can be assigned a unique index, from 0 up to 1 less than the
+total number of actions. Initially, this ordering (and
+numbering) for each action was intended to allow for a kind of
+Goedel-numbering of tests, for proving certain mathematical properties
+\cite{AndrewsTR}.  However, it also allows us to concisely define a
+practical method for normalizing and generalizing test cases.
+
+
+
+\section{Normalization Algorithm}
+
+A test-case normalization algorithm has a simple goal:  we ideally aim to
+produce a function $f : t \rightarrow t$ (a function that takes a test
+case and returns a test case) such that:
+
+\begin{enumerate}
+\item If $t$ fails, $f(t)$ fails.
+\item If $t$ and $t'$ fail due to the same fault, $f(t) = f(t')$.
+\item If $t$ and $t'$ fail due to different faults, $f(t) \not=
+  f(t')$.
+\end{enumerate}
+
+Such a function would define a true \emph{canonical form} for test cases, where
+each underlying fault is uniquely represented by a single test case.
+In general, it seems clear that defining such an $f$ is (at least) as
+difficult as automatic fault localization and repair.  Therefore, we
+aim at approximating the goal, by providing a set of simple
+transformations such that $f$ reduces many tests to the same test, has
+low probability of reducing two tests failing for different reasons
+into the same test, and $f$ is not unreasonably expensive to compute.
+The implementation for $f$ (in fact, for a family of $f$-approximating
+functions, with different tradeoffs in runtime and level of
+normalization) involves defining a set of rewrite rules such that for a
+test $b$ (the base test), the rules define a finite set of candidate
+tests $c \in C(b)$, possible simplifications of $b$, where each $c$ is
+the result of applying some rewrite, $r_i$ to $b$.  The notion of
+simplicity is defined by a restriction on the rewriting rules.  For
+any test case $t$, let $R(t)$ be the length of the maximum number of
+rewrites that can be applied to $t$, e.g., the longest possible
+sequence such that $c_0 = r_{i1}(t), c_1 = r_{i2}(c_0), ... c_n = r_{in}(c_{n-1})$. We
+require that $\forall c \in C(b), R(c) < R(b)$.  The number of possible
+rewrites for each candidate must be smaller than the number of
+possible rewrites for $b$.  This implies further restrictons, e.g., no
+rewriting can ever reverse another rewrite's effects.  Such a rewrite
+system is \emph{strongly normalizing}:  any sequence of rewrites
+chosen will eventually end in a term (test case) that cannot be
+further rewritten.
+
+In the setting of TSTL, where test actions and have a defined total
+order, a simple principle can be applied to produce strongly
+normalizing rewrite rules: rewrites should reduce the sum of the
+indices of the actions in the test case.  This approach
+provides effective normaliization at a significant, but not
+unreasonable, computational cost.
+
+In order to formally define normalization, some additional notation is required.
+A \emph{step} is an action paired with an index indicating its position in a text,
+where the first action is step 0, etc., e.g.: $(2: a)$ indicates the
+third step of the test is action $a$ (indexing is from 0). 
+$\Delta(t,t')$ is the set of all steps in $t$ such that $t(i) \not= t'(i)$.
+
+We use the $<$ operator over various types:
+$a < b$ iff the index of action $a$ is lower
+than that of action $b$.  We compare steps with $<$ by comparing their
+actions --- $(i,a) < (j,b)$ iff $a < b$.  For a set or sequence of actions or steps, we define the $min$ of the
+set to be the lowest indexed action in the set, and use
+these to compare sets:  $s_1 < s_2$ iff $min(s_1) < min(s_2)$. For pools,
+$p < p'$ if and only if $p$'s index is lower than the index for $p'$
+\emph{and} $p$ and $p'$ are from the same pool.
+
+The rewrite $t[x \Rightarrow y]$ denotes the test t with all instances of $x$
+replaced by $y$.  Here, $x$ and $y$ can be actions, steps, or pools.
+$t[x \Leftrightarrow y]$ is similar, except that $x$ and $y$ are
+swapped.  Rewrite $t(i,j)[x \Rightarrow y]$ is the same as $t[x \Rightarrow
+y]$, except that the replacement is only applied between steps $i$ and
+$j$, inclusive.  Finally, $t_i(x)$ denotes $t$ with all steps
+containing $x$ that are before step $i$ moved to step $i$, preserving
+their previous order, and moving steps at $i$ and after $i$ to make room.
+
+\begin{enumerate}
+\item {\bf SimplifyAll:}
+$c = b[a \Rightarrow a']$\\
+\-\ \ \ \emph{where} $a' < a$\\
+Covers the case where all appearances of an action can be replaced with a 
+simpler (lower-indexed) action. 
+\item {\bf ReplacePool:}
+$c = b(i,j)[p \Rightarrow p']$\\ 
+\-\ \ \ \emph{where} $p < p'$ and $0 \leq i < j <
+|b|$\\
+Covers the case when all appearances of an instance of a pool can be replaced with 
+a lower-indexed instance of that pool (with possible restriction to a range of steps).
+\item {\bf ReplaceMovePool:}
+$c = b_{\rightarrow i}(p')[p \Rightarrow p']$\\
+\-\ \ \ \emph{where} $p < p'$ and $0
+\leq i < |b|$\\
+Covers the case when all appearances of an instance of a pool can be replaced with
+a lower-indexed instance of that pool, if all assignments to the new instance before a
+certain step are moved to that step.
+\item {\bf SimplifySingle:}
+$c = b[(i: a) \Rightarrow (i: a')]$\\
+\-\ \ \ \emph{where} $a' < a$\\
+Covers the case where one action can be replaced with a 
+simpler (lower-indexed) action. 
+\item {\bf SwapPool:}
+$c = b(i,j)[p \Leftrightarrow p']$\\
+\-\ \ \ \emph{where} $\Delta(c,b) < \Delta(b,c)$\\
+\-\ \ \ and $0 \leq i < j < |b|$\\
+\-\ \ \ and $p < p'$\\
+Covers the case where swapping two pool instances (within a range of steps) reduces
+the minimal action index of the modified steps.
+\item {\bf SwapAction:}
+$c = b[(i: a) \Rightarrow (i: b), (j: b) \Rightarrow (j: a)]$\\
+\-\ \ \ \emph{where} $i < j$ and
+$b < a$\\
+Covers the case where two actions can be swapped in the test, with the
+lower-indexed action now appearing earlier.
+\item {\bf ReduceAction:}
+$c = b[(i: a) \Rightarrow (i: a')]$\\
+\-\ \ \ \emph{where} $|ddmin(c)| < |ddmin(b)|$\\
+Covers the case where an action can be replaced by any action (not just lower-indexed
+actions) and this enables further delta-debugging-based reduction of
+the test case's length.
+\end{enumerate}
+
+These rules alone do not determine a complete normalization method; it is
+also required to determine an order in which they are applied.  The
+order in our default implementation is the order above, with the
+modification that in practice the {\bf ReplacePool} and {\bf
+  ReplaceMovePool} rewrites are both performed at once, interleaved
+(e.g., for every possible replacement of a pool, both rules are
+checked, in the order given above).  The core algorithm, given a set
+of ordered rewrite rules defining $C(b)$ is given as Algorithm
+\ref{simpalg}.  Here {\tt pred} is an arbitrary predicate indicating
+that the candidate test still satisfies the property of interest that
+held for the original test $b$.  In most cases, this predicate will be
+``the test fails'' but we also have preserve
+code coverage in regression suites \cite{icst2014}.
+
+\begin{algorithm}
+\caption{Basic algorithm for simplification}
+\label{simpalg}
+\begin{algorithmic}[1]
+\While {modified}
+\State {modified = False}
+\For {$c \in C(b)$}
+\If{pred($c$)}
+\State modified = True
+\State $b$ = $c$
+\State break (exit For loop)
+\EndIf
+\EndFor
+\EndWhile
+\State return $b$
+\end{algorithmic}
+\end{algorithm}
+
+The cost of normalizing a test case is, in the worst case, extremely
+large.  Consider a testing scenario where there are $n$ actions, each
+of which is always enabled.  For a test case of $k$ steps, each of
+which is the highest indexed action, checking the candidates produced
+by the {\bf SimplifySingle} rule alone requires performing $n^k$
+test executions.  If we further assume that the sequence of successful rewrites
+first rewrites the final step by reducing its index by one, which
+makes it possible to reduce the index of the previous step by one, and
+so forth, it is easy to see that nearly $k n^k$ test case runs are
+required.  In practice, the number of required test case runs is
+proportional to the length of the test $k$, but most actions are not
+enabled at most steps, and the rules are applied in an order that
+quickly converges on a normal form.
+
+For test cases with a very short runtime, this algorithm is usually
+practical, more expensive than delta-debugging but requiring less than
+a minute to run.  However, when test case execution is expensive, the
+set of candidate test cases must be further restricted.  In our
+experiments, we found that restricting action replacements to cases
+where the Levenshtein \cite{Lev} distance (text edit distance) between
+the code for the actions was in some range was effective in reducing
+runtime, while almost always having no impact on the final result.  In
+practice, most test actions can only be replaced by syntactically
+similar actions, without completely changing test semantics.
+
+\section{Generalization Algorithm}
