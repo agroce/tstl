@@ -45,6 +45,14 @@ changes are not meant to be combined --- the annotation claims only
 that changing these aspects of the test case one at a time will
 preserve failure.
 
+Many test cases that expose the same fault will normalize to the same
+test case --- many, but not all.  Running 100,000 tests (of length
+100) on the faulty AVL tree produces 860 failing test cases with no
+duplicates.  Normalizing these reduces the number of distinct failing
+test cases to only 22.  Of course, all failures due to the same fault
+would normalize to a single, representative test case, but we can only
+aim to approximate such a canonical form for faults.
+
 \begin{figure}
 {\scriptsize
 {\bf Test case \#1}
