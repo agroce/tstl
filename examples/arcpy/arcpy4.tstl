@@ -127,9 +127,9 @@ len(<prjfilelist,1>) >= 1 -> <prjfile> := <prjfilelist> [0]
 <transformlist> = <transformlist> [1:]
 len(<transformlist,1>) >= 1 -> <transform> := <transformlist> [0]
 
-<newlayer> := "l1" # + arcpy.env.workspace.split(".")[1]
-<newlayer> := "l2" # + arcpy.env.workspace.split(".")[1]
-<newlayer> := "l3" # + arcpy.env.workspace.split(".")[1]
+<newlayer> := "l1" + arcpy.env.workspace.split(".")[1]
+<newlayer> := "l2" + arcpy.env.workspace.split(".")[1]
+<newlayer> := "l3" + arcpy.env.workspace.split(".")[1]
 
 #{IOError} <description> := arcpy.Describe(<layerfile>)
 
@@ -277,7 +277,7 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 
 {arcpy.ExecuteError} arcpy.SymDiff_analysis(<classorlayer>,<classorlayer>,<featureclass>,join_attributes=<joinattributes>,cluster_tolerance=<dist>); report()
 
-{arcpy.ExecuteError} arcpy.PolygonNeighbors_analysis(<classorfeature>,~<polytable>); report()
+{arcpy.ExecuteError} arcpy.PolygonNeighbors_analysis(<classorlayer>,~<polytable>); report()
 
 {arcpy.ExecuteError} arcpy.Statistics_analysis(<classorlayer>,~<stattable>,<statfields>); report()
 
