@@ -268,6 +268,8 @@ proportional to the length of the test $k$, but most actions are not
 enabled at most steps, and the rules are applied in an order that
 quickly converges on a normal form.
 
+\subsubsection{Normalization Optimizations}
+
 For test cases with a very short runtime, this algorithm is usually
 practical, more expensive than delta-debugging but requiring less than
 a minute to run.  However, when test case execution is expensive, the
@@ -277,6 +279,19 @@ where the Levenshtein \cite{Lev} distance (text edit distance) between
 the code for the actions was in some range was effective in reducing
 runtime, while almost always having no impact on the final result.  In
 practice, most test actions can only be replaced by syntactically
-similar actions, without completely changing test semantics.
+similar actions, without completely changing test semantics.  A
+further useful optimization when normalizing large numbers of tests of
+the same SUT is to cache results, so that as soon as the rewrite
+sequence produces a previously seen test, the final result can be
+produced (since the algorithm is deterministic).  Finally, it is easy
+to parallelize the normalization of a test case by checking the
+predicate over multiple candidates at once.  As soon as a candidate
+satisfies the predicate, one of two options are available:  either the
+normalization can proceed with that candidate as the new base, making
+the algorithm potentially nondeterministic (in theory; in practice we
+suspect the same final result will usually appear), or the algorithmc
+can wait for all earlier-in-sequence candidates to be checked, and
+only proceed when no candidate that would be checked first in the
+sequential version of the algorithm remains in the work queue.
 
 \subsection{Generalization Algorithm}
