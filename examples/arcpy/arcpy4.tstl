@@ -5,7 +5,6 @@
 
 <@
 def cleanupFiles():
-    print "CLEANING UP"
     # First get rid of modified files
     for l in ["l1","l2","l3"]:
     	arcpy.Delete_management(l)
@@ -20,10 +19,18 @@ def cleanupFiles():
         new_workspace = "C:\\Arctmp\\workspace." + str(i)
         if not os.path.exists(new_workspace):
             break             
-    print "NEW WORKSPACE IS",new_workspace
+    print "TESTING USING WORKSPACE",new_workspace
     # Now move in fresh copies
     shutil.copytree("C:\\Arcbase",new_workspace)
+    print "CONTENTS:"
     arcpy.env.workspace = new_workspace
+    for f in sorted(glob.glob(arcpy.env.workspace + "\\*.shp")):
+        print f
+    for f in sorted(glob.glob(arcpy.env.workspace + "\\*.lyr")):
+        print f
+    for f in sorted(glob.glob(arcpy.env.workspace + "\\*.gdb")):
+        print f        
+
 
 def fcsInGdb(gdb):
     old_workspace = arcpy.env.workspace
@@ -100,15 +107,15 @@ init: cleanupFiles()
 
 log: 1 arcpy.GetMessages()
 
-#<layerfilelist> := glob.glob(arcpy.env.workspace + "\\*.lyr")
+#<layerfilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.lyr"))
 #len(<layerfilelist,1>) >= 1 -> <layerfile> := <layerfilelist> [0]
 #<layerfilelist> = <layerfilelist> [1:]
 
-<gdbfilelist> := glob.glob(arcpy.env.workspace + "\\*.gdb")
+<gdbfilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.gdb"))
 len(<gdbfilelist,1>) >= 1 -> <gdbfile> := <gdbfilelist> [0]
 <gdbfilelist> = <gdbfilelist> [1:]
 
-<shapefilelist> := glob.glob(arcpy.env.workspace + "\\*.shp")
+<shapefilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.shp"))
 len(<shapefilelist,1>) >= 1 -> <shapefile> := <shapefilelist> [0]
 <shapefilelist> = <shapefilelist> [1:]
 
@@ -120,7 +127,7 @@ len(<shapefilelist,1>) >= 1 -> <shapefile> := <shapefilelist> [0]
 <shapefile> := arcpy.env.workspace + "\\new2.shp"
 <shapefile> := arcpy.env.workspace + "\\new3.shp"
 
-<prjfilelist> := glob.glob("C:\\Program Files (x86)\\ArcGIS\\Desktop10.3\\Reference Systems\\*.prj")
+<prjfilelist> := sorted(glob.glob("C:\\Program Files (x86)\\ArcGIS\\Desktop10.3\\Reference Systems\\*.prj"))
 len(<prjfilelist,1>) >= 1 -> <prjfile> := <prjfilelist> [0]
 <prjfilelist> = <prjfilelist> [1:]
 
