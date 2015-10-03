@@ -1,0 +1,49 @@
+\section{Related Work}
+
+This work builds on the ideas behind delta-debugging \cite{DD}, that test cases
+should not contain extraneous information that is not needed to
+reproduce failure.  It extends this beyond length to include a notion
+where some actions in a test are considered simpler than others, which
+in some cases also allows further reduction of the length of the test
+case as well.  Delta-debugging and slicing \cite{TCminim} for test case
+reduction are limited, generally, to producing subsets of the original
+test case, not modifying parts of the test to obtain further
+simplicity.
+
+Normalization is in part motivated by the fuzzer taming \cite{PLDI13}
+problem:  determining how many distinct faults are present in a large
+set of failing test cases.  This is a key problem in practical
+application of automated testing.  Our previous work on fuzzer taming
+in fact uses delta-debugging as a simple normalization method that
+reduces some test cases to syntactical duplicates; the methods are orthogonal.
+
+Zhang \cite{SaiSimple} proposed an alternative approach to semantic
+test simplification.  Like our approach, Zhang's is semantic, able to
+modify, rather than simply remove, portions of a test.  However,
+because Zhang operates directly over a fragment of the Java language,
+rather than using an abstraction of test actions allowed, the set of
+rewrite operations performed is highly restricted:  no new methods can
+be invoked, statements cannot be re-ordered, and no new values are
+used.  This limits its ability to simplify tests and makes it a fairly
+weak normalizer (in fact it makes no attempt to perform syntactic
+normalization, e.g., not making sure to use the same variables when
+variable name is irrelevant to failure).
+
+CReduce \cite{CReduce} performs some simple normalization as part of a
+complex test-case reduction scheme for C code, and the
+peephole-rewrite scheme used in CReduce is also an inspiration for the
+approach taken by our normalizer.
+
+Work on producing readable tests \cite{Guava,Readable} is also
+related, in that it aims to ``simplify'' tests in a way that goes
+beyond measuring test length.  Work on readable tests is primarily
+intended to assist debugging in a human-factors sense, while our
+normalization and generalization aims to increase the information
+density of a test (hopefully increasing readability as well, of
+course), and to address the fuzzer taming problem.  The approaches are
+essentially orthogonal: our normalized tests could be altered to
+improve readability by these methods.
+
+Test case generalization is also related to dynamic invariant
+generation, in that it informs the user of invariants over a series of
+test executions satisfying some property \cite{Daikon}. 
