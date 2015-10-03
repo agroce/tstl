@@ -7,6 +7,9 @@
 def cleanupFiles():
     print "CLEANING UP"
     # First get rid of modified files
+    for l in ["l1","l2","l3"]:
+    	arcpy.Delete_management(l)
+    
     for f in glob.glob("C:\\Arctmp\\*"):
         try:
             shutil.rmtree(f)
@@ -33,8 +36,6 @@ def fcsInGdb(gdb):
     return fcs
 
 def report():
-    return
-    print arcpy.env.workspace
     print arcpy.GetMessages()
 @>
 
@@ -127,9 +128,9 @@ len(<prjfilelist,1>) >= 1 -> <prjfile> := <prjfilelist> [0]
 <transformlist> = <transformlist> [1:]
 len(<transformlist,1>) >= 1 -> <transform> := <transformlist> [0]
 
-<newlayer> := "l1" + arcpy.env.workspace.split(".")[1]
-<newlayer> := "l2" + arcpy.env.workspace.split(".")[1]
-<newlayer> := "l3" + arcpy.env.workspace.split(".")[1]
+<newlayer> := "l1"
+<newlayer> := "l2"
+<newlayer> := "l3"
 
 #{IOError} <description> := arcpy.Describe(<layerfile>)
 
@@ -281,13 +282,13 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 
 {arcpy.ExecuteError} arcpy.Statistics_analysis(<classorlayer>,~<stattable>,<statfields>); report()
 
-{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>); report()
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>)
 
-{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>,search_distance=<dist>); report()
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>,search_distance=<dist>)
 
-{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>,search_distance=<dist>,selection_type=<selectiontype>); report()
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>,search_distance=<dist>,selection_type=<selectiontype>)
 
-{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(<newlayer>,selection_type=<selectiontype>,where_clause=' "' + <fieldname> + '" ' + <op> + <val>); report()
+{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(<newlayer>,selection_type=<selectiontype>,where_clause=' "' + <fieldname> + '" ' + <op> + <val>)
 
 {arcpy.ExecuteError} arcpy.CopyFeatures_management(<featureclass>,<featureclass>); report()
 
