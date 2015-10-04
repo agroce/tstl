@@ -234,7 +234,9 @@ of ordered rewrite rules defining $C(b)$ is given as Algorithm
 that the candidate test still satisfies the property of interest that
 held for the original test $b$.  In most cases, this predicate will be
 ``the test fails'' but we also have preserved
-code coverage for regression suites \cite{icst2014}.
+code coverage for regression suites \cite{icst2014}.  Notice that
+after applying each rewrite rule, we perform delta-debugging on the
+new base test case, since often a rewrite makes other steps irrelevant.
 
 \begin{algorithm}
 \caption{Basic algorithm for normalization}
@@ -246,7 +248,7 @@ code coverage for regression suites \cite{icst2014}.
 \For {$c \in C(b)$}
 \If{pred($c$)}
 \State modified = True
-\State $b$ = $c$
+\State $b$ = $ddmin(c)$
 \State {\bf break} (exit {\bf for} loop)
 \EndIf
 \EndFor
@@ -284,7 +286,13 @@ similar actions, without completely changing test semantics.  A
 further useful optimization when normalizing large numbers of tests of
 the same SUT is to cache results, so that as soon as the rewrite
 sequence produces a previously seen test, the final result can be
-produced (since the algorithm is deterministic).  Finally, it is easy
+produced (since the algorithm is deterministic).  For systems with
+very expensive replay, the delta-debugging of each new base can also
+be omitted, counting on the {\bf ReduceAction} rewrite to eventually
+remove useless steps (however, this may come at a cost of attempts to
+rewrite steps that could be removed).
+
+Finally, it is easy
 to parallelize the normalization of a test case by checking the
 predicate over multiple candidates at once.  As soon as a candidate
 satisfies the predicate, one of two options are available:  either the
