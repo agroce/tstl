@@ -506,7 +506,7 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
                         return (True, testC)
     return (False, test)
 
-def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None):
+def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True):
     """
     Attempts to produce a 1-simplified test case
     """
@@ -554,14 +554,18 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
         if distLimit == None:
             distLimit = 3 # maximum of 3 char change when replacing actions!  allows numeric switches, simple pool modifications, but very few method changes            
 
+    numChanges = 0
     changed = True
     while changed:
         stest = self.captureReplay(test)
         changed = False
+        if reorder:
+            newSimplifiers = list(simplifiers)
         for s in simplifiers:
             oldTest = test
             (changed, test) = s(test, pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit)
             if changed:
+                numChanges += 1
                 if reduceOnChange:
                     test = self.reduce(test, pred, pruneGuards, keepLast)
                 stest = self.captureReplay(test)
@@ -573,8 +577,14 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
                         self.__simplifyCache[t] = result
                     return result                
                 history.append(stest)
+                if reorder:
+                    simplifiers = newSimplifiers
                 break
+            elif reorder:
+                newSimplifiers.remove(s)
+                newSimplifiers.append(s)
 
+    print "NUMBER OF CHANGES",numChanges
     # No changes, this is 1-simple (fix-point)
     try:
         test_after_simplify(self)
