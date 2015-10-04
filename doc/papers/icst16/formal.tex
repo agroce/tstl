@@ -233,20 +233,21 @@ of ordered rewrite rules defining $C(b)$ is given as Algorithm
 \ref{simpalg}.  Here {\tt pred} is an arbitrary predicate indicating
 that the candidate test still satisfies the property of interest that
 held for the original test $b$.  In most cases, this predicate will be
-``the test fails'' but we also have preserve
-code coverage in regression suites \cite{icst2014}.
+``the test fails'' but we also have preserved
+code coverage for regression suites \cite{icst2014}.
 
 \begin{algorithm}
-\caption{Basic algorithm for simplification}
+\caption{Basic algorithm for normalization}
 \label{simpalg}
 \begin{algorithmic}[1]
+\State {modified = True}
 \While {modified}
 \State {modified = False}
 \For {$c \in C(b)$}
 \If{pred($c$)}
 \State modified = True
 \State $b$ = $c$
-\State break (exit For loop)
+\State {\bf break} (exit {\bf for} loop)
 \EndIf
 \EndFor
 \EndWhile
