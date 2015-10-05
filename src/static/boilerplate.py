@@ -694,6 +694,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 j = 0
                 for s in testC:
                     print "STEP",j,testC[j]
+                    j += 1
                 canMakeSimple[i].append(v)
     noOrder = []
     endSwappable = -1
