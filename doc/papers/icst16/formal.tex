@@ -105,9 +105,19 @@ Goedel-numbering of tests, for proving certain mathematical properties
 \cite{AndrewsTR}.  However, it also allows us to concisely define a
 practical method for normalizing and generalizing test cases.
 
+One note: in normal TSTL semantics, the action sequence that assigns a
+value to the same pool twice in a row is not allowed --- until a pool
+value is used, it cannot be assigned to again.  However, during
+normalization and generalization, this restriction is removed.  The
+restriction exists only to prevent the generation of un-interesting
+test sequences.  The normalization and generalization algorithms avoid
+such sequences by other means, and allowing over-writing assignments
+makes normalization much more effective.  Such sequences only appear
+in intermediate steps; after normalization, test
+cases are guaranteed to not have any remaining sequences invalid in
+normal TSTL semantics.
 
-
-\subsection{Normalization Algorithm}
+\subsection{Normalization}
 
 A test-case normalization algorithm has a simple goal:  we ideally aim to
 produce a function $f : t \rightarrow t$ (a function that takes a test
@@ -153,6 +163,8 @@ indices of the actions in the test case.  This approach
 provides effective normaliization at a significant, but not
 unreasonable, computational cost.
 
+\subsubsection{Definitions and Notation}
+
 In order to formally define normalization, some additional notation is required.
 A \emph{step} is an action paired with an index indicating its position in a text,
 where the first action is step 0, etc., e.g.: $(2: a)$ indicates the
@@ -176,6 +188,8 @@ y]$, except that the replacement is only applied between steps $i$ and
 $j$, inclusive.  Finally, $t_i(x)$ denotes $t$ with all steps
 containing $x$ that are before step $i$ moved to step $i$, preserving
 their previous order, and moving steps at $i$ and after $i$ to make room.
+
+\subsubsection{Rewrite Rules}
 
 \begin{enumerate}
 \item {\bf SimplifyAll:}
@@ -221,6 +235,8 @@ Covers the case where an action can be replaced by any action (not just lower-in
 actions) and this enables further delta-debugging-based reduction of
 the test case's length.
 \end{enumerate}
+
+\subsubsection{Normalization Algorithm}
 
 These rules alone do not determine a complete normalization method; it is
 also required to determine an order in which they are applied.  The
@@ -273,7 +289,16 @@ quickly converges on a normal form.
 
 \subsubsection{Normalization Optimizations}
 
-For test cases with a very short runtime, this algorithm is usually
+The simplest and most important optimization is to improve on the
+constant ordering of rewrite rules.  In our implementation, once a
+rule fails to produce a candidate that satisfied {\tt pred} that rule
+is moved to the end of the ordering of rewrites.  This optimization
+followed the observation that almost always once a rule failed to
+produce any changes in a test case, it never applied again.  This
+simple change, in our experience, typically halves the time required
+for normalization.
+
+For test cases with a very short runtime, this algorithm (with reordering) is usually
 practical, more expensive than delta-debugging but requiring less than
 a minute to run.  However, when test case execution is expensive, the
 set of candidate test cases must be further restricted.  In our
@@ -303,4 +328,4 @@ can wait for all earlier-in-sequence candidates to be checked, and
 only proceed when no candidate that would be checked first in the
 sequential version of the algorithm remains in the work queue.
 
-\subsection{Generalization Algorithm}
+\subsection{Generalization}
