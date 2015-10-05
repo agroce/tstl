@@ -23,14 +23,14 @@ def parse_args():
                         help='Ignore properties.')
     parser.add_argument('-f', '--full', action='store_true',
                         help="Don't reduce -- report full failing test.")
-    parser.add_argument('-C', '--canonize', action='store_true',
-                        help="Canonize/simplify after reduction.")
+    parser.add_argument('-N', '--normalize', action='store_true',
+                        help="Normalize/simplify after reduction.")
     parser.add_argument('-E', '--essentials', action='store_true',
                         help="Determine essential elements in failing test.")
     parser.add_argument('-G', '--generalize', action='store_true',
                         help="Generalize tests.")
     parser.add_argument('-e', '--speed', type=str, default="FAST",
-                        help='Canonization/simplification speed (default = FAST).')    
+                        help='Normalization/simplification speed (default = FAST).')    
     parser.add_argument('-k', '--keep', action='store_true',
                         help="Keep last action the same when reducing.")
     parser.add_argument('-o', '--output', type=str, default=None,
@@ -143,12 +143,12 @@ def handle_failure(test, msg, checkFail, newCov = False):
                     print t.prettyName(s[0]),"# STEP",i
                     i += 1
         sys.stdout.flush()
-        if config.canonize:
+        if config.normalize:
             startSimplify = time.time()
-            print "SIMPLIFYING..."
-            test = t.simplify(test, failProp, True, config.keep, verbose = True, speed = config.speed)
-            print "Simplified test has",len(test),"steps"
-            print "SIMPLIFIED IN",time.time()-startSimplify,"SECONDS"
+            print "NORMALIZING..."
+            test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
+            print "Normalized test has",len(test),"steps"
+            print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
         if config.generalize:
             startGeneralize = time.time()
             print "GENERALIZING..."

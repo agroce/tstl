@@ -346,7 +346,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
                     rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
                     if len(rtestC) < len(test):
                         if verbose:
-                            print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
+                            print "NORMALIZER: RULE ReduceAction: STEP",i,name1,"-->",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
                         return (True, rtestC)
     return (False, test)
 
@@ -373,7 +373,7 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
                 testC = map(lambda x: self.actionModify(x,name1,name2), test)
                 if pred(testC):
                     if verbose:
-                        print "SIMPLIFIER: REPLACED ALL",name1,"WITH",name2
+                        print "NORMALIZER: RULE SimplifyAll:",name1,"-->",name2
                     return (True, testC)
     return (False, test)
 
@@ -403,7 +403,10 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
                 testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
                 if (testC != test) and pred(testC):
                     if verbose:
-                        print "SIMPLIFIER: REPLACED",p,"WITH",new," -- MOVED TO",pos
+                        if pos == 0:
+                            print "NORMALIZER: RULE ReplacePool:",p,"WITH",new
+                        else:
+                            print "NORMALIZER: RULE ReplaceMovePool:",p,"WITH",new," -- MOVED TO",pos
                     return (True, testC)
                 # Not possible, try with only replacing between pos and pos2
                 for pos2 in xrange(len(test),pos,-1):
@@ -412,7 +415,7 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
                     testC = prefix + suffix + test[pos2:]
                     if (testC != test) and pred(testC):
                         if verbose:
-                            print "SIMPLIFIER: REPLACED",p,"WITH",new,"BETWEEN",pos,"AND",pos2
+                            print "NORMALIZER: RULE ReplacePool:",p,"WITH",new,"FROM",pos,"TO",pos2
                         return (True, testC)
     return (False, test)
 
@@ -438,7 +441,7 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
                     if verbose:
-                        print "SIMPLIFIER: REPLACED STEP",i,name1,"WITH",name2
+                        print "NORMALIZER: RULE SimplifySingle: STEP",i,name1,"-->",name2
                     return (True, testC)
     return (False, test)
 
@@ -477,7 +480,7 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
                         if leastTestC < leastTest:
                             if pred(testC):
                                 if verbose:
-                                    print "SIMPLIFIER: SWAPPED",p1,"AND",p2,"BETWEEN STEP",pos1,"AND",pos2
+                                    print "NORMALIZER: RULE SwapPool:",p1,"AND",p2,"BETWEEN STEP",pos1,"AND",pos2
                                 return (True, testC)
     return (False, test)
 
@@ -502,16 +505,16 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
                     testC = frag1 + frag2 + frag3 + frag4 + frag5
                     if pred(testC):
                         if verbose:
-                            print "SIMPLIFIER: SWAPPED STEP",i,test[i][0],"WITH STEP",j,test[j][0]
+                            print "NORMALIZER: RULE SwapAction:",i,test[i][0],"WITH STEP",j,test[j][0]
                         return (True, testC)
     return (False, test)
 
-def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True):
+def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True):
     """
-    Attempts to produce a 1-simplified test case
+    Attempts to produce a normalized test case
     """
     try:
-        test_before_simplify(self)
+        test_before_normalize(self)
     except:
         pass
 
@@ -519,7 +522,7 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
     stest = self.captureReplay(test)
     if stest in self.__simplifyCache:
         if verbose:
-            print "SIMPLIFIER: FOUND TEST IN CACHED RESULTS"
+            print "NORMALIZER: FOUND TEST IN CACHED RESULTS"
         return self.__simplifyCache[stest]
     history = [stest]
         
@@ -565,13 +568,12 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
             oldTest = test
             (changed, test) = s(test, pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit)
             if changed:
-                numChanges += 1
                 if reduceOnChange:
                     test = self.reduce(test, pred, pruneGuards, keepLast)
                 stest = self.captureReplay(test)
                 if stest in self.__simplifyCache:
                     if verbose:
-                        print "SIMPLIFIER: FOUND TEST IN CACHED RESULTS"
+                        print "NORMALIZER: FOUND TEST IN CACHED RESULTS"
                     result = self.__simplifyCache[stest]
                     for t in history:
                         self.__simplifyCache[t] = result
@@ -584,10 +586,9 @@ def simplify(self, test, pred, pruneGuards = False, keepLast = True, verbose = F
                 newSimplifiers.remove(s)
                 newSimplifiers.append(s)
 
-    print "NUMBER OF CHANGES",numChanges
     # No changes, this is 1-simple (fix-point)
     try:
-        test_after_simplify(self)
+        test_after_normalize(self)
     except:
         pass
 
