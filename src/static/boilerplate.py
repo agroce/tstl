@@ -653,6 +653,9 @@ def freshSimpleVariants(self, name, previous, replacements):
     return freshSimples
 
 def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+    # Change so double assignments are allowed
+    self.__relaxUsedRestriction = True
+    
     enableChange = {}
     for i in xrange(0,len(test)):
         if checkEnabled:
@@ -759,4 +762,5 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             if i == end:
                 print "#] (steps in [] can be in any order)"
 
-            
+    self.__relaxUsedRestriction = False
+    # Make sure to restore normal semantics!
