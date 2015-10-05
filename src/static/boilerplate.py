@@ -689,12 +689,6 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
         for v in self.freshSimpleVariants(test[i][0],test[:i],canReplace):
             testC = test[:i] + v + test[i+1:]
             if pred(testC):
-                print "AT",i,"FRESH SIMPLE SUCCESS FOR"
-                print "CHANGE",v
-                j = 0
-                for s in testC:
-                    print "STEP",j,testC[j]
-                    j += 1
                 canMakeSimple[i].append(v)
     noOrder = []
     endSwappable = -1
@@ -770,3 +764,9 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
 
     self.__relaxUsedRestriction = False
     # Make sure to restore normal semantics!
+
+def relax(self):
+    self.__relaxUsedRestriction = True
+
+def stopRelax(self):
+    self.__relaxUsedRestriction = False
