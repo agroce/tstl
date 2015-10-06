@@ -349,7 +349,7 @@ changeable aspects of a test case.  The core algorithm is simple:
 \State replace = replace $\cup ((i,a),(i,a'))$
 \EndIf
 \EndFor 
-\For{$j : i < j < |t|-1 \wedge (j: b) \in t \wedge (j: b) > (i: a) $}
+\For{$j : i < j < |t|-1 \wedge (j: b) > (i: a) $}
 \If {pred($t[(i: a) \Rightarrow (i: b), (j: b) \Rightarrow (j: a)]$)}
 \State swap = swap $\cup ((i,a),(j,b))$
 \EndIf
