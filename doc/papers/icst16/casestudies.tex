@@ -4,7 +4,18 @@
 
 \subsection{XML Parser}
 
-Running 1,000 tests without 
+We also examined how normalization combined with multiple faults for a
+simple XML parser with about 260 lines of code \cite{myxml}, with one
+original fault (a crash instead of a parse error when given an empty
+tag ({\tt <>}) and one seeded fault (failure when adding two nodes
+with the same name).  Running 1,000 tests produces 848 failing test
+cases.  Without normalization, it takes only 37.45 seconds to execute
+all 1,000 tests, including delta-debugging these 848 failures.
+However, the output is 717 distinct failing test cases.  Normalizing
+increases the runtime to 354.7 seconds, but reduces the number of
+distinct failing tests to 5, with 3 variations of the original fault
+and 2 variations of the seeded fault.  Generalizing these 5 failures
+increases the runtime by less than 5 seconds.
 
 \subsection{The numpy Library}
 
@@ -91,6 +102,8 @@ assert (np.array\_equal(array0,array0))
 }
 \caption{Normalized and generalized test case (15 steps)}
 \end{figure}
+
+\subsection{ESRI arcpy GIS Library}
 
 \begin{figure}
 {\scriptsize 

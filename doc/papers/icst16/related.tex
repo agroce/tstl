@@ -8,7 +8,9 @@ in some cases also allows further reduction of the length of the test
 case as well.  Delta-debugging and slicing \cite{TCminim} for test case
 reduction are limited, generally, to producing subsets of the original
 test case, not modifying parts of the test to obtain further
-simplicity.
+simplicity.  Some earlier work in bounded model checking modified
+counterexamples to use numerically smaller values \cite{MakeMost} but
+otherwise did not aim to simplify or normalize failures.
 
 Normalization is in part motivated by the fuzzer taming \cite{PLDI13}
 problem:  determining how many distinct faults are present in a large

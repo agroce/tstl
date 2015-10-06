@@ -292,7 +292,7 @@ quickly converges on a normal form.
 
 The simplest and most important optimization is to improve on the
 constant ordering of rewrite rules.  In our implementation, once a
-rule fails to produce a candidate that satisfied {\tt pred} that rule
+rule fails to produce a candidate that satisfies {\tt pred} that rule
 is moved to the end of the ordering of rewrites.  This optimization
 followed the observation that almost always once a rule failed to
 produce any changes in a test case, it never applied again.  This
@@ -361,7 +361,9 @@ changeable aspects of a test case.  The core algorithm is simple:
 
 This algorithm collects all steps that can be replaced with other
 actions or swapped with other steps, and returns the set to be
-reported to the user.
+reported to the user.  This version assumes the test has already been
+normalized, but can be extended to any test case by removing the
+restrictions that $a > a'$ and $(j : b) > (i : a)$.
 
 \subsubsection{Fresh Values and Misleading Test Cases}
 
@@ -378,4 +380,4 @@ can be agnostic as to the underlying SUT, or even the language of the
 system under test.  The current TSTL implementation is in
 Python\footnote{There is also a Java version in alpha.}, but the
 normalization and generalization algorithms do not depend on the
-underlying language, so long as it uses pools to store values.
+underlying language, only on the TSTL-level notions of actions and pools.
