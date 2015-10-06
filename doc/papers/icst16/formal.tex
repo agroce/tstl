@@ -367,7 +367,47 @@ restrictions that $a > a'$ and $(j : b) > (i : a)$.
 
 \subsubsection{Fresh Values and Misleading Test Cases}
 
-A 
+A side-effect of delta-debugging and of normalization is the reduction
+of the number of variables used in a test case.  While usually helpful
+for understanding, this can sometimes result in misleading test
+cases.  In stateful systems, for example those using some kind of
+cache for efficiency, putting the system into a bad state may require
+building a complex object.  Once system state is corrupted, however,
+the complex object is irrelevant, and its appearance in the call
+leading to failure can be misleading.
+
+As an example, consider the test case in Figure \ref{fig:mislead},
+produced by our TSTL harness that uses TSTL to test TSTL itself\footnote{Since
+TSTL provides a Python API, that API can be used as the SUT in
+testing; we have discovered several important TSTL bugs this way.}.
+
+\begin{figure}
+{\scriptsize
+\begin{code}
+\textcolor{black!35}{\#[}
+test0 = []                             \textcolor{black!35}{\# STEP 0}
+\textcolor{black!35}{\#  or test0 = sut0.test() }
+actionlist0 = sut0.actions()           \textcolor{black!35}{\# STEP 1}
+\textcolor{black!35}{\#  or actionlist0 = sut0.enabled() }
+\textcolor{black!35}{\#] (steps in [] can be in any order)}
+action0 = actionlist0[0]               \textcolor{black!35}{\# STEP 2}
+\textcolor{black!35}{\#[}
+test0.append(action0)                  \textcolor{black!35}{\# STEP 3}
+pred0 = sut0.fails                     \textcolor{black!35}{\# STEP 4}
+\textcolor{black!35}{\#] (steps in [] can be in any order)}
+sut0.normalize(test0,pred0)            \textcolor{black!35}{\# STEP 5}
+sut0.normalize(test0,pred0)            \textcolor{black!35}{\# STEP 6}
+\textcolor{black!35}{\#  or (}
+\textcolor{black!35}{\#      test0 = []  ;}
+\textcolor{black!35}{\#      sut0.normalize(test0,pred0) }
+\textcolor{black!35}{\#     )}
+\end{code}
+}
+\caption{Generalized test for TSTL itself, showing fresh-object
+  generalization.}
+\label{fig:mislead}
+\end{figure}
+
 
 \subsection{Discussion}
 

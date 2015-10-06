@@ -132,39 +132,38 @@ avl1.delete(int1)
 \begin{figure}
 {\scriptsize
 \begin{code}
-\#[
-int0 = 1                       \# STEP 0
-\#  or int0 = 5 
-\#   - int0 = 20 
-\#  swaps with step 4
-int1 = 3                       \# STEP 1
-\#  or int1 = 5 
-\#   - int1 = 20 
-\#  swaps with step 6
-avl0 = avl.AVLTree()           \# STEP 2
-\#] (steps in [] can be in any order)
-avl0.insert(int0)              \# STEP 3
-\#[
-int0 = 2                       \# STEP 4
-\#  swaps with step 0
-avl0.insert(int1)              \# STEP 5
-\#] (steps in [] can be in any order)
-int1 = 4                       \# STEP 6
-\#  or int1 = 5 
-\#   - int1 = 20 
-\#  swaps with step 1
-avl0.insert(int1)              \# STEP 7
-avl0.insert(int0)              \# STEP 8
-avl0.delete(int1)              \# STEP 9
-\#  or (
-\#      int1 = 3  ;
-\#      avl0.delete(int1) 
-\#     )
+\textcolor{black!35}{\#[}
+int0 = 1                              \textcolor{black!35}{\# STEP 0}
+\textcolor{black!35}{\#  or int0 = 5 }
+\textcolor{black!35}{\#   - int0 = 20} 
+\textcolor{black!35}{\#  swaps with step 4}
+int1 = 3                              \textcolor{black!35}{\# STEP 1}
+\textcolor{black!35}{\#  or int1 = 5 }
+\textcolor{black!35}{\#   - int1 = 20} 
+\textcolor{black!35}{\#  swaps with step 6}
+avl0 = avl.AVLTree()                  \textcolor{black!35}{\# STEP 2}
+\textcolor{black!35}{\#] (steps in [] can be in any order)}
+avl0.insert(int0)                     \textcolor{black!35}{\# STEP 3}
+\textcolor{black!35}{\#[}
+int0 = 2                              \textcolor{black!35}{\# STEP 4}
+\textcolor{black!35}{\#  swaps with step 0}
+avl0.insert(int1)                     \textcolor{black!35}{\# STEP 5}
+\textcolor{black!35}{\#] (steps in [] can be in any order)}
+int1 = 4                              \textcolor{black!35}{\# STEP 6}
+\textcolor{black!35}{\#  or int1 = 5 }
+\textcolor{black!35}{\#   - int1 = 20} 
+\textcolor{black!35}{\#  swaps with step 1}
+avl0.insert(int1)                     \textcolor{black!35}{\# STEP 7}
+avl0.insert(int0)                     \textcolor{black!35}{\# STEP 8}
+avl0.delete(int1)                     \textcolor{black!35}{\# STEP 9}
+\textcolor{black!35}{\#  or (}
+\textcolor{black!35}{\#      int1 = 3  ;}
+\textcolor{black!35}{\#      avl0.delete(int1) }
+\textcolor{black!35}{\#     )}
 \end{code}
 }
 \caption{Normalization and generalization for all three test cases.
-  Lines beginning with \# are comments in Python, here used to
-annotate the test case.}
+  Lines beginning with \# are comments in Python, used for annotations.}
 \label{normalgen}
 \end{figure}
 
