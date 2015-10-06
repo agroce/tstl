@@ -5,7 +5,7 @@ test case reduction \cite{DD,MinUnit,ICSEDiff} to produce test cases
 that remove irrelevant operations.  In fact, test case reduction is
 now standard practice in industral testing tools such as Mozilla's
 {\tt jsfunfuzz}.  However, simply reducing the length of a test case
-does not produce true semantic minimality.  There may be many
+does not produce any kind of semantic simplicity.  There may be many
 1-minimal test cases that present different variations of a single
 fault.  In many cases, reading more than one of these test cases
 provides no useful additional information on the cause of failure.
@@ -28,15 +28,15 @@ insertions.
 Figure \ref{normalgen} shows the result of applying our \emph{test case
   normalization} method to these three tests, and then applying our
 \emph{test case generalization} approach to the normalized test case.
-First, we note that all three test cases normalize to the same test
-case.  This test case, in addition to the 10 steps required to produce
+\emph{All three test cases normalize to the same test
+case}.  This single test case, in addition to the 10 steps required to produce
 the failure, includes comments indicating what about the test case can
 be changed while still failing in the same way.  For instance, the
 value 1 assigned to {\tt int0} in step 0 is not essential.  It could
 be changed to any value in the range 5-20 (the total set of values
 allowed by the test generator) without changing the final result.  The
 same is true of the assignment of 3 to {\tt int1}.  Similarly, the
-ordering of many steps in the test case is not important.  Finally,
+exact ordering of many steps in the test case is not important.  Finally,
 step 9 is annotated to show that instead of using the existing value
 of {\tt int1} (4), a fresh assignment could be inserted before the
 {\tt delete} call, setting {\tt
@@ -45,16 +45,42 @@ changes are not meant to be combined --- the annotation claims only
 that changing these aspects of the test case one at a time will
 preserve failure.
 
-Many test cases that expose the same fault will normalize to the same
-test case --- many, but not all.  Running 100,000 tests (of length
-100) on the faulty AVL tree produces 860 failing test cases with no
-duplicates.  Normalizing these reduces the number of distinct failing
-test cases to only 22.  Of course, ideally \emph{all} failures due to the same fault
-would normalize to a single, representative test case, but we can only
-aim to approximate such a canonical form for faults.  Figure
-\ref{diffnorm} shows an example test case that normalizes differently,
-and its normalized form (we omit the generalization, which is not
-interestingly different than that for the first normalized test case).
+Combining normalization and generalization avoids some common problems
+with understanding automatically generated test cases.  For instance,
+when a large integer appears in such a test case, the question always
+arises --- is this unusual value important, or just a randomly chosen
+number of no significance \cite{MakeMost}?  After normalization, any
+large values in a test case are sure to be essential, rather than
+accidental, because normalization includes value minimization.
+Without the additional step of generalization, however, it would be
+easy to conclude that \emph{all} small numeric values in normalized tests are
+accidental.  Generalization informs a user when a small value is
+required to reproduce a failure, and when it is simply an artifact of normalization.
+
+Normalization is not a complete solution to the problem of
+identifying distinct faults (one key limitation is that our algorithms do not apply to
+complex custom test generators such as CSmith \cite{csmith} or {\tt
+  jsfunfuzz} \cite{jsfunfuzz}), but it is highly effective when it applies,
+in our experience.
+Running 100,000 tests (of length 100) on the faulty AVL tree produces
+860 failing test cases with no duplicates.  Normalizing these reduces
+the number of distinct failing test cases to only 22.  Of course,
+ideally \emph{all} failures due to the same fault would normalize to a
+single, representative test case, but we can only aim to approximate
+such a canonical form for faults.  Figure \ref{diffnorm} shows a test
+case that normalizes differently, and its normalized form (we omit the
+generalization, which is not interestingly different than that for the
+first normalized test case).
+
+The contributions of this paper are 1) the idea of normalizing and
+generalizing test cases, 2) algorithms for normalizing and
+generalizing test cases that make use of the abstract graph interface
+for testing provided by the TSTL \cite{NFM15,ISSTA15} testing
+language, and 3) some initial experimental results showing the value
+of test case normalization and generalization.  We show that
+normalization and generalization has been key to efforts to understand
+complex failing test cases for a widely-used, highly complex library
+for GIS automation.
 
 \begin{figure}
 {\scriptsize

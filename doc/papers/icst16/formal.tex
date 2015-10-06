@@ -263,12 +263,12 @@ new base test case, since often a rewrite makes other steps irrelevant.
 \State {modified = False}
 \For {$c \in C(b)$}
 \If{pred($c$)}
-\State modified = True
+\State modified = True 
 \State $b$ = $ddmin(c)$
-\State {\bf break} (exit {\bf for} loop)
-\EndIf
-\EndFor
-\EndWhile
+\State {\bf break} (exit {\bf for} loop) 
+\EndIf 
+\EndFor 
+\EndWhile 
 \State return $b$
 \end{algorithmic}
 \end{algorithm}
@@ -286,6 +286,7 @@ required.  In practice, the number of required test case runs is
 proportional to the length of the test $k$, but most actions are not
 enabled at most steps, and the rules are applied in an order that
 quickly converges on a normal form.
+
 
 \subsubsection{Normalization Optimizations}
 
@@ -329,3 +330,52 @@ only proceed when no candidate that would be checked first in the
 sequential version of the algorithm remains in the work queue.
 
 \subsection{Generalization}
+
+\subsubsection{Generalization Algorithm}
+
+The core idea of generalization is to use methods similar to those
+involved in normalization to provide a user with information about
+changeable aspects of a test case.  The core algorithm is simple:
+
+\begin{algorithm}
+\caption{Basic algorithm for generalization}
+\label{genalg}
+\begin{algorithmic}[1]
+\State {swap = $\emptyset$}
+\State {replace = $\emptyset$}
+\For {$(i, a) \in t$}
+\For {$a' : a' > a$}:
+\If {pred($t[(i,a) \Rightarrow (i,a')]$)}
+\State replace = replace $\cup ((i,a),(i,a'))$
+\EndIf
+\EndFor 
+\For{$j : i < j < |t|-1 \wedge (j: b) \in t \wedge (j: b) > (i: a) $}
+\If {pred($t[(i: a) \Rightarrow (i: b), (j: b) \Rightarrow (j: a)]$)}
+\State swap = swap $\cup ((i,a),(j,b))$
+\EndIf
+\EndFor
+\EndFor
+\State {return (swap, replace)}
+\end{algorithmic}
+\end{algorithm}
+
+This algorithm collects all steps that can be replaced with other
+actions or swapped with other steps, and returns the set to be
+reported to the user.
+
+\subsubsection{Fresh Values and Misleading Test Cases}
+
+A 
+
+\subsection{Discussion}
+
+The essential feature of normalization and generalization as presented
+in this paper is that they produce semantic results (simplification of
+tests and information on the essential features of a test) by purely
+syntactic means.  This is possible due to TSTL's conversion of testing
+into a graph exploration problem, where a test generation algorithm
+can be agnostic as to the underlying SUT, or even the language of the
+system under test.  The current TSTL implementation is in
+Python\footnote{There is also a Java version in alpha.}, but the
+normalization and generalization algorithms do not depend on the
+underlying language, so long as it uses pools to store values.
