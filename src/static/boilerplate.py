@@ -44,7 +44,7 @@ def getPropCode(self,name):
 def prettyName(self, name):
     newName = name
     for p in self.__pools:
-        pfind = newName.find(p)
+        pfind = newName.find(p+"[")
         while pfind != -1:
             closePos = newName.find("]",pfind)
             findRef = newName.find("_REF",pfind)
@@ -55,7 +55,7 @@ def prettyName(self, name):
             else:
                 newAccess = p.replace(self.__poolPrefix,"") + index
             newName = newName.replace(access, newAccess)
-            pfind = newName.find(p)
+            pfind = newName.find(p+"[")
     return newName
 
 def captureReplay(self, test):
