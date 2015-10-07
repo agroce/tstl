@@ -209,6 +209,10 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
         test_before_reduce(self)
     except:
         pass
+
+    if len(test) < 2:
+        return test
+    
     if keepLast:
         tb = test[:-1]
         addLast = [test[-1]]
