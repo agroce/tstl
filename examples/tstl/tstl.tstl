@@ -1,0 +1,34 @@
+@import thissut as s
+@import random as r
+
+pool: <rand> 1
+pool: <sut> 1
+pool: <test> 3
+pool: <actionlist> 3
+pool: <action> 3
+pool: <pred> 2
+
+init: <sut> = s.sut()
+init: <rand> = r.Random()
+init: <rand>.seed(1)
+
+<test> := []
+<test> := <sut>.test()
+~<test>.append(<action>)
+
+<actionlist> := <sut>.actions()
+<actionlist> := <sut>.enabled()
+<actionlist> := ~<actionlist>[1:]
+<rand>.shuffle(~<actionlist>)
+
+<action> := <actionlist> [0]
+
+<sut>.safely(<action>)
+<sut>.restart()
+
+<pred> := <sut>.fails
+
+<test> := <sut>.normalize(<test>,<pred>)
+(<test,1> != None) and (len(<test,1>) >= 1) -> <test> := <sut>.reduce(<test>,<pred>)
+(<test,1> != None) and (len(<test,1>) >= 1) -> <test> := <sut>.reduce(<test>,<pred>,keepLast=False)
+<test> := <sut>.generalize(<test>,<pred>)
