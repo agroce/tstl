@@ -341,6 +341,8 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
     
     for i in xrange(0,len(test)):
         name1 = test[i][0]
+        if i not in enableChange:
+            continue        
         for name2 in enableChange[i]:
             if name1 != name2:
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -369,6 +371,8 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
     donePairs = []
     for i in xrange(0,len(test)):
         name1 = test[i][0]
+        if i not in enableChange:
+            continue        
         for name2 in enableChange[i]:
             if (self.__orderings[name1] > self.__orderings[name2]) and ((name1,name2) not in donePairs):
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -438,6 +442,8 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
     
     for i in xrange(0,len(test)):
         name1 = test[i][0]
+        if i not in enableChange:
+            continue        
         for name2 in enableChange[i]:
             if self.__orderings[name1] > self.__orderings[name2]:
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -678,6 +684,8 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     for i in xrange(0,len(test)):
         canReplace[i] = []
         canMakeSimple[i] = []
+        if i not in enableChange:
+            continue
         for a in enableChange[i]:
             if (distLimit != None) and (self.levDist(a, test[i][0]) > distLimit):
                 continue
