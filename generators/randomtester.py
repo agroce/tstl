@@ -57,6 +57,8 @@ def parse_args():
                         help="File to write coverage report to ('coverage.out' default).")
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage.")
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help="Run in verbose mode.")
     parser.add_argument('-H', '--html', type=str, default=None,
                         help="Write HTML report (directory to write to, None default).")
     parsed_args = parser.parse_args(sys.argv[1:])
@@ -149,7 +151,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
-        if config.generalize:
+        if config.generalize and (test not in failures):
             startGeneralize = time.time()
             print "GENERALIZING..."
             t.generalize(test, failProp, verbose = True)
@@ -183,6 +185,11 @@ def handle_failure(test, msg, checkFail, newCov = False):
         i += 1
         if outf != None:
             outf.write(t.serializable(s)+"\n")
+    if not newCov:
+        f = t.failure()
+        print "ERROR:",f
+        print "TRACEBACK:"
+        traceback.print_tb(f[2])
     sys.stdout.flush()
     if outf != None:
         outf.close()
@@ -230,7 +237,14 @@ checkResult = True
 if config.total:
     fulltest = open("fulltest.txt",'w')
 
+if config.verbose:
+    print "ABOUT TO START TESTING"
+    sys.stdout.flush()
+    
 while (config.maxtests == -1) or (ntests < config.maxtests):
+    if config.verbose:
+        print "STARTING TEST",ntests
+        sys.stdout.flush()
     ntests += 1
 
     startRestart = time.time()
@@ -245,7 +259,9 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         currtest = open("currtest.txt",'w')
 
     for s in xrange(0,config.depth):
-
+        if config.verbose:
+            print "GENERATING STEP",s
+        
         startGuard = time.time()
         acts = tacts
         while True:
@@ -290,7 +306,10 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         if config.total:
             fulltest.write(a[0] + "\n")
             fulltest.flush()            
-        
+
+        if config.verbose:
+            print "ACTION:",t.prettyName(a[0])
+            
         startOp = time.time()
         stepOk = t.safely(a)
         opTime += (time.time()-startOp)

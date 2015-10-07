@@ -209,6 +209,10 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
         test_before_reduce(self)
     except:
         pass
+
+    if len(test) < 2:
+        return test
+    
     if keepLast:
         tb = test[:-1]
         addLast = [test[-1]]
@@ -337,6 +341,8 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
     
     for i in xrange(0,len(test)):
         name1 = test[i][0]
+        if i not in enableChange:
+            continue        
         for name2 in enableChange[i]:
             if name1 != name2:
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -365,6 +371,8 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
     donePairs = []
     for i in xrange(0,len(test)):
         name1 = test[i][0]
+        if i not in enableChange:
+            continue        
         for name2 in enableChange[i]:
             if (self.__orderings[name1] > self.__orderings[name2]) and ((name1,name2) not in donePairs):
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -434,6 +442,8 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
     
     for i in xrange(0,len(test)):
         name1 = test[i][0]
+        if i not in enableChange:
+            continue        
         for name2 in enableChange[i]:
             if self.__orderings[name1] > self.__orderings[name2]:
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -527,7 +537,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     history = [stest]
         
     # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
-    self.__relaxUsedRestriction = True
+    self.relax()
              
     # Default speed is fast, if speed not recognized
     simplifiers = [self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep, self.reduceLengthStep]
@@ -577,6 +587,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
                     result = self.__simplifyCache[stest]
                     for t in history:
                         self.__simplifyCache[t] = result
+                    self.stopRelax()
                     return result                
                 history.append(stest)
                 if reorder:
@@ -592,7 +603,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     except:
         pass
 
-    self.__relaxUsedRestriction = False
+    self.stopRelax()
     # restore normal TSTL semantics!
 
     # Update the simplification cache and return
@@ -655,7 +666,7 @@ def freshSimpleVariants(self, name, previous, replacements):
 
 def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     # Change so double assignments are allowed
-    self.__relaxUsedRestriction = True
+    self.relax()
     
     enableChange = {}
     for i in xrange(0,len(test)):
@@ -673,6 +684,8 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     for i in xrange(0,len(test)):
         canReplace[i] = []
         canMakeSimple[i] = []
+        if i not in enableChange:
+            continue
         for a in enableChange[i]:
             if (distLimit != None) and (self.levDist(a, test[i][0]) > distLimit):
                 continue
@@ -763,7 +776,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             if i == end:
                 print "#] (steps in [] can be in any order)"
 
-    self.__relaxUsedRestriction = False
+    self.stopRelax()
     # Make sure to restore normal semantics!
 
 def relax(self):

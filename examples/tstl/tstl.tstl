@@ -1,0 +1,51 @@
+@import thissut as s
+@import random as r
+
+pool: <rand> 1
+pool: <sut> 1
+pool: <test> 3
+pool: <actionlist> 3
+pool: <action> 3
+pool: <pred> 2
+
+pool: <bool> 2
+pool: <speed> 2
+pool: <dist> 2
+
+init: <sut> = s.sut()
+init: <rand> = r.Random()
+init: <rand>.seed(1)
+
+<test> := []
+<test> := <sut>.test()
+~<test>.append(<action>)
+
+<actionlist> := <sut>.actions()
+<actionlist> := <sut>.enabled()
+<actionlist> := ~<actionlist>[1:]
+<rand>.shuffle(~<actionlist>)
+
+<bool> := False
+<bool> := True
+
+<speed> := "FAST"
+<speed> := "VERYFAST"
+<speed> := "SLOW"
+<speed> := "VERYFASTREDUCE"
+
+<dist> := <[1..10]>
+
+len(<actionlist,1>) > 0 -> <action> := <actionlist>[0]
+
+<sut>.safely(<action>)
+<sut>.restart()
+
+<pred> := <sut>.fails
+
+<test> := <sut>.reduce(<test>,<pred>)
+<test> := <sut>.reduce(<test>,<pred>,keepLast=False)
+<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>)
+<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>,distLimit=<dist>)
+<sut>.generalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>)
+<sut>.generalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,distLimit=<dist>)
+
