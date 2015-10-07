@@ -163,6 +163,10 @@ indices of the actions in the test case.  This approach
 provides effective normaliization at a significant, but not
 unreasonable, computational cost.
 
+The second principle that determines the rewrite rules is that each
+rules should be unlikely to change the underlying cause for test case
+failure.
+
 \subsubsection{Definitions and Notation}
 
 In order to formally define normalization, some additional notation is required.
@@ -384,23 +388,23 @@ testing; we have discovered several important TSTL bugs this way.}.
 \begin{figure}
 {\scriptsize
 \begin{code}
-\textcolor{black!35}{\#[}
-test0 = []                             \textcolor{black!35}{\# STEP 0}
-\textcolor{black!35}{\#  or test0 = sut0.test() }
-actionlist0 = sut0.actions()           \textcolor{black!35}{\# STEP 1}
-\textcolor{black!35}{\#  or actionlist0 = sut0.enabled() }
-\textcolor{black!35}{\#] (steps in [] can be in any order)}
-action0 = actionlist0[0]               \textcolor{black!35}{\# STEP 2}
-\textcolor{black!35}{\#[}
-test0.append(action0)                  \textcolor{black!35}{\# STEP 3}
-pred0 = sut0.fails                     \textcolor{black!35}{\# STEP 4}
-\textcolor{black!35}{\#] (steps in [] can be in any order)}
-sut0.normalize(test0,pred0)            \textcolor{black!35}{\# STEP 5}
-sut0.normalize(test0,pred0)            \textcolor{black!35}{\# STEP 6}
-\textcolor{black!35}{\#  or (}
-\textcolor{black!35}{\#      test0 = []  ;}
-\textcolor{black!35}{\#      sut0.normalize(test0,pred0) }
-\textcolor{black!35}{\#     )}
+\textcolor{black!45}{\#[}
+test0 = []                             \textcolor{black!45}{\# STEP 0}
+\textcolor{black!45}{\#  or test0 = sut0.test() }
+actionlist0 = sut0.actions()           \textcolor{black!45}{\# STEP 1}
+\textcolor{black!45}{\#  or actionlist0 = sut0.enabled() }
+\textcolor{black!45}{\#] (steps in [] can be in any order)}
+action0 = actionlist0[0]               \textcolor{black!45}{\# STEP 2}
+\textcolor{black!45}{\#[}
+test0.append(action0)                  \textcolor{black!45}{\# STEP 3}
+pred0 = sut0.fails                     \textcolor{black!45}{\# STEP 4}
+\textcolor{black!45}{\#] (steps in [] can be in any order)}
+sut0.normalize(test0,pred0)            \textcolor{black!45}{\# STEP 5}
+sut0.normalize(test0,pred0)            \textcolor{black!45}{\# STEP 6}
+\textcolor{black!45}{\#  or (}
+\textcolor{black!45}{\#      test0 = []  ;}
+\textcolor{black!45}{\#      sut0.normalize(test0,pred0) }
+\textcolor{black!45}{\#     )}
 \end{code}
 }
 \caption{Generalized test for TSTL itself, showing fresh-object
