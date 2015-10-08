@@ -51,16 +51,18 @@ makes any surprising restrictions on test values clear.  For NumPy
 tests, normalization takes considerably longer than reduction, in part
 due to the expense of operations on large arrays.  Over almost all
 examples, the average time to reduce tests is about 4-5 seconds, and
-the time for normalization is between 712 and 774 seconds.
-Generalization takes between 52 and 59 seconds in these cases.  The
-exception was a test case of 45,206 steps (!) leading to a memory
-exhaustion error and crash, reduced (over a period of nearly a day) to
-a test case with 10 steps, which then normalized (in only 2 hours)
-to a test case with 8 steps, involving no operations other than array
-initialization (with zeros or ones), array flattening, and array
-addition (the original test case involved larger dimensions, array
-multiplication, and array subtraction).  This is the only case in
-which we have seen normalization time lower than reduction time.
+the time for normalization is between 712 and 774 seconds.  The
+average time to discover a failing test case, for comparison, is just
+over 400 seconds.  Generalization takes between 52 and 59 seconds in
+these cases.  The exception was a test case of 45,206 steps (!)
+leading to a memory exhaustion error and crash, reduced (over a period
+of nearly a day) to a test case with 10 steps, which then normalized
+(in only 2 hours) to a test case with 8 steps, involving no operations
+other than array initialization (with zeros or ones), array
+flattening, and array addition (the original test case involved larger
+dimensions, array multiplication, and array subtraction).  This is the
+only case in which we have seen normalization time lower than
+reduction time.
 
 \begin{figure}
 {\scriptsize
