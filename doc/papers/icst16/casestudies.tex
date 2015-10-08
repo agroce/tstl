@@ -1,5 +1,11 @@
 \section {Case Studies}
 
+It is probably best to consider this section as a series of case
+studies of normalization and generalization, rather than a complete
+experimental evaluation.  We believe these examples make it clear that
+our current algorithms are practically useful, and merit further
+development and optimization.
+
 \subsection{AVL Tree}
 
 \subsection{XML Parser}
@@ -19,7 +25,42 @@ increases the runtime by less than 5 seconds.
 
 \subsection{TSTL}
 
-\subsection{The numpy Library}
+\subsection{NumPy}
+
+NumPy \cite{NumPy} is a very widely used Python library/extension that supports
+large, multi-dimensional matrices and provides a huge library of
+mathematical functions.  The popular SciPy library for scientific
+computing builds on NumPy.  Developing tests for NumPy is challenging,
+because none of the authors are experts in numeric computation, and
+the specification of correct behavior is often somewhat subtle.  As a
+simple example, consider the test case in Figure \ref{numpyorig},
+normalized and generalized in Figure \ref{numpynormgen}.  Prior to
+normalization, understanding why the test case leads to a violation of
+self-equality for an array is, to say the least, non-trivial.  After
+normalization, it is much clearer what is happening:
+1) {\tt array0} contains {\tt NaN} 2) this is in fact correct
+behavior (the array \emph{should} contain {\tt NaN}).  The greater
+length and much larger number of operations involved in the original
+reduced test case obscures this critical point.  In NumPy, array
+equality does not hold for objects containing {\tt NaN}, so the
+assertion must be modified to exclude this case.
+
+Other, more complex, cases have also made it clear that normalization
+is useful for some additional test case reduction and generalization
+makes any surprising restrictions on test values clear.  For NumPy
+tests, normalization takes considerably longer than reduction, in part
+due to the expense of operations on large arrays.  Over almost all
+examples, the average time to reduce tests is about 4-5 seconds, and
+the time for normalization is between 712 and 774 seconds.
+Generalization takes between 52 and 59 seconds in these cases.  The
+exception was a test case of 45,206 steps (!) leading to a memory
+exhaustion error and crash, reduced (over a period of nearly a day) to
+a test case with 10 steps, which then normalized (in only 2 hours)
+to a test case with 8 steps, involving no operations other than array
+initialization (with zeros or ones), array flattening, and array
+addition (the original test case involved larger dimensions, array
+multiplication, and array subtraction).  This is the only case in
+which we have seen normalization time lower than reduction time.
 
 \begin{figure}
 {\scriptsize
@@ -69,52 +110,49 @@ increases the runtime by less than 5 seconds.
  assert (np.array\_equal(array1,array1))
 \end{code}
 }
-\caption{Original failing test case for numpy (42 steps)}
+\caption{Original ``failing'' test case for numpy (42 steps)}
+\label{numpyorig}
 \end{figure}
 
 \begin{figure}
 {\scriptsize
 \begin{code}
-dim0 = 1                            \# STEP 0
-\#  or dim0 = 10 
-shape0 = (dim0)                     \# STEP 1
-\#  or shape0 = (dim0, dim0) 
-\#  or shape0 = (dim0, dim0, dim0) 
-array0 = np.ones(shape0)            \# STEP 2
-array0 = array0 + array0            \# STEP 3
-array0 = array0 + array0            \# STEP 4
-\#  or array0 = array0 * array0 
-array0 = array0 * array0            \# STEP 5
-array0 = array0 * array0            \# STEP 6
-array0 = array0 * array0            \# STEP 7
-array0 = array0 * array0            \# STEP 8
-array0 = array0 * array0            \# STEP 9
-array0 = array0 * array0            \# STEP 10
-array0 = array0 * array0            \# STEP 11
-array0 = array0 * array0            \# STEP 12
-array0 = array0 * array0            \# STEP 13
-array0 = array0 - array0            \# STEP 14
-\#  or array1 = array0 - array0 
-\#  or array2 = array0 - array0 
-\#  or array3 = array0 - array0 
-\#  or array4 = array0 - array0 
-\#  or array5 = array0 - array0 
+dim0 = 1                            \textcolor{black!45}{\# STEP 0}
+\textcolor{black!45}{\#  or dim0 = 10 }
+shape0 = (dim0)                     \textcolor{black!45}{\# STEP 1}
+\textcolor{black!45}{\#  or shape0 = (dim0, dim0) }
+\textcolor{black!45}{\#  or shape0 = (dim0, dim0, dim0) }
+array0 = np.ones(shape0)            \textcolor{black!45}{\# STEP 2}
+array0 = array0 + array0            \textcolor{black!45}{\# STEP 3}
+array0 = array0 + array0            \textcolor{black!45}{\# STEP 4}
+\textcolor{black!45}{\#  or array0 = array0 * array0 }
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 5}
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 6}
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 7}
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 8}
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 9}
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 10}
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 11}
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 12}
+array0 = array0 * array0            \textcolor{black!45}{\# STEP 13}
+array0 = array0 - array0            \textcolor{black!45}{\# STEP 14}
 assert (np.array\_equal(array0,array0))
 \end{code}
 }
-\caption{Normalized and generalized test case (15 steps)}
+\caption{Normalized and generalized test case for numpy (15 steps)}
+\label{numpynormgen}
 \end{figure}
 
-\subsection{Esri ArcPy GIS Site-Package}
+\subsection{Esri ArcPy}
 
 Esri (the Environmental Systems Research Institute) is the single
-largest Geographic Information System software vendor, with about 40\%
+largest Geographic Information System (GIS) software vendor, with about 40\%
 of global market share.  Esri's ArcGIS tools are extremely widely
 used for GIS analysis, in government, scientific research, commercial
 enterprises, and education.  Automation of complex GIS analysis and
 data management is a frequent need, and Esri has long provided tools
 for programming their GIS software tools.  The current method of
-choice is a Python site-package, ArcPy.  ArcPy is a complex library,
+choice is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
 with dozens of classes and hundreds of functions distributed over
 a variety of of toolboxes.  Most of the code involved in ArcPy
 functionality is C++ for which source is unavailable (the source for
@@ -160,7 +198,11 @@ this paper, it was essential to understand that the SQL query and
 selection type were not essential to the fault, but that using a
 freshly created layer would not result in a crash:  the problem
 appears to be that ArcGIS (or ArcPy) does not invalidate layers built
-from a feature class when that feature class is deleted.  The
+from a feature class when that feature class is deleted\footnote{In
+  this instance, a generalization (the fresh values generalization in
+  particular) is informative even though it does not allow any
+  generalization; knowing that it was attempted, but prevented the
+  failure, is also valuable.}.  The
 original, non-normalized test case makes this far less clear, as the
 use of {\tt CopyFeatures} and the multiplicity of shapefiles involved
 disguises the essence of the problem.
