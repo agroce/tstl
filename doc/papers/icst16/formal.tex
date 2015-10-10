@@ -162,9 +162,10 @@ further rewritten.
 In the setting of TSTL, where test actions have a defined total
 order, a simple principle can be applied to produce strongly
 normalizing rewrite rules: rewrites should reduce the sum of the
-indices of the actions in the test case.  This approach
-provides effective normaliization at a significant, but not
-unreasonable, computational cost.
+indices of the actions in the test case, or make the test case's
+actions more ordered by index.  This approach
+provides effective normalization at a significant, but not
+impractical, computational cost.
 
 The second principle that determines the rewrite rules is that each
 rule should be unlikely to change the underlying cause for test case
@@ -176,7 +177,8 @@ positions of actions in the test case.
 \subsubsection{Definitions and Notation}
 
 In order to formally define normalization, some additional notation is required.
-A \emph{step} is an action paired with an index indicating its position in a text,
+A \emph{step} is an action paired with an index indicating its
+position in a test case,
 where the first action is step 0, etc., e.g.: $(2: a)$ indicates the
 third step of the test is action $a$ (indexing is from 0). 
 $\Delta(t,t')$ is the set of all steps in $t$ such that $t(i) \not= t'(i)$.
@@ -296,7 +298,10 @@ In practice, the number of required test case runs is certainly
 proportional to the length of the test $k$, and the total number of
 actions (that are ever enabled) but most actions are not
 enabled at most steps, and the rules are applied in an order that
-quickly converges on a normal form for many test cases.  
+quickly converges on a normal form for many test cases.  In our
+experiments, normalization is only very expensive when delta-debugging
+is also costly, and appears to be worse than delta-debugging by a
+constant factor, somewhere in the range of 2x-10x.
 
 \subsubsection{Normalization Optimizations}
 
@@ -334,11 +339,11 @@ Finally, it is easy to parallelize the normalization of a test case by
 checking the predicate over multiple candidates at once.  As soon as a
 candidate satisfies the predicate, one of two options are available:
 either the normalization can proceed with that candidate as the new
-base, making the algorithm potentially nondeterministic (in theory; in
+base, making the algorithm nondeterministic (in theory; in
 practice we suspect the same final result will usually appear), or the
 algorithm can wait for all earlier-in-sequence candidates to be
 checked, and only proceed when no candidate that would be checked
-first in the sequential version of the algorithm remain in the work
+first in the sequential version of the algorithm is in the work
 queue.
 
 \subsection{Generalization}
@@ -347,7 +352,15 @@ queue.
 
 The core idea of generalization is to use methods similar to those
 involved in normalization to provide a user with information about
-changeable aspects of a test case.  The core algorithm is simple:
+changeable aspects of a test case.  Some values and orderings of steps
+in a test case are \emph{essential} to the failure: when changed, they
+cause the test case to no longer fail.  Many others, however, are
+\emph{accidental} --- any concrete test case has to choose \emph{some}
+values and step ordering (for us, that enforced by the normalization
+process) but many such choices are arbitrary, or at least allow
+variance, with respect to the cause of failure.  Generalization
+performs experiments to distinguish essential and accidental aspects
+of a test case, and summarizes the results.  The core algorithm is simple:
 
 \begin{algorithm}
 \caption{Basic algorithm for generalization}
@@ -375,7 +388,17 @@ This algorithm collects all steps that can be replaced with other
 actions or swapped with other steps, and returns the set to be
 reported to the user.  This version assumes the test has already been
 normalized, but can be extended to any test case by removing the
-restrictions that $a > a'$ and $(j : b) > (i : a)$.
+restrictions that $a > a'$ and $(j : b) > (i : a)$.  The complexity of
+generalization is simpler to determine than that of normalization: if
+we assume all actions are enabled at each step, and there are $n$
+actions and $k$ steps, checking for replacements requires $k^{n-1}$
+test case executions (when every action is the lowest-indexed action).
+In that worst case, no swaps are possible.  The complexity of checking
+for swaps in the worst case is quadratic in $k$.  In practice, most
+actions are not enabled at most steps, and most actions in a test case
+are not the lowest-indexed action.  Basic generalization is trivial to
+parallelize, as all checks are independent.
+
 
 \subsubsection{Fresh Values and Misleading Test Cases}
 
@@ -486,13 +509,15 @@ successful fresh value generalization.
 
 \subsection{Discussion}
 
-The essential feature of normalization and generalization as presented
-in this paper is that they produce semantic results (simplification of
-tests and information on the essential features of a test) by purely
-syntactic means.  This is possible due to TSTL's conversion of testing
-into a graph exploration problem, where a test generation algorithm
-can be agnostic as to the underlying SUT, or even the language of the
-system under test.  The current TSTL implementation is in
-Python\footnote{There is also a Java version in alpha.}, but the
-normalization and generalization algorithms do not depend on the
-underlying language, only on the TSTL-level notions of actions and pools.
+The key feature of normalization and generalization as presented in
+this paper is that they produce semantic results (simplification of
+test cases and information on the essential and accidental features of
+a test case) by purely syntactic means.  This is possible due to
+TSTL's conversion of testing into a graph exploration problem
+\cite{NFM15}, where a test generation algorithm can be agnostic as to
+the underlying SUT, or even the language of the system under test.
+The current TSTL implementation is in Python\footnote{There is also a
+  Java version in beta, with a simpler version of normalization
+  implemented.}, but the normalization and generalization algorithms
+do not depend on the underlying language, only on the TSTL-level
+notions of actions and pools.

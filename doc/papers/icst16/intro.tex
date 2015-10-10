@@ -6,9 +6,10 @@ that remove irrelevant operations.  In fact, test case reduction is
 now standard practice in industral testing tools such as Mozilla's
 {\tt jsfunfuzz}.  However, simply reducing the length of a test case
 does not produce any kind of semantic simplicity.  There may be many
-1-minimal test cases that present different variations of a single
-fault.  In many cases, reading more than one of these test cases
-provides no useful additional information on the cause of failure.
+(often far more than a thousand, in practice) 1-minimal test cases
+that present different variations of a single fault.  In many cases,
+reading more than one of these test cases provides no useful
+additional information on the cause of failure.
 
 Consider the three test cases shown in Figure \ref{threetests}.  These
 test cases are obviously very similar, and in fact all lead to a
@@ -16,18 +17,18 @@ violation of the property that an AVL tree must always be nearly
 balanced, due to a missing call to {\tt rebalance} in {\tt delete} in
 a Python implementation of AVL trees.  However, the test cases are
 syntactically very different, and a testing system that collects
-failing test cases will produce three tests for a user to examine.
+failing test cases will present all three tests for a user to examine.
 While there are methods for attempting to determine which test cases
 represent distinct faults \cite{PLDI13}, the ideal solution is
 arguably to rewrite all three of these test cases into a single,
-normal form that preserves the structure of the failure while removing
+\emph{canonical} form that preserves the structure of the failure while removing
 such accidental aspects of each test case as the particular integer
 values and variables used, and the ordering of assignments and
 insertions.
 
 Figure \ref{normalgen} shows the result of applying our \emph{test case
-  normalization} method to these three tests, and then applying our
-\emph{test case generalization} approach to the normalized test case.
+  normalization} algorithm to these three tests, and then applying our
+\emph{test case generalization} algorithm to the normalized test case.
 \emph{All three test cases normalize to the same test
 case}.  This single test case, in addition to the 10 steps required to produce
 the failure, includes comments indicating what about the test case can
@@ -51,24 +52,25 @@ kind of failure, test case \emph{generalization}.
 Combining normalization and generalization avoids some common problems
 with understanding automatically generated test cases.  For instance,
 when a large integer appears in such a test case, the question always
-arises --- is this unusual value important, or just a randomly chosen
-number of no significance \cite{MakeMost}?  After normalization, any
-large values in a test case are sure to be essential, rather than
+arises --- is this unusual value important, or just a random number of
+no significance \cite{MakeMost}?  After normalization, any large
+values in a test case are essential, rather than
 accidental, because normalization includes value minimization.
 Without the additional step of generalization, however, it would be
-easy to conclude that \emph{all} small numeric values in normalized tests are
-accidental.  Generalization informs a user when a small value is
-required to reproduce a failure, and when it is simply an artifact of normalization.
+easy to assume all small numeric values in normalized
+tests are accidental.  Generalization informs a user when a small
+value is required to reproduce a failure, and when it is simply an
+artifact of normalization.
 
-Normalization is not a complete solution to the problem of
-identifying distinct faults (one key limitation is that our algorithms do not apply to
-complex custom test generators such as CSmith \cite{csmith} or {\tt
-  jsfunfuzz} \cite{jsfunfuzz}), but it is highly effective when it applies,
-in our experience.
-Running 100,000 tests (of length 100) on the faulty AVL tree produces
-860 failing test cases with no duplicates.  Normalizing these reduces
-the number of distinct failing test cases to just 22.  Of course,
-ideally \emph{all} failures due to the same fault would normalize to a
+Normalization is not a complete solution to the problem of identifying
+distinct faults (one key limitation is that our algorithms do not
+apply to complex custom test generators such as CSmith \cite{csmith}
+or {\tt jsfunfuzz} \cite{jsfunfuzz}), but it is highly effective when
+it applies, in our experience.  Running 100,000 tests (of length 100)
+on the faulty AVL tree produces 860 failing test cases with no
+duplicates.  Normalizing these reduces the number of distinct failing
+test cases to just 22.  Of course, ideally \emph{all} failures due to
+the same fault in the SUT (Software Under Test) would normalize to a
 single, representative test case, but we can only aim to approximate
 such a canonical form for faults.  Figure \ref{diffnorm} shows a test
 case that normalizes differently, and its normalized form (we omit the

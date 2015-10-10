@@ -1,1 +1,20 @@
 \section{Conclusions and Future Work}
+
+This paper presents test case normalization and generalization, first
+steps towards a goal we suspect can only be approximated: providing
+users of automated testing with a \emph{single test case, as short and
+  simple as possible, for each underlying fault in the SUT}, where
+that test case 1) produces a failure due to the fault and 2) includes
+annotations describing the general conditions under which the fault
+manifests as failure.  This is the ideal; normalization moves toward
+this ideal by rewriting numerous distinct failing test cases into a
+smaller set of simpler test cases, and generalization is a
+first-effort at an annotation method for describing the core structure
+of a failure, separating essential and accidental aspects of a test
+case.  Our algorithms rely on the ability of TSTL, a language for
+defining test cases for automated testing, to define simplification
+and experiments for generalization in a form amenable to simple
+rewriting, which can apply to any SUT and any language.
+
+Our current implementation is meant to serve as a useful starting
+point for further development.
