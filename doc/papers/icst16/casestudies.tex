@@ -210,6 +210,24 @@ original, non-normalized test case makes this far less clear, as the
 use of {\tt CopyFeatures} and the multiplicity of shapefiles involved
 disguises the essence of the problem.
 
+In addition to helping us understand failures, normalization and
+generalization are also being used to prepare an API-behavior
+regression suite for ArcPy.  One of the challenges of using a large
+API like ArcPy is that behavior of the system can change from version
+to version; in some cases this is due to new faults, or fixed faults,
+but in other cases there is simply an undocumented change.  In order
+to assist ArcPy developers, we are preparing a test suite that covers
+as much as possible of the Python source for ArcPy, in the latest version of ArcPy,
+10.3, and records the values returned in 10.3.  For future versions of
+ArcPy (or older versions), a ``semantic diff'' with 10.3, based on
+these calls, can be produced by running this suite.  The tests in the
+suite are normalized and generalized to help users understand the
+conditions behind an API usage's behavior, not just one set of
+values.  This ``coverage regression'' quick test \cite{icst2014} may
+also be useful for helping users understand the API, since the set of
+online examples of usage from Esri is usually limited to a small set
+of parameter combinations.
+
 \begin{figure}
 {\scriptsize 
 \begin{code}
@@ -241,7 +259,7 @@ arcpy.SelectLayerByAttribute\_management
    ' "'+fieldname1+'" '+op0+val1) 
 \end{code}
 }
-\caption{Original test case for ESRI ArcPy library (19 steps)}
+\caption{Original test case for ArcPy library (19 steps)}
 \label{esriorig}
 \end{figure}
 
@@ -290,7 +308,7 @@ arcpy.SelectLayerByAttribute\_management
    ' "'+ fieldname0+'" '+op0+val0)     \textcolor{black!45}{\# STEP 11}
 \end{code}
 }
-\caption{Normalized and generalized test case for ESRI ArcPy library
+\caption{Normalized and generalized test case for ArcPy library
   (12 steps)}
 \label{esrinormgen}
 \end{figure}
