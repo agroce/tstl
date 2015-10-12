@@ -113,7 +113,7 @@ class BinomialHeap(object):
         def __init__(self, get_heap, key, val=None):
             self.degree = 0
             self.parent = None
-            self.next   = None
+            self.nxt   = None
             self.child  = None
             self.key    = key
             self.ref    = ItemRef(self, get_heap)
@@ -128,12 +128,12 @@ class BinomialHeap(object):
                 return 'NIL'
             
         def __str__(self):
-            return '(%s, c:%s, n:%s)' % (getStrKey(self), getStrKey(self.child), getStrKey(self.__next__))
+            return '(%s, c:%s, n:%s)' % (getStrKey(self), getStrKey(self.child), getStrKey(self.nxt))
 
         def link(self, other):
             "Makes other a subtree of self."
             other.parent  = self
-            other.next    = self.child
+            other.nxt    = self.child
             self.child    = other
             self.degree  += 1
 
@@ -166,23 +166,23 @@ class BinomialHeap(object):
                 return h1
             if h1.degree < h2.degree:
                 h  = h1
-                h1 = h.__next__
+                h1 = h.nxt
             else:
                 h  = h2
-                h2 = h2.__next__
+                h2 = h2.nxt
             p = h
             while h2 and h1:
                 if h1.degree < h2.degree:
-                    p.next = h1
-                    h1 = h1.__next__
+                    p.nxt = h1
+                    h1 = h1.nxt
                 else:
-                    p.next = h2
-                    h2 = h2.__next__
-                p = p.__next__
+                    p.nxt = h2
+                    h2 = h2.nxt
+                p = p.nxt
             if h2:
-                p.next = h2
+                p.nxt = h2
             else:
-                p.next = h1
+                p.nxt = h1
             return h
 
         @staticmethod
@@ -193,15 +193,15 @@ class BinomialHeap(object):
             if not h:
                 return None
             tail = None
-            next = h
+            nxt = h
             h.parent = None
-            while h.__next__:
-                next = h.__next__
-                h.next = tail
+            while h.nxt:
+                nxt = h.nxt
+                h.nxt = tail
                 tail   = h
-                h = next
+                h = nxt
                 h.parent = None
-            h.next = tail
+            h.nxt = tail
             return h
 
     class __Ref(object):
@@ -276,9 +276,9 @@ class BinomialHeap(object):
             (x, prev) = pos
             # remove from list
             if prev:
-                prev.next = x.__next__
+                prev.nxt = x.nxt
             else:
-                self.head = x.__next__
+                self.head = x.nxt
             kids = BinomialHeap.Node.roots_reverse(x.child)
             self.__union(kids)
             x.ref.in_tree = False
@@ -312,7 +312,7 @@ class BinomialHeap(object):
         self.union(other)
         return self
 
-    def __next__(self):
+    def nxt(self):
         """Returns the value with the minimum key (= highest priority) in the heap
         AND removes it from the heap; raises StopIteration if the heap is empty.
         """
@@ -335,13 +335,13 @@ class BinomialHeap(object):
         min  = self.head
         min_prev = None
         prev = min
-        cur  = min.__next__
+        cur  = min.nxt
         while cur:
             if cur.key < min.key:
                 min = cur
                 min_prev = prev
             prev = cur
-            cur  = cur.__next__
+            cur  = cur.nxt
         return (min, min_prev)
 
     def __union(self, h2):
@@ -355,28 +355,28 @@ class BinomialHeap(object):
         h1 = BinomialHeap.Node.roots_merge(h1, h2)
         prev = None
         x    = h1
-        next = x.__next__
-        while next:
-            if x.degree != next.degree or \
-                    (next.__next__ and next.next.degree == x.degree):
+        nxt = x.nxt
+        while nxt:
+            if x.degree != nxt.degree or \
+                    (nxt.nxt and nxt.nxt.degree == x.degree):
                 prev = x
-                x    = next
-            elif x.key <= next.key:
-                # x becomes the root of next
-                x.next = next.__next__
-                x.link(next)
+                x    = nxt
+            elif x.key <= nxt.key:
+                # x becomes the root of nxt
+                x.nxt = nxt.nxt
+                x.link(nxt)
             else:
-                # next becomes the root of x
+                # nxt becomes the root of x
                 if not prev:
                     # update the "master" head
-                    h1 = next
+                    h1 = nxt
                 else:
                     # just update previous link
-                    prev.next = next
-                next.link(x)
+                    prev.nxt = nxt
+                nxt.link(x)
                 # x is not toplevel anymore, update ref by advancing
-                x = next
-            next = x.__next__
+                x = nxt
+            nxt = x.nxt
         self.head = h1
 
 def heap(lst=[]):

@@ -137,7 +137,7 @@ class BinomialHeap(object):
             covertool.cover("bh.py:115")
             self.parent = None
             covertool.cover("bh.py:116")
-            self.next   = None
+            self.nxt   = None
             covertool.cover("bh.py:117")
             self.child  = None
             covertool.cover("bh.py:118")
@@ -162,7 +162,7 @@ class BinomialHeap(object):
             
         def __str__(self):
             covertool.cover("bh.py:131")
-            return '(%s, c:%s, n:%s)' % (getStrKey(self), getStrKey(self.child), getStrKey(self.__next__))
+            return '(%s, c:%s, n:%s)' % (getStrKey(self), getStrKey(self.child), getStrKey(self.nxt))
 
         def link(self, other):
             covertool.cover("bh.py:134")
@@ -170,7 +170,7 @@ class BinomialHeap(object):
             covertool.cover("bh.py:135")
             other.parent  = self
             covertool.cover("bh.py:136")
-            other.next    = self.child
+            other.nxt    = self.child
             covertool.cover("bh.py:137")
             self.child    = other
             covertool.cover("bh.py:138")
@@ -224,12 +224,12 @@ class BinomialHeap(object):
                 covertool.cover("bh.py:168")
                 h  = h1
                 covertool.cover("bh.py:169")
-                h1 = h.__next__
+                h1 = h.nxt
             else:
                 covertool.cover("bh.py:171")
                 h  = h2
                 covertool.cover("bh.py:172")
-                h2 = h2.__next__
+                h2 = h2.nxt
             covertool.cover("bh.py:173")
             p = h
             covertool.cover("bh.py:174")
@@ -237,23 +237,23 @@ class BinomialHeap(object):
                 covertool.cover("bh.py:175")
                 if h1.degree < h2.degree:
                     covertool.cover("bh.py:176")
-                    p.next = h1
+                    p.nxt = h1
                     covertool.cover("bh.py:177")
-                    h1 = h1.__next__
+                    h1 = h1.nxt
                 else:
                     covertool.cover("bh.py:179")
-                    p.next = h2
+                    p.nxt = h2
                     covertool.cover("bh.py:180")
-                    h2 = h2.__next__
+                    h2 = h2.nxt
                 covertool.cover("bh.py:181")
-                p = p.__next__
+                p = p.nxt
             covertool.cover("bh.py:182")
             if h2:
                 covertool.cover("bh.py:183")
-                p.next = h2
+                p.nxt = h2
             else:
                 covertool.cover("bh.py:185")
-                p.next = h1
+                p.nxt = h1
             covertool.cover("bh.py:186")
             return h
 
@@ -269,23 +269,23 @@ class BinomialHeap(object):
             covertool.cover("bh.py:195")
             tail = None
             covertool.cover("bh.py:196")
-            next = h
+            nxt = h
             covertool.cover("bh.py:197")
             h.parent = None
             covertool.cover("bh.py:198")
-            while h.__next__:
+            while h.nxt:
                 covertool.cover("bh.py:199")
-                next = h.__next__
+                nxt = h.nxt
                 covertool.cover("bh.py:200")
-                h.next = tail
+                h.nxt = tail
                 covertool.cover("bh.py:201")
                 tail   = h
                 covertool.cover("bh.py:202")
-                h = next
+                h = nxt
                 covertool.cover("bh.py:203")
                 h.parent = None
             covertool.cover("bh.py:204")
-            h.next = tail
+            h.nxt = tail
             covertool.cover("bh.py:205")
             return h
 
@@ -395,10 +395,10 @@ class BinomialHeap(object):
             covertool.cover("bh.py:278")
             if prev:
                 covertool.cover("bh.py:279")
-                prev.next = x.__next__
+                prev.nxt = x.nxt
             else:
                 covertool.cover("bh.py:281")
-                self.head = x.__next__
+                self.head = x.nxt
             covertool.cover("bh.py:282")
             kids = BinomialHeap.Node.roots_reverse(x.child)
             covertool.cover("bh.py:283")
@@ -442,7 +442,7 @@ class BinomialHeap(object):
         covertool.cover("bh.py:313")
         return self
 
-    def __next__(self):
+    def nxt(self):
         """Returns the value with the minimum key (= highest priority) in the heap
         AND removes it from the heap; raises StopIteration if the heap is empty.
         """
@@ -477,7 +477,7 @@ class BinomialHeap(object):
         covertool.cover("bh.py:337")
         prev = min
         covertool.cover("bh.py:338")
-        cur  = min.__next__
+        cur  = min.nxt
         covertool.cover("bh.py:339")
         while cur:
             covertool.cover("bh.py:340")
@@ -489,7 +489,7 @@ class BinomialHeap(object):
             covertool.cover("bh.py:343")
             prev = cur
             covertool.cover("bh.py:344")
-            cur  = cur.__next__
+            cur  = cur.nxt
         covertool.cover("bh.py:345")
         return (min, min_prev)
 
@@ -514,40 +514,40 @@ class BinomialHeap(object):
         covertool.cover("bh.py:357")
         x    = h1
         covertool.cover("bh.py:358")
-        next = x.__next__
+        nxt = x.nxt
         covertool.cover("bh.py:359")
-        while next:
+        while nxt:
             covertool.cover("bh.py:360")
-            if x.degree != next.degree or \
-                    (next.__next__ and next.next.degree == x.degree):
+            if x.degree != nxt.degree or \
+                    (nxt.nxt and nxt.nxt.degree == x.degree):
                 covertool.cover("bh.py:362")
                 prev = x
                 covertool.cover("bh.py:363")
-                x    = next
-            elif x.key <= next.key:
-                # x becomes the root of next
+                x    = nxt
+            elif x.key <= nxt.key:
+                # x becomes the root of nxt
                 covertool.cover("bh.py:366")
-                x.next = next.__next__
+                x.nxt = nxt.nxt
                 covertool.cover("bh.py:367")
-                x.link(next)
+                x.link(nxt)
             else:
-                # next becomes the root of x
+                # nxt becomes the root of x
                 covertool.cover("bh.py:370")
                 if not prev:
                     # update the "master" head
                     covertool.cover("bh.py:372")
-                    h1 = next
+                    h1 = nxt
                 else:
                     # just update previous link
                     covertool.cover("bh.py:375")
-                    prev.next = next
+                    prev.nxt = nxt
                 covertool.cover("bh.py:376")
-                next.link(x)
+                nxt.link(x)
                 # x is not toplevel anymore, update ref by advancing
                 covertool.cover("bh.py:378")
-                x = next
+                x = nxt
             covertool.cover("bh.py:379")
-            next = x.__next__
+            nxt = x.nxt
         covertool.cover("bh.py:380")
         self.head = h1
 
