@@ -138,8 +138,9 @@ each underlying fault is uniquely represented by a single test case.
 In general, it seems clear that defining such an $f$ is (at least) as
 difficult as automatic fault localization and repair.  Therefore, we
 aim at approximating the goal, by providing a set of simple
-transformations such that $f$ reduces many tests to the same test, has
-low probability of reducing two tests failing for different reasons
+transformations such that $f$ changes many tests to the same test, $f$
+has
+low probability of changing two tests failing for different reasons
 into the same test, and $f$ is not unreasonably expensive to compute.
 The implementation for $f$ (in fact, for a family of $f$-approximating
 functions, with different tradeoffs in runtime and level of
