@@ -20,17 +20,18 @@ simple Python implementation of AVL trees found on the web
 \end{figure}
 
 Figure \ref{normeffect} shows the reduction in number of distinct
-failing test cases produced by normalization (vs. reduction only) for a
-set of 82 mutants of the AVLTree source code\footnote{All graphs
+failing test cases produced by normalization (vs. reduction only) for
+a set of 82 mutants of the AVLTree source code\footnote{All graphs
   produced using matplotlib \cite{Hunter:2007}.}.  Of the 228 mutants
 produced by MutPy \cite{mutpy}, only these produced at least 1 failure
-in 1,000 test cases.  Using only normalization, the mean number of
-distinct failures (for one fault) was 498.4, with a median of 485.
-Using normalization, the mean was 3.1 distinct failures, with a mean
-of just 2 failures.  For 38 of the 82 mutants, normalization produced
-only a single representative failure.  For every mutant, normalization
-reduced the number of distinct failures, and no mutant produced more
-than 27 distinct failures, after normalization.
+in 1,000 test cases.  Using only delta-debugging-based reduction, the
+mean number of distinct failures for each mutant (which is, by nature,
+a single fault) was 498.4, with a median of 485.  Using normalization,
+the mean was 3.1 distinct failures, with a mean of just 2 failures.
+For 38 of the 82 mutants, normalization produced only a single
+representative failure.  For every mutant, normalization reduced the
+number of distinct failures, and no mutant produced more than 27
+distinct failures, after normalization.
 
 \subsection{XML Parser}
 
