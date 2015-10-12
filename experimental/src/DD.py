@@ -68,7 +68,7 @@ class OutcomeCache:
 
         p = self
         for start in range(len(c)):
-            if not p.tail.has_key(c[start]):
+            if c[start] not in p.tail:
                 p.tail[c[start]] = OutcomeCache()
             p = p.tail[c[start]]
             
@@ -78,7 +78,7 @@ class OutcomeCache:
         """Return RESULT if (C, RESULT) is in the cache; None, otherwise."""
         p = self
         for start in range(len(c)):
-            if not p.tail.has_key(c[start]):
+            if c[start] not in p.tail:
                 return None
             p = p.tail[c[start]]
 
@@ -94,17 +94,17 @@ class OutcomeCache:
                 return self.result
             elif self.tail != {}:
                 # Select some superset
-                superset = self.tail[self.tail.keys()[0]]
+                superset = self.tail[list(self.tail.keys())[0]]
                 return superset.lookup_superset(c, start + 1)
             else:
                 return None
 
-        if self.tail.has_key(c[start]):
+        if c[start] in self.tail:
             return self.tail[c[start]].lookup_superset(c, start + 1)
 
         # Let K0 be the largest element in TAIL such that K0 <= C[START]
         k0 = None
-        for k in self.tail.keys():
+        for k in list(self.tail.keys()):
             if (k0 == None or k > k0) and k <= c[start]:
                 k0 = k
 
@@ -118,7 +118,7 @@ class OutcomeCache:
         C' being a subset of C or equal to C.  Otherwise, return None."""
         p = self
         for start in range(len(c)):
-            if p.tail.has_key(c[start]):
+            if c[start] in p.tail:
                 p = p.tail[c[start]]
 
         return p.result
@@ -228,7 +228,7 @@ class DD:
         
         c = []
         for delta in c1:
-            if not s2.has_key(delta):
+            if delta not in s2:
                 c.append(delta)
 
         return c
@@ -241,7 +241,7 @@ class DD:
 
         c = []
         for delta in c1:
-            if s2.has_key(delta):
+            if delta in s2:
                 c.append(delta)
 
         return c
@@ -254,7 +254,7 @@ class DD:
 
         c = c1[:]
         for delta in c2:
-            if not s1.has_key(delta):
+            if delta not in s1:
                 c.append(delta)
 
         return c
@@ -266,7 +266,7 @@ class DD:
             s2[delta] = 1
 
         for delta in c1:
-            if not s2.has_key(delta):
+            if delta not in s2:
                 return 0
 
         return 1
@@ -275,7 +275,7 @@ class DD:
     def coerce(self, c):
         """Return the configuration C as a compact string"""
         # Default: use printable representation
-        return `c`
+        return repr(c)
 
     def pretty(self, c):
         """Like coerce(), but sort beforehand"""
@@ -305,13 +305,13 @@ class DD:
                 return self.FAIL
 
         if self.debug_test:
-            print
-            print "test(" + self.coerce(c) + ")..."
+            print()
+            print("test(" + self.coerce(c) + ")...")
 
         outcome = self._test(c)
 
         if self.debug_test:
-            print "test(" + self.coerce(c) + ") = " + `outcome`
+            print("test(" + self.coerce(c) + ") = " + repr(outcome))
 
         if self.cache_outcomes:
             self.outcome_cache.add(c, outcome)
@@ -327,12 +327,12 @@ class DD:
     def split(self, c, n):
         """Split C into [C_1, C_2, ..., C_n]."""
         if self.debug_split:
-            print "split(" + self.coerce(c) + ", " + `n` + ")..."
+            print("split(" + self.coerce(c) + ", " + repr(n) + ")...")
 
         outcome = self._split(c, n)
 
         if self.debug_split:
-            print "split(" + self.coerce(c) + ", " + `n` + ") = " + `outcome`
+            print("split(" + self.coerce(c) + ", " + repr(n) + ") = " + repr(outcome))
 
         return outcome
 
@@ -353,14 +353,14 @@ class DD:
              to CSUB.  Otherwise, resolve by removing deltas from CSUB."""
 
         if self.debug_resolve:
-            print "resolve(" + `csub` + ", " + self.coerce(c) + ", " + \
-                  `direction` + ")..."
+            print("resolve(" + repr(csub) + ", " + self.coerce(c) + ", " + \
+                  repr(direction) + ")...")
 
         outcome = self._resolve(csub, c, direction)
 
         if self.debug_resolve:
-            print "resolve(" + `csub` + ", " + self.coerce(c) + ", " + \
-                  `direction` + ") = " + `outcome`
+            print("resolve(" + repr(csub) + ", " + self.coerce(c) + ", " + \
+                  repr(direction) + ") = " + repr(outcome))
 
         return outcome
 
@@ -425,8 +425,8 @@ class DD:
     def report_progress(self, c, title):
         if len(c) != self.__last_reported_length:
             if self.debug_dd:
-                print
-                print title + ": " + `len(c)` + " deltas left:", self.coerce(c)
+                print()
+                print(title + ": " + repr(len(c)) + " deltas left:", self.coerce(c))
             self.__last_reported_length = len(c)
 
 
@@ -438,13 +438,13 @@ class DD:
         assert self.test(c)  == dd.FAIL
 
         if self.debug_dd:
-            print ("dd(" + self.pretty(c) + ", " + `r` + ", " + `n` + ")...")
+            print(("dd(" + self.pretty(c) + ", " + repr(r) + ", " + repr(n) + ")..."))
 
         outcome = self._old_dd(c, r, n)
 
         if self.debug_dd:
-            print ("dd(" + self.pretty(c) + ", " + `r` + ", " + `n` +
-                   ") = " + `outcome`)
+            print(("dd(" + self.pretty(c) + ", " + repr(r) + ", " + repr(n) +
+                   ") = " + repr(outcome)))
 
         return outcome
 
@@ -466,7 +466,7 @@ class DD:
 
         run = 1
         next_c = c[:]
-         next_r = r[:]
+        next_r = r[:]
 
         # We replace the tail recursion from the paper by a loop
         while 1:
@@ -475,27 +475,27 @@ class DD:
             cs = self.split(c, n)
 
             if self.debug_dd:
-                print
-                print "dd (run #" + `run` + "): trying",
+                print()
+                print("dd (run #" + repr(run) + "): trying", end=' ')
                 for i in range(n):
                     if i > 0:
-                        print "+",
-                    print len(cs[i]),
-                print
+                        print("+", end=' ')
+                    print(len(cs[i]), end=' ')
+                print()
 
             # Check subsets
             ts = []
             for i in range(n):
                 if self.debug_dd:
-                    print "dd: trying cs[" + `i` + "] =", self.pretty(cs[i])
+                    print("dd: trying cs[" + repr(i) + "] =", self.pretty(cs[i]))
 
                 t, cs[i] = self.test_and_resolve(cs[i], r, c, self.REMOVE)
                 ts.append(t)
                 if t == self.FAIL:
                     # Found
                     if self.debug_dd:
-                        print "dd: found", len(cs[i]), "deltas:",
-                        print self.pretty(cs[i])
+                        print("dd: found", len(cs[i]), "deltas:", end=' ')
+                        print(self.pretty(cs[i]))
                     return self.dd(cs[i], r)
 
             # Check complements
@@ -518,8 +518,8 @@ class DD:
                 if ts[i] == self.PASS and tbars[i] == self.PASS:
                     # Interference
                     if self.debug_dd:
-                        print "dd: interference of", self.pretty(cs[i]),
-                        print "and", self.pretty(cbars[i])
+                        print("dd: interference of", self.pretty(cs[i]), end=' ')
+                        print("and", self.pretty(cbars[i]))
                         
                     d    = self.dd(cs[i][:], cbars[i] + r)
                     dbar = self.dd(cbars[i][:], cs[i] + r)
@@ -528,16 +528,16 @@ class DD:
                 if ts[i] == self.UNRESOLVED and tbars[i] == self.PASS:
                     # Preference
                     if self.debug_dd:
-                        print "dd: preferring", len(cs[i]), "deltas:",
-                        print self.pretty(cs[i])
+                        print("dd: preferring", len(cs[i]), "deltas:", end=' ')
+                        print(self.pretty(cs[i]))
                         
                     return self.dd(cs[i][:], cbars[i] + r)
 
                 if ts[i] == self.PASS or tbars[i] == self.FAIL:
                     if self.debug_dd:
                         excluded = self.__listminus(next_c, cbars[i])
-                        print "dd: excluding", len(excluded), "deltas:",
-                        print self.pretty(excluded)
+                        print("dd: excluding", len(excluded), "deltas:", end=' ')
+                        print(self.pretty(excluded))
 
                     if ts[i] == self.PASS:
                         next_r = self.__listunion(next_r, cs[i])
@@ -549,12 +549,12 @@ class DD:
             if next_n == n and next_c[:] == c[:] and next_r[:] == r[:]:
                 # Nothing left
                 if self.debug_dd:
-                    print "dd: nothing left"
+                    print("dd: nothing left")
                 return next_c
 
             # Try again
             if self.debug_dd:
-                print "dd: try again"
+                print("dd: try again")
 
             c = next_c
             r = next_r
@@ -602,12 +602,12 @@ class DD:
         self.CC = c
 
         if self.debug_dd:
-            print ("dd(" + self.pretty(c) + ", " + `n` + ")...")
+            print(("dd(" + self.pretty(c) + ", " + repr(n) + ")..."))
 
         outcome = self._dd(c, n)
 
         if self.debug_dd:
-            print ("dd(" + self.pretty(c) + ", " + `n` + ") = " + `outcome`)
+            print(("dd(" + self.pretty(c) + ", " + repr(n) + ") = " + repr(outcome)))
 
         return outcome
 
@@ -627,7 +627,7 @@ class DD:
             if n > len(c):
                 # No further minimizing
                 if self.debug_dd:
-                    print "dd: done"
+                    print("dd: done")
                 return c
 
             self.report_progress(c, "dd")
@@ -635,13 +635,13 @@ class DD:
             cs = self.split(c, n)
 
             if self.debug_dd:
-                print
-                print "dd (run #" + `run` + "): trying",
+                print()
+                print("dd (run #" + repr(run) + "): trying", end=' ')
                 for i in range(n):
                     if i > 0:
-                        print "+",
-                    print len(cs[i]),
-                print
+                        print("+", end=' ')
+                    print(len(cs[i]), end=' ')
+                print()
 
             c_failed    = 0
             cbar_failed = 0
@@ -652,15 +652,15 @@ class DD:
             # Check subsets
             for i in range(n):
                 if self.debug_dd:
-                    print "dd: trying", self.pretty(cs[i])
+                    print("dd: trying", self.pretty(cs[i]))
 
                 (t, cs[i]) = self.test_mix(cs[i], c, self.REMOVE)
 
                 if t == self.FAIL:
                     # Found
                     if self.debug_dd:
-                        print "dd: found", len(cs[i]), "deltas:",
-                        print self.pretty(cs[i])
+                        print("dd: found", len(cs[i]), "deltas:", end=' ')
+                        print(self.pretty(cs[i]))
 
                     c_failed = 1
                     next_c = cs[i]
@@ -686,9 +686,9 @@ class DD:
 
                     if t == self.FAIL:
                         if self.debug_dd:
-                            print "dd: reduced to", len(cbars[i]),
-                            print "deltas:",
-                            print self.pretty(cbars[i])
+                            print("dd: reduced to", len(cbars[i]), end=' ')
+                            print("deltas:", end=' ')
+                            print(self.pretty(cbars[i]))
 
                         cbar_failed = 1
                         next_c = self.__listintersect(next_c, cbars[i])
@@ -703,12 +703,12 @@ class DD:
                 if n >= len(c):
                     # No further minimizing
                     if self.debug_dd:
-                        print "dd: done"
+                        print("dd: done")
                     return c
 
                 next_n = min(len(c), n * 2)
                 if self.debug_dd:
-                    print "dd: increase granularity to", next_n
+                    print("dd: increase granularity to", next_n)
                 cbar_offset = (cbar_offset * next_n) / n
 
             c = next_c
@@ -730,13 +730,13 @@ class DD:
         n = 2
 
         if self.debug_dd:
-            print ("dddiff(" + self.pretty(c) + ", " + `n` + ")...")
+            print(("dddiff(" + self.pretty(c) + ", " + repr(n) + ")..."))
 
         outcome = self._dddiff([], c, n)
 
         if self.debug_dd:
-            print ("dddiff(" + self.pretty(c) + ", " + `n` + ") = " +
-                   `outcome`)
+            print(("dddiff(" + self.pretty(c) + ", " + repr(n) + ") = " +
+                   repr(outcome)))
 
         return outcome
 
@@ -747,8 +747,8 @@ class DD:
         # We replace the tail recursion from the paper by a loop
         while 1:
             if self.debug_dd:
-                print "dd: c1 =", self.pretty(c1)
-                print "dd: c2 =", self.pretty(c2)
+                print("dd: c1 =", self.pretty(c1))
+                print("dd: c2 =", self.pretty(c2))
 
             if self.assume_axioms_hold:
                 t1 = self.PASS
@@ -764,24 +764,24 @@ class DD:
             c = self.__listminus(c2, c1)
 
             if self.debug_dd:
-                print "dd: c2 - c1 =", self.pretty(c)
+                print("dd: c2 - c1 =", self.pretty(c))
 
             if n > len(c):
                 # No further minimizing
-                print "dd: done"
+                print("dd: done")
                 return (c, c1, c2)
 
             self.report_progress(c, "dd")
 
             cs = self.split(c, n)
 
-            print
-            print "dd (run #" + `run` + "): trying",
+            print()
+            print("dd (run #" + repr(run) + "): trying", end=' ')
             for i in range(n):
                 if i > 0:
-                    print "+",
-                print len(cs[i]),
-            print
+                    print("+", end=' ')
+                print(len(cs[i]), end=' ')
+            print()
 
             progress = 0
 
@@ -794,7 +794,7 @@ class DD:
                 i = (j + cbar_offset) % n
                 
                 if self.debug_dd:
-                    print "dd: trying", self.pretty(cs[i])
+                    print("dd: trying", self.pretty(cs[i]))
 
                 (t, csub) = self.test_and_resolve(cs[i], c1, c, self.REMOVE)
                 csub = self.__listunion(c1, csub)
@@ -807,8 +807,8 @@ class DD:
                     cbar_offset = 0
 
                     if self.debug_dd:
-                        print "dd: reduce c2 to", len(next_c2), "deltas:",
-                        print self.pretty(next_c2)
+                        print("dd: reduce c2 to", len(next_c2), "deltas:", end=' ')
+                        print(self.pretty(next_c2))
                     break
 
                 if t == self.PASS and t2 == self.FAIL:
@@ -819,8 +819,8 @@ class DD:
                     cbar_offset = i
 
                     if self.debug_dd:
-                        print "dd: increase c1 to", len(next_c1), "deltas:",
-                        print self.pretty(next_c1)
+                        print("dd: increase c1 to", len(next_c1), "deltas:", end=' ')
+                        print(self.pretty(next_c1))
                     break
 
 
@@ -836,8 +836,8 @@ class DD:
                     cbar_offset = 0
 
                     if self.debug_dd:
-                        print "dd: increase c1 to", len(next_c1), "deltas:",
-                        print self.pretty(next_c1)
+                        print("dd: increase c1 to", len(next_c1), "deltas:", end=' ')
+                        print(self.pretty(next_c1))
                     break
 
                 if t == self.FAIL and t1 == self.PASS:
@@ -848,8 +848,8 @@ class DD:
                     cbar_offset = i
 
                     if self.debug_dd:
-                        print "dd: reduce c2 to", len(next_c2), "deltas:",
-                        print self.pretty(next_c2)
+                        print("dd: reduce c2 to", len(next_c2), "deltas:", end=' ')
+                        print(self.pretty(next_c2))
                     break
 
             if progress:
@@ -857,11 +857,11 @@ class DD:
             else:
                 if n >= len(c):
                     # No further minimizing
-                    print "dd: done"
+                    print("dd: done")
                     return (c, c1, c2)
 
                 next_n = min(len(c), n * 2)
-                print "dd: increase granularity to", next_n
+                print("dd: increase granularity to", next_n)
                 cbar_offset = (cbar_offset * next_n) / n
 
             c1  = next_c1
@@ -921,7 +921,7 @@ if __name__ == '__main__':
             DD.__init__(self)
                         
 
-    print "WYNOT - a tool for delta debugging."
+    print("WYNOT - a tool for delta debugging.")
     mydd = MyDD()
     # mydd.debug_test     = 1                        # Enable debugging output
     # mydd.debug_dd       = 1                        # Enable debugging output
@@ -931,16 +931,16 @@ if __name__ == '__main__':
     # mydd.cache_outcomes = 0
     # mydd.monotony = 0
 
-    print "Minimizing failure-inducing input..."
+    print("Minimizing failure-inducing input...")
     c = mydd.ddmin([1, 2, 3, 4, 5, 6, 7, 8])  # Invoke DDMIN
-    print "The 1-minimal failure-inducing input is", c
-    print "Removing any element will make the failure go away."
-    print
+    print("The 1-minimal failure-inducing input is", c)
+    print("Removing any element will make the failure go away.")
+    print()
     
-    print "Computing the failure-inducing difference..."
+    print("Computing the failure-inducing difference...")
     (c, c1, c2) = mydd.dd([1, 2, 3, 4, 5, 6, 7, 8])        # Invoke DD
-    print "The 1-minimal failure-inducing difference is", c
-    print c1, "passes,", c2, "fails"
+    print("The 1-minimal failure-inducing difference is", c)
+    print(c1, "passes,", c2, "fails")
     
 
 

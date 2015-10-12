@@ -6,9 +6,9 @@ t = sut.t()
 LEN = 2000
 N = 1000
 
-for n in xrange(0,N):
+for n in range(0,N):
     t.restart()
-    for s in xrange(0,LEN):
+    for s in range(0,LEN):
         oldstate = t.state()
         nxt = []
         for action in t.enabled():
@@ -24,5 +24,5 @@ for n in xrange(0,N):
             nxt.append((action, fitness))
             t.backtrack(oldstate)
         sortedacts = sorted(nxt, key=lambda x : x[1], reverse = True)
-        print sortedacts[0]
+        print(sortedacts[0])
         sortedacts[0][0][2]()

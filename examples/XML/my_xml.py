@@ -189,14 +189,14 @@ erezbibi AT users DOT sourceforge DOT net
 """
 
 import re
-import htmlentitydefs
+import html.entities
 from types import GeneratorType
 
 INDENT = "  "
 
 class MyXmlError(Exception): pass
 
-class MyValue(unicode):
+class MyValue(str):
         """
         Holds an end value, this can be Node value or attribute value.
         This is a unicode object that adds a "number" and "boolean" attributes.
@@ -204,7 +204,7 @@ class MyValue(unicode):
         def __new__(cls, value=None, *args, **kw):
                 if value is None:
                         value = ''
-                return unicode.__new__(cls, value)
+                return str.__new__(cls, value)
 
 
         @property
@@ -266,7 +266,7 @@ class MyXml(object):
                 """ If asking for attribute (starts with at_) return it or EMPTY_VALUE """
                 if not self._attr is None and name.startswith("at_"):
                         return self._attr.get(name[3:], EMPTY_VALUE)
-                raise AttributeError, ("%s is not an attribute of MyXml" % name)
+                raise AttributeError("%s is not an attribute of MyXml" % name)
 
         def as_list(self):
                 """
@@ -304,7 +304,7 @@ class MyNode(MyValue, MyXml):
                 ret = INDENT * MyXml._indent + '<' + self._name
                 if self._attr:
                         ret += ' ' + ' '.join ('%s="%s"' % (key, val) for key, val in \
-                                self._attr.items())
+                                list(self._attr.items()))
                 if self:
                         ret += ">%s</%s>" % (self.value, self._name)
                 else:
@@ -317,7 +317,7 @@ class MyNode(MyValue, MyXml):
                         # Compare the entire object (name, attr, value)
                         return hash(self) == hash(obj)
                 # Compare only values
-                return unicode(self) == unicode(obj)
+                return str(self) == str(obj)
 
         def __ne__(self, obj):
                 return not self.__eq__(obj)
@@ -325,14 +325,14 @@ class MyNode(MyValue, MyXml):
         def __getitem__(self, key):
                 """ This function is so we can look at this node as one item list """
                 if not isinstance(key, int):
-                        raise TypeError, "Cannot slice a NodesList"
+                        raise TypeError("Cannot slice a NodesList")
                 if key != 0:
                         raise IndexError
                 return self
 
         def add(self, node):
                 """ Not implemented in leaf nodes """
-                raise NotImplementedError, "Leaf node is immutable"
+                raise NotImplementedError("Leaf node is immutable")
 
 
 # Construct an Empty Node
@@ -374,7 +374,7 @@ class MyNodesDict(dict, MyXml):
                 if xml:
                         _text2dict(self, xml)
                 elif value:
-                        for key, val in value.iteritems():
+                        for key, val in value.items():
                                 self.add(_object2xml(key, val))
 
         def __getattr__(self, name):
@@ -383,7 +383,7 @@ class MyNodesDict(dict, MyXml):
                 python reserved words), this will also return EMPY_NODE if the node
                 doesn't exists.
                 """
-                if self.has_key(name):
+                if name in self:
                         return self[name]
                 if name.startswith("nd_"):
                         return self.get(name[3:], EMPTY_NODE)
@@ -392,7 +392,7 @@ class MyNodesDict(dict, MyXml):
         def __setattr__(self, name, val):
                 if name and name[0] == '_':
                         return MyXml.__setattr__(self, name, val)
-                raise NotImplementedError, "Nodes-Dict attributes are immutable"
+                raise NotImplementedError("Nodes-Dict attributes are immutable")
 
         def __repr__(self):
                 """ Return the dictionary data as XML string """
@@ -405,7 +405,7 @@ class MyNodesDict(dict, MyXml):
                 ret = INDENT * MyXml._indent + '<' + self._name
                 if self._attr:
                         ret += ' ' + ' '.join ('%s="%s"' % (key, val) for key, val in \
-                                self._attr.items ())
+                                list(self._attr.items ()))
                 ret += ">\n%s\n%s</%s>" % (values, INDENT * MyXml._indent, self._name)
                 return ret
 
@@ -429,7 +429,7 @@ class MyNodesDict(dict, MyXml):
                 assert isinstance(node, MyXml), "node must be MyXml object"
                 #assert node.node_name, "new node must have a name"
                 if not node.node_name:
-                    for sub_node in node.values():
+                    for sub_node in list(node.values()):
                         self.add(sub_node)
                 elif node.node_name in self:
                         tmp = self[node.node_name].as_list()
@@ -481,7 +481,7 @@ def _convert_entity(m):
         except ValueError:
             return '&#%s;' % m.group(2)
     try:
-        return htmlentitydefs.entitydefs[m.group(2)]
+        return html.entities.entitydefs[m.group(2)]
     except KeyError:
         return '&%s;' % m.group(2)
 
@@ -502,7 +502,7 @@ def _get_inner_tag(text):
         contains = not text.rstrip().endswith('/')
         lst = _re_inner_tag.findall(text)
         if not lst:
-                raise MyXmlError, "Cannot understand this tag format: %s..." % text[:min(10, len(text))]
+                raise MyXmlError("Cannot understand this tag format: %s..." % text[:min(10, len(text))])
         name = lst[0][1]
         if lst[1:]:
                 attr = dict((atr[1], MyValue(atr[3])) for atr in lst[1:])
@@ -517,7 +517,7 @@ def _get1item(text):
         """
         i = text.find('>')
         if not text or text[0] != '<' or i == -1:
-                raise MyXmlError, "Cannot understand this format: %s..." % text[:min(20, len(text))]
+                raise MyXmlError("Cannot understand this format: %s..." % text[:min(20, len(text))])
         name, attr, contains = _get_inner_tag(text[1:i])
         if contains:
                 # Find the correct closing tag
@@ -529,7 +529,7 @@ def _get1item(text):
                         j = mtch.start()
                         if counter == 0: break
                 if not j or counter != 0:
-                        raise MyXmlError, "Cannot understand this format: Cannot find </%s>" % name
+                        raise MyXmlError("Cannot understand this format: Cannot find </%s>" % name)
                 content = text[i+1:j].strip()
                 length = j + len(name) + 3
         else:
@@ -633,5 +633,5 @@ if __name__ == '__main__':
         import doctest
         doctest.testmod()
 
-        print "Test Passed"
+        print("Test Passed")
 

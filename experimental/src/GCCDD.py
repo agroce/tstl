@@ -2,7 +2,7 @@
 # Using delta debugging on GCC input
 
 import DD
-import commands
+import subprocess
 import string
 
 class MyDD(DD.DD):
@@ -20,14 +20,14 @@ class MyDD(DD.DD):
         out.write(input)
         out.close()
 
-        print self.coerce(deltas)
+        print(self.coerce(deltas))
 
         # Invoke GCC
-        (status, output) = commands.getstatusoutput(
+        (status, output) = subprocess.getstatusoutput(
             "(ulimit -H -s 256; gcc -c -O input.c) 2>&1")
 
-        print output
-        print "Exit code", status
+        print(output)
+        print("Exit code", status)
 
         # Determine outcome
         if status == 0:
@@ -53,10 +53,10 @@ def DDreduce(SUT, test, pred, keepLast = True):
 
     mydd = MyDD()
     
-    print "Simplifying failure-inducing input..."
+    print("Simplifying failure-inducing input...")
     c = mydd.ddmin(deltas)              # Invoke DDMIN
-    print "The 1-minimal failure-inducing input is", mydd.coerce(c)
-    print "Removing any element will make the failure go away."
+    print("The 1-minimal failure-inducing input is", mydd.coerce(c))
+    print("Removing any element will make the failure go away.")
 
     return mydd.coerce(c)
 

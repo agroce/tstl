@@ -80,7 +80,7 @@ class t(object):
    def guard11(self):
       return True and (self.p_VAL_used[0])
    def act12(self):
-      print self.p_LIST[0]
+      print(self.p_LIST[0])
 
       self.p_LIST_used[0]=True
    def guard12(self):
@@ -159,4 +159,4 @@ class t(object):
          return False
       return True
    def enabled(self):
-       return filter(lambda (s, g, a): g(), self.actions)
+       return [s_g_a for s_g_a in self.actions if s_g_a[1]()]

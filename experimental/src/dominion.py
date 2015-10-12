@@ -14,7 +14,7 @@ def thehand(g):
 def endTurn(g):
         g.currentPlayer().discard.extend(g.currentPlayer().hand)
         g.currentPlayer().hand = []
-        for c in xrange(0,5):
+        for c in range(0,5):
                 g.currentPlayer().drawCard()
         return g.nextPlayer().startTurn()
 

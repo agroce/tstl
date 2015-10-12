@@ -71,7 +71,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -84,25 +84,25 @@ def handle_failure(test, msg, checkFail, newCov = False):
 
     if not newCov:
         failCount += 1
-        print msg
+        print(msg)
         f = t.failure()
-        print "ERROR:",f
-        print "TRACEBACK:"
+        print("ERROR:",f)
+        print("TRACEBACK:")
         traceback.print_tb(f[2])
     else:
-        print "Handling new coverage for quick testing"
+        print("Handling new coverage for quick testing")
         snew = t.newCurrStatements()
         for s in snew:
-            print "NEW STATEMENT",s
+            print("NEW STATEMENT",s)
         bnew = t.newCurrBranches()
         for b in bnew:
-            print "NEW BRANCH",b
+            print("NEW BRANCH",b)
         trep = t.replay(test)
         sremove = []
         scov = t.currStatements()
         for s in snew:
             if s not in scov:
-                print "REMOVING",s
+                print("REMOVING",s)
                 sremove.append(s)
         for s in sremove:
             snew.remove(s)
@@ -110,13 +110,13 @@ def handle_failure(test, msg, checkFail, newCov = False):
         bcov = t.currBranches()
         for b in bnew:
             if b not in bcov:
-                print "REMOVING",b
+                print("REMOVING",b)
                 bremove.append(b)
         for b in bremove:
             bnew.remove(b)
         beforeReduceS = set(t.allStatements())
         beforeReduceB = set(t.allBranches())
-    print "Original test has",len(test),"steps"
+    print("Original test has",len(test),"steps")
     if not config.full:
         if not checkFail:
             failProp = t.fails
@@ -124,38 +124,38 @@ def handle_failure(test, msg, checkFail, newCov = False):
             failProp = t.failsCheck
         if newCov:
             failProp = t.coversAll(snew,bnew)
-        print "REDUCING..."
+        print("REDUCING...")
         startReduce = time.time()
         original = test
         test = t.reduce(test, failProp, True, config.keep)
-        print "Reduced test has",len(test),"steps"
-        print "REDUCED IN",time.time()-startReduce,"SECONDS"
+        print("Reduced test has",len(test),"steps")
+        print("REDUCED IN",time.time()-startReduce,"SECONDS")
         i = 0
         for s in test:
-            print "STEP",i,t.prettyName(s[0])
+            print("STEP",i,t.prettyName(s[0]))
             i += 1
         if config.essentials:
-            print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
+            print("FINDING ESSENTIAL ELEMENTS OF REDUCED TEST")
             (canRemove, cannotRemove) = t.reduceEssentials(test, original, failProp, True, config.keep)
-            print len(canRemove),len(cannotRemove)
+            print(len(canRemove),len(cannotRemove))
             for (c,reducec) in canRemove:
-                print "CAN BE REMOVED:",map(lambda x:x[0], c)
+                print("CAN BE REMOVED:",[x[0] for x in c])
                 i = 0
                 for s in reducec:
-                    print t.prettyName(s[0]),"# STEP",i
+                    print(t.prettyName(s[0]),"# STEP",i)
                     i += 1
         sys.stdout.flush()
         if config.normalize:
             startSimplify = time.time()
-            print "NORMALIZING..."
+            print("NORMALIZING...")
             test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
-            print "Normalized test has",len(test),"steps"
-            print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
+            print("Normalized test has",len(test),"steps")
+            print("NORMALIZED IN",time.time()-startSimplify,"SECONDS")
         if config.generalize and (test not in failures):
             startGeneralize = time.time()
-            print "GENERALIZING..."
+            print("GENERALIZING...")
             t.generalize(test, failProp, verbose = True)
-            print "GENERALIZED IN",time.time()-startGeneralize,"SECONDS"            
+            print("GENERALIZED IN",time.time()-startGeneralize,"SECONDS")            
         reduceTime += time.time()-startReduce
 
     i = 0
@@ -164,10 +164,10 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if config.quickTests:
             for s in t.allStatements():
                 if s not in beforeReduceS:
-                    print "NEW STATEMENT FROM REDUCTION",s
+                    print("NEW STATEMENT FROM REDUCTION",s)
             for b in t.allBranches():
                 if b not in beforeReduceB:
-                    print "NEW BRANCH FROM REDUCTION",b
+                    print("NEW BRANCH FROM REDUCTION",b)
             outname = "quicktest." + str(quickCount)
             quickCount += 1
         if config.multiple:
@@ -177,34 +177,34 @@ def handle_failure(test, msg, checkFail, newCov = False):
         outf = None
     if config.failedLogging != None:
         t.setLog(config.failedLogging)
-    print
-    print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
+    print()
+    print("FINAL VERSION OF TEST, WITH LOGGED REPLAY:")
     for s in test:
-        print t.prettyName(s[0]),"  # STEP",i
+        print(t.prettyName(s[0]),"  # STEP",i)
         t.safely(s)
         i += 1
         if outf != None:
             outf.write(t.serializable(s)+"\n")
     if not newCov:
         f = t.failure()
-        print "ERROR:",f
-        print "TRACEBACK:"
+        print("ERROR:",f)
+        print("TRACEBACK:")
         traceback.print_tb(f[2])
     sys.stdout.flush()
     if outf != None:
         outf.close()
     if config.multiple:
         if test in failures:
-            print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
+            print("NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING")
             repeatCount += 1
         else:
             failures.append(test)
-            print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
+            print("FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES")
 
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random testing using config={}'.format(config))
+print(('Random testing using config={}'.format(config)))
 
 R = random.Random(config.seed)
 
@@ -238,12 +238,12 @@ if config.total:
     fulltest = open("fulltest.txt",'w')
 
 if config.verbose:
-    print "ABOUT TO START TESTING"
+    print("ABOUT TO START TESTING")
     sys.stdout.flush()
     
 while (config.maxtests == -1) or (ntests < config.maxtests):
     if config.verbose:
-        print "STARTING TEST",ntests
+        print("STARTING TEST",ntests)
         sys.stdout.flush()
     ntests += 1
 
@@ -258,9 +258,9 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     if config.replayable:
         currtest = open("currtest.txt",'w')
 
-    for s in xrange(0,config.depth):
+    for s in range(0,config.depth):
         if config.verbose:
-            print "GENERATING STEP",s
+            print("GENERATING STEP",s)
         
         startGuard = time.time()
         acts = tacts
@@ -278,7 +278,7 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
                 if (config.stutter == None) or (R.random() > config.stutter):
                     tryStutter = False
                 if (config.greedyStutter) and sawNew:
-                    print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
+                    print("TRYING TO STUTTER DUE TO COVERAGE GAIN")
                     tryStutter = True
             if not tryStutter:
                 p = R.randint(0,len(acts)-1)
@@ -291,11 +291,11 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         guardTime += time.time()-startGuard
         elapsed = time.time() - start
         if elapsed > config.timeout:
-            print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+            print("STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test))
             break
             
         if tryStutter:
-            print "STUTTERING WITH",a[0]
+            print("STUTTERING WITH",a[0])
         test.append(a)
         nops += 1
 
@@ -308,17 +308,17 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
             fulltest.flush()            
 
         if config.verbose:
-            print "ACTION:",t.prettyName(a[0])
+            print("ACTION:",t.prettyName(a[0]))
             
         startOp = time.time()
         stepOk = t.safely(a)
         opTime += (time.time()-startOp)
         if tryStutter:
-            print "DONE STUTTERING"
+            print("DONE STUTTERING")
         if (not config.uncaught) and (not stepOk):
             handle_failure(test, "UNCAUGHT EXCEPTION", False)
             if not config.multiple:
-                print "STOPPING TESTING DUE TO FAILED TEST"
+                print("STOPPING TESTING DUE TO FAILED TEST")
             break
 
         startCheck = time.time()
@@ -328,28 +328,28 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         if not checkResult:
             handle_failure(test, "PROPERLY VIOLATION", True)
             if not config.multiple:
-                print "STOPPING TESTING DUE TO FAILED TEST"
+                print("STOPPING TESTING DUE TO FAILED TEST")
             break
             
         elapsed = time.time() - start
         if config.running:
             if t.newBranches() != set([]):
-                print "ACTION:",a[0],tryStutter
+                print("ACTION:",a[0],tryStutter)
                 for b in t.newBranches():
-                    print elapsed,len(t.allBranches()),"New branch",b
+                    print(elapsed,len(t.allBranches()),"New branch",b)
                 sawNew = True
             else:
                 sawNew = False
             if t.newStatements() != set([]):
-                print "ACTION:",a[0],tryStutter
+                print("ACTION:",a[0],tryStutter)
                 for s in t.newStatements():
-                    print elapsed,len(t.allStatements()),"New statement",s
+                    print(elapsed,len(t.allStatements()),"New statement",s)
                 sawNew = True
             else:
                 sawNew = False                
 
         if elapsed > config.timeout:
-            print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+            print("STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test))
             break
         
     if config.replayable:
@@ -360,7 +360,7 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:
-        print "STOPPING TESTING DUE TO TIMEOUT"
+        print("STOPPING TESTING DUE TO TIMEOUT")
         break        
 
 if config.total:
@@ -368,30 +368,30 @@ if config.total:
     
 if not config.nocover:
     t.restart()
-    print t.report(config.coverfile),"PERCENT COVERED"
+    print(t.report(config.coverfile),"PERCENT COVERED")
 
     if config.html:
         t.htmlReport(config.html)
 
-print time.time()-start, "TOTAL RUNTIME"
-print ntests, "EXECUTED"
-print nops, "TOTAL TEST OPERATIONS"
-print opTime, "TIME SPENT EXECUTING TEST OPERATIONS"
-print guardTime, "TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS"
+print(time.time()-start, "TOTAL RUNTIME")
+print(ntests, "EXECUTED")
+print(nops, "TOTAL TEST OPERATIONS")
+print(opTime, "TIME SPENT EXECUTING TEST OPERATIONS")
+print(guardTime, "TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS")
 if not config.ignoreprops:
-    print checkTime, "TIME SPENT CHECKING PROPERTIES"
-    print (opTime + checkTime), "TOTAL TIME SPENT RUNNING SUT"
-print restartTime, "TIME SPENT RESTARTING"
-print reduceTime, "TIME SPENT REDUCING TEST CASES"
+    print(checkTime, "TIME SPENT CHECKING PROPERTIES")
+    print((opTime + checkTime), "TOTAL TIME SPENT RUNNING SUT")
+print(restartTime, "TIME SPENT RESTARTING")
+print(reduceTime, "TIME SPENT REDUCING TEST CASES")
 if config.multiple:
-    print failCount,"FAILED"
-    print repeatCount,"REPEATS OF FAILURES"
+    print(failCount,"FAILED")
+    print(repeatCount,"REPEATS OF FAILURES")
     n = 0
     for test in failures:
-        print "FAILURE",n
+        print("FAILURE",n)
         i = 0
         for s in test:
-            print "STEP",i,s[0]
+            print("STEP",i,s[0])
             i += 1
         n += 1
     i = -1
@@ -401,15 +401,15 @@ if config.multiple:
         for test2 in failures:
             j += 1
             if (j > i):
-                print "COMPARING FAILURE",i,"AND FAILURE",j
-                for k in xrange(0,max(len(test1),len(test2))):
+                print("COMPARING FAILURE",i,"AND FAILURE",j)
+                for k in range(0,max(len(test1),len(test2))):
                     if k >= len(test1):
-                        print "STEP",k,"-->",test2[k][0]
+                        print("STEP",k,"-->",test2[k][0])
                     elif k >= len(test2):
-                        print "STEP",k,test1[k][0],"-->"                        
+                        print("STEP",k,test1[k][0],"-->")                        
                     elif test1[k] != test2[k]:
-                        print "STEP",k,test1[k][0],"-->",test2[k][0]
+                        print("STEP",k,test1[k][0],"-->",test2[k][0])
         
 if not config.nocover:
-    print len(t.allBranches()),"BRANCHES COVERED"
-    print len(t.allStatements()),"STATEMENTS COVERED"
+    print(len(t.allBranches()),"BRANCHES COVERED")
+    print(len(t.allStatements()),"STATEMENTS COVERED")

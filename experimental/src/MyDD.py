@@ -27,10 +27,10 @@ if __name__ == '__main__':
     # print "Removing any element will make the failure go away."
     # print
     
-    print "Isolating the failure-inducing difference..."
+    print("Isolating the failure-inducing difference...")
     (c, c1, c2) = mydd.dd(deltas)        # Invoke DD
-    print "The 1-minimal failure-inducing difference is", c
-    print c1, "passes,", c2, "fails"
+    print("The 1-minimal failure-inducing difference is", c)
+    print(c1, "passes,", c2, "fails")
 
 
 

@@ -30,7 +30,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -38,7 +38,7 @@ def make_config(pargs, parser):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random testing using config={}'.format(config))
+print(('Random testing using config={}'.format(config)))
 
 start = time.time()
 elapsed = time.time()-start
@@ -54,9 +54,9 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     t.restart()
     test = []
 
-    print ntests, len(covertool.getTotalCoverage())
+    print(ntests, len(covertool.getTotalCoverage()))
 
-    for s in xrange(0,config.depth):
+    for s in range(0,config.depth):
         possible = t.enabled()
         random.shuffle(possible)
         old = t.state()
@@ -66,8 +66,8 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         for (name, guard, act) in possible[:config.k]:
             elapsed = time.time()-start
             if elapsed > config.timeout:
-                print "EXITING DUE TO TIMEOUT"
-                print ntests, "EXECUTED"
+                print("EXITING DUE TO TIMEOUT")
+                print(ntests, "EXECUTED")
                 sys.exit(2)
             pos += 1
             test.append(name)
@@ -76,18 +76,18 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
             except:
                 pass
             if not t.check():
-                print "FAILING TEST:", test
+                print("FAILING TEST:", test)
                 sys.exit(1)
             covNew = covertool.getCoverage()
             if len(covNew) > len(cov):
                 elapsed = time.time()-start
-                print "FOUND NEW BRANCH", elapsed, len(covNew)
+                print("FOUND NEW BRANCH", elapsed, len(covNew))
                 break
             if pos == last:
                 break
             covertool.setCoverage(cov)
             t.backtrack(old)
 
-print ntests, "EXECUTED"
+print(ntests, "EXECUTED")
 
 

@@ -32,7 +32,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -40,7 +40,7 @@ def make_config(pargs, parser):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random testing using config={}'.format(config))
+print(('Random testing using config={}'.format(config)))
 
 if config.seed != None:
     random.seed(config.seed)
@@ -48,7 +48,7 @@ if config.seed != None:
 start = time.time()
 elapsed = time.time()-start
 
-print config.module, type(config.module)
+print(config.module, type(config.module))
 cov = coverage.coverage(branch=True, source=[config.module])
 
 t = SUT.t()
@@ -63,7 +63,7 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     t.restart()
     test = []
 
-    for s in xrange(0,config.depth):
+    for s in range(0,config.depth):
         a = random.choice(t.enabled())
         test.append(a)
         
@@ -76,30 +76,30 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
                 traceback.print_tb(tb)
                 tbInfo = traceback.extract_tb(tb)
                 filename,line,func,text = tbInfo[-1]
-                print "TEST:"
+                print("TEST:")
                 for step in test:
-                    print step[0]
-                print "EXITING DUE TO FAILED TEST"
+                    print(step[0])
+                print("EXITING DUE TO FAILED TEST")
                 
                 red = t.reduce(test, t.failsCheck, True, True)
-                print "REDUCED:"
+                print("REDUCED:")
                 for step in red:
-                    print step[0]
+                    print(step[0])
                 sys.exit(1)
         finally:
             cov.stop()
 
-        print cov.collector.get_arc_data()
+        print(cov.collector.get_arc_data())
 
         (filename, executable, missing, string) = cov.analysis("my_xml.py")
         if oldmissing == None:
             oldmissing = executable
         if len(missing) < len(oldmissing):
             elapsed = time.time() - start
-            print elapsed, (len(executable) - len(missing))
+            print(elapsed, (len(executable) - len(missing)))
             for m in oldmissing:
                 if m not in missing:
-                    print "COVERED:",m
+                    print("COVERED:",m)
             oldmissing = missing
         
         if not t.check():
@@ -107,27 +107,27 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
             traceback.print_tb(tb)
             tbInfo = traceback.extract_tb(tb)
             filename,line,func,text = tbInfo[-1]
-            print "TEST:"
+            print("TEST:")
             for step in test:
-                print step [0]
-            print "EXITING DUE TO FAILED TEST"
+                print(step [0])
+            print("EXITING DUE TO FAILED TEST")
 
             red = t.reduce(test, t.failsCheck, True, True)
-            print "REDUCED:"
+            print("REDUCED:")
             for step in red:
-                print step[0]
+                print(step[0])
             sys.exit(1)
             
         elapsed = time.time() - start
         if elapsed > config.timeout:
-            print "EXITING DUE TO TIMEOUT"
-            print ntests, "EXECUTED"
+            print("EXITING DUE TO TIMEOUT")
+            print(ntests, "EXECUTED")
             sys.exit(2)
             break
 
 for s in test:
-    print s
+    print(s)
 
-print ntests, "EXECUTED"
+print(ntests, "EXECUTED")
 
 

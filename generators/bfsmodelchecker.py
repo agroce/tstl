@@ -59,7 +59,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -68,21 +68,21 @@ def make_config(pargs, parser):
 def handle_failure(test, msg, checkFail):
     global failCount
     failCount += 1
-    print msg
+    print(msg)
     f = t.failure()
-    print "ERROR:",f
-    print "TRACEBACK:"
+    print("ERROR:",f)
+    print("TRACEBACK:")
     traceback.print_tb(f[2])
 
-    print "Original test has",len(test),"steps"
+    print("Original test has",len(test),"steps")
     if not config.full:
         if not checkFail:
             failProp = t.fails
         else:
             failProp = t.failsCheck
-        print "REDUCING..."
+        print("REDUCING...")
         test = t.reduce(test, failProp, True, config.keep)
-        print "Reduced test has",len(test),"steps"
+        print("Reduced test has",len(test),"steps")
 
     i = 0
     if config.output != None:
@@ -95,7 +95,7 @@ def handle_failure(test, msg, checkFail):
     if config.failedLogging != None:
         t.setLog(config.failedLogging)        
     for s in test:
-        print "STEP",i,s[0]
+        print("STEP",i,s[0])
         t.safely(s)
         i += 1
         if outf != None:
@@ -105,7 +105,7 @@ def handle_failure(test, msg, checkFail):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('BFS exploration using config={}'.format(config))
+print(('BFS exploration using config={}'.format(config)))
 
 R = random.Random(config.seed)
 
@@ -133,7 +133,7 @@ while (queue != []):
     queue = queue[1:]
     if len(test) > maxDepth:
         maxDepth = len(test)
-        print "REACHED DEPTH",maxDepth,"QUEUE SIZE",len(queue)+1
+        print("REACHED DEPTH",maxDepth,"QUEUE SIZE",len(queue)+1)
     if len(test) == config.depth:
         continue
     t.backtrack(s)
@@ -147,13 +147,13 @@ while (queue != []):
         if (not config.uncaught) and (not stepOk):
             handle_failure(test, "UNCAUGHT EXCEPTION", False)
             if not config.multiple:
-                print "STOPPING TESTING DUE TO FAILED TEST"
+                print("STOPPING TESTING DUE TO FAILED TEST")
             thisBug = True
                 
         if (not config.ignoreprops) and (not t.check()):
             handle_failure(test, "PROPERLY VIOLATION", True)
             if not config.multiple:
-                print "STOPPING TESTING DUE TO FAILED TEST"
+                print("STOPPING TESTING DUE TO FAILED TEST")
             thisBug = True
         ns = t.state()
         if not thisBug:
@@ -165,39 +165,39 @@ while (queue != []):
                 if not config.novisited:
                     visited.append(s)
                     if config.verbose:
-                        print len(visited), "NEW STATE:"
-                        print s
+                        print(len(visited), "NEW STATE:")
+                        print(s)
                 queue.append((ns, test))
         elif not config.multiple:
             break                
         elapsed = time.time() - start
         if config.running:
             if len(t.newBranches()):
-                print "ACTION:",action
+                print("ACTION:",action)
                 for b in t.newBranches():
-                    print elapsed,len(t.allBranches()),"New branch",b
+                    print(elapsed,len(t.allBranches()),"New branch",b)
         if elapsed > config.timeout:
-            print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+            print("STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test))
             break
         t.backtrack(s)
         test = test[:-1]
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:
-        print "STOPPING TESTING DUE TO TIMEOUT"
+        print("STOPPING TESTING DUE TO TIMEOUT")
         break        
 
 if not config.nocover:
-    print t.report(config.coverfile),"PERCENT COVERED"
+    print(t.report(config.coverfile),"PERCENT COVERED")
 
     if config.html:
         t.htmlReport(config.html)
             
-print len(visited), "STATES VISITED"
-print maxDepth,"MAX SEARCH DEPTH"
-print maxQueue,"MAX QUEUE SIZE"
+print(len(visited), "STATES VISITED")
+print(maxDepth,"MAX SEARCH DEPTH")
+print(maxQueue,"MAX QUEUE SIZE")
 if config.multiple:
-    print failCount,"FAILED"
+    print(failCount,"FAILED")
 if not config.nocover:
-    print len(t.allBranches()),"BRANCHES COVERED"
-    print len(t.allStatements()),"STATEMENTS COVERED"
+    print(len(t.allBranches()),"BRANCHES COVERED")
+    print(len(t.allStatements()),"STATEMENTS COVERED")

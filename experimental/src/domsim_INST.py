@@ -463,7 +463,7 @@ def test_match(strategies, setup=match_setup):
     Returns the winning strategies.
     """
     covertool.cover("domsim.py:315")
-    DECK, DISCARD, HAND, TURNS, ATTACKS = range(5)
+    DECK, DISCARD, HAND, TURNS, ATTACKS = list(range(5))
     covertool.cover("domsim.py:316")
     supply = setup_supply(len(strategies))
     covertool.cover("domsim.py:317")
@@ -477,11 +477,11 @@ def test_match(strategies, setup=match_setup):
             covertool.cover("domsim.py:322")
             break
         covertool.cover("domsim.py:323")
-        if len(strategies) <= 4 and supply.values().count(0) >= 3:
+        if len(strategies) <= 4 and list(supply.values()).count(0) >= 3:
             covertool.cover("domsim.py:324")
             break
         covertool.cover("domsim.py:325")
-        if len(strategies) > 4 and supply.values().count(0) >= 4:
+        if len(strategies) > 4 and list(supply.values()).count(0) >= 4:
             covertool.cover("domsim.py:326")
             break
         covertool.cover("domsim.py:327")
@@ -581,34 +581,34 @@ def test(name, tries, strategy, runner=test_game, **kwargs):
     covertool.cover("domsim.py:383")
     scores.sort()
     covertool.cover("domsim.py:384")
-    print name
+    print(name)
     covertool.cover("domsim.py:385")
     num = len(times)
     covertool.cover("domsim.py:386")
-    print "Num = %d" % num
+    print("Num = %d" % num)
     covertool.cover("domsim.py:387")
-    print "Tot = %d" % total_tries
+    print("Tot = %d" % total_tries)
     covertool.cover("domsim.py:388")
-    print "Min = %d" % times[0]
+    print("Min = %d" % times[0])
     covertool.cover("domsim.py:389")
     if num % 2 == 1:
         covertool.cover("domsim.py:390")
-        print "Med = %d" % times[num // 2]
+        print("Med = %d" % times[num // 2])
     else:
         covertool.cover("domsim.py:392")
-        print "Med = %f" % (float(times[num // 2 - 1] + times[num // 2]) / 2)
+        print("Med = %f" % (float(times[num // 2 - 1] + times[num // 2]) / 2))
     covertool.cover("domsim.py:393")
-    print "Max = %d" % times[-1]
+    print("Max = %d" % times[-1])
     covertool.cover("domsim.py:394")
     avg = float(sum(times)) / num
     covertool.cover("domsim.py:395")
-    print "Avg = %f" % avg
+    print("Avg = %f" % avg)
     covertool.cover("domsim.py:396")
-    print "StD = %f" % ((sum((x-avg)**2 for x in times) / (num-1)) ** 0.5)
+    print("StD = %f" % ((sum((x-avg)**2 for x in times) / (num-1)) ** 0.5))
     covertool.cover("domsim.py:397")
-    print "Avg Score = %f" % (float(sum(scores)) / num)
+    print("Avg Score = %f" % (float(sum(scores)) / num))
     covertool.cover("domsim.py:398")
-    print
+    print()
 
 
 def test_matches(tries, strategies, runner=test_match, **kwargs):
@@ -636,17 +636,17 @@ def test_matches(tries, strategies, runner=test_match, **kwargs):
             covertool.cover("domsim.py:413")
             raise e
     covertool.cover("domsim.py:414")
-    print "Num = %d" % matches
+    print("Num = %d" % matches)
     covertool.cover("domsim.py:415")
-    print "Tot = %d" % total_tries
+    print("Tot = %d" % total_tries)
     covertool.cover("domsim.py:416")
     for strategy in strategies:
         covertool.cover("domsim.py:417")
         name = strategy[0]
         covertool.cover("domsim.py:418")
-        print name, winners.count(name), float(winners.count(name)) / matches
+        print(name, winners.count(name), float(winners.count(name)) / matches)
     covertool.cover("domsim.py:419")
-    print
+    print()
 
 
 # Strategy functions
@@ -1036,7 +1036,7 @@ def chapel(deck, discard, hand, turn, supply, attacks=None):
             covertool.cover("domsim.py:614")
             coppers = min(coppers, coins - COST[GOLD])
         covertool.cover("domsim.py:615")
-        for i in xrange(coppers):
+        for i in range(coppers):
             covertool.cover("domsim.py:616")
             hand.remove(COPPER)
         covertool.cover("domsim.py:617")
@@ -1091,7 +1091,7 @@ def multi_chapel(deck, discard, hand, turn, supply):
             covertool.cover("domsim.py:637")
             chapels = hand.count(CHAPEL) - 1
             covertool.cover("domsim.py:638")
-            for i in xrange(chapels):
+            for i in range(chapels):
                 covertool.cover("domsim.py:639")
                 hand.remove(CHAPEL)
         covertool.cover("domsim.py:640")
@@ -1108,7 +1108,7 @@ def multi_chapel(deck, discard, hand, turn, supply):
             covertool.cover("domsim.py:646")
             coppers = min(coppers, coins - COST[GOLD])
         covertool.cover("domsim.py:647")
-        for i in xrange(coppers):
+        for i in range(coppers):
             covertool.cover("domsim.py:648")
             hand.remove(COPPER)
         covertool.cover("domsim.py:649")
@@ -1195,7 +1195,7 @@ def chapel_lab(deck, discard, hand, turn, supply, labs=2):
             covertool.cover("domsim.py:683")
             coppers = min(coppers, coins - COST[LABORATORY])
         covertool.cover("domsim.py:684")
-        for i in xrange(coppers):
+        for i in range(coppers):
             covertool.cover("domsim.py:685")
             hand.remove(COPPER)
         covertool.cover("domsim.py:686")

@@ -1,5 +1,5 @@
 def enabled(self):
-    return filter(lambda (s, g, a): g(), self.__actions)
+    return [s_g_a for s_g_a in self.__actions if s_g_a[1]()]
 
 def features(self):
     return self.__features
@@ -99,12 +99,12 @@ def setLogAction(self, f):
     self.__logAction = f
 
 def logPrint(self, code, text):
-    print "[LOG " + str(code) + "] " + str(text)
+    print("[LOG " + str(code) + "] " + str(text))
 
 def __candidates(self, t, n):
     candidates = []
     s = len(t) / n
-    for i in xrange(0,n):
+    for i in range(0,n):
         tc = t[0:i*s]
         tc.extend(t[(i+1)*s:])
         candidates.append(tc)

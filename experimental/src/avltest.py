@@ -19,11 +19,11 @@ cov = coverage.coverage(branch=True, source = ["avl.py"])
 cov.start()
 
 try:
-    for t in xrange(0,NTESTS):
+    for t in range(0,NTESTS):
         test = ["b"]
         ref = {}
         a = avl.AVLTree()
-        for s in xrange(0,TLEN):
+        for s in range(0,TLEN):
             op = random.choice(["insert","delete","inorder_traverse"])
             test.append(op)
             if op == "insert":
@@ -41,21 +41,21 @@ try:
                 tl = a.inorder_traverse()
                 assert (sorted(ref.keys()) == tl)
         currBranches = cov.collector.get_arc_data()
-        for src_file, arcs in currBranches.iteritems():
+        for src_file, arcs in currBranches.items():
             for arc in arcs:
                 branch = (src_file, arc)
                 if branch not in branchesHit:
                     branchesHit.add(branch)
                     elapsed = time.time()-start
-                    print elapsed,len(branchesHit),branch
+                    print(elapsed,len(branchesHit),branch)
                     newBranch = True        
                 
 except:
-    print "THE POOR TEST FAILED:"
+    print("THE POOR TEST FAILED:")
     for s in test:
-        print s
+        print(s)
 
 cov.stop()
 cov.html_report()
 
-print "ALL DONE"
+print("ALL DONE")

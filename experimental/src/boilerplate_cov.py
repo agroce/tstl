@@ -3,7 +3,7 @@ def __updateCov(self):
     self.__newStatements = set()
     self.__newCurrBranches = set()
     self.__newCurrStatements = set()
-    for src_file, arcs in self.__cov.collector.get_arc_data().iteritems():
+    for src_file, arcs in self.__cov.collector.get_arc_data().items():
         for arc in arcs:
             branch = (src_file, arc)
             if branch not in self.__allBranches:
@@ -12,7 +12,7 @@ def __updateCov(self):
             if branch not in self.__currBranches:
                 self.__currBranches.add(branch)
                 self.__newCurrBranches.add(branch)
-    for src_file, lines in self.__cov.collector.get_line_data().iteritems():
+    for src_file, lines in self.__cov.collector.get_line_data().items():
         for line in lines:
             statement = (src_file, line)
             if statement not in self.__allStatements:
