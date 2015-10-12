@@ -48,7 +48,8 @@ evident.  Out of 60,226 normalizations performed in our full AVLTree mutant
 experiments, 59,972 (99.6\%) resulted in a cache hit (most of these
 after a small number of normalization steps).  In fact, the total
 number of rewrites performed during the experiments was only 205,752,
-for an average of only 2.4 non-cache-hit rewrites of each test.
+for an average of only 2.4 non-cache-hit rewrites of each test.  Note
+that this is with the cache starting empty for each of the 82 mutants.
 
 AVLTree mutants also provided a way to evaluate the danger of
 normalization losing faults by changing a test case failing due to one
