@@ -42,7 +42,13 @@ normalization is given on an already-reduced test case, so the inputs
 for normalization are smaller than those for reduction; however, this
 is the expected use-case for normalization.  Comparing on equal-sized
 tests would simply involve adding the costs for reduction to those for
-normalization, as an additional step of normalization.
+normalization, as an additional step of normalization.  Finally, the
+criticality of caching for normalizing large numbers of tests is
+evident.  Out of 60,226 normalizations performed in our full AVLTree mutant
+experiments, 59,972 (99.6\%) resulted in a cache hit (most of these
+after a small number of normalization steps).  In fact, the total
+number of rewrites performed during the experiments was only 205,752,
+for an average of only 2.4 non-cache-hit rewrites of each test.
 
 AVLTree mutants also provided a way to evaluate the danger of
 normalization losing faults by changing a test case failing due to one
@@ -90,23 +96,24 @@ equality does not hold for objects containing {\tt NaN}, so the
 assertion must be modified to exclude this case.
 
 Other, more complex, cases have also made it clear that normalization
-is useful for some additional test case reduction and generalization
-makes any surprising restrictions on test values clear.  For NumPy
-tests, normalization takes considerably longer than reduction, in part
-due to the expense of operations on large arrays.  Over almost all
-examples, the average time to reduce tests is about 4-5 seconds, and
-the time for normalization is between 712 and 774 seconds.  The
-average time to discover a failing test case, for comparison, is just
-over 400 seconds.  Generalization takes between 52 and 59 seconds in
-these cases.  The exception was a test case of 45,206 steps (!)
-leading to a memory exhaustion error and crash, reduced (over a period
-of nearly a day) to a test case with 10 steps, which then normalized
-(in only 2 hours) to a test case with 8 steps, involving no operations
-other than array initialization (with zeros or ones), array
-flattening, and array addition (the original test case involved larger
-dimensions, array multiplication, and array subtraction).  This is the
-only case in which we have seen normalization time lower than
-reduction time.
+is useful for additional test case length reduction for NumPy, and
+that generalization makes any surprising restrictions on test values
+clear.  For NumPy tests, normalization takes much longer than
+reduction, in part due to the expense of operations on large arrays.
+Over almost all examples, the average time to reduce tests is about
+4-5 seconds, and the time for normalization is between 712 and 774
+seconds.  The average time to discover a failing test case, for
+comparison, is just over 400 seconds.  Generalization takes between 52
+and 59 seconds in these cases.  The exception was a test case of
+45,206 steps (!)  leading to a memory exhaustion error and crash,
+reduced (over a period of nearly a day) to a test case with 10 steps,
+which then normalized (in only 2 hours) to a test case with 8 steps,
+involving no operations other than array initialization (with zeros or
+ones), array flattening, and array addition (the original test case
+involved larger dimensions, array multiplication, and array
+subtraction).  This is the only case in which we have seen
+normalization time lower than reduction time, unless the normalization
+was just a cache hit.
 
 \begin{figure}
 {\scriptsize

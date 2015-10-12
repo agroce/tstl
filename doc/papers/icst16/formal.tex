@@ -353,7 +353,13 @@ changing test semantics.
 A further useful optimization when normalizing large numbers of tests
 of the same SUT is to cache results, so that as soon as the rewrite
 sequence produces a previously seen test, the final result can be
-returned (since the algorithm is deterministic).  For systems with
+returned (since the algorithm is deterministic).   For very large
+numbers of tests, this is the most important optimization.
+Interestingly, though it is also deterministic, caching
+delta-debugging results is almost useless, since the chance of seeing
+an exact match is very small; this is true with the initial input to
+normalization, but a few pool and value changes often result in a
+cache hit. For systems with
 very expensive replay, the delta-debugging of each new base test case
 can also be omitted, as we can count on the {\bf ReduceAction} rewrite to
 eventually remove useless steps (however, this may come at a cost of
