@@ -298,6 +298,7 @@ def main():
     outf = open(config.output,'w')
 
     # Handle raw python, imports
+    outf.write("import imp\n")
     outf.write("import copy\n")
     outf.write("import traceback\n")
     outf.write("import re\n")
@@ -860,7 +861,7 @@ def main():
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     genCode.append("# BEGIN RELOAD CODE\n")
     for l in import_modules:
-        s = baseIndent + 'reload({})\n'.format(l)
+        s = baseIndent + 'imp.reload({})\n'.format(l)
         genCode.append(s)
     genCode.append("# END RELOAD CODE\n")        
     if (not config.nocover) and config.coverreload:
