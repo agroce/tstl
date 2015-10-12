@@ -985,11 +985,11 @@ def main():
     ###############################################################################
 
     for l in boilerplate:
-        outf.write(baseIndent + l)
+        outf.write(baseIndent + l.decode('utf-8'))
 
     if not config.nocover:
         for l in boilerplate_cov:
-            outf.write(baseIndent + l)    
+            outf.write(baseIndent + l.decode('utf-8'))
 
     outf.close()
 
