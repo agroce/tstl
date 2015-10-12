@@ -32,7 +32,9 @@ the mean was 3.1 distinct failures, with a mean of just 2 failures.
 For 38 of the 82 mutants, normalization produced only a single
 representative failure.  For every mutant, normalization reduced the
 number of distinct failures, and no mutant produced more than 27
-distinct failures, after normalization.  The mean cost to reduce a
+distinct failures, after normalization.
+
+The mean cost to reduce a
 test case was 0.05 seconds, with a median of 0.03 seconds.  The mean
 cost for normalization was 0.38 seconds, with a median of 0.1 seconds.
 The minimum runtime for both algorithms was negligible (less than 1
@@ -47,7 +49,7 @@ criticality of caching for normalizing large numbers of tests is
 evident.  Out of 60,226 normalizations performed in our full AVLTree mutant
 experiments, 59,972 (99.6\%) resulted in a cache hit (most of these
 after a small number of normalization steps).  In fact, the total
-number of rewrites performed during the experiments was only 205,752,
+number of rewrites performed during the experiments was only 145,780,
 for an average of only 2.4 non-cache-hit rewrites of each test.  Note
 that this is with the cache starting empty for each of the 82 mutants.
 
