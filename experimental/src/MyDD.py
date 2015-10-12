@@ -9,7 +9,7 @@ class MyDD(DD.DD):
         DD.DD.__init__(self)
         
     def _test(self, deltas):
-	# FIXME: Set up a test function that takes a set of deltas and
+        # FIXME: Set up a test function that takes a set of deltas and
         # returns either self.PASS, self.FAIL, or self.UNRESOLVED.
         if c == []:
             return self.PASS
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     # print
     
     print "Isolating the failure-inducing difference..."
-    (c, c1, c2) = mydd.dd(deltas)	# Invoke DD
+    (c, c1, c2) = mydd.dd(deltas)        # Invoke DD
     print "The 1-minimal failure-inducing difference is", c
     print c1, "passes,", c2, "fails"
 
