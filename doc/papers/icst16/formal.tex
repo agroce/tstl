@@ -285,23 +285,48 @@ new base test case, since often a rewrite makes other steps irrelevant.
 \end{algorithmic}
 \end{algorithm}
 
-The cost of normalizing a test case is, in the worst case, extremely
-large.  Consider a testing scenario where there are $n$ actions, each
-of which is always enabled.  For a test case of $k$ steps, each of
-which is the highest indexed action, checking the candidates produced
-by the {\bf SimplifySingle} rule alone requires performing $n^k$
-test executions.  Each step can be rewritten at most once for each
-such check, and each step can be rewritten only $n-1$ times, in total,
-since the lowest indexed action cannot be simplified, making this
-exponential the dominating factor in the worst case complexity. 
-In practice, the number of required test case runs is certainly
-proportional to the length of the test $k$, and the total number of
-actions (that are ever enabled) but most actions are not
-enabled at most steps, and the rules are applied in an order that
-quickly converges on a normal form for many test cases.  In our
-experiments, normalization is only very expensive when delta-debugging
-is also costly, and appears to be worse than delta-debugging by a
-constant factor, somewhere in the range of 2x-10x.
+Assume there are $k$ steps in the test case and $n$ possible actions.
+We approximate the complexity of normalization by first bounding the cost for each pass through the
+inner {\bf for} loop.  The action replacements and pool movement
+replacement rewrites (1, 3, 4, and 7) all require at most $k (n-1)$
+predicate checks when no simplification takes place, and all checks
+fail.  The {\bf SwapAction} rewrite can obviously require no more than
+$k^2$ checks, and the {\bf ReplacePool} rewrite fewer than
+$k^2 (n-1)$\footnote{The details of how these bounds are determined,
+  in that pool changes are also action changes, are not critical, and
+  a more detailed analysis is somewhat involved, and beyond the scope
+  of this paper; we note that like delta-debugging, the worst-case
+  complexity is seldom observed, and offer some further optimizations
+  below.}.  Therefore each inner loop run requires at most
+$k^2 + k^2(n-1) + 4k(n-1)$ checks (we assume a constant cost to run a
+check --- unlike in delta-debugging, this is a reasonable assumption, as few
+rules change the length of the test).  Each time the inner loop finds
+a valid rewrite, there is also the cost of a delta-debugging step,
+which is at worst quadratic in $k$ \cite{DD}.  The cost of the inner
+loop is therefore $O(k^2n)$.  How many times can this inner loop run
+(e.g., how many times can the {\bf while} loop run)?  Each
+action can be replaced fewer than $n$ times, since each
+replacement (or at least one replacement in each rewrite,
+for the pool changes) must decrease the index of the action.  Steps
+can be swapped fewer than $k$ times, obviously.  Each  {\bf
+  ReduceAction} rewrite requires reducing the length of the
+test, giving it a total (not per-step, like the other bounds) bound of
+$k$ successful rewrites.  This gives us an upper bound of $kn +
+k^2 + k$ executions for the outer loop, and a total runtime that is
+$O(k^4n)$.
+
+In practice, most actions are not enabled at most steps, and
+the rules are applied in an order that quickly converges on a normal
+form for many test cases.  In our experiments, normalization is only
+very expensive when delta-debugging is also costly, and appears to be
+worse than delta-debugging by a constant factor, somewhere in the
+range of 2-10x, usually closer to 10x.  We believe that if
+normalization can decrease human effort in examining large numbers of
+redundant test cases, this price is more than reasonable.  Measuring
+the payoff from improved understanding of test cases is difficult;
+however, in multiple fault settings, we hope normalization can often
+provide a quantifiable value in shorter time until all faults have
+been examined by a human, for bug triage \cite{PLDI13}.
 
 \subsubsection{Normalization Optimizations}
 
@@ -320,8 +345,7 @@ it still requires  less than a minute to run.  However, when test case
 execution is expensive, the set of candidate test cases must be
 further restricted.  In our experiments, we found that restricting
 action replacements to cases where the Levenshtein \cite{Lev} distance
-(text edit distance) between the code for the actions was in some
-range was effective in reducing runtime, while almost always having no
+(text edit distance) between the code for the actions was bounded was effective in reducing runtime, while almost always having no
 impact on the final result.  In practice, most test actions can only
 be replaced by syntactically similar actions, without completely
 changing test semantics.
@@ -360,7 +384,8 @@ values and step ordering (for us, that enforced by the normalization
 process) but many such choices are arbitrary, or at least allow
 variance, with respect to the cause of failure.  Generalization
 performs experiments to distinguish essential and accidental aspects
-of a test case, and summarizes the results.  The core algorithm is simple:
+of a test case, and summarizes the results.  The core algorithm
+(Algorithm \ref{genalg}) is simple.
 
 \begin{algorithm}
 \caption{Basic algorithm for generalization}
@@ -391,7 +416,7 @@ normalized, but can be extended to any test case by removing the
 restrictions that $a > a'$ and $(j : b) > (i : a)$.  The complexity of
 generalization is simpler to determine than that of normalization: if
 we assume all actions are enabled at each step, and there are $n$
-actions and $k$ steps, checking for replacements requires $k^{n-1}$
+actions and $k$ steps, checking for replacements requires $k (n-1)$
 test case executions (when every action is the lowest-indexed action).
 In that worst case, no swaps are possible.  The complexity of checking
 for swaps in the worst case is quadratic in $k$.  In practice, most

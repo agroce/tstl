@@ -11,7 +11,8 @@ development and optimization.
 For basic experiments on the ability of normalization to reduce the
 number of failing test cases and preserve fault detection, we used a
 simple Python implementation of AVL trees found on the web
-\cite{avltree}, with 225 lines of code.
+\cite{avltree}, with 225 lines of code\footnote{All code sizes given
+  are non-comment, non-blank lines, as measured by cloc \cite{cloc}.}.
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{length}
@@ -31,22 +32,40 @@ the mean was 3.1 distinct failures, with a mean of just 2 failures.
 For 38 of the 82 mutants, normalization produced only a single
 representative failure.  For every mutant, normalization reduced the
 number of distinct failures, and no mutant produced more than 27
-distinct failures, after normalization.
+distinct failures, after normalization.  The mean cost to reduce a
+test case was 0.05 seconds, with a median of 0.03 seconds.  The mean
+cost for normalization was 0.38 seconds, with a median of 0.1 seconds.
+The minimum runtime for both algorithms was negligible (less than 1
+milisecond), but the maximums were 1.3 seconds for reduction and 17.6
+seconds for normalization.  Note that in all our results the cost of
+normalization is given on an already-reduced test case, so the inputs
+for normalization are smaller than those for reduction; however, this
+is the expected use-case for normalization.  Comparing on equal-sized
+tests would simply involve adding the costs for reduction to those for
+normalization, as an additional step of normalization.
+
+AVLTree mutants also provided a way to evaluate the danger of
+normalization losing faults by changing a test case failing due to one
+fault into a test case failing due to a different fault, a problem
+known as ``slippage'' when it occurs with delta-debugging
+\cite{PLDI13}.  AVLTree is a particularly challenging setting in this
+regard, as there are very few API calls, and the test cases for faults
+are likely to be very close to each other in the combinatorial space.
 
 \subsection{XML Parser}
 
 We also examined how normalization combined with multiple faults for a
 simple XML parser with about 260 lines of code \cite{myxml}, with one
-original fault (a crash instead of a parse error when given an empty
-tag ({\tt <>}) and one seeded fault (failure when adding two nodes
-with the same name).  Running 1,000 tests produces 848 failing test
-cases.  Without normalization, it takes only 37.45 seconds to execute
+original fault (an uncaught exception instead of a parse error when given an empty
+tag ({\tt <>})) and one seeded fault (triggered by adding two nodes
+with the same name).  Running 1,000 tests produced 848 failing test
+cases.  Without normalization, it took only 37.45 seconds to execute
 all 1,000 tests, including delta-debugging these 848 failures.
-However, the output is 717 distinct failing test cases.  Normalizing
-increases the runtime to 354.7 seconds, but reduces the number of
+However, the output was 717 distinct failing test cases.  Normalizing
+increased the runtime to 354.7 seconds, but reduced the number of
 distinct failing tests to 5, with 3 variations of the original fault
 and 2 variations of the seeded fault.  Generalizing these 5 failures
-increases the runtime by less than 5 seconds.
+increased the runtime by less than 5 seconds.
 
 \subsection{TSTL}
 

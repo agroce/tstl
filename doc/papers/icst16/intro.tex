@@ -1,8 +1,13 @@
 \section{Introduction}
 
-It has long been understood that effective automated testing requires
-test case reduction \cite{DD,MinUnit,ICSEDiff} to produce test cases
-that remove irrelevant operations.  In fact, test case reduction is
+It has long been understood that effective automated testing often requires
+test case reduction \cite{DD,MinUnit,TCminim,ICSEDiff} to produce test cases
+that remove irrelevant operations\footnote{Algorithms such as
+  bounded-exhaustive testing \cite{SoftBET} or some search-based approaches that
+  optimize for short test cases \cite{FA11} may not require reduction, but random
+  testing, model-checking \cite{Gastin04minimizationof}, and other
+  approaches, including symbolic execution \cite{issta14} can benefit greatly from
+  test case/counterexample reduction.}.  In fact, test case reduction is
 now standard practice in industral testing tools such as Mozilla's
 {\tt jsfunfuzz}.  However, simply reducing the length of a test case
 does not produce any kind of semantic simplicity.  There may be many
@@ -81,7 +86,7 @@ The contributions of this paper are 1) the idea of normalizing and
 generalizing test cases, as steps toward a (likely unreachable) goal
 of ``one test case to rule them all'' (per fault), 2) algorithms for normalizing
 and generalizing test cases that make use of the abstract graph
-interface for testing provided by the TSTL \cite{NFM15,ISSTA15}
+interface for testing provided by the TSTL \cite{tstl,NFM15,ISSTA15}
 testing language, and 3) some initial experimental results showing the
 value of test case normalization and generalization.  We show that
 normalization and generalization have been key to efforts to understand
