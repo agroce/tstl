@@ -8,6 +8,11 @@ development and optimization.
 
 \subsection{AVLTree}
 
+For basic experiments on the ability of normalization to reduce the
+number of failing test cases and preserve fault detection, we used a
+simple Python implementation of AVL trees found on the web
+\cite{avltree}, with 225 lines of code.
+
 \begin{figure}
 \includegraphics[width=\columnwidth]{length}
 \caption{Effects of normalization on 82 AVL Tree mutants.}
@@ -15,9 +20,9 @@ development and optimization.
 \end{figure}
 
 Figure \ref{normeffect} shows the reduction in number of distinct
-failing test cases produce by normalization (vs. reduction only) for a
+failing test cases produced by normalization (vs. reduction only) for a
 set of 82 mutants of the AVLTree source code\footnote{All graphs
-  produced using matplotlib\cite{Hunter:2007}.}.  Of the 228 mutants
+  produced using matplotlib \cite{Hunter:2007}.}.  Of the 228 mutants
 produced by MutPy \cite{mutpy}, only these produced at least 1 failure
 in 1,000 test cases.  Using only normalization, the mean number of
 distinct failures (for one fault) was 498.4, with a median of 485.
