@@ -6,7 +6,26 @@ experimental evaluation.  We believe these examples make it clear that
 our current algorithms are practically useful, and merit further
 development and optimization.
 
-\subsection{AVL Tree}
+\subsection{AVLTree}
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{length}
+\caption{Effects of normalization on 82 AVL Tree mutants.}
+\label{normeffect}
+\end{figure}
+
+Figure \ref{normeffect} shows the reduction in number of distinct
+failing test cases produce by normalization (vs. reduction only) for a
+set of 82 mutants of the AVLTree source code\footnote{All graphs
+  produced using matplotlib\cite{Hunter:2007}.}.  Of the 228 mutants
+produced by MutPy \cite{mutpy}, only these produced at least 1 failure
+in 1,000 test cases.  Using only normalization, the mean number of
+distinct failures (for one fault) was 498.4, with a median of 485.
+Using normalization, the mean was 3.1 distinct failures, with a mean
+of just 2 failures.  For 38 of the 82 mutants, normalization produced
+only a single representative failure.  For every mutant, normalization
+reduced the number of distinct failures, and no mutant produced more
+than 27 distinct failures, after normalization.
 
 \subsection{XML Parser}
 
