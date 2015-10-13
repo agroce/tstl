@@ -79,7 +79,7 @@ inclusive, setting the value of an {\tt avl} pool to a newly
 constructed AVL tree, and calling an AVL tree's {\tt insert}, {\tt
   delete}, {\tt find} and {\tt inorder} methods.  Figure
 \ref{threetests} in the introduction shows three
-shows valid test cases produced by running a random test generator on
+valid test cases produced by running a random test generator on
 the TSTL-compiled interface produced by this definition.  TSTL handles
 ensuring that tests are well-formed: for example, no pool instance
 (such as {\tt avl1} can appear in an action until it has been assigned
@@ -173,7 +173,11 @@ rule should be unlikely to change the underlying cause for test case
 failure.  To that end, the rules below always either change at most
 one action (possibly in multiple steps, but in a uniform way) or make
 \emph{no} changes to the actions performed, only to the pools used or the
-positions of actions in the test case.
+positions of actions in the test case.  We cannot guarantee
+normalization does not change the underlying fault in a test; however,
+the limited scope of rewrites should at least make the likelyhood of
+fault change (known as ``slippage'' \cite{PLDI13}) around that of
+delta-debugging, which is widely accepted as a reasonable tradeoff.
 
 \subsubsection{Definitions and Notation}
 

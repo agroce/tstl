@@ -58,8 +58,27 @@ normalization losing faults by changing a test case failing due to one
 fault into a test case failing due to a different fault, a problem
 known as ``slippage'' when it occurs with delta-debugging
 \cite{PLDI13}.  AVLTree is a particularly challenging setting in this
-regard, as there are very few API calls, and the test cases for faults
-are likely to be very close to each other in the combinatorial space.
+regard, as there are very few API calls, and all calls take the same
+simple inputs, so test cases for faults are likely to be very close to
+each other in the combinatorial space.  To test the slippage rates for
+normalization, we randomly selected 118 mutant pairs drawn from the 82
+detectable mutants, and produced higher-order-mutants for each of
+these by applying both mutants (using only mutants that modified
+different source lines).  Of these, the set of reduced test cases
+included at least one test capable of exposing each of the two faults
+for only 75 pairs (in some cases due to reduction slippage, in some
+cases due to one fault completely masking the other fault:  e.g., if
+{\tt insert} always fails, it is not possible to produce a test case
+that exposes a fault in {\tt delete} on a non-empty tree).  Out of
+these 75 cases, normalization produced test cases exposing both faults
+for exactly 80\% of pairs.  Interestingly, in 2cases normalization took
+a set of reduced test cases not capable of exposing both faults, and
+produced a smaller set of test cases that was capable of exercising
+both faults (this is not counted into the slippage measure).
+Arguably this is ``slippage'' in that a test case not capable of
+exposing fault F was modified to expose fault F (classic slippage) but
+since the new test case set exposed both faults, normalization
+actually restored fault detection.
 
 \subsection{XML Parser}
 
@@ -115,8 +134,8 @@ involving no operations other than array initialization (with zeros or
 ones), array flattening, and array addition (the original test case
 involved larger dimensions, array multiplication, and array
 subtraction).  This is the only case in which we have seen
-normalization time lower than reduction time, unless the normalization
-was just a cache hit.
+normalization time lower than reduction time, without assistance from
+the cache.
 
 \begin{figure}
 {\scriptsize
