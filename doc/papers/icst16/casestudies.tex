@@ -86,16 +86,31 @@ read unreduced test cases, so it is only detected if the original test
 cases before reduction are stored and re-executed after bugs have been
 fixed), but in our own previous work \cite{PLDI13}, slippage due to
 reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
-for other SUTs (up to 23\%) for Mozilla's JavaScript engine.
+for other SUTs (up to 23\%) for Mozilla's JavaScript engine.  For our
+own AVLTree example, the slippage rate for reduction (ignoring
+normalization) is almost 30\%.  As a simple mitigation, we propose
+storing at least the reduced test cases, and possibly the original,
+unreduced test cases, for all failures.  These should be used as a
+regression in the event all faults detected by normalized test cases
+are fixed.  It might also be useful, in especially critical testing
+(e.g., for security problems) to run a fuzzer taming algorithm on
+reduced test cases, and examine the highest ranked failures \cite{PLDI13}.
 
-The reduction in test cases produced by normalization was, again, very
-large.  Figure \ref{normeffect}, even in log scale, makes it difficult
-to distinguish from the effects with single faults.  For mutant pairs,
-the mean/median number of distinct failures was 554.4/607 for
-reduction alone, and 2.8/2 for reduction + normalization.  The runtime
-for normalization was essentially unchanged from the single-mutant numbers
-given above.  For reduction alone, using pairs increased the number of
-distinct failures, while normalization failure counts actually decreased.
+The reduction in test cases produced by normalization for mutant pairs
+was, as with single mutants, very large (Figure \ref{normeffect}).
+For mutant pairs, the mean/median number of distinct failures was
+554.4/607 for reduction alone, but only 2.8/2 for reduction +
+normalization.  The runtime for normalization was essentially
+unchanged from the single-mutant numbers given above.  For reduction
+alone, using pairs increased the number of distinct failures, while
+normalized failure counts actually decreased.  For 115 of the 238
+mutant pairs where reduction did not lose a fault, normalization was
+``perfect'' --- it preserved both faults and produced only 1 or 2 test
+cases\footnote{It is possible to detect both faults with a single test
+  case, if that test case fails when \emph{either} fault is
+  present.}.  In other words, normalization produced perfect results for
+almost half (48.3\%) of all multi-fault AVLTree versions where reduction
+provided seed tests containing all faults.
 
 \subsection{XML Parser}
 
@@ -126,8 +141,10 @@ the runtime to 3,690 seconds, but reduces the number of failures to two.
 
 Our final two case studies provide little information on the ability
 of normalization to reduce the number of failing tests; for these
-SUTs, failure rates are low enough or test case reduction runtime high
-enough that each failure is dealt with in a 
+SUTs, failure rates are low enough or test case reduction runtimes high
+enough that each failure is dealt with one-by-one.  However,
+normalization and generalization is, we claim, also useful for
+individual test cases.
 
 NumPy \cite{NumPy} is a very widely used Python library/extension that supports
 large, multi-dimensional matrices and provides a huge library of
