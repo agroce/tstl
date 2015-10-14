@@ -11,8 +11,7 @@ development and optimization.
 For basic experiments on the ability of normalization to reduce the
 number of failing test cases and preserve fault detection, we used a
 simple Python implementation of AVL trees found on the web
-\cite{avltree}, with 225 lines of code\footnote{All code sizes given
-  are non-comment, non-blank lines, as measured by cloc \cite{cloc}.}.
+\cite{avltree}, with 225 lines of code\footnote{All code sizes non-comment, non-blank lines, measured by cloc \cite{cloc}.}.
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{length}
@@ -22,8 +21,7 @@ simple Python implementation of AVL trees found on the web
 
 Figure \ref{normeffect} shows the reduction in number of distinct
 failing test cases produced by normalization (vs. reduction only) for
-a set of 82 mutants of the AVLTree source code\footnote{All graphs
-  produced using matplotlib \cite{Hunter:2007}.}.  Of the 228 mutants
+a set of 82 mutants of the AVLTree source code \cite{Hunter:2007}.  Of the 228 mutants
 produced by MutPy \cite{mutpy}, only these produced at least 1 failure
 in 1,000 test cases.  Using only delta-debugging-based reduction, the
 mean number of distinct failures for each mutant (which is, by nature,
@@ -72,7 +70,8 @@ in a few cases due to one fault completely masking the other fault:  e.g., if
 that exposes a fault in {\tt delete} on a non-empty tree).
 
 Out of these 238 mutant pairs, normalization produced test cases
-exposing both faults for 80.7\% of pairs.  Interestingly, in 4 cases
+exposing both faults for 80.7\% of pairs (19.3\% slippage at the
+suite level).  Interestingly, in 4 cases
 normalization took a set of reduced test cases not capable of exposing
 both faults, and produced a smaller set of test cases that was capable
 of exercising both faults (this is not counted into the slippage
@@ -162,9 +161,10 @@ behavior (the array \emph{should} contain {\tt NaN}).  The greater
 length and much larger number of operations involved in the original
 reduced test case obscures this critical point.  In NumPy, array
 equality does not hold for objects containing {\tt NaN}, so the
-assertion must be modified to exclude this case.
+assertion must be modified.
 
-Other, more complex, cases have also made it clear that normalization
+
+Other, more complex, failures have also made it clear that normalization
 is useful for additional test case length reduction for NumPy, and
 that generalization makes any surprising restrictions on test values
 clear.  For NumPy tests, normalization takes much longer than
@@ -291,8 +291,7 @@ ArcPy/ArcGIS, some of which not only cause incorrect behavior but
 cause a crash that also ends testing.  Before proceeding to more
 nuanced testing, it is critical to understand these faults, the set of
 behaviors that trigger them, and modify the test definition to avoid
-triggering these behaviors with minimal limitations on the thoroughness
-of testing.
+triggering these faults with minimal limitations on thorough testing.
 
 There is no space in this paper to elaborate on the details of
 this large test effort (which has required adding numerous additional

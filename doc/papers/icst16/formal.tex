@@ -6,15 +6,15 @@
 {\scriptsize
 \begin{code}
 @import avl
-\vspace{0.1in}
+\vspace{0.05in}
 pool: <int> 4 CONST
 pool: <avl> 3
-\vspace{0.1in}
+\vspace{0.05in}
 property: <avl>.check\_balanced()
-\vspace{0.1in}
+\vspace{0.05in}
 <int> := <[1..20]>
 <avl> := avl.AVLTree()
-\vspace{0.1in}
+\vspace{0.05in}
 <avl>.insert(<int>)
 <avl>.delete(<int>)
 <avl>.find(<int>)
@@ -59,10 +59,8 @@ values.  Given a harness like the one in Figure \ref{fig:example},
 TSTL compiles it into a class file defining an interface for testing
 that provides features such as querying the set of available testing
 actions, restarting a test, replaying a test, collecting code coverage
-data, and so forth.  The TSTL release
-(\url{https://github.com/agroce/tstl}) also provides some testing
-tools that make use of this interface to generate tests and provide
-other debugging capabilities.
+data, and so forth.  The TSTL release \cite{tstl} provides
+testing tools that use of the interface for test generation and debugging.
 
 The key point for our purposes is merely that a TSTL test harness
 defines a set of \emph{pools} that hold values produced and used
@@ -111,8 +109,8 @@ properties of test-generation algorithms
 \cite{AndrewsTR}.  However, it also allows us to concisely define a
 practical method for normalizing and generalizing test cases.
 
-One note: in normal TSTL semantics, the action sequence that assigns a
-value to the same pool twice in a row is not allowed --- until a pool
+In normal TSTL semantics, assigning a
+value to the same pool twice in a row is not allowed; until a pool
 value is used, it cannot be assigned to again.  However, during
 normalization and generalization, this restriction is removed.  The
 restriction exists only to prevent the generation of uninteresting
@@ -605,15 +603,13 @@ successful fresh value generalization.
 
 \subsection{Discussion}
 
-The key feature of normalization and generalization as presented in
-this paper is that they produce semantic results (simplification of
-test cases and information on the essential and accidental features of
-a test case) by purely syntactic means.  This is possible due to
-TSTL's conversion of testing into a graph exploration problem
-\cite{NFM15}, where a test generation algorithm can be agnostic as to
-the underlying SUT, or even the language of the system under test.
-The current TSTL implementation is in Python\footnote{There is also a
-  Java version in beta, with a simpler version of normalization
-  implemented.}, but the normalization and generalization algorithms
-do not depend on the underlying language, only on the TSTL-level
-notions of actions and pools.
+TSTL's conversion of testing into a
+graph exploration problem \cite{NFM15}, where a test generation
+algorithm can be agnostic as to the underlying SUT, or even the
+language of the system under test, enables us to produce semantic
+normalization and generalization by simple syntactic means.  The current TSTL implementation is
+in Python\footnote{There is also a beta Java version, with a
+  simpler version of normalization.}, but the
+normalization and generalization algorithms do not depend on the
+underlying language, only on the abstract notions of actions and
+pools.
