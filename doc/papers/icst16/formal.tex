@@ -94,17 +94,20 @@ The definition of pools and actions in TSTL defines a \emph{total
   order} on all actions.  First, actions are ordered by their position
 in the definition file.  All {\tt insert} actions are therefore before
 all {\tt delete} actions, and all {\tt delete} actions are before find
-actions.  Of course, one line of TSTL defines many actions, because of
-the choices for pools.  For example, the line {\tt
-  <avl>.insert(<int>)} defines 12 actions, one for each choice of {\tt
-  avl} and {\tt int} pool instance.  These are ordered lexically, in
-the obvious way ({\tt avl0} preceeds {\tt avl1}, etc.).  Value ranges
-such as in the {\tt int} initialization, are also ordered in the
-natural way, with lower values first.  Given this total order, each
-action can be assigned a unique index, from 0 up to 1 less than the
-total number of actions. Initially, this ordering (and
+actions.  One line of TSTL typically defines more than one action. For
+example, the line of TSTL code {\tt <avl>.insert(<int>)} defines 12 actions, one
+for each choice of {\tt avl} and {\tt int} pool instance:  the action set
+includes {\tt avl0.insert(int0)}, {\tt avl1.insert(int0)}, {\tt
+  avl0.insert(int1)}, and so forth.  These are
+ordered lexically, with the first pool appearing in the text taking
+precedence ({\tt avl0.insert(int2)} preceeds {\tt avl1.insert(int0)},
+etc.).  Value ranges such as in the {\tt int} initialization, are also
+ordered in the natural way, with lower values first.  Given this total
+order, each action can be assigned a unique index, from 0 up to 1 less
+than the total number of actions. Initially, this ordering (and
 numbering) for each action was intended to allow for a kind of
-Goedel-numbering of tests, for proving certain mathematical properties
+G\"odel-numbering of tests, for use in proofs about
+properties of test-generation algorithms
 \cite{AndrewsTR}.  However, it also allows us to concisely define a
 practical method for normalizing and generalizing test cases.
 
@@ -135,7 +138,7 @@ case and returns a test case) such that:
 
 Such a function would define a true \emph{canonical form} for test cases, where
 each underlying fault is uniquely represented by a single test case.
-In general, it seems clear that defining such an $f$ is (at least) as
+In general, it seems clear that defining such a function $f$ is (at least) as
 difficult as automatic fault localization and repair.  Therefore, we
 aim at approximating the goal, by providing a set of simple
 transformations such that $f$ changes many tests to the same test, $f$
