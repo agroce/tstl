@@ -28,7 +28,7 @@ produced by MutPy \cite{mutpy}, only these produced at least 1 failure
 in 1,000 test cases.  Using only delta-debugging-based reduction, the
 mean number of distinct failures for each mutant (which is, by nature,
 a single fault) was 498.4, with a median of 485.  Using normalization,
-the mean was 3.1 distinct failures, with a mean of just 2 failures.
+the mean was 3.1 distinct failures, with a median of just 2 failures.
 For 38 of the 82 mutants, normalization produced only a single
 representative failure.  For every mutant, normalization reduced the
 number of distinct failures, and no mutant produced more than 27
@@ -61,24 +61,41 @@ known as ``slippage'' when it occurs with delta-debugging
 regard, as there are very few API calls, and all calls take the same
 simple inputs, so test cases for faults are likely to be very close to
 each other in the combinatorial space.  To test the slippage rates for
-normalization, we randomly selected 183 mutant pairs drawn from the 82
+normalization, we randomly selected 364 mutant pairs drawn from the 82
 detectable mutants, and produced higher-order-mutants for each of
 these by applying both mutants (using only mutants that modified
 different source lines).  Of these, the set of reduced test cases
 included at least one test capable of exposing each of the two faults
-for only 117 pairs (in some cases due to reduction slippage, in some
-cases due to one fault completely masking the other fault:  e.g., if
+for only 238 pairs (in almost all cases due to reduction slippage, but
+in a few cases due to one fault completely masking the other fault:  e.g., if
 {\tt insert} always fails, it is not possible to produce a test case
-that exposes a fault in {\tt delete} on a non-empty tree).  Out of
-these 117 cases, normalization produced test cases exposing both faults
-for 80.1\% of pairs.  Interestingly, in 2 cases normalization took
-a set of reduced test cases not capable of exposing both faults, and
-produced a smaller set of test cases that was capable of exercising
-both faults (this is not counted into the slippage measure).
-Arguably this is ``slippage'' in that a test case not capable of
-exposing fault F was modified to expose fault F (classic slippage) but
-since the new test case set exposed both faults, normalization
-actually restored fault detection.
+that exposes a fault in {\tt delete} on a non-empty tree).
+
+Out of these 238 mutant pairs, normalization produced test cases
+exposing both faults for 80.7\% of pairs.  Interestingly, in 4 cases
+normalization took a set of reduced test cases not capable of exposing
+both faults, and produced a smaller set of test cases that was capable
+of exercising both faults (this is not counted into the slippage
+measure).  Arguably this is ``slippage'' in that a test case not
+capable of exposing fault F was modified to expose fault F (classic
+slippage) but since the new test suite exposed both faults,
+normalization actually restored fault detection.
+
+Data on slippage is not extensive (in part because few actual testers
+read unreduced test cases, so it is only detected if the original test
+cases before reduction are stored and re-executed after bugs have been
+fixed), but in our own previous work \cite{PLDI13}, slippage due to
+reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
+for other SUTs (up to 23\%) for Mozilla's JavaScript engine.
+
+The reduction in test cases produced by normalization was, again, very
+large.  Figure \ref{normeffect}, even in log scale, makes it difficult
+to distinguish from the effects with single faults.  For mutant pairs,
+the mean/median number of distinct failures was 554.4/607 for
+reduction alone, and 2.8/2 for reduction + normalization.  The runtime
+for normalization was essentially unchanged from the single-mutant numbers
+given above.  For reduction alone, using pairs increased the number of
+distinct failures, while normalization failure counts actually decreased.
 
 \subsection{XML Parser}
 
@@ -106,6 +123,11 @@ failing test cases.  Adding normalization and generalization brings
 the runtime to 3,690 seconds, but reduces the number of failures to two.
 
 \subsection{NumPy}
+
+Our final two case studies provide little information on the ability
+of normalization to reduce the number of failing tests; for these
+SUTs, failure rates are low enough or test case reduction runtime high
+enough that each failure is dealt with in a 
 
 NumPy \cite{NumPy} is a very widely used Python library/extension that supports
 large, multi-dimensional matrices and provides a huge library of
