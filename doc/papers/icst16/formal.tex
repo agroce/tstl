@@ -48,19 +48,21 @@ avl1.delete(int2)
 }
 
 TSTL \cite{NFM15,ISSTA15} is a language for defining the structure of
-test cases, and a set of tools for use in generating, manipulating,
-and understanding those test cases.  Figure \ref{fig:example} shows a
-simplified portion of a TSTL definition of tests of an AVL tree class,
-in the latest syntax for TSTL (which differs slightly from that in the
-cited papers introducing TSTL).  TSTL provides numerous features not
-shown in this small example, including automatic differential testing,
-complex logging, support for complex guards, and use of pre- and post-
-values.  Given a harness like the one in Figure \ref{fig:example},
-TSTL compiles it into a class file defining an interface for testing
-that provides features such as querying the set of available testing
-actions, restarting a test, replaying a test, collecting code coverage
-data, and so forth.  The TSTL release \cite{tstl} provides
-testing tools that use of the interface for test generation and debugging.
+test cases (usually API-call sequences, but also grammar-based tests using
+string construction), and a set of tools for use in generating,
+manipulating, and understanding those test cases.  Figure
+\ref{fig:example} shows a simplified portion of a TSTL definition of
+tests of an AVL tree class, in the latest syntax for TSTL (which
+differs slightly from that in the cited papers introducing TSTL).
+TSTL provides numerous features not shown in this small example,
+including automatic differential testing, complex logging, support for
+complex guards, and use of pre- and post- values.  Given a harness
+like the one in Figure \ref{fig:example}, TSTL compiles it into a
+class file defining an interface for testing that provides features
+such as querying the set of available testing actions, restarting a
+test, replaying a test, collecting code coverage data, and so forth.
+The TSTL release \cite{tstl} provides testing tools that use of the
+interface for test generation and debugging.
 
 The key point for our purposes is merely that a TSTL test harness
 defines a set of \emph{pools} that hold values produced and used

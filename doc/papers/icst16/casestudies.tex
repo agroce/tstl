@@ -21,7 +21,7 @@ simple Python implementation of AVL trees found on the web
 
 Figure \ref{normeffect} shows the reduction in number of distinct
 failing test cases produced by normalization (vs. reduction only) for
-a set of 82 mutants of the AVLTree source code \cite{Hunter:2007}.  Of the 228 mutants
+a set of 82 mutants \cite{mutant} of the AVLTree source code \cite{Hunter:2007}.  Of the 228 mutants
 produced by MutPy \cite{mutpy}, only these produced at least 1 failure
 in 1,000 test cases.  Using only delta-debugging-based reduction, the
 mean number of distinct failures for each mutant (which is, by nature,
@@ -133,9 +133,8 @@ interface (the TSTL compiler is about 1,600 LOC; a compiled SUT is
 often 30KLOC or larger).  For the only fault discovered so far in our testing (which
 has focused on the newest code, that for normalization and
 generalization), the cache-related problem mentioned above, generating
-and reducing 100 test cases requires 1,090 seconds and produces 90
-failing test cases.  Adding normalization and generalization brings
-the runtime to 3,690 seconds, but reduces the number of failures to two.
+and reducing 100 test cases requires 1,090 seconds and produces 90 failures.  Adding normalization and generalization brings
+the runtime to 3,690 seconds, but produces just two failures.
 
 \subsection{NumPy}
 
@@ -162,7 +161,11 @@ behavior (the array \emph{should} contain {\tt NaN}).  The greater
 length and much larger number of operations involved in the original
 reduced test case obscures this critical point.  In NumPy, array
 equality does not hold for objects containing {\tt NaN}, so the
-assertion must be modified.
+assertion must be modified.  As far as we know, normalization
+transforms all versions of this fault into a single test case, but our
+data is not adequate to make this claim for certain, as the failure
+rate is approximately 3 failures/100K
+tests of length 100.
 
 
 Other, more complex, failures have also made it clear that normalization
@@ -317,9 +320,9 @@ due to the cost of running complex GIS analyses.  However, even with
 this high cost, reducing, normalizing, and generalizing test cases has
 been a more effective use of our time than trying to understand the
 faults without these aids.  For example, in the test case shown in
-this paper, it was essential to understand that the SQL query and
-selection type were not essential to the fault, but that using a
-freshly created layer would not result in a crash:  the problem
+this paper, it was important to understand that the SQL query and
+selection type were not essential, but using a
+freshly created layer will not result in a crash:  the problem
 appears to be that ArcGIS (or ArcPy) does not invalidate layers built
 from a feature class when that feature class is deleted\footnote{In
   this instance, a generalization (the fresh values generalization in

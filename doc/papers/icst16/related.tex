@@ -45,16 +45,11 @@ course), and to address the fuzzer taming problem.  The approaches are
 essentially orthogonal: our normalized tests could be altered to
 improve readability by these methods.
 
-Test case generalization is akin to dynamic invariant
-generation, in that it informs the user of invariants over a series of
-test executions satisfying some property \cite{Daikon}, but differs in
-that it is focused on a single predicate, and rather than using
-induction to predict invariants, it performs experiments to determine
-conditioned invariants in a limited neighborhood of a test case.
-The only other work we are aware of that is similar to generalization
-is efforts to provide information about essential and accidental
-aspects of model checking counterexamples, or causal inferences on
-such \cite{FreeWill,MakeMost,SPIN03}.  There is considerable
-additional work on causality in model checking, but the setting, aims,
-and methods are quite different in all of these cases (including those
-cited) to our approach.
+The most closely related work to our generalization efforts is Pike's
+SmartCheck \cite{SmartCheck}, which targets algebraic data in
+Haskell, and offers an interesting alternative approach to reduction
+and generalization.  Test case generalization is also akin to dynamic invariant generation,
+in that it informs the user of invariants over a series of test
+executions \cite{Daikon}.  The only other work we are aware of that is
+similar to generalization concerns essential and accidental aspects of
+model checking counterexamples, e.g. \cite{FreeWill,MakeMost,SPIN03}.  
