@@ -143,7 +143,7 @@ Our final two case studies provide little information on the ability
 of normalization to reduce the number of failing tests; for these
 SUTs, failure rates are low enough or test case reduction runtimes high
 enough that each failure is dealt with one-by-one.  However,
-normalization and generalization is, we claim, also useful for
+normalization and generalization are, we claim, also useful for
 individual test cases.
 
 NumPy \cite{NumPy} is a very widely used Python library/extension that supports
@@ -233,7 +233,7 @@ the cache.
  assert (np.array\_equal(array1,array1))
 \end{code}
 }
-\caption{Original ``failing'' test case for numpy (42 steps)}
+\caption{Original ``failing'' test case for numpy (42 steps).}
 \label{numpyorig}
 \end{figure}
 
@@ -262,7 +262,7 @@ array0 = array0 - array0            \textcolor{black!45}{\# STEP 14}
 assert (np.array\_equal(array0,array0))
 \end{code}
 }
-\caption{Normalized and generalized test case for numpy (15 steps)}
+\caption{Normalized and generalized test case for numpy (15 steps).}
 \label{numpynormgen}
 \end{figure}
 
@@ -379,7 +379,7 @@ arcpy.SelectLayerByAttribute\_management
    ' "'+fieldname1+'" '+op0+val1) 
 \end{code}
 }
-\caption{Original test case for ArcPy library (19 steps)}
+\caption{Original test case for ArcPy library (19 steps).}
 \label{esriorig}
 \end{figure}
 
@@ -429,6 +429,6 @@ arcpy.SelectLayerByAttribute\_management
 \end{code}
 }
 \caption{Normalized and generalized test case for ArcPy library
-  (12 steps)}
+  (12 steps).}
 \label{esrinormgen}
 \end{figure}
