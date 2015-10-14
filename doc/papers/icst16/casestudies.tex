@@ -129,7 +129,8 @@ increased the runtime by less than 5 seconds.
 \subsection{TSTL}
 
 As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own API
-interface.  For the only fault discovered so far in our testing (which
+interface (the TSTL compiler is about 1,600 LOC; a compiled SUT is
+often 30KLOC or larger).  For the only fault discovered so far in our testing (which
 has focused on the newest code, that for normalization and
 generalization), the cache-related problem mentioned above, generating
 and reducing 100 test cases requires 1,090 seconds and produces 90
