@@ -8,7 +8,7 @@ that remove irrelevant operations\footnote{Algorithms such as
   testing, model-checking \cite{Gastin04minimizationof}, and other
   approaches, including symbolic execution \cite{issta14} can benefit greatly from
   test case/counterexample reduction.}.  In fact, test case reduction is
-now standard practice in industral testing tools such as Mozilla's
+now standard practice in industrial testing tools such as Mozilla's
 {\tt jsfunfuzz}.  However, simply reducing the length of a test case
 does not produce any kind of semantic simplicity.  There may be many
 (often far more than a thousand, in practice) 1-minimal test cases
@@ -85,19 +85,21 @@ performing the same task over a set of thousands of failures with more
 extreme variation.
 
 The contributions of this paper are 1) the idea of normalizing and
-generalizing API-based test cases, as steps toward a (likely unreachable) goal
-of ``one test case to rule them all'' (per fault), 2) algorithms for
-normalizing and generalizing test cases that make use of the abstract
-graph interface for testing provided by the TSTL
+generalizing API-based test cases, as steps toward a (likely
+unreachable) goal of ``one test case to rule them all'' (per fault),
+2) algorithms for normalizing and generalizing test cases that make
+use of the abstract graph interface for testing provided by the TSTL
 \cite{tstl,NFM15,ISSTA15} testing language, and 3) some initial
 experimental results showing the value of test case normalization and
 generalization.  In our experiments, normalization preserves fault
-detection approximately as well as test case reduction does, and often
-reduces the set of test cases to be examined by more than an order of
-magnitude.  We show that normalization and generalization have also
-been useful in understanding test cases for a variety of software
-systems, including TSTL itself and a widely-used, highly complex
-library for GIS automation.
+detection approximately as well as test case reduction via
+delta-debugging, and often reduces the set of test cases to be
+examined by more than an order of magnitude. In many cases, the
+normalization is perfect (one test case per fault).  We show that
+normalization and generalization have also been useful in
+understanding test cases for a variety of software systems, including
+TSTL itself and a widely-used, highly complex library for GIS
+automation.
 
 \begin{figure}
 {\scriptsize

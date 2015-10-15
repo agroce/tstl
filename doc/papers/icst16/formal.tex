@@ -100,7 +100,7 @@ for each choice of {\tt avl} and {\tt int} pool instance:  the action set
 includes {\tt avl0.insert(int0)}, {\tt avl1.insert(int0)}, {\tt
   avl0.insert(int1)}, and so forth.  These are
 ordered lexically, with the first pool appearing in the text taking
-precedence ({\tt avl0.insert(int2)} preceeds {\tt avl1.insert(int0)},
+precedence ({\tt avl0.insert(int2)} precedes {\tt avl1.insert(int0)},
 etc.).  Value ranges such as in the {\tt int} initialization, are also
 ordered in the natural way, with lower values first.  Given this total
 order, each action can be assigned a unique index, from 0 up to 1 less
@@ -157,7 +157,7 @@ rewrites that can be applied to $t$, e.g., the longest possible
 sequence such that $c_0 = r_{i1}(t), c_1 = r_{i2}(c_0), ... c_n = r_{in}(c_{n-1})$. We
 require that $\forall c \in C(b), R(c) < R(b)$.  The number of possible
 rewrites for each candidate must be smaller than the number of
-possible rewrites for $b$.  This implies further restrictons, e.g., no
+possible rewrites for $b$.  This implies further restrictions, e.g., no
 rewrite can ever reverse another rewrite's effects.  Such a rewrite
 system is \emph{strongly normalizing}:  any sequence of rewrites
 chosen will eventually end in a term (test case) that cannot be
@@ -178,7 +178,7 @@ one action (possibly in multiple steps, but in a uniform way) or make
 \emph{no} changes to the actions performed, only to the pools used or the
 positions of actions in the test case.  We cannot guarantee
 normalization does not change the underlying fault in a test; however,
-the limited scope of rewrites should at least make the likelyhood of
+the limited scope of rewrites should at least make the likelihood of
 fault change (known as ``slippage'' \cite{PLDI13}) around that of
 delta-debugging, which is widely accepted as a reasonable tradeoff.
 
@@ -501,13 +501,13 @@ parallelize, as all checks are independent.
 A side-effect of delta-debugging and of normalization is the reduction
 of the number of variables used in a test case.  While usually helpful
 for understanding, this can sometimes result in misleading test
-cases.  In stateful system, putting the system into a bad state may require
+cases.  In a stateful system, putting the system into a bad state may require
 building a complex object.  Once system state is corrupted, however,
 the complex object is irrelevant, and its appearance in the call
 leading to failure can be misleading.  In previous work at NASA, we
 observed that sometimes a delta-debugged file system test case
 \cite{ICSEDiff,AMAI} would use an open file descriptor in a call,
-leading to the suspicion that the file had been corrputed, when in
+leading to the suspicion that the file had been corrupted, when in
 fact the file system's state in memory was damaged, and the same
 operation on any file would produce the same problem.  To address this
 problem, we present a more aggressive generalization than
@@ -522,7 +522,7 @@ itself\footnote{Since TSTL provides a Python API, that API can be used
 cache, produced by normalizing a test with only one action.  Without
 generalization, it appears that the failure comes when this test is
 normalized a second time.  However, the information after step 6 shows
-that in fact the failure will take place even if an newly created empty test is
+that in fact the failure will take place even if a newly created empty test is
 normalized.  Without this generalization, the state of the {\tt test} pool
 may appear to be important, not the state of the TSTL system itself.
 
@@ -591,8 +591,8 @@ side.  As an example, if an integer is used as an argument to a
 function, the pool value's last assignment is still valid and should
 be omitted from ``fresh'' values, as redundant.  However, calling a
 function on an AVL tree or a list may modify the object, making an
-assignment non-redundant, even if it is the last apperance of that
-pool on the lhs.  Further extensions of the fresh value generalization
+assignment non-redundant, even if it is the last appearance of that
+pool as lhs.  Further extensions of the fresh value generalization
 could be considered; e.g., if a fresh value for some object requires use
 of a complex constructor, the values required to call the constructor
 could also be produced, if they do not appear in the test case

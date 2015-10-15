@@ -36,7 +36,7 @@ The mean cost to reduce a
 test case was 0.05 seconds, with a median of 0.03 seconds.  The mean
 cost for normalization was 0.38 seconds, with a median of 0.1 seconds.
 The minimum runtime for both algorithms was negligible (less than 1
-milisecond), but the maximums were 1.3 seconds for reduction and 17.6
+millisecond), but the maximums were 1.3 seconds for reduction and 17.6
 seconds for normalization.  Note that in all our results the cost of
 normalization is given on an already-reduced test case, so the inputs
 for normalization are smaller than those for reduction; however, this
@@ -303,7 +303,7 @@ this process.  Figures \ref{esriorig} and \ref{esrinormgen} show one
 crash-inducing test case, after initial delta-debugging (from over
 2,000 test steps) (Figure \ref{esriorig}) and with normalization and
 generalization (Figure \ref{esrinormgen}).  First, in this setting
-normalization has thus contributed a surprising amount of additional
+normalization has contributed a surprising amount of additional
 reduction over delta-debugging.  In this example, normalization
 reduced the length from 19 steps to 11 steps; in another case, it
 reduced the test case from 18 to 14 steps, and in the other crash
