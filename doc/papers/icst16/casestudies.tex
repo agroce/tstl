@@ -145,9 +145,9 @@ enough that each failure is dealt with one-by-one.  However,
 normalization and generalization are, we claim, also useful for
 individual test cases.
 
-NumPy \cite{NumPy} is a very widely used Python library/extension that supports
-large, multi-dimensional matrices and provides a huge library of
-mathematical functions.  The popular SciPy library for scientific
+NumPy \cite{NumPy} is a very widely used Python library/extension that
+supports large, multi-dimensional matrices and provides a huge library
+of mathematical functions.  The popular SciPy library for scientific
 computing builds on NumPy.  Developing tests for NumPy is challenging,
 because none of the authors are experts in numeric computation, and
 the specification of correct behavior is often somewhat subtle.  As a
@@ -155,17 +155,16 @@ simple example, consider the test case in Figure \ref{numpyorig},
 normalized and generalized in Figure \ref{numpynormgen}.  Prior to
 normalization, understanding why the test case leads to a violation of
 self-equality for an array is, to say the least, non-trivial.  After
-normalization, it is much clearer what is happening:
-1) {\tt array0} contains {\tt NaN} 2) this is in fact correct
-behavior (the array \emph{should} contain {\tt NaN}).  The greater
-length and much larger number of operations involved in the original
-reduced test case obscures this critical point.  In NumPy, array
-equality does not hold for objects containing {\tt NaN}, so the
-assertion must be modified.  As far as we know, normalization
-transforms all versions of this fault into a single test case, but our
-data is not adequate to make this claim for certain, as the failure
-rate is approximately 3 failures/100K
-tests of length 100.
+normalization, it is much clearer what is happening: 1) {\tt array0}
+contains {\tt NaN} 2) this is in fact correct behavior (the array
+\emph{should} contain {\tt NaN}).  The greater length and much larger
+number of operations involved in the original reduced test case
+obscures this critical point.  In NumPy, array equality does not hold
+for objects containing {\tt NaN}, so the assertion must be modified.
+As far as we know, normalization transforms all instances of this
+fault into this canonical test case, but our data (over fewer than 20
+failures) is insufficient to make a strong claim, as the failure rate
+is approximately 3 failures/100K tests of length 100.
 
 
 Other, more complex, failures have also made it clear that normalization
