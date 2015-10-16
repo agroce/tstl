@@ -200,7 +200,7 @@ $\Delta(t,t')$ is the set of all steps in $t$ such that $t(i) \not= t'(i)$.
 We use the $<$ operator over various types:
 $a < b$ iff the index of action $a$ is lower
 than that of action $b$.  We compare steps with $<$ by comparing their
-actions --- $(i,a) < (j,b)$ iff $a < b$.  For a set or sequence of actions or steps, we define the $min$ of the
+actions --- $(i: a) < (j: b)$ iff $a < b$.  For a set or sequence of actions or steps, we define the $min$ of the
 set to be the lowest indexed action in the set, and use
 these to compare sets:  $s_1 < s_2$ iff $min(s_1) < min(s_2)$. For pools,
 $p < p'$ if and only if $p$'s index is lower than the index for $p'$
@@ -211,7 +211,7 @@ replaced by $y$.  Here, $x$ and $y$ can be actions, steps, or pools.
 $t[x \Leftrightarrow y]$ is similar, except that $x$ and $y$ are
 swapped.  Rewrite $t(i,j)[x \Rightarrow y]$ is the same as $t[x \Rightarrow
 y]$, except that the replacement is only applied between steps $i$ and
-$j$, inclusive.  Finally, $t_i(x)$ denotes $t$ with all steps
+$j$, inclusive.  Finally, $t_{\rightarrow i}(x)$ denotes $t$ with all steps
 containing $x$ that are before step $i$ moved to step $i$, preserving
 their previous order, and moving steps at $i$ and after $i$ to make room.
 
@@ -329,7 +329,7 @@ Substituting this expression into the expression above bounding total
 predicate checks, we see that the cost for normalization is
 $O(k^4a^2)$.  While worse than the quadratic cost of delta-debugging,
 this also is applied to already-reduced test cases, unlike
-delta-debugging; the $k$ in our quadratic is, for random test cases,
+delta-debugging; the $k$ in our quartic is, for random test cases,
 typically an order of magnitude smaller than the $k$ in
 delta-debugging \cite{ICSEDiff,icst2014,MinUnit}, which can partly
 balance the additonal cost for test cases whose unreduced length is
