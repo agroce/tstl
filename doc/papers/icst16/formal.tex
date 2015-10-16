@@ -93,8 +93,8 @@ first step of the first test case in Figure \ref{threetests} is storing a new AV
 The definition of pools and actions in TSTL defines a \emph{total
   order} on all actions.  First, actions are ordered by their position
 in the definition file.  All {\tt insert} actions are therefore before
-all {\tt delete} actions, and all {\tt delete} actions are before find
-actions.  One line of TSTL typically defines more than one action. For
+all {\tt delete} actions, and all {\tt delete} actions are before {\tt
+  find} actions.  One line of TSTL typically defines more than one action. For
 example, the line of TSTL code {\tt <avl>.insert(<int>)} defines 12 actions, one
 for each choice of {\tt avl} and {\tt int} pool instance:  the action set
 includes {\tt avl0.insert(int0)}, {\tt avl1.insert(int0)}, {\tt
@@ -136,23 +136,29 @@ case and returns a test case) such that:
   f(t_2)$.
 \end{enumerate}
 
-Such a function would define a true \emph{canonical form} for test cases, where
-each underlying fault is uniquely represented by a single test case.
-In general, it seems clear that defining such a function $f$ is (at least) as
-difficult as automatic fault localization and repair.  Therefore, we
-aim at approximating the goal, by providing a set of simple
-transformations such that $f$ changes many tests to the same test, $f$
-has
-low probability of changing two tests failing for different reasons
-into the same test, and $f$ is not unreasonably expensive to compute.
-The implementation for $f$ (in fact, for a family of $f$-approximating
-functions, with different tradeoffs in runtime and level of
-normalization) involves defining a set of rewrite rules such that for a
-test $b$ (the base test), the rules define a finite set of candidate
-tests $c \in C(b)$, possible simplifications of $b$, where each $c$ is
-the result of applying some rewrite, $r_i$ to $b$.  The notion of
-simplicity is defined by a restriction on the rewriting rules.  For
-any test case $t$, let $R(t)$ be the length of the maximum number of
+Such a function would define a true \emph{canonical form} for test
+cases, where each underlying fault is uniquely represented by a single
+test case.  In general, it seems clear that defining such a function
+$f$ is (at least) as difficult as automatic fault localization and
+repair.  Therefore, we aim at approximating the goal, by providing a
+set of simple transformations such that $f$ changes many tests to the
+same test, $f$ has low probability of changing two tests failing for
+different reasons into the same test, and $f$ is not unreasonably
+expensive to compute.  The implementation for $f$ (in fact, for a
+family of $f$-approximating functions, with different tradeoffs in
+runtime and level of normalization) involves defining a set of rewrite
+rules such that for a test $b$ (the base test), the rules define a
+finite set of candidate tests $c \in C(b)$, possible simplifications
+of $b$, where each $c$ is the result of applying some rewrite, $r_i$
+to $b$.  The notion of simplicity is defined by a restriction on the
+rewriting rules.  For any test case $t$ and rewrite $r_i \in C(t)$, we
+require that $|C(r_i(t))| < |C(t)|$.  Such a rewrite system is
+necessarily \emph{strongly normalizing}: any sequence of rewrites
+chosen will eventually end in a term (test case) that cannot be
+further rewritten (and the total length of a rewrite sequence in this
+case is bounded by the initial $|C(b)|$).
+
+\comment{, let $R(t)$ be the length of the maximum number of
 rewrites that can be applied to $t$, e.g., the longest possible
 sequence such that $c_0 = r_{i1}(t), c_1 = r_{i2}(c_0), ... c_n = r_{in}(c_{n-1})$. We
 require that $\forall c \in C(b), R(c) < R(b)$.  The number of possible
@@ -161,7 +167,7 @@ possible rewrites for $b$.  This implies further restrictions, e.g., no
 rewrite can ever reverse another rewrite's effects.  Such a rewrite
 system is \emph{strongly normalizing}:  any sequence of rewrites
 chosen will eventually end in a term (test case) that cannot be
-further rewritten.
+further rewritten.}
 
 In the setting of TSTL, where test actions have a defined total
 order, a simple principle can be applied to produce strongly
@@ -293,20 +299,44 @@ new base test case, since often a rewrite makes other steps irrelevant.
 \end{algorithmic}
 \end{algorithm}
 
-Assume there are $k$ steps in the test case and $n$ possible actions.
-We approximate the complexity of normalization by first bounding the cost for each pass through the
-inner {\bf for} loop.  The action replacements and pool movement
-replacement rewrites (1, 3, 4, and 7) all require at most $k (n-1)$
-predicate checks when no simplification takes place, and all checks
-fail.  The {\bf SwapAction} rewrite can obviously require no more than
-$k^2$ checks, and the {\bf ReplacePool} rewrite fewer than
-$k^2 (n-1)$\footnote{The details of how these bounds are determined,
+The worst-case complexity of normalization can be given an upper bound by recalling our
+rule that each rewrite must lower the number of possible rewrites by
+at least one.  We assume test case execution to check the predicate
+has a constant cost (this is reasonable, as the length of the test
+usually does not change in normalization).  This means if there are $n$ possible rewrites of a
+test case, there can be at most $n$ predicate checks for the current test case,
+then at most $n-1$ checks for the rewritten test case, and so on, for
+a total of $\frac{n(n+1)}{2}$ predicate checks, where $n$ is the
+number of possible rewrites of the test case $b$ being normalized, e.g.,
+$n = |C(b)|$.
+
+How many rewrites can a test case $b$ have?  
+Assume there are $k$ steps in the test case and $a$ possible actions.
+The action replacements rewrites ({\bf SimplifyAll}, {\bf
+  SimplifySingle}, and {\bf ReduceAction}) allow for at most $k (a-1)$
+rewrites each.
+ There are $\leq k^2$ possible {\bf SwapAction} rewrites, and
+ $\leq k^2(a-1)$ possible rewrites for each of {\bf ReplacePool}, {\bf ReplaceMovePool}, and {\bf SwapPool}\footnote{The details of how these bounds are determined,
   in that pool changes are also action changes, are not critical, and
   a more detailed analysis is somewhat involved, and beyond the scope
   of this paper; we note that like delta-debugging, the worst-case
   complexity is seldom observed, and offer some further optimizations
-  below.}.  Therefore each inner loop run requires at most
-$k^2 + k^2(n-1) + 4k(n-1)$ checks (we assume a constant cost to run a
+  below.}.  There are therefore at most
+$n=k^2 + 3k^2(a-1) + 3k(a-1)$ rewrites, over-approximating (since an
+action cannot be rewritten to itself, etc.).  Each rewrite also
+requires a delta-debugging step, which is quadratic in $k$ \cite{DD}.
+Substituting this expression into the expression above bounding total
+predicate checks, we see that the cost for normalization is
+$O(k^4a^2)$.  While worse than the quadratic cost of delta-debugging,
+this also is applied to already-reduced test cases, unlike
+delta-debugging; the $k$ in our quadratic is, for random test cases,
+typically an order of magnitude smaller than the $k$ in
+delta-debugging \cite{ICSEDiff,icst2014,MinUnit}, which can partly
+balance the additonal cost for test cases whose unreduced length is
+less than 100.
+
+\comment{
+checks (we assume a constant cost to run a
 check --- unlike in delta-debugging, this is a reasonable assumption, as few
 rules change the length of the test).  Each time the inner loop finds
 a valid rewrite, there is also the cost of a delta-debugging step,
@@ -321,7 +351,7 @@ can be swapped fewer than $k$ times, obviously.  Each  {\bf
 test, giving it a total (not per-step, like the other bounds) bound of
 $k$ successful rewrites.  This gives us an upper bound of $kn +
 k^2 + k$ executions for the outer loop, and a total runtime that is
-$O(k^4n)$.
+$O(k^4n)$.}
 
 In practice, most actions are not enabled at most steps, and
 the rules are applied in an order that quickly converges on a normal
