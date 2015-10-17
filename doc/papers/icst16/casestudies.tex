@@ -124,18 +124,17 @@ all 1,000 tests, including delta-debugging these 848 failures.
 However, the output was 717 distinct failing test cases.  Normalizing
 increased the runtime to 354.7 seconds, but reduced the number of
 distinct failing tests to 5, with 3 variations of the original fault
-and 2 variations of the seeded fault.  Generalizing these 5 failures
-increased the runtime by less than 5 seconds.
+and 2 variations of the seeded fault.  Generalization only required 5 seconds.
+
 
 \subsection{TSTL}
 
 As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own API
 interface (the TSTL compiler is about 1,600 LOC; a compiled SUT is
-often 30KLOC or larger).  For the only fault discovered so far in our testing (which
-has focused on the newest code, that for normalization and
-generalization), the cache-related problem mentioned above, generating
-and reducing 100 test cases requires 1,090 seconds and produces 90 failures.  Adding normalization and generalization brings
-the runtime to 3,690 seconds, but produces just two failures.
+often 30KLOC or larger).  For the only fault discovered so far in
+testing the latest version of TSTL, the cache-related problem mentioned above, generating
+and reducing 100 test cases required 1,090 seconds and produced 90 failures.  Adding normalization and generalization increased
+the runtime to 3,690 seconds, but produced just two failures.
 
 \subsection{NumPy}
 

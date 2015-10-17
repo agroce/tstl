@@ -467,7 +467,7 @@ Figure \ref{diffnorm} shows the sequence of successful rewrites in
 normalizing a simple AVL tree test failure.  Note that the numbering
 of steps appears inconsistent in the first {\bf SwapAction} because a
 successful delta-debugging removes a no-longer-needed step after a
-rewrite.  In our experience, this pattern, where successful rewrites
+rewrite.  In our experience, the pattern in this example, where successful rewrites
 are roughly equal to the original number of steps, is frequent across SUTs.
 
 \subsection{Generalization}
@@ -620,18 +620,19 @@ to, and pools that are modified without appearing on a left-hand
 side.  As an example, if an integer is used as an argument to a
 function, the pool value's last assignment is still valid and should
 be omitted from ``fresh'' values, as redundant.  However, calling a
-function on an AVL tree or a list may modify the object, making an
+function on an AVL tree may modify it, making an
 assignment non-redundant, even if it is the last appearance of that
-pool as lhs.  Further extensions of the fresh value generalization
+pool as LHS.  We use the {\tt CONST} tag (see Figure \ref{fig:example}) to mark
+which values can be modified on the RHS.  Further extensions of the fresh value generalization
 could be considered; e.g., if a fresh value for some object requires use
 of a complex constructor, the values required to call the constructor
 could also be produced, if they do not appear in the test case
 previously (if only one of a set of constructors can produce a fresh
-value that will satisfy the predicate).  However, in our experiments
-so far, simple fresh value generation suffices, since the needed
+value that will satisfy the predicate).  In our experiments
+so far, simple fresh value generation suffices, as needed
 inputs to constructors are usually available in pools, and it is not
-important to know \emph{all} constructor inputs that could result in a
-successful fresh value generalization.
+important to know \emph{all} inputs that could result in a
+valid fresh value.
 
 \subsection{Discussion}
 
