@@ -162,9 +162,9 @@ number of operations involved in the original reduced test case
 obscures this critical point.  In NumPy, array equality does not hold
 for objects containing {\tt NaN}, so the assertion must be modified.
 As far as we know, normalization transforms all instances of this
-fault into this canonical test case, but our data (over fewer than 20
-failures) is insufficient to make a strong claim, as the failure rate
-is approximately 3 failures/100K tests of length 100.
+fault into this canonical test case, but our data (over fewer than 30
+failures) is insufficient to make a definite claim, as the failure rate
+is slightly less than 3 failures/100,000 tests on average.
 
 
 Other, more complex, failures have also made it clear that normalization
