@@ -46,6 +46,7 @@ grestore
 \smartqed  % flush right qed marks, e.g. at end of proof
 %
 \usepackage{graphicx}
+\usepackage{code}
 %
 % \usepackage{mathptmx}      % use Times fonts if available on your TeX system
 %
@@ -98,83 +99,37 @@ grestore
 % \subclass{MSC code1 \and MSC code2 \and more}
 \end{abstract}
 
-\section{Introduction}
-\label{intro}
-Your text comes here. Separate text sections with
-\section{Section title}
-\label{sec:1}
-Text with citations \cite{RefB} and \cite{RefJ}.
-\subsection{Subsection title}
-\label{sec:2}
-as required. Don't forget to give each section
-and subsection a unique label (see Sect.~\ref{sec:1}).
-\paragraph{Paragraph headings} Use paragraph headings as needed.
-\begin{equation}
-a^2+b^2=c^2
-\end{equation}
+\input{intro}
+\input{tstl}
+\input{langchanges}
+\input{toolchanges}
+\input{faults}
+\input{regression}
+\input{savestate}
 
-% For one-column wide figures use
-\begin{figure}
-% Use the relevant command to insert your figure file.
-% For example, with the graphicx package use
-  \includegraphics{example.eps}
-% figure caption is below the figure
-\caption{Please write your figure caption here}
-\label{fig:1}       % Give a unique label
-\end{figure}
-%
-% For two-column wide figures use
-\begin{figure*}
-% Use the relevant command to insert your figure file.
-% For example, with the graphicx package use
-  \includegraphics[width=0.75\textwidth]{example.eps}
-% figure caption is below the figure
-\caption{Please write your figure caption here}
-\label{fig:2}       % Give a unique label
-\end{figure*}
-%
-% For tables use
-\begin{table}
-% table caption is above the table
-\caption{Please write your table caption here}
-\label{tab:1}       % Give a unique label
-% For LaTeX tables use
-\begin{tabular}{lll}
-\hline\noalign{\smallskip}
-first & second & third  \\
-\noalign{\smallskip}\hline\noalign{\smallskip}
-number & number & number \\
-number & number & number \\
-\noalign{\smallskip}\hline
-\end{tabular}
-\end{table}
-
-
-%\begin{acknowledgements}
-%If you'd like to thank anyone, place your comments here
-%and remove the percent signs.
-%\end{acknowledgements}
+\input{related}
+\input{conclusions}
 
 % BibTeX users please use one of
-%\bibliographystyle{spbasic}      % basic style, author-year citations
+\bibliographystyle{spbasic}      % basic style, author-year citations
 %\bibliographystyle{spmpsci}      % mathematics and physical sciences
 %\bibliographystyle{spphys}       % APS-like style for physics
-%\bibliography{}   % name your BibTeX data base
+\bibliography{bibliography}   % name your BibTeX data base
 
 % Non-BibTeX users please use
-\begin{thebibliography}{}
+%\begin{thebibliography}{}
 %
 % and use \bibitem to create references. Consult the Instructions
 % for authors for reference list style.
 %
-\bibitem{RefJ}
+%\bibitem{RefJ}
 % Format for Journal Reference
-Author, Article title, Journal, Volume, page numbers (year)
+%Author, Article title, Journal, Volume, page numbers (year)
 % Format for books
-\bibitem{RefB}
-Author, Book title, page numbers. Publisher, place (year)
+%\bibitem{RefB}
+%Author, Book title, page numbers. Publisher, place (year)
 % etc
-\end{thebibliography}
+%\end{thebibliography}
 
 \end{document}
 % end of file template.tex
