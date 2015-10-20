@@ -213,8 +213,8 @@ len(<gdbfeatureclasslist,1>) >= 1 -> <featureclass> := <gdbfeatureclasslist>[0]
 <sortlist> := []
 <sortlist>.append(<sort>)
 
-{IOError} <insertcursor> := arcpy.InsertCursor(<classorlayer>)
-{IOError} <insertcursor> := arcpy.InsertCursor(<classorlayer>,<spatialref>)
+#{IOError} <insertcursor> := arcpy.InsertCursor(<classorlayer>)
+#{IOError} <insertcursor> := arcpy.InsertCursor(<classorlayer>,<spatialref>)
 {IOError} <searchcursor> := arcpy.SearchCursor(<classorlayer>)
 {IOError,exceptions.RuntimeError} <searchcursor> := arcpy.SearchCursor(<classorlayer>,<whereclause>)
 {IOError,exceptions.RuntimeError} <searchcursor> := arcpy.SearchCursor(<classorlayer>,<whereclause>,<spatialref>)
@@ -222,22 +222,22 @@ len(<gdbfeatureclasslist,1>) >= 1 -> <featureclass> := <gdbfeatureclasslist>[0]
 {IOError} <updatecursor> := arcpy.UpdateCursor(<classorlayer>,<spatialref>)
 
 <irow> := <insertcursor>.newRow()
-<insertcursor>.insertRow(<irow>)
+{exceptions.RuntimeError} <insertcursor>.insertRow(<irow>)
 
 <irow> := <insertcursor>.next()
 <urow> := <updatecursor>.next()
 <srow> := <searchcursor>.next()
 
 {exceptions.RuntimeError} <val> := <irow>.getValue(<fieldname>)
-<val> := <srow>.getValue(<fieldname>)
-<val> := <urow>.getValue(<fieldname>)
+{exceptions.RuntimeError} <val> := <srow>.getValue(<fieldname>)
+{exceptions.RuntimeError} <val> := <urow>.getValue(<fieldname>)
 
-<irow>.setValue(<fieldname>,<val>)
+{exceptions.RuntimeError} <irow>.setValue(<fieldname>,<val>)
 
-<urow>.setNull(<fieldname>)
-<urow>.setValue(<fieldname>,<val>)
-<updatecursor>.deleteRow(<urow>)
-<updatecursor>.updateRow(<urow>)
+{exceptions.RuntimeError} <urow>.setNull(<fieldname>)
+{exceptions.RuntimeError} <urow>.setValue(<fieldname>,<val>)
+{exceptions.RuntimeError} <updatecursor>.deleteRow(<urow>)
+{exceptions.RuntimeError} <updatecursor>.updateRow(<urow>)
 
 <op> := ">"
 <op> := "<"
@@ -252,7 +252,7 @@ len(<gdbfeatureclasslist,1>) >= 1 -> <featureclass> := <gdbfeatureclasslist>[0]
 <val> := "100"
 <val> := "1000"
 
-<whereclause> := '"' + <fieldname> + '" ' + <op> + <val>
+<whereclause> := '"' + <fieldname> + '" ' + <op> + str(<val>)
 
 <whereclause> := <whereclause> + ' AND ' + <whereclause>
 
@@ -288,7 +288,7 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 
 {arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(<featureclass>,<newlayer>); report()
 
-{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(<featureclass>,<newlayer>,where_clause=' "' + <fieldname> + '" ' + <op> + <val>); report()
+{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(<featureclass>,<newlayer>,where_clause=<whereclause>); report()
 
 {arcpy.ExecuteError} arcpy.Project_management(<featureclass>,<featureclass>,<spatialref>,<transform>); report()
 
@@ -340,9 +340,9 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 
 {arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>,search_distance=<dist>,selection_type=<selectiontype>)
 
-{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(<newlayer>,selection_type=<selectiontype>,where_clause=' "' + <fieldname> + '" ' + <op> + <val>)
+{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(<newlayer>,selection_type=<selectiontype>,where_clause=<whereclause>)
 
-{arcpy.ExecuteError} arcpy.Select_analysis(<classorlayer>,<featureclass>,where_clause=' "' + <fieldname> + '" ' + <op> + <val>)
+{arcpy.ExecuteError} arcpy.Select_analysis(<classorlayer>,<featureclass>,where_clause=<whereclause>)
 
 {arcpy.ExecuteError} arcpy.CopyFeatures_management(<featureclass>,<featureclass>); report()
 
