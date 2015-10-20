@@ -1,4 +1,10 @@
-\section{The ArcPy Testing Harness}
+\section{The ArcPy TSTL Test Harness}
+
+Figures \ref{preamble}, \ref{actions1}, and \ref{actions2} show a
+version of the actual ArcPy test harness.  This version can the faults
+described in this paper, though in practice some faults are easier to
+detect than others, and for practical testing it is best to disable,
+e.g., the various {\tt Delete} calls.  
 
 \begin{figure}
 {\scriptsize
@@ -118,6 +124,7 @@ log: 1 arcpy.GetMessages()
 \end{code}
 }
 \caption{ArcPy TSTL test harness definition preamble (pools, functions, logging).}
+\label{preamble}
 \end{figure}
 
 \begin{figure}
@@ -213,32 +220,41 @@ len(<gdbfeatureclasslist,1>) >= 1 -> <featureclass> := <gdbfeatureclasslist>[0]
 <sortlist> := []
 <sortlist>.append(<sort>)
 
-{IOError} <insertcursor> := arcpy.InsertCursor(<classorlayer>)
-{IOError} <insertcursor> := arcpy.InsertCursor(<classorlayer>,<spatialref>)
-{IOError} <searchcursor> := arcpy.SearchCursor(<classorlayer>)
-{IOError,exceptions.RuntimeError} <searchcursor> := arcpy.SearchCursor(<classorlayer>,<whereclause>)
+\{IOError\} <insertcursor> := arcpy.InsertCursor(<classorlayer>)
+\{IOError\} <insertcursor> := arcpy.InsertCursor(<classorlayer>,<spatialref>)
+\{IOError\} <searchcursor> := arcpy.SearchCursor(<classorlayer>)
+\{IOError,exceptions.RuntimeError\} <searchcursor> := arcpy.SearchCursor(<classorlayer>,<whereclause>)
 {IOError,exceptions.RuntimeError} <searchcursor> := arcpy.SearchCursor(<classorlayer>,<whereclause>,<spatialref>)
-{IOError} <updatecursor> := arcpy.UpdateCursor(<classorlayer>)
-{IOError} <updatecursor> := arcpy.UpdateCursor(<classorlayer>,<spatialref>)
+\{IOError\} <updatecursor> := arcpy.UpdateCursor(<classorlayer>)
+\{IOError\} <updatecursor> := arcpy.UpdateCursor(<classorlayer>,<spatialref>)
 
 <irow> := <insertcursor>.newRow()
-{exceptions.RuntimeError} <insertcursor>.insertRow(<irow>)
+\{exceptions.RuntimeError\} <insertcursor>.insertRow(<irow>)
 
 <irow> := <insertcursor>.next()
 <urow> := <updatecursor>.next()
 <srow> := <searchcursor>.next()
 
-{exceptions.RuntimeError} <val> := <irow>.getValue(<fieldname>)
-{exceptions.RuntimeError} <val> := <srow>.getValue(<fieldname>)
-{exceptions.RuntimeError} <val> := <urow>.getValue(<fieldname>)
+\{exceptions.RuntimeError\} <val> := <irow>.getValue(<fieldname>)
+\{exceptions.RuntimeError\} <val> := <srow>.getValue(<fieldname>)
+\{exceptions.RuntimeError\} <val> := <urow>.getValue(<fieldname>)
 
-{exceptions.RuntimeError} <irow>.setValue(<fieldname>,<val>)
+\{exceptions.RuntimeError\} <irow>.setValue(<fieldname>,<val>)
 
-{exceptions.RuntimeError} <urow>.setNull(<fieldname>)
-{exceptions.RuntimeError} <urow>.setValue(<fieldname>,<val>)
-{exceptions.RuntimeError} <updatecursor>.deleteRow(<urow>)
-{exceptions.RuntimeError} <updatecursor>.updateRow(<urow>)
+\{exceptions.RuntimeError\} <urow>.setNull(<fieldname>)
+\{exceptions.RuntimeError\} <urow>.setValue(<fieldname>,<val>)
+\{exceptions.RuntimeError\} <updatecursor>.deleteRow(<urow>)
+\{exceptions.RuntimeError\} <updatecursor>.updateRow(<urow>)
 
+\end{code}
+}
+\caption{ArcPy TSTL test harness actions, part 1.}
+\label{actions1}
+\end{figure}
+
+\begin{figure}
+{\scriptsize
+\begin{code}
 <op> := ">"
 <op> := "<"
 <op> := "<="
@@ -266,7 +282,7 @@ len(<gdbfeatureclasslist,1>) >= 1 -> <featureclass> := <gdbfeatureclasslist>[0]
 
 <stattable> := arcpy.env.workspace + "\\stats.dbf"
 
-{IOError} <fieldlist> := arcpy.ListFields(<classorlayer>)
+\{IOError\} <fieldlist> := arcpy.ListFields(<classorlayer>)
 len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 <fieldlist> = <fieldlist> [1:]
 
@@ -286,78 +302,90 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 <statfields> := []
 <statfields>.append([<fieldname>,<stattype>])
 
-{arcpy.ExecuteError} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>); report()
+\{arcpy.ExecuteError\} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>); report()
 
-{arcpy.ExecuteError} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>,where\_clause=<whereclause>); report()
+\{arcpy.ExecuteError\} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>,where\_clause=<whereclause>); report()
 
-{arcpy.ExecuteError} arcpy.Project\_management(<featureclass>,<featureclass>,<spatialref>,<transform>); report()
+\{arcpy.ExecuteError\} arcpy.Project\_management(<featureclass>,<featureclass>,<spatialref>,<transform>); report()
 
-{arcpy.ExecuteError} arcpy.AddField\_management(<featureclass>,<fieldname>,<fieldtype>); report()
+\{arcpy.ExecuteError\} arcpy.AddField\_management(<featureclass>,<fieldname>,<fieldtype>); report()
 
-{arcpy.ExecuteError} arcpy.DeleteField\_management(<featureclass>,<fieldname>); report()
+\{arcpy.ExecuteError\} arcpy.DeleteField\_management(<featureclass>,<fieldname>); report()
 
-{arcpy.ExecuteError} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>); report()
+\{arcpy.ExecuteError\} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>); report()
 
-{arcpy.ExecuteError} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>,dissolve\_option="ALL"); report()
+\{arcpy.ExecuteError\} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>,dissolve\_option="ALL"); report()
 
-{arcpy.ExecuteError} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>,dissolve\_option="LIST",dissolve\_field=<fieldnamelist>); report()
+\{arcpy.ExecuteError\} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>,dissolve\_option="LIST",
+   dissolve\_field=<fieldnamelist>); report()
 
-{arcpy.ExecuteError} arcpy.Erase\_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
+\{arcpy.ExecuteError\} arcpy.Erase\_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
 
-{arcpy.ExecuteError} arcpy.Erase\_analysis(<classorlayer>,<classorlayer>,<featureclass>,cluster\_tolerance=<dist>); report()
+\{arcpy.ExecuteError\} arcpy.Erase\_analysis(<classorlayer>,<classorlayer>,<featureclass>,
+   cluster\_tolerance=<dist>); report()
 
-{arcpy.ExecuteError} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>); report()
+\{arcpy.ExecuteError\} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>); report()
 
-{arcpy.ExecuteError} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,join\_attributes=<joinattributes>); report()
+\{arcpy.ExecuteError\} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,join\_attributes=<joinattributes>);
+   report()
 
-{arcpy.ExecuteError} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,cluster\_tolerance=<dist>); report()
+\{arcpy.ExecuteError\} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,cluster\_tolerance=<dist>); report()
 
-{arcpy.ExecuteError} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,join\_attributes=<joinattributes>,cluster\_tolerance=<dist>); report()
+\{arcpy.ExecuteError\} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,join\_attributes=<joinattributes>,
+   cluster\_tolerance=<dist>); report()
 
-{arcpy.ExecuteError} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>); report()
+\{arcpy.ExecuteError\} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>); report()
 
-{arcpy.ExecuteError} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,join\_attributes=<joinattributes>); report()
+\{arcpy.ExecuteError\} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,join\_attributes=<joinattributes>); report()
 
-{arcpy.ExecuteError} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,cluster\_tolerance=<dist>); report()
+\{arcpy.ExecuteError\} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,cluster\_tolerance=<dist>); report()
 
-{arcpy.ExecuteError} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,join\_attributes=<joinattributes>,cluster\_tolerance=<dist>); report()
+\{arcpy.ExecuteError\} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,join\_attributes=<joinattributes>,
+   cluster\_tolerance=<dist>); report()
 
-{arcpy.ExecuteError} arcpy.SpatialJoin\_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
+\{arcpy.ExecuteError\} arcpy.SpatialJoin\_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
 
-{arcpy.ExecuteError} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
+\{arcpy.ExecuteError\} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
 
-{arcpy.ExecuteError} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>,join\_attributes=<joinattributes>); report()
+\{arcpy.ExecuteError\} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>,
+   join\_attributes=<joinattributes>); report()
 
-{arcpy.ExecuteError} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>,join\_attributes=<joinattributes>,cluster\_tolerance=<dist>); report()
+\{arcpy.ExecuteError\} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>,
+   join\_attributes=<joinattributes>,cluster\_tolerance=<dist>); report()
 
-{arcpy.ExecuteError} arcpy.PolygonNeighbors\_analysis(<classorlayer>,~<polytable>); report()
+\{arcpy.ExecuteError\} arcpy.PolygonNeighbors\_analysis(<classorlayer>,~<polytable>); report()
 
-{arcpy.ExecuteError} arcpy.Statistics\_analysis(<classorlayer>,~<stattable>,<statfields>); report()
+\{arcpy.ExecuteError\} arcpy.Statistics\_analysis(<classorlayer>,~<stattable>,<statfields>); report()
 
-{arcpy.ExecuteError} arcpy.SelectLayerByLocation\_management(<newlayer>,select\_features=<newlayer>,overlap\_type=<overlaptype>)
+\{arcpy.ExecuteError\} arcpy.SelectLayerByLocation\_management(<newlayer>,select\_features=<newlayer>,
+   overlap\_type=<overlaptype>)
 
-{arcpy.ExecuteError} arcpy.SelectLayerByLocation\_management(<newlayer>,select\_features=<newlayer>,overlap\_type=<overlaptype>,search\_distance=<dist>)
+\{arcpy.ExecuteError\} arcpy.SelectLayerByLocation\_management(<newlayer>,select\_features=<newlayer>,
+   overlap\_type=<overlaptype>,search\_distance=<dist>)
 
-{arcpy.ExecuteError} arcpy.SelectLayerByLocation\_management(<newlayer>,select\_features=<newlayer>,overlap\_type=<overlaptype>,search\_distance=<dist>,selection\_type=<selectiontype>)
+\{arcpy.ExecuteError\} arcpy.SelectLayerByLocation\_management(<newlayer>,select\_features=<newlayer>,
+   overlap\_type=<overlaptype>,search\_distance=<dist>,selection\_type=<selectiontype>)
 
-{arcpy.ExecuteError} arcpy.SelectLayerByAttribute\_management(<newlayer>,selection\_type=<selectiontype>,where\_clause=<whereclause>)
+\{arcpy.ExecuteError\} arcpy.SelectLayerByAttribute\_management(<newlayer>,selection\_type=<selectiontype>,
+   where\_clause=<whereclause>)
 
-{arcpy.ExecuteError} arcpy.Select\_analysis(<classorlayer>,<featureclass>,where\_clause=<whereclause>)
+\{arcpy.ExecuteError\} arcpy.Select\_analysis(<classorlayer>,<featureclass>,where\_clause=<whereclause>)
 
-{arcpy.ExecuteError} arcpy.CopyFeatures\_management(<featureclass>,<featureclass>); report()
+\{arcpy.ExecuteError\} arcpy.CopyFeatures\_management(<featureclass>,<featureclass>); report()
 
-{arcpy.ExecuteError} arcpy.Sort\_management(<featureclass>,<featureclass>,<sortlist>); report()
+\{arcpy.ExecuteError\} arcpy.Sort\_management(<featureclass>,<featureclass>,<sortlist>); report()
 
-{arcpy.ExecuteError} arcpy.Sort\_management(<featureclass>,<featureclass>,<sortlist>,<spatialsort>); report()
+\{arcpy.ExecuteError\} arcpy.Sort\_management(<featureclass>,<featureclass>,<sortlist>,<spatialsort>); report()
 
-{arcpy.ExecuteError} arcpy.Sort\_management(<featureclass>,<featureclass>,[["Shape",<sorttype>]],<spatialsort>); report()
+\{arcpy.ExecuteError\} arcpy.Sort\_management(<featureclass>,<featureclass>,[["Shape",<sorttype>]],<spatialsort>); report()
 
-{arcpy.ExecuteError} arcpy.CheckGeometry\_management(<classorlayer>,~<errtable>); report()
+\{arcpy.ExecuteError\} arcpy.CheckGeometry\_management(<classorlayer>,~<errtable>); report()
 
-{arcpy.ExecuteError} arcpy.CheckGeometry\_management(<classorlayerlist>,~<errtable>); report()
+\{arcpy.ExecuteError\} arcpy.CheckGeometry\_management(<classorlayerlist>,~<errtable>); report()
 
-{arcpy.ExecuteError} arcpy.Delete\_management(<featureclass>); report()
+\{arcpy.ExecuteError\} arcpy.Delete\_management(<featureclass>); report()
 \end{code}
 }
-\caption{ArcPy TSTL test harness definition actions.}
+\caption{ArcPy TSTL test harness definition actions, part 2.}
+\label{actions2}
 \end{figure}
