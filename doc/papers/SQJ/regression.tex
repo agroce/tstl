@@ -1,1 +1,43 @@
 \subsection{Regression Generation}
+
+One difficulty for ArcPy users is ensuring that their existing scripts
+and tools work on new versions of ArcGIS.  Each recent major release
+(10.2 and 10.3) after ArcPy's introduction has produced some changes
+in the behavior of API calls.  Detecting when such changes cause a
+script to break is difficult.  A first step would be an automatic way
+to find when the return values for calls differ between ArcPy
+versions.
+Because installing multiple versions of ArcGIS on the same system is
+difficult or impossible, our method for finding differences relies on
+choosing a reference version (10.3 in our current efforts), and
+generating a set of standalone tests that 1) cover a large amount of
+ArcPy functionality, including invalid inputs to functions and 2)
+record the return values and exceptions raised by calls.  These tests
+can be run on any ArcPy version, and will report differences between
+the tests and version 10.3.
+
+We generate the tests using an approach called \emph{quick testing}
+\cite{icst2014,stvrcausereduce}, which takes a set of tests produced
+by random testing, and applies a test case reduction algorithm
+\cite{DD} to produce short tests that have the same code coverage as
+the very large, highly redundant, original set of test cases.
+Automatic quick-testing was added to TSTL's random test generator to
+support ArcPy testing.  Combined with standalone test generation, this
+allowed us to produce test cases that can be run on any version of
+ArcPy, and explore a large variety of behavior of the code.  Coverage
+alone, however, unlike previous quick testing efforts, is insufficient
+to ensure a useful regression test.  Because coverage only considers
+the Python behavior of ArcPy (since we do not have access to the
+source for the ArcGIS engine), it may group behaviors that are not
+similar together.  We added the ability to combine coverage
+preservation with preservation of all ArcPy messages indicating a
+successful GIS engine operation, after abstracting away such details
+as the runtime of the operation, and so forth.
+
+However, just producing these coverage-and-engine-behavior preserving
+standalone tests is not sufficient for good version comparison, since
+standalone test cases as produced only check for properties defined in TSTL.  An
+additional option was added to the standalone test generator, allowing
+it to record the actual return values of all calls, the set of
+exceptions thrown, and so forth to more precisely record a test's
+behavior on an ArcPy version.
