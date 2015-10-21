@@ -1,1 +1,32 @@
 \section{Introduction}
+
+\subsection{Esri ArcPy}
+
+
+Esri (the Environmental Systems Research Institute) is the single
+largest Geographic Information System (GIS) software vendor, with about 40\%
+of global market share.  Esri's ArcGIS tools are extremely widely
+used for GIS analysis, in government, scientific research, commercial
+enterprises, and education.  Automation of complex GIS analysis and
+data management is a frequent need, and Esri has long provided tools
+for programming their GIS software tools.  The current method of
+choice is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
+with dozens of classes and hundreds of functions distributed over
+a variety of of toolboxes.  Most of the code involved in ArcPy
+functionality is C++ for which source is unavailable (the source for
+the actual ArcGIS tools); the Python source alone is over 50,000 lines
+of code.
+
+\subsection{Automated Testing for the Rest of the World}
+
+Previous work on automated testing for APIs has been largely carried
+out by software testing researchers only, or (at most) by individuals
+who are primarily software developers.  This paper presents work
+largely directed by an individual (the first author) who is not a
+software developer by profession or education, but a GIS analyst.  The
+problem of end-user testing \cite{burnettEUSE,Silos,rothermelTOSEM} is
+known to be difficult, and previous work has focused on end-users of
+systems less like traditional programming, e.g. spreadsheets, visual
+languages, or machine-learning systems.  This paper partly aims to
+describe a case study in how a non-expert in testing who is familliar
+with a software library can adapt existing tools to test that library.

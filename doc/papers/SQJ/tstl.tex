@@ -50,8 +50,8 @@ test cases (usually API-call sequences, but also grammar-based tests using
 string construction), and a set of tools for use in generating,
 manipulating, and understanding those test cases.  Figure
 \ref{fig:example} shows a simplified portion of a TSTL definition of
-tests of an AVL tree class, in the latest syntax for TSTL (which
-differs slightly from that in the cited papers introducing TSTL).
+tests of an AVL tree class, in the latest syntax for TSTL (modified in
+the course of the work described in this paper).
 TSTL provides numerous features not shown in this small example,
 including automatic differential testing, complex logging, support for
 complex guards, and use of pre- and post- values.  Given a harness
@@ -62,7 +62,7 @@ test, replaying a test, collecting code coverage data, and so forth.
 The TSTL release \cite{tstl} provides testing tools that use the
 interface for test generation and debugging.
 
-The key point for our purposes is merely that a TSTL test harness
+A TSTL test harness
 defines a set of \emph{pools} that hold values produced and used
 during testing \cite{AndrewsTR} (a common approach to defining
 API-testing sequences) and a set of actions that are possible during
@@ -76,8 +76,8 @@ the value of an {\tt int} pool to any integer in the range 1-20
 inclusive, setting the value of an {\tt avl} pool to a newly
 constructed AVL tree, and calling an AVL tree's {\tt insert}, {\tt
   delete}, {\tt find} and {\tt inorder} methods.  Figure
-\ref{threetests} in the introduction shows three
-valid test cases produced by running a random test generator on
+\ref{fig:avlrun} shows a
+valid test case produced by running a random test generator on
 the TSTL-compiled interface produced by this definition.  TSTL handles
 ensuring that tests are well-formed: for example, no pool instance
 (such as {\tt avl1} can appear in an action until it has been assigned
@@ -85,6 +85,6 @@ a value), and no pool instance that has been assigned a value can be
 assigned a different value until it has been used in an action, to
 avoid degenerate sequences such as {\tt int3 = 10} followed by {\tt
   int3 = 4}.  Each action in a test case is called a ``step'' --- the
-first step of the first test case in Figure \ref{threetests} is storing a new AVL tree in {\tt
-  avl0}, for example.
+first step of the first test case in Figure \ref{fig:avlrun} is storing a new AVL tree in {\tt
+  avl1}, for example.
 
