@@ -270,13 +270,13 @@ assert (np.array\_equal(array0,array0))
 
 \subsection{Esri ArcPy}
 
-Esri (the Environmental Systems Research Institute) is the single
+Esri is the single
 largest Geographic Information System (GIS) software vendor, with about 40\%
 of global market share.  Esri's ArcGIS tools are extremely widely
 used for GIS analysis, in government, scientific research, commercial
-enterprises, and education.  Automation of complex GIS analysis and
+enterprises, and education.  Automation for complex GIS analysis and
 data management is a frequent need, and Esri has long provided tools
-for programming their GIS software tools.  The current method of
+for programming their GIS software systems.  The current method of
 choice is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
 with dozens of classes and hundreds of functions distributed over
 a variety of of toolboxes.  Most of the code involved in ArcPy
@@ -289,48 +289,48 @@ implementing a TSTL-based framework for testing ArcPy itself as well
 as libraries based on ArcPy.  The TSTL definition is already more than
 twice as large as the next-largest example previously studied, even
 though it only includes a small portion of ArcGIS so far. The first
-stage of testing has resulted in discovery of several faults in
-ArcPy/ArcGIS, some of which not only cause incorrect behavior but
+stage of testing has resulted in discovery of multiple faults in
+ArcPy/ArcGIS, six of which not only cause incorrect behavior but
 cause a crash that also ends testing.  Before proceeding to more
 nuanced testing, it is critical to understand these faults, the set of
 behaviors that trigger them, and modify the test definition to avoid
 triggering these faults with minimal limitations on thorough testing.
 
-There is no space in this paper to elaborate on the details of
-this large test effort (which has required adding numerous additional
-features and modes to TSTL), but normalization and generalization have been very useful in
-this process.  Figures \ref{esriorig} and \ref{esrinormgen} show one
-crash-inducing test case, after initial delta-debugging (from over
-2,000 test steps) (Figure \ref{esriorig}) and with normalization and
-generalization (Figure \ref{esrinormgen}).  First, in this setting
-normalization has contributed a surprising amount of additional
-reduction over delta-debugging.  In this example, normalization
-reduced the length from 19 steps to 11 steps; in another case, it
-reduced the test case from 18 to 14 steps, and in the other crash
-fault, it reduced the test case from 27 to 20 steps.  The cost of
-normalization is high --- in our runs, it has taken from 17,340
-seconds up to 24,769 seconds.  However, in this setting even
-delta-debugging is extremely expensive --- the cost of reduction alone
-has ranged from 7,930 seconds to 8,688 seconds.  Generalization has
-taken from under an hour (3,203 seconds) up to 11,149 seconds.  These
-costs are due in part to the need to run tests in a sandbox
-environment to avoid killing the Python testing process, and in part
-due to the cost of running complex GIS analyses.  However, even with
-this high cost, reducing, normalizing, and generalizing test cases has
-been a more effective use of our time than trying to understand the
-faults without these aids.  For example, in the test case shown in
-this paper, it was important to understand that the SQL query and
-selection type were not essential, but using a
-freshly created layer will not result in a crash:  the problem
-appears to be that ArcGIS (or ArcPy) does not invalidate layers built
-from a feature class when that feature class is deleted\footnote{In
-  this instance, a generalization (the fresh values generalization in
-  particular) is informative even though it does not allow any
-  generalization; knowing that it was attempted, but prevented the
-  failure, is also valuable.}.  The
-original, non-normalized test case makes this far less clear, as the
-use of {\tt CopyFeatures} and the multiplicity of shapefiles involved
-disguises the essence of the problem.
+There is no space in this paper to elaborate on the details of this
+large test effort (which has required adding numerous additional
+features and modes to TSTL), but normalization and generalization have
+been very useful in this process.  Figures \ref{esriorig} and
+\ref{esrinormgen} show one crash-inducing test case, after initial
+delta-debugging (from over 2,000 test steps) (Figure \ref{esriorig})
+and with normalization and generalization (Figure \ref{esrinormgen}).
+First, in this setting normalization has contributed a surprising
+amount of additional reduction over delta-debugging.  In this example,
+normalization reduced the length from 19 steps to 11 steps; in another
+case, it reduced the test case from 18 to 14 steps, and in yet another
+crash fault, it reduced the test case from 27 to 20 steps (one crash
+fault only reduced from 10 steps to 9 steps, though the omission was
+informative).  The cost of normalization is high --- in our runs, it
+has taken from 17,340 seconds up to 24,769 seconds.  However, in this
+setting even delta-debugging is extremely expensive --- the cost of
+reduction alone has ranged from 7,930 seconds to 8,688 seconds.
+Generalization has taken from under an hour (3,203 seconds) up to
+11,149 seconds.  These costs are due in part to the need to run tests
+in a sandbox environment to avoid killing the Python testing process,
+and in part due to the cost of running complex GIS analyses.  However,
+even with this high cost, reducing, normalizing, and generalizing test
+cases has been a more effective use of our time than trying to
+understand the faults without these aids.  For example, in the test
+case shown in this paper, it was important to understand that the SQL
+query and selection type were not essential, but using a freshly
+created layer will not result in a crash: the problem appears to be
+that ArcGIS (or ArcPy) does not invalidate layers built from a feature
+class when that feature class is deleted\footnote{In this instance, a
+  generalization (the fresh values generalization in particular) is
+  informative even though it does not allow any generalization;
+  knowing that it was attempted, but prevented the failure, is also
+  valuable.}.  The original, non-normalized test case makes this far
+less clear, as the use of {\tt CopyFeatures} and the multiplicity of
+shapefiles involved disguises the essence of the problem.
 
 In addition to helping us understand failures, normalization and
 generalization are also being used to prepare an API-behavior
