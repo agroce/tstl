@@ -81,9 +81,9 @@ constructed AVL tree, and calling an AVL tree's {\tt insert}, {\tt
 \ref{threetests} in the introduction shows three
 valid test cases produced by running a random test generator on
 the TSTL-compiled interface produced by this definition.  TSTL handles
-ensuring that tests are well-formed: for example, no pool instance
+ensuring that tests are well-formed. No pool instance
 (such as {\tt avl1} can appear in an action until it has been assigned
-a value), and no pool instance that has been assigned a value can be
+a value).  No pool instance that has been assigned a value can be
 assigned a different value until it has been used in an action, to
 avoid degenerate sequences such as {\tt int3 = 10} followed by {\tt
   int3 = 4}.  Each action in a test case is called a ``step'' --- the
@@ -101,7 +101,7 @@ includes {\tt avl0.insert(int0)}, {\tt avl1.insert(int0)}, {\tt
   avl0.insert(int1)}, and so forth.  These are
 ordered lexically, with the first pool appearing in the text taking
 precedence ({\tt avl0.insert(int2)} precedes {\tt avl1.insert(int0)},
-etc.).  Value ranges such as in the {\tt int} initialization, are also
+etc.).  Value ranges, such as in the {\tt int} initialization, are also
 ordered in the natural way, with lower values first.  Given this total
 order, each action can be assigned a unique index, from 0 up to 1 less
 than the total number of actions. Initially, this ordering (and
@@ -155,8 +155,8 @@ rewriting rules.  For any test case $t$ and rewrite $r_i \in C(t)$, we
 require that $|C(r_i(t))| < |C(t)|$.  Such a rewrite system is
 necessarily \emph{strongly normalizing}: any sequence of rewrites
 chosen will eventually end in a term (test case) that cannot be
-further rewritten (and the total length of a rewrite sequence in this
-case is bounded by the initial $|C(b)|$).
+further rewritten, and the total length of a rewrite sequence in this
+case is bounded by the initial $|C(b)|$.
 
 \comment{, let $R(t)$ be the length of the maximum number of
 rewrites that can be applied to $t$, e.g., the longest possible
@@ -170,15 +170,14 @@ chosen will eventually end in a term (test case) that cannot be
 further rewritten.}
 
 In the setting of TSTL, where test actions have a defined total
-order, a simple principle can be applied to produce strongly
-normalizing rewrite rules: rewrites should reduce the sum of the
+order, two simple principles can be applied to produce strongly
+normalizing rewrite rules.  First, rewrites should reduce the sum of the
 indices of the actions in the test case, or make the test case's
 actions more ordered by index.  This approach
 provides effective normalization at a significant, but not
 impractical, computational cost.
-
 The second principle that determines the rewrite rules is that each
-rule should be unlikely to change the underlying cause for test case
+rule is unlikely to change the underlying cause for test case
 failure.  To that end, the rules below always either change at most
 one action (possibly in multiple steps, but in a uniform way) or make
 \emph{no} changes to the actions performed, only to the pools used or the
@@ -213,7 +212,8 @@ swapped.  Rewrite $t(i,j)[x \Rightarrow y]$ is the same as $t[x \Rightarrow
 y]$, except that the replacement is only applied between steps $i$ and
 $j$, inclusive.  Finally, $t_{\rightarrow i}(x)$ denotes $t$ with all steps
 containing $x$ that are before step $i$ moved to step $i$, preserving
-their previous order, and moving steps at $i$ and after $i$ to make room.
+their previous order, shifting steps at $i$ and after $i$ to make room for
+the moved steps, again preserving order.
 
 \subsubsection{Rewrite Rules}
 
@@ -268,8 +268,8 @@ These rules alone do not determine a complete normalization method; it is
 also required to determine an order in which they are applied.  The
 order in our default implementation is the order above, with the
 modification that in practice the {\bf ReplacePool} and {\bf
-  ReplaceMovePool} rewrites are both performed at once, interleaved
-(e.g., for every possible replacement of a pool, both rules are
+  ReplaceMovePool} rewrites are checked in the same loop
+(e.g., for every possible replacement of a pool, both rules for pool replacement are
 checked, in the order given above).  The core algorithm, given a set
 of ordered rewrite rules defining $C(b)$ is given as Algorithm
 \ref{simpalg}.  Here {\tt pred} is an arbitrary predicate indicating
@@ -301,39 +301,38 @@ new base test case, since often a rewrite makes other steps irrelevant.
 
 The worst-case complexity of normalization can be given an upper bound by recalling our
 rule that each rewrite must lower the number of possible rewrites by
-at least one.  We assume test case execution to check the predicate
-has a constant cost (this is reasonable, as the length of the test
-usually does not change in normalization).  This means if there are $n$ possible rewrites of a
+at least one.  This means if there are $n$ possible rewrites of a
 test case, there can be at most $n$ predicate checks for the current test case,
 then at most $n-1$ checks for the rewritten test case, and so on, for
 a total of $\frac{n(n+1)}{2}$ predicate checks, where $n$ is the
 number of possible rewrites of the test case $b$ being normalized, e.g.,
-$n = |C(b)|$.
+$n = |C(b)|$.  Test case execution to check the predicate can be
+assumed to have a constant cost since the length of the test case does
+not usually change by more than a few steps during normalization. 
 
-How many rewrites can a test case $b$ have?  
-Assume there are $k$ steps in the test case and $a$ possible actions.
-The action replacements rewrites ({\bf SimplifyAll}, {\bf
-  SimplifySingle}, and {\bf ReduceAction}) allow for at most $k (a-1)$
-rewrites each.
- There are $\leq k^2$ possible {\bf SwapAction} rewrites, and
- $\leq k^2(a-1)$ possible rewrites for each of {\bf ReplacePool}, {\bf ReplaceMovePool}, and {\bf SwapPool}\footnote{The details of how these bounds are determined,
-  in that pool changes are also action changes, are not critical, and
-  a more detailed analysis is somewhat involved, and beyond the scope
-  of this paper; we note that like delta-debugging, the worst-case
-  complexity is seldom observed, and offer some further optimizations
-  below.}.  There are therefore at most
-$n=k^2 + 3k^2(a-1) + 3k(a-1)$ rewrites, over-approximating (since an
-action cannot be rewritten to itself, etc.).  Each rewrite also
+How many rewrites can a test case $b$ have?  Assume there are $k$
+steps in the test case and $a$ possible actions.  The action
+replacements rewrites ({\bf SimplifyAll}, {\bf SimplifySingle}, and
+{\bf ReduceAction}) allow for at most $k (a-1)$ rewrites each.  There
+are $\leq k^2$ possible {\bf SwapAction} rewrites, and $\leq k^2(a-1)$
+possible rewrites for each of {\bf ReplacePool}, {\bf
+  ReplaceMovePool}, and {\bf SwapPool}\footnote{The details of how
+  these bounds are determined, in that pool changes are also action
+  changes, are not critical, and a more detailed analysis is somewhat
+  involved, and beyond the scope of this paper; we note that like
+  delta-debugging, the worst-case complexity is seldom observed, and
+  offer some further optimizations below.}.  There are therefore at
+most $n=k^2 + 3k^2(a-1) + 3k(a-1)$ rewrites, over-approximating (since
+an action cannot be rewritten to itself, etc.).  Each rewrite also
 requires a delta-debugging step, which is quadratic in $k$ \cite{DD}.
-Substituting this expression into the expression above bounding total
-predicate checks, we see that the cost for normalization is
-$O(k^4a^2)$.  While worse than the quadratic cost of delta-debugging,
-this also is applied to already-reduced test cases, unlike
-delta-debugging; the $k$ in our quartic is, for random test cases,
-typically an order of magnitude smaller than the $k$ in
-delta-debugging \cite{ICSEDiff,icst2014,MinUnit}, which can partly
-balance the additonal cost for test cases whose unreduced length is
-less than 100.
+Substituting this expression into the expression $\frac{n(n+1)}{2}$
+above, we see that the cost for normalization is $O(k^4a^2)$.  While
+worse than the quadratic cost of delta-debugging, for already
+1-minimal test cases, unlike delta-debugging; the $k$ in our quartic complexity
+is, for random test cases, typically an order of magnitude smaller
+than the $k$ in delta-debugging \cite{ICSEDiff,icst2014,MinUnit},
+which can partly balance the additonal cost for test cases whose
+unreduced length is less than 100.
 
 \comment{
 checks (we assume a constant cost to run a
@@ -353,16 +352,16 @@ $k$ successful rewrites.  This gives us an upper bound of $kn +
 k^2 + k$ executions for the outer loop, and a total runtime that is
 $O(k^4n)$.}
 
-In practice, most actions are not enabled at most steps, and
-the rules are applied in an order that quickly converges on a normal
-form for many test cases.  In our experiments, normalization is only
-very expensive when delta-debugging is also costly, and appears to be
-worse than delta-debugging by a constant factor, somewhere in the
-range of 2-10x, usually closer to 10x.  We believe that if
-normalization can decrease human effort in examining large numbers of
-redundant test cases, this price is more than reasonable.  Measuring
-the payoff from improved understanding of test cases is difficult;
-however, in multiple fault settings, we hope normalization can often
+We believe that if normalization can decrease human effort in
+examining large numbers of redundant test cases, this price is more
+than reasonable.  In practice, most actions are not enabled at most
+steps, and the rules are applied in an order that quickly converges on
+a normal form for many test cases.  In our experiments, normalization
+was only very expensive when delta-debugging was also costly, and
+appeared to be worse than delta-debugging by a constant factor,
+somewhere in the range of 2-10x, usually closer to 10x.  Measuring the
+payoff from improved understanding of test cases is difficult;
+however, in multiple fault settings, normalization can often
 provide a quantifiable value in shorter time until all faults have
 been examined by a human, for bug triage \cite{PLDI13}.
 
