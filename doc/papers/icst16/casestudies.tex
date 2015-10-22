@@ -25,7 +25,7 @@ failing test cases produced by normalization (vs. reduction only) for
 a set of 82 mutants \cite{mutant} of the AVLTree source code \cite{Hunter:2007}.  Of the 228 mutants
 produced by MutPy \cite{mutpy}, only these produced at least 1 failure
 in 1,000 test cases.  Using only delta-debugging-based reduction, the
-mean number of distinct failures for each mutant (which is, by nature,
+mean number of distinct failures for each mutant (which is, by definition,
 a single fault) was 498.4, with a median of 485.  Using normalization,
 the mean was 3.1 distinct failures, with a median of just 2 failures.
 For 38 of the 82 mutants, normalization produced only a single
@@ -103,28 +103,26 @@ For mutant pairs, the mean/median number of distinct failures was
 normalization.  The runtime for normalization was essentially
 unchanged from the single-mutant numbers given above.  For reduction
 alone, using pairs increased the number of distinct failures, while
-normalized failure counts actually decreased.  For 115 of the 238
+normalized failure counts actually decreased.  For 48.3\% (115 of 238)
 mutant pairs where reduction did not lose a fault, normalization was
 ``perfect'' --- it preserved both faults and produced only 1 or 2 test
 cases\footnote{It is possible to detect both faults with a single test
   case, if that test case fails when \emph{either} fault is
-  present.}.  In other words, normalization produced perfect results for
-almost half (48.3\%) of all multi-fault AVLTree versions where reduction
-provided seed tests containing all faults.
+  present.}. 
 
 \subsection{XML Parser}
 
 We also examined how normalization combined with multiple faults for a
 simple XML parser with about 260 lines of code \cite{myxml}, with one
-original fault (an uncaught exception instead of a parse error when given an empty
-tag ({\tt <>})) and one seeded fault (triggered by adding two nodes
-with the same name).  Running 1,000 tests produced 848 failing test
-cases.  Without normalization, it took only 37.45 seconds to execute
-all 1,000 tests, including delta-debugging these 848 failures.
-However, the output was 717 distinct failing test cases.  Normalizing
-increased the runtime to 354.7 seconds, but reduced the number of
-distinct failing tests to 5, with 3 variations of the original fault
-and 2 variations of the seeded fault.  Generalization only required 5 seconds.
+real fault, triggered by the empty tag ({\tt <>})), and one
+seeded fault triggered when adding two nodes with the same
+name.  A comment in the code indicates the seeded fault is realistic.  Running 1,000 tests
+produced 848 failing test cases.  Without normalization, it took only
+37.45 seconds to execute and delta-debug all 1,000 tests.  The output was 717 distinct failing test
+cases.  Normalization increased the runtime to 354.7 seconds, but
+reduced the number of failures to just 5: 3 failures
+for the original fault and 2 for the seeded fault.
+%Generalization took < 5 seconds.
 
 
 \subsection{TSTL}

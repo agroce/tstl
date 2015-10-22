@@ -70,37 +70,41 @@ value is required to reproduce a failure, and when it is simply an
 artifact of normalization.
 
 Normalization is not a complete solution to the problem of identifying
-distinct faults (e.g., our algorithms do not
-apply to complex custom test generators such as CSmith \cite{csmith}
-or {\tt jsfunfuzz} \cite{jsfunfuzz}), but it is often highly effective.  Running 100,000 tests (of length 100)
-on the faulty AVL tree produces 860 failing test cases with no
-duplicates.  Normalizing these reduces the number of distinct failing
-test cases to just 22.  Ideally \emph{all} failures due to the same
-fault in the SUT (Software Under Test) would normalize to a single,
-representative test case, but we can only aim to approximate such a
-canonical form for faults.  Figure \ref{diffnorm}, in Section
-\ref{formalexample}, shows an AVL tree test case that normalizes
-differently; however, determining that the failure in Figure
-\ref{diffnorm} is due to the same fault
-as the failure in Figure \ref{normalgen} should be much less difficult than
-performing the same task over a set of thousands of failures with more
-extreme variation.
+distinct faults (e.g., our algorithms do not apply to complex custom
+test generators such as CSmith \cite{csmith} or {\tt jsfunfuzz}
+\cite{jsfunfuzz}), but it is often highly effective.  Running 100,000
+tests (of length 100) on the faulty AVL tree produces 860 failing test
+cases with no duplicates.  Normalizing these reduces the number of
+distinct failing test cases to just 22.  Ideally \emph{all} failures
+due to the same fault in the SUT (Software Under Test) would normalize
+to a single, representative test case, but we can only aim to
+approximate such a canonical form for faults.  Figure \ref{diffnorm},
+in Section \ref{formalexample}, shows an AVL tree test case that
+normalizes differently.  The graph structure required for this particular fault results in
+unusually poor effectiveness for normalization.  In experiments with 82 AVL tree faults,
+the mean number of distinct failures after normalization for 1,000
+tests was just 3.1 (with median 2), while this fault produced 18
+distinct failures.  Even here, determining that the failure in Figure
+\ref{diffnorm} (or one of the similarly structured other 20 failures)
+is due to the same fault as the failure in Figure \ref{normalgen}
+should be much less difficult than performing the same task over many hundreds of failures with much more extreme variation. 
 
 The contributions of this paper are 1) the idea of normalizing and
-generalizing API-based test cases, as steps toward the true goal of
+generalizing API-based test cases, as important steps toward the true goal of
 ``one test case to rule them all'' (per fault), 2) algorithms for
 normalizing and generalizing test cases that make use of the abstract
 graph interface for testing provided by the TSTL
-\cite{tstl,NFM15,ISSTA15} DSL \cite{Fow10}, and 3) initial
+\cite{tstl,NFM15,ISSTA15} domain-specific language (DSL) \cite{Fow10}, and 3) initial
 experimental results showing the value of normalization and
 generalization.  Normalization preserves fault
 detection approximately as well as test case reduction via
 delta-debugging, and often reduces the set of test cases to be
 examined by more than an order of magnitude. In many cases, the
 normalization is perfect (one test case per fault).  Normalization and generalization have also been useful in
-understanding test cases for a variety of software systems, including
+understanding complicated test cases for a variety of software systems, including
 TSTL itself, the well known NumPy library for numeric computation, and
-ArcPy, a widely-used, highly complex package for GIS automation.
+ArcPy, a widely-used, highly complex package for Geographic
+Information System (GIS) automation.
 
 \begin{figure}
 {\scriptsize
