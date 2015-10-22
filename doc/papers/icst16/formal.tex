@@ -82,14 +82,14 @@ constructed AVL tree, and calling an AVL tree's {\tt insert}, {\tt
 valid test cases produced by running a random test generator on
 the TSTL-compiled interface produced by this definition.  TSTL handles
 ensuring that tests are well-formed. No pool instance
-(such as {\tt avl1} can appear in an action until it has been assigned
-a value).  No pool instance that has been assigned a value can be
+(such as {\tt avl1}) can appear in an action until it has been assigned
+a value.  No pool instance that has been assigned a value can be
 assigned a different value until it has been used in an action, to
 avoid degenerate sequences such as {\tt int3 = 10} followed by {\tt
   int3 = 4}.  Each action in a test case is called a ``step'' --- the
 first step of the first test case in Figure \ref{threetests} is storing a new AVL tree in {\tt
-  avl0}, for example.  A test case is just a numbered sequence of
-actions, which is equivalent to a set of steps.
+  avl0}, for example.  A test case is just an ordered sequence of
+actions, which is equivalent to a set of numbered steps.
 
 The definition of pools and actions in TSTL defines a \emph{total
   order} on all actions.  First, actions are ordered by their position
