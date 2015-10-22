@@ -172,9 +172,9 @@ further rewritten.}
 
 In the setting of TSTL, where test actions have a defined total
 order, two simple principles can be applied to produce useful
-rewrite rules.  First, rewrites should reduce the sum of the
-indices of the actions in the test case, or make the test case's
-actions more ordered by index.  This guarantees that the rewrites are
+rewrite rules.  First, rewrites must reduce the sum of the
+indices of the actions in the test case, make the test case's
+actions more ordered by index, or reduce test length.  This guarantees that the rewrites are
 strongly normalizing.
 The second principle that determines the rewrite rules is that each
 rule ought to be unlikely to change the underlying cause for test case
