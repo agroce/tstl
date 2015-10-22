@@ -1,0 +1,366 @@
+@import shutil
+@import os
+@import glob
+@import arcpy
+@import exceptions
+@import gc
+
+<@
+def cleanupFiles():
+    gc.collect() # Get rid of cursors
+    # First get rid of modified files
+    for l in ["l1","l2","l3"]:
+    	arcpy.Delete_management(l)
+    
+    for f in glob.glob("C:\\Arctmp\\*"):
+        try:
+            shutil.rmtree(f)
+        except:
+            print "UNABLE TO REMOVE:",f
+    # Now remove the old directory
+    for i in xrange(0,1000000):
+        new_workspace = "C:\\Arctmp\\workspace." + str(i)
+        if not os.path.exists(new_workspace):
+            break             
+    print "TESTING USING WORKSPACE",new_workspace
+    # Now move in fresh copies
+    shutil.copytree("C:\\Arcbase",new_workspace)
+    arcpy.env.workspace = new_workspace
+    print sorted(glob.glob(arcpy.env.workspace + "\\*.shp")),
+    print sorted(glob.glob(arcpy.env.workspace + "\\*.lyr")),
+    print sorted(glob.glob(arcpy.env.workspace + "\\*.gdb"))
+
+
+def fcsInGdb(gdb):
+    old_workspace = arcpy.env.workspace
+    arcpy.env.workspace = gdb
+    fcs = []
+    for fds in arcpy.ListDatasets('','feature') + ['']:
+        for fc in arcpy.ListFeatureClasses('','',fds):
+            fcs.append(os.path.join(gdb,fds,fc))
+    arcpy.env.workspace = old_workspace
+    return fcs
+
+def report():
+    print arcpy.GetMessages()
+@>
+
+pool: <layerfilelist> 2
+pool: <layerfile> 2 CONST
+
+pool: <shapefilelist> 2
+pool: <shapefile> 2 CONST
+
+pool: <gdbfilelist> 2
+pool: <gdbfile> 2 CONST
+
+pool: <gdbfeatureclasslist> 2
+
+pool: <featureclass> 4 CONST
+pool: <classorlayer> 4 CONST
+
+pool: <classorlayerlist> 2
+
+pool: <description> 2
+pool: <spatialref> 2
+
+pool: <prjfilelist> 2
+pool: <prjfile> 2 CONST
+
+pool: <transformlist> 2
+pool: <transform> 2 CONST
+
+pool: <newlayer> 2 CONST
+
+pool: <layerlist> 2
+pool: <layer> 2
+
+pool: <fieldname> 2 CONST
+pool: <fieldtype> 2 CONST
+pool: <fieldlist> 2
+pool: <fieldnamelist> 2
+
+pool: <stattype> 2 CONST
+pool: <statfields> 2
+
+pool: <dist> 2 CONST
+
+pool: <sorttype> 2 CONST
+pool: <spatialsort> 2 CONST
+
+pool: <sort> 1
+pool: <sortlist> 2
+
+pool: <joinattributes> 2
+
+pool: <overlaptype> 2 CONST
+pool: <selectiontype> 2 CONST
+pool: <op> 2 CONST
+pool: <val> 2 CONST
+pool: <whereclause> 2 CONST
+
+pool: <errtable> 1 CONST
+pool: <polytable> 1 CONST
+pool: <stattable> 1 CONST
+
+pool: <insertcursor> 3
+pool: <searchcursor> 3
+pool: <updatecursor> 3
+
+pool: <irow> 3
+pool: <srow> 3
+pool: <urow> 3
+
+pool: <hascursor> 1
+
+init: cleanupFiles()
+init: <hascursor> = {}
+
+log: 1 arcpy.GetMessages()
+
+#<layerfilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.lyr"))
+#len(<layerfilelist,1>) >= 1 -> <layerfile> := <layerfilelist> [0]
+#<layerfilelist> = <layerfilelist> [1:]
+
+<gdbfilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.gdb"))
+len(<gdbfilelist,1>) >= 1 -> <gdbfile> := <gdbfilelist> [0]
+<gdbfilelist> = <gdbfilelist> [1:]
+
+<shapefilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.shp"))
+len(<shapefilelist,1>) >= 1 -> <shapefile> := <shapefilelist> [0]
+<shapefilelist> = <shapefilelist> [1:]
+
+<layerfile> := arcpy.env.workspace + "\\new1.lyr"
+<layerfile> := arcpy.env.workspace + "\\new2.lyr"
+<layerfile> := arcpy.env.workspace + "\\new3.lyr"
+
+<shapefile> := arcpy.env.workspace + "\\new1.shp"
+<shapefile> := arcpy.env.workspace + "\\new2.shp"
+<shapefile> := arcpy.env.workspace + "\\new3.shp"
+
+<prjfilelist> := sorted(glob.glob("C:\\Program Files (x86)\\ArcGIS\\Desktop10.3\\Reference Systems\\*.prj"))
+len(<prjfilelist,1>) >= 1 -> <prjfile> := <prjfilelist> [0]
+<prjfilelist> = <prjfilelist> [1:]
+
+<transformlist> := arcpy.ListTransformations(<spatialref>,<spatialref>)
+<transformlist> = <transformlist> [1:]
+len(<transformlist,1>) >= 1 -> <transform> := <transformlist> [0]
+
+<newlayer> := "l1"
+<newlayer> := "l2"
+<newlayer> := "l3"
+
+#{IOError} <description> := arcpy.Describe(<layerfile>)
+
+<spatialref> := <description>.spatialReference
+<spatialref> := arcpy.SpatialReference(<prjfile>)
+
+<gdbfeatureclasslist> := fcsInGdb(<gdbfile>)
+<gdbfeatureclasslist> = <gdbfeatureclasslist>[1:]
+
+#<featureclass> := <layerfile>
+<featureclass> := <shapefile>
+len(<gdbfeatureclasslist,1>) >= 1 -> <featureclass> := <gdbfeatureclasslist>[0]
+
+<classorlayer> := <featureclass>
+<classorlayer> := <newlayer>
+
+<classorlayerlist> := []
+<classorlayerlist>.append(<classorlayer>)
+
+<fieldtype> := "TEXT"
+<fieldtype> := "FLOAT"
+<fieldtype> := "DOUBLE"
+<fieldtype> := "SHORT"
+<fieldtype> := "LONG"
+<fieldtype> := "DATE"
+
+<fieldname> := "newf1"
+<fieldname> := "newf2"
+<fieldname> := "newf3"
+
+<dist> := "100 Feet"
+<dist> := "500 Feet"
+<dist> := "1000 Feet"
+<dist> := "1 Mile"
+<dist> := "2 Miles"
+
+<joinattributes> := "ALL"
+<joinattributes> := "NO_FID"
+<joinattributes> := "ONLY_FID"
+
+<overlaptype> := "INTERSECT"
+<overlaptype> := "CONTAINS"
+<overlaptype> := "COMPLETELY_CONTAINS"
+<overlaptype> := "WITHIN"
+<overlaptype> := "SHARE_A_LINE_SEGMENT_WITH"
+<overlaptype> := "CROSSED_BY_THE_OUTLINE_OF"
+
+<selectiontype> := "NEW_SELECTION"
+<selectiontype> := "ADD_TO_SELECTION"
+<selectiontype> := "REMOVE_FROM_SELECTION"
+<selectiontype> := "SUBSET_SELECTION"
+<selectiontype> := "SWITCH_SELECTION"
+<selectiontype> := "CLEAR_SELECTION"
+
+<sorttype> := "ASCENDING"
+<sorttype> := "DESCENDING"
+
+<spatialsort> := "UR"
+<spatialsort> := "UL"
+<spatialsort> := "LR"
+<spatialsort> := "LL"
+<spatialsort> := "PEANO"
+
+<sort> := [<fieldname>,<sorttype>]
+<sortlist> := []
+<sortlist>.append(<sort>)
+
+# Note:  cursors should take <classorlayer> but this is to avoid some known problems
+
+{IOError} <insertcursor> := arcpy.InsertCursor(<featureclass>); <hascursor>[<featureclass,1>] = True
+{IOError} <insertcursor> := arcpy.InsertCursor(<featureclass>,<spatialref>); <hascursor>[<featureclass,1>] = True
+{IOError} <searchcursor> := arcpy.SearchCursor(<featureclass>); <hascursor>[<featureclass,1>] = True
+{IOError,exceptions.RuntimeError} <searchcursor> := arcpy.SearchCursor(<featureclass>,<whereclause>); <hascursor>[<featureclass,1>] = True
+{IOError,exceptions.RuntimeError} <searchcursor> := arcpy.SearchCursor(<featureclass>,<whereclause>,<spatialref>); <hascursor>[<featureclass,1>] = True
+{IOError} <updatecursor> := arcpy.UpdateCursor(<featureclass>); <hascursor>[<featureclass,1>] = True
+{IOError} <updatecursor> := arcpy.UpdateCursor(<featureclass>,<spatialref>); <hascursor>[<featureclass,1>] = True
+
+<irow> := <insertcursor>.newRow()
+{exceptions.RuntimeError} <insertcursor>.insertRow(<irow>)
+
+<irow> := <insertcursor>.next()
+<urow> := <updatecursor>.next()
+<srow> := <searchcursor>.next()
+
+{exceptions.RuntimeError} <val> := <irow>.getValue(<fieldname>)
+{exceptions.RuntimeError} <val> := <srow>.getValue(<fieldname>)
+{exceptions.RuntimeError} <val> := <urow>.getValue(<fieldname>)
+
+{exceptions.RuntimeError} <irow>.setValue(<fieldname>,<val>)
+
+{exceptions.RuntimeError} <urow>.setNull(<fieldname>)
+{exceptions.RuntimeError} <urow>.setValue(<fieldname>,<val>)
+{exceptions.RuntimeError} <updatecursor>.deleteRow(<urow>)
+{exceptions.RuntimeError} <updatecursor>.updateRow(<urow>)
+
+<op> := ">"
+<op> := "<"
+<op> := "<="
+<op> := ">="
+<op> := "="
+<op> := "!="
+
+<val> := "10"
+<val> := "20"
+<val> := "30"
+<val> := "100"
+<val> := "1000"
+
+<whereclause> := '"' + <fieldname> + '" ' + <op> + str(<val>)
+
+<whereclause> := <whereclause> + ' AND ' + <whereclause>
+
+<whereclause> := <whereclause> + ' OR ' +  <whereclause>
+
+<whereclause> := 'NOT' + <whereclause>
+
+<errtable> := arcpy.env.workspace + "\\geomerr.dbf"
+
+<polytable> := arcpy.env.workspace + "\\polyneig.dbf"
+
+<stattable> := arcpy.env.workspace + "\\stats.dbf"
+
+{IOError} <fieldlist> := arcpy.ListFields(<classorlayer>)
+len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
+<fieldlist> = <fieldlist> [1:]
+
+<fieldnamelist> := []
+<fieldnamelist>.append(<fieldname>)
+
+<stattype> := "SUM"
+<stattype> := "MEAN"
+<stattype> := "MIN"
+<stattype> := "MAX"
+<stattype> := "RANGE"
+<stattype> := "STD"
+<stattype> := "COUNT"
+<stattype> := "FIRST"
+<stattype> := "LAST"
+
+<statfields> := []
+<statfields>.append([<fieldname>,<stattype>])
+
+{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(<featureclass>,<newlayer>); report()
+
+{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(<featureclass>,<newlayer>,where_clause=<whereclause>); report()
+
+{arcpy.ExecuteError} arcpy.Project_management(<featureclass>,<featureclass>,<spatialref>,<transform>); report()
+
+{arcpy.ExecuteError} not (<featureclass,1> in <hascursor>) -> arcpy.AddField_management(<featureclass>,<fieldname>,<fieldtype>); report()
+
+{arcpy.ExecuteError} arcpy.DeleteField_management(<featureclass>,<fieldname>); report()
+
+{arcpy.ExecuteError} arcpy.Buffer_analysis(<classorlayer>,<featureclass>,<dist>); report()
+
+{arcpy.ExecuteError} arcpy.Buffer_analysis(<classorlayer>,<featureclass>,<dist>,dissolve_option="ALL"); report()
+
+{arcpy.ExecuteError} arcpy.Buffer_analysis(<classorlayer>,<featureclass>,<dist>,dissolve_option="LIST",dissolve_field=<fieldnamelist>); report()
+
+{arcpy.ExecuteError} arcpy.Erase_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
+
+{arcpy.ExecuteError} arcpy.Erase_analysis(<classorlayer>,<classorlayer>,<featureclass>,cluster_tolerance=<dist>); report()
+
+{arcpy.ExecuteError} arcpy.Intersect_analysis(<classorlayerlist>,<featureclass>); report()
+
+{arcpy.ExecuteError} arcpy.Intersect_analysis(<classorlayerlist>,<featureclass>,join_attributes=<joinattributes>); report()
+
+{arcpy.ExecuteError} arcpy.Intersect_analysis(<classorlayerlist>,<featureclass>,cluster_tolerance=<dist>); report()
+
+{arcpy.ExecuteError} arcpy.Intersect_analysis(<classorlayerlist>,<featureclass>,join_attributes=<joinattributes>,cluster_tolerance=<dist>); report()
+
+{arcpy.ExecuteError} arcpy.Union_analysis(<classorlayerlist>,<featureclass>); report()
+
+{arcpy.ExecuteError} arcpy.Union_analysis(<classorlayerlist>,<featureclass>,join_attributes=<joinattributes>); report()
+
+{arcpy.ExecuteError} arcpy.Union_analysis(<classorlayerlist>,<featureclass>,cluster_tolerance=<dist>); report()
+
+{arcpy.ExecuteError} arcpy.Union_analysis(<classorlayerlist>,<featureclass>,join_attributes=<joinattributes>,cluster_tolerance=<dist>); report()
+
+{arcpy.ExecuteError} arcpy.SpatialJoin_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
+
+{arcpy.ExecuteError} arcpy.SymDiff_analysis(<classorlayer>,<classorlayer>,<featureclass>); report()
+
+{arcpy.ExecuteError} arcpy.SymDiff_analysis(<classorlayer>,<classorlayer>,<featureclass>,join_attributes=<joinattributes>); report()
+
+{arcpy.ExecuteError} arcpy.SymDiff_analysis(<classorlayer>,<classorlayer>,<featureclass>,join_attributes=<joinattributes>,cluster_tolerance=<dist>); report()
+
+{arcpy.ExecuteError} arcpy.PolygonNeighbors_analysis(<classorlayer>,~<polytable>); report()
+
+{arcpy.ExecuteError} arcpy.Statistics_analysis(<featureclass>,~<stattable>,<statfields>); report() # Note, should be classorlayer, but avoiding bug!
+
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>)
+
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>,search_distance=<dist>)
+
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,select_features=<newlayer>,overlap_type=<overlaptype>,search_distance=<dist>,selection_type=<selectiontype>)
+
+{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(<newlayer>,selection_type=<selectiontype>,where_clause=<whereclause>)
+
+{arcpy.ExecuteError} arcpy.Select_analysis(<classorlayer>,<featureclass>,where_clause=<whereclause>)
+
+{arcpy.ExecuteError} arcpy.CopyFeatures_management(<featureclass>,<featureclass>); report()
+
+{arcpy.ExecuteError} arcpy.Sort_management(<featureclass>,<featureclass>,<sortlist>); report()
+
+{arcpy.ExecuteError} arcpy.Sort_management(<featureclass>,<featureclass>,<sortlist>,<spatialsort>); report()
+
+{arcpy.ExecuteError} arcpy.Sort_management(<featureclass>,<featureclass>,[["Shape",<sorttype>]],<spatialsort>); report()
+
+{arcpy.ExecuteError} arcpy.CheckGeometry_management(<classorlayer>,~<errtable>); report()
+
+{arcpy.ExecuteError} arcpy.CheckGeometry_management(<classorlayerlist>,~<errtable>); report()
+
+#{arcpy.ExecuteError} arcpy.Delete_management(<featureclass>); report() commented out to avoid bug with layers
+
+
