@@ -88,7 +88,8 @@ assigned a different value until it has been used in an action, to
 avoid degenerate sequences such as {\tt int3 = 10} followed by {\tt
   int3 = 4}.  Each action in a test case is called a ``step'' --- the
 first step of the first test case in Figure \ref{threetests} is storing a new AVL tree in {\tt
-  avl0}, for example.
+  avl0}, for example.  A test case is just a numbered sequence of
+actions, which is equivalent to a set of steps.
 
 The definition of pools and actions in TSTL defines a \emph{total
   order} on all actions.  First, actions are ordered by their position
@@ -147,16 +148,16 @@ different reasons into the same test, and $f$ is not unreasonably
 expensive to compute.  The implementation for $f$ (in fact, for a
 family of $f$-approximating functions, with different tradeoffs in
 runtime and level of normalization) involves defining a set of rewrite
-rules such that for a test $b$ (the base test), the rules define a
-finite set of candidate tests $c \in C(b)$, possible simplifications
-of $b$, where each $c$ is the result of applying some rewrite, $r_i$
-to $b$.  The notion of simplicity is defined by a restriction on the
+rules such that for a test $t$, the rules define a
+finite set of candidate tests $t' \in C(t)$, possible simplifications
+of $t$, where each $t'$ is the result of applying some rewrite, $r_i$
+to $t$.  The notion of simplicity is defined by a restriction on the
 rewriting rules.  For any test case $t$ and rewrite $r_i \in C(t)$, we
 require that $|C(r_i(t))| < |C(t)|$.  Such a rewrite system is
 necessarily \emph{strongly normalizing}: any sequence of rewrites
 chosen will eventually end in a term (test case) that cannot be
 further rewritten, and the total length of a rewrite sequence in this
-case is bounded by the initial $|C(b)|$.
+case is bounded by the initial $|C(t)|$.
 
 \comment{, let $R(t)$ be the length of the maximum number of
 rewrites that can be applied to $t$, e.g., the longest possible
@@ -184,7 +185,7 @@ one action (possibly in multiple steps, but in a uniform way) or make
 positions of actions in the test case.  We cannot guarantee
 normalization does not change the underlying fault in a test; however,
 the limited scope of rewrites should at least make the likelihood of
-fault change (known as ``slippage'' \cite{PLDI13}) around that of
+fault change (known as ``slippage'' \cite{PLDI13}) no worse than that of
 delta-debugging, which is widely accepted as a reasonable tradeoff.
 
 \subsubsection{Definitions and Notation}
@@ -219,44 +220,44 @@ the moved steps, again preserving order.
 
 \begin{enumerate}
 \item {\bf SimplifyAll:}
-$c = b[a \Rightarrow a']$\\
+$t' = t[a \Rightarrow a']$\\
 \-\ \ \ \emph{where} $a' < a$\\
 Covers the case where all appearances of an action can be replaced with a 
 simpler (lower-indexed) action. 
 \item {\bf ReplacePool:}
-$c = b(i,j)[p \Rightarrow p']$\\ 
+$t' = t(i,j)[p \Rightarrow p']$\\ 
 \-\ \ \ \emph{where} $p < p'$ and $0 \leq i < j <
-|b|$\\
+|t|$\\
 Covers the case when all appearances of an instance of a pool can be replaced with 
 a lower-indexed instance of that pool (with possible restriction to a range of steps).
 \item {\bf ReplaceMovePool:}
-$c = b_{\rightarrow i}(p')[p \Rightarrow p']$\\
+$t' = t_{\rightarrow i}(p')[p \Rightarrow p']$\\
 \-\ \ \ \emph{where} $p < p'$ and $0
-\leq i < |b|$\\
+\leq i < |t|$\\
 Covers the case when all appearances of an instance of a pool can be replaced with
 a lower-indexed instance of that pool, if all assignments to the new instance before a
 certain step are moved to that step.
 \item {\bf SimplifySingle:}
-$c = b[(i: a) \Rightarrow (i: a')]$\\
+$t' = t[(i: a) \Rightarrow (i: a')]$\\
 \-\ \ \ \emph{where} $a' < a$\\
 Covers the case where one action can be replaced with a 
 simpler (lower-indexed) action. 
 \item {\bf SwapPool:}
-$c = b(i,j)[p \Leftrightarrow p']$\\
-\-\ \ \ \emph{where} $\Delta(c,b) < \Delta(b,c)$\\
-\-\ \ \ and $0 \leq i < j < |b|$\\
+$t' = t(i,j)[p \Leftrightarrow p']$\\
+\-\ \ \ \emph{where} $\Delta(t',t) < \Delta(t,t')$\\
+\-\ \ \ and $0 \leq i < j < |t|$\\
 \-\ \ \ and $p < p'$\\
 Covers the case where swapping two pool instances (within a range of steps) reduces
 the minimal action index of the modified steps.
 \item {\bf SwapAction:}
-$c = b[(i: a) \Rightarrow (i: b), (j: b) \Rightarrow (j: a)]$\\
+$t' = t[(i: a) \Rightarrow (i: b), (j: b) \Rightarrow (j: a)]$\\
 \-\ \ \ \emph{where} $i < j$ and
 $b < a$\\
 Covers the case where two actions can be swapped in the test, with the
 lower-indexed action now appearing earlier.
 \item {\bf ReduceAction:}
-$c = b[(i: a) \Rightarrow (i: a')]$\\
-\-\ \ \ \emph{where} $|ddmin(c)| < |ddmin(b)|$\\
+$t' = t[(i: a) \Rightarrow (i: a')]$\\
+\-\ \ \ \emph{where} $|ddmin(t')| < |ddmin(t)|$\\
 Covers the case where an action can be replaced by any action (not just lower-indexed
 actions) and this enables further delta-debugging-based reduction of
 the test case's length.
@@ -271,10 +272,10 @@ modification that in practice the {\bf ReplacePool} and {\bf
   ReplaceMovePool} rewrites are checked in the same loop
 (e.g., for every possible replacement of a pool, both rules for pool replacement are
 checked, in the order given above).  The core algorithm, given a set
-of ordered rewrite rules defining $C(b)$ is given as Algorithm
+of ordered rewrite rules defining $C(t)$ is given as Algorithm
 \ref{simpalg}.  Here {\tt pred} is an arbitrary predicate indicating
 that the candidate test still satisfies the property of interest that
-held for the original test $b$.  In most cases, this predicate will be
+held for the original test $t$.  In most cases, this predicate will be
 ``the test fails'' but we also have preserved
 code coverage for regression suites \cite{icst2014}.  Notice that
 after applying each rewrite rule, we perform delta-debugging on the
@@ -287,15 +288,15 @@ new base test case, since often a rewrite makes other steps irrelevant.
 \State {modified = True}
 \While {modified}
 \State {modified = False}
-\For {$c \in C(b)$}
-\If{pred($c$)}
+\For {$t' \in C(t)$}
+\If{pred($t'$)}
 \State modified = True 
-\State $b$ = $ddmin(c)$
+\State $t$ = $ddmin(t')$
 \State {\bf break} (exit {\bf for} loop) 
 \EndIf 
 \EndFor 
 \EndWhile 
-\State return $b$
+\State return $t$
 \end{algorithmic}
 \end{algorithm}
 
@@ -305,16 +306,16 @@ at least one.  This means if there are $n$ possible rewrites of a
 test case, there can be at most $n$ predicate checks for the current test case,
 then at most $n-1$ checks for the rewritten test case, and so on, for
 a total of $\frac{n(n+1)}{2}$ predicate checks, where $n$ is the
-number of possible rewrites of the test case $b$ being normalized, e.g.,
-$n = |C(b)|$.  Test case execution to check the predicate can be
+number of possible rewrites of the test case $t$ being normalized, e.g.,
+$n = |C(t)|$.  Test case execution to check the predicate can be
 assumed to have a constant cost since the length of the test case does
 not usually change by more than a few steps during normalization. 
 
-How many rewrites can a test case $b$ have?  Assume there are $k$
-steps in the test case and $a$ possible actions.  The action
+How many rewrites can a test case $t$ have?  Assume there are $k$
+steps in the test case and $\alpha$ possible actions.  The action
 replacements rewrites ({\bf SimplifyAll}, {\bf SimplifySingle}, and
-{\bf ReduceAction}) allow for at most $k (a-1)$ rewrites each.  There
-are $\leq k^2$ possible {\bf SwapAction} rewrites, and $\leq k^2(a-1)$
+{\bf ReduceAction}) allow for at most $k (\alpha-1)$ rewrites each.  There
+are $\leq k^2$ possible {\bf SwapAction} rewrites, and $\leq k^2(\alpha-1)$
 possible rewrites for each of {\bf ReplacePool}, {\bf
   ReplaceMovePool}, and {\bf SwapPool}\footnote{The details of how
   these bounds are determined, in that pool changes are also action
@@ -322,11 +323,11 @@ possible rewrites for each of {\bf ReplacePool}, {\bf
   involved, and beyond the scope of this paper; we note that like
   delta-debugging, the worst-case complexity is seldom observed, and
   offer some further optimizations below.}.  There are therefore at
-most $n=k^2 + 3k^2(a-1) + 3k(a-1)$ rewrites, over-approximating (since
-an action cannot be rewritten to itself, etc.).  Each rewrite also
-requires a delta-debugging step, which is quadratic in $k$ \cite{DD}.
+most $n=k^2 + 3k^2(\alpha-1) + 3k(\alpha-1)$ rewrites, over-approximating (since
+an action cannot be rewritten to itself).  Each rewrite also
+requires a \emph{ddmin} call, which is quadratic in $k$ \cite{DD}.
 Substituting this expression into the expression $\frac{n(n+1)}{2}$
-above, we see that the cost for normalization is $O(k^4a^2)$.  While
+above, we see that the cost for normalization is $O(k^4\alpha^2)$.  While
 worse than the quadratic cost of delta-debugging, for already
 1-minimal test cases, unlike delta-debugging; the $k$ in our quartic complexity
 is, for random test cases, typically an order of magnitude smaller
@@ -371,13 +372,13 @@ The simplest and most important optimization is to improve on the
 constant ordering of rewrite rules.  In our implementation, once a
 rule fails to produce a candidate that satisfies {\tt pred} that rule
 is moved to the end of the ordering of rewrites.  This optimization
-followed the observation that almost always once a rule fails to
-produce any changes in a test case, it never applies again.  This
-simple change, in our experience, typically halves the time required
-for normalization.
+followed the observation that once a rule fails once to produce any
+valid rewrites for a test case, it frequently produces no further
+reductions.  This simple change typically halves the time required for
+normalization.
 
 For test cases with a very short runtime, this algorithm (with
-reordering) is usually practical: though more expensive than delta-debugging
+reordering) is usually practical: while more expensive than delta-debugging
 it still requires  less than a minute to run.  However, when test case
 execution is expensive, the set of candidate test cases must be
 further restricted.  In our experiments, we found that restricting
@@ -388,30 +389,31 @@ be replaced by syntactically similar actions, without completely
 changing test semantics.
 
 A further useful optimization when normalizing large numbers of tests
-of the same SUT is to cache results, so that as soon as the rewrite
+of the same SUT is to cache results across tests: as soon as the rewrite
 sequence produces a previously seen test, the final result can be
 returned (since the algorithm is deterministic).   For very large
 numbers of tests, this is the most important optimization.
-Interestingly, though $ddmin$ is also deterministic, caching
+Interestingly, although $ddmin$ is also deterministic, caching
 delta-debugging results across tests is far less useful, since the chance of seeing
-an exact match is extremely small; this is true with the \emph{initial} input to
-normalization, but a few pool and value changes often result in a
+an exact match is extremely small.  This is true for the \emph{initial} input to
+normalization, but a small number of pool and value changes often result in a
 cache hit. For systems with
 very expensive replay, the delta-debugging of each new base test case
-can also be omitted, as we can count on the {\bf ReduceAction} rewrite to
-eventually remove useless steps (however, this may come at a cost of
-attempts to rewrite steps that could be removed).
+can also be omitted: the {\bf ReduceAction} rewrite will
+eventually remove the extraneous steps.  However, the reduced calls to
+\emph{ddmin} are offset by attempts to rewrite steps that could be
+removed.  
 
-Finally, it is easy to parallelize the normalization of a test case by
+It is also trivial to parallelize the normalization of a test case by
 checking the predicate over multiple candidates at once.  As soon as a
-candidate satisfies the predicate, one of two options are available:
-either the normalization can proceed with that candidate as the new
-base, making the algorithm nondeterministic (in theory; in
-practice we suspect the same final result will usually appear), or the
-algorithm can wait for all earlier-in-sequence candidates to be
-checked, and only proceed when no candidate that would be checked
-first in the sequential version of the algorithm is in the work
-queue.
+candidate satisfies the predicate, a parallel implementation faces two
+possible choices.
+Either the normalization can proceed with that candidate as the new
+base, making the algorithm nondeterministic (in practice, we suspect
+the same final result will usually appear), or the algorithm can wait
+for all earlier-in-sequence candidates to be checked, and only proceed
+when no candidate that would be checked first in the sequential
+version of the algorithm is in the work queue.
 
 \subsection{Normalization Example}
 \label{formalexample}
@@ -466,8 +468,8 @@ Figure \ref{diffnorm} shows the sequence of successful rewrites in
 normalizing a simple AVL tree test failure.  Note that the numbering
 of steps appears inconsistent in the first {\bf SwapAction} because a
 successful delta-debugging removes a no-longer-needed step after a
-rewrite.  In our experience, the pattern in this example, where successful rewrites
-are roughly equal to the original number of steps, is frequent across SUTs.
+rewrite.  The pattern in this example, where successful rewrites
+are roughly equal to the original number of steps, is frequently seen across SUTs.
 
 \subsection{Generalization}
 
@@ -479,12 +481,12 @@ changeable aspects of a test case.  Some values and orderings of steps
 in a test case are \emph{essential} to the failure: when changed, they
 cause the test case to no longer fail.  Many others, however, are
 \emph{accidental} --- any concrete test case has to choose \emph{some}
-values and step ordering (for us, that enforced by the normalization
+values and step ordering (enforced by the normalization
 process) but many such choices are arbitrary, or at least allow
 variance, with respect to the cause of failure.  Generalization
 performs experiments to distinguish essential and accidental aspects
 of a test case, and summarizes the results.  The core algorithm
-(Algorithm \ref{genalg}) is simple.
+(Algorithm \ref{genalg}) is simple:
 
 \begin{algorithm}
 \caption{Basic algorithm for generalization}
@@ -513,10 +515,10 @@ actions or swapped with other steps, and returns the set to be
 reported to the user.  This version assumes the test has already been
 normalized, but can be extended to any test case by removing the
 restrictions that $a > a'$ and $(j : b) > (i : a)$.  The complexity of
-generalization is simpler to determine than that of normalization: if
-we assume all actions are enabled at each step, and there are $n$
-actions and $k$ steps, checking for replacements requires $k (n-1)$
-test case executions (when every action is the lowest-indexed action).
+generalization is simpler to determine than that of normalization.  If
+we assume all actions are enabled at each step, and there are $\alpha$
+actions and $k$ steps, checking for replacements requires $k (\alpha-1)$
+test case executions, when every action is the lowest-indexed action.
 In that worst case, no swaps are possible.  The complexity of checking
 for swaps in the worst case is quadratic in $k$.  In practice, most
 actions are not enabled at most steps, and most actions in a test case
@@ -538,10 +540,9 @@ observed that sometimes a delta-debugged file system test case
 \cite{ICSEDiff,AMAI} would use an open file descriptor in a call,
 leading to the suspicion that the file had been corrupted, when in
 fact the file system's state in memory was damaged, and the same
-operation on any file would produce the same problem.  To address this
-problem, we present a more aggressive generalization than
-replacement and swap:  replacing a pool use with a
-fresh value.  
+operation on any file would produce the same problem.  
+We therefore present a more aggressive generalization than
+replacement or swap:  replacing a pool use with a \emph{fresh value}.  
 
 As an example, consider the test case in Figure \ref{fig:mislead},
 produced by our TSTL harness that uses TSTL to test TSTL
@@ -609,29 +610,29 @@ position one higher.
 \end{algorithm}
 
 In practice, the {\tt fresh} set returned should be pruned to avoid
-redundant actions.  It is not useful information that the sequence {\tt
-  int0 = 1 ; int1 = 2; int0 = 1; f(int0)} fails if {\tt int0 = 1; int1
-  = 2; f(int0)} fails.  Redundancy elimination also needs to take into
-account the potential assignments to a pool from the {\tt replace}
-generalization, which are also redundant.  Furthermore, it is useful
-to distinguish between pools that are never modified, only assigned
-to, and pools that are modified without appearing on a left-hand
-side.  As an example, if an integer is used as an argument to a
-function, the pool value's last assignment is still valid and should
-be omitted from ``fresh'' values, as redundant.  However, calling a
-function on an AVL tree may modify it, making an
-assignment non-redundant, even if it is the last appearance of that
-pool as LHS.  We use the {\tt CONST} tag (see Figure \ref{fig:example}) to mark
-which values can be modified on the RHS.  Further extensions of the fresh value generalization
-could be considered; e.g., if a fresh value for some object requires use
-of a complex constructor, the values required to call the constructor
-could also be produced, if they do not appear in the test case
-previously (if only one of a set of constructors can produce a fresh
-value that will satisfy the predicate).  In our experiments
-so far, simple fresh value generation suffices, as needed
-inputs to constructors are usually available in pools, and it is not
-important to know \emph{all} inputs that could result in a
-valid fresh value.
+redundant actions.  It is not useful information that the sequence
+{\tt int0 = 1 ; int1 = 2; int0 = 1; f(int0)} fails if {\tt int0 = 1;
+  int1 = 2; f(int0)} fails.  Redundancy elimination also needs to take
+into account the potential assignments to a pool from the {\tt
+  replace} generalization, which are also redundant.  Furthermore, it
+is useful to distinguish between pools that are never modified, only
+assigned to, and pools that are modified without appearing on a
+left-hand side.  As an example, if an integer is used as an argument
+to a function, the pool value's last assignment is still valid and
+should be omitted from ``fresh'' values, as redundant.  However,
+calling a function on an AVL tree may modify it, making an assignment
+non-redundant, even if it is the last appearance of that pool as LHS.
+We use the {\tt CONST} tag (see Figure \ref{fig:example}) to mark
+which values can be modified on the RHS.  Further extensions of the
+fresh value generalization could be considered.  For example, if a
+fresh value for some object requires use of a complex constructor,
+values required to call the constructor can also be produced, if
+needed, recursively (if only one of a set of constructors can produce
+a fresh value that will satisfy the predicate).  In our experiments so
+far, simple fresh value generation sufficed, as needed inputs to
+constructors were usually available in pools.  It is not clear how
+important it is to know \emph{all} values that could result in a valid
+fresh value.
 
 \subsection{Discussion}
 
