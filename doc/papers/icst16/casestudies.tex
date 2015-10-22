@@ -86,7 +86,7 @@ read unreduced test cases, so it is only detected if the original test
 cases before reduction are stored and re-executed after bugs have been
 fixed), but in our own previous work \cite{PLDI13}, slippage due to
 reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
-for other SUTs (up to 23\%) for Mozilla's JavaScript engine.  For our
+for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For our
 own AVLTree example, the slippage rate for reduction (ignoring
 normalization) is almost 30\%.  As a simple mitigation, we propose
 storing at least the reduced test cases, and possibly the original,
