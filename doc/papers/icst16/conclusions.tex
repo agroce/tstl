@@ -8,21 +8,19 @@ that test case 1) produces a failure due to the fault and 2) includes
 annotations describing the general conditions under which the fault
 manifests as failure.  This is the ideal; normalization moves toward
 this ideal by rewriting numerous distinct failing test cases into a
-smaller set of simpler test cases, and generalization is a
-first-effort at an annotation method for describing the core structure
-of a failure, separating essential and accidental aspects of a test
-case.  Our algorithms rely on the ability of TSTL \cite{NFM15,ISSTA15}, a language for
-defining test cases for automated testing, to define simplification
-and experiments for generalization in a form amenable to simple
-rewriting, which can apply to any SUT and any language.  The approach applies to any test generation
-method, including those that produce short tests \cite{FA11,SoftBET}.
+smaller (and sometimes minimal) set of simpler test cases, and
+generalization identifies essential and accidental aspects of a test
+case.  These algorithms rely on the ability of TSTL
+\cite{NFM15,ISSTA15} to define simplification and experiments for generalization
+in a form amenable to simple rewriting, which can apply to any SUT and
+any language.  The approach applies to any test generation method,
+including those that already produce short tests \cite{FA11,SoftBET}.
 
-Our current implementation is meant to serve as a useful starting
-point for further development.  TSTL is available in a working version
-\cite{tstl} that supports normalization and generalization, and the
-normalization and generalization implementations are designed to allow
-the easy addition of further rewrite rules that can move testing even closer to
-the goal of ``one test case to rule them all.''
+TSTL is available in a working version \cite{tstl} that supports
+normalization and generalization, and the normalization and
+generalization implementations are designed to allow the easy addition
+of further rewrite rules that can move testing even closer to the goal
+of ``one test case to rule them all.''
 
 The goal of normalization, not just
 reduction, can also be pursued in settings other than API sequence or

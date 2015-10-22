@@ -89,12 +89,10 @@ reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
 for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For our
 own AVLTree example, the slippage rate for reduction (ignoring
 normalization) is almost 30\%.  As a simple mitigation, we propose
-storing at least the reduced test cases, and possibly the original,
-unreduced test cases, for all failures.  These should be used as a
-regression in the event all faults detected by normalized test cases
-are fixed.  It might also be useful, in especially critical testing
-(e.g., for security problems) to run a fuzzer taming algorithm on
-reduced test cases, and examine the highest ranked failures \cite{PLDI13}.
+storing at least reduced test cases, and ideally the original,
+unreduced test cases, as a
+slippage check when all faults detected by normalized test cases
+are fixed.  
 
 The reduction in test cases produced by normalization for mutant pairs
 was, as with single mutants, very large (Figure \ref{normeffect}).

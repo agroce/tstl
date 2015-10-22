@@ -529,32 +529,31 @@ parallelize, as all checks are independent.
 \subsubsection{Fresh Values and Misleading Test Cases}
 \label{freshgen}
 
-A side-effect of delta-debugging and of normalization is the reduction
-of the number of variables used in a test case.  While usually helpful
-for understanding, this can sometimes result in misleading test
-cases.  In a stateful system, putting the system into a bad state may require
-building a complex object.  Once system state is corrupted, however,
-the complex object is irrelevant, and its appearance in the call
-leading to failure can be misleading.  In previous work at NASA, we
-observed that sometimes a delta-debugged file system test case
-\cite{ICSEDiff,AMAI} would use an open file descriptor in a call,
-leading to the suspicion that the file had been corrupted, when in
-fact the file system's state in memory was damaged, and the same
-operation on any file would produce the same problem.  
-We therefore present a more aggressive generalization than
-replacement or swap:  replacing a pool use with a \emph{fresh value}.  
+A side-effect of delta-debugging and normalization is reduction of the
+number of variables in a test case.  While usually helpful, this can
+sometimes result in misleading test cases.  In a stateful system,
+putting the system into a bad state may require building a complex
+object.  Once system state is corrupted, however, the complex object
+is irrelevant, and its appearance in the call leading to failure can
+be misleading.  In previous work at NASA, we observed that sometimes a
+delta-debugged file system test case \cite{ICSEDiff,AMAI} would use an
+open file descriptor in a call, leading to the suspicion that the file
+had been corrupted, when in fact the file system's state was damaged,
+and the same operation on any file would produce the problem.  We
+therefore present a more aggressive generalization than replacement or
+swap: replacing a pool use with a \emph{fresh value}.
 
-As an example, consider the test case in Figure \ref{fig:mislead},
-produced by our TSTL harness that uses TSTL to test TSTL
-itself\footnote{Since TSTL provides a Python API, that API can be used
-  as the SUT in testing; we have discovered several important TSTL
-  bugs this way.}.  The problem involves an invalid normalization
-cache, produced by normalizing a test with only one action.  Without
-generalization, it appears that the failure comes when this test is
-normalized a second time.  However, the information after step 6 shows
-that in fact the failure will take place even if a newly created empty test is
-normalized.  Without this generalization, the state of the {\tt test} pool
-may appear to be important, not the state of the TSTL system itself.
+Consider the test case in Figure \ref{fig:mislead}, produced by a
+TSTL harness for  TSTL itself\footnote{Since TSTL
+  provides a Python API, that API can be used as the SUT in testing;
+  we have discovered several important TSTL bugs this way.}.  The
+problem involves an invalid cache, produced by normalizing a test with
+only one action.  Without fresh value generalization, it appears that
+the failure is due to normalizing this test again.
+The annotation after step 6 lets us see that the failure
+will take place even for a new empty test.
+Without this generalization, the state of the {\tt test} may
+appear to be important, not the state of  TSTL itself.
 
 \begin{figure}
 {\scriptsize
@@ -627,8 +626,7 @@ which values can be modified on the RHS.  Further extensions of the
 fresh value generalization could be considered.  For example, if a
 fresh value for some object requires use of a complex constructor,
 values required to call the constructor can also be produced, if
-needed, recursively (if only one of a set of constructors can produce
-a fresh value that will satisfy the predicate).  In our experiments so
+needed, recursively.  In our experiments so
 far, simple fresh value generation sufficed, as needed inputs to
 constructors were usually available in pools.  It is not clear how
 important it is to know \emph{all} values that could result in a valid
@@ -645,4 +643,13 @@ in Python\footnote{There is also a beta Java version, with a
   simpler version of normalization.}, but the
 normalization and generalization algorithms do not depend on the
 underlying language, only on the abstract notions of actions and
-pools.
+pools.  
+One intuitive concern with this approach is that a user may not place
+actions in a ``good'' order in the TSTL definition.  What if
+normalization rewrites actions into ``more complex'' rather than
+simpler actions?  The key insight is that, with the exception of cases
+such as ordering numeric ranges naturally, the ordering \emph{does not usually
+  matter}, it only matters that there exists \emph{some order} to
+guide normalization and generalization.  Actions will
+only be replaced or swapped if, causally, the predicate is \emph{indifferent}
+to the choice.
