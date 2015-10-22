@@ -9,12 +9,12 @@ that remove irrelevant operations\footnote{Algorithms such as
   approaches, including symbolic execution \cite{issta14} can benefit from
   test case/counterexample reduction.}.  In fact, test case reduction is
 now standard practice in industrial testing tools such as Mozilla's
-{\tt jsfunfuzz}.  However, simply reducing the length of a test case
+{\tt jsfunfuzz} \cite{jsfunfuzz,jsfunfuzz2,lithium}.  However, simply reducing the length of a test case
 does not produce any kind of semantic simplicity.  There may be many
 (often far more than a thousand, in practice) 1-minimal test cases
 that present different variations of a single fault.  Far too often,
 reading more than one of these test cases provides no useful
-additional information on the cause of failure.
+additional information on the cause of failure. 
 
 Consider the three test cases shown in Figure \ref{threetests}.  These
 test cases are obviously very similar, and in fact all lead to a
@@ -37,9 +37,9 @@ Figure \ref{normalgen} shows the result of applying our \emph{test case
 \emph{All three test cases normalize to the same test
 case}.  This single test case, in addition to the 10 steps required to produce
 the failure, includes comments indicating what about the test case can
-be changed while still failing in the same way.  For instance, the
+be changed while preserving the property that the test fails.  For instance, the
 value 1 assigned to {\tt int0} in step 0 is not essential.  It could
-be changed to any value in the range 5-20 (the total set of values
+be changed to any value in the range 5-20 (1-20 is the range of values
 allowed by the test generator) without changing the final result.  The
 same is true of the assignment of 3 to {\tt int1}.  Similarly, the
 exact ordering of many steps in the test case is not important.  Finally,
@@ -80,7 +80,8 @@ due to the same fault in the SUT (Software Under Test) would normalize
 to a single, representative test case, but we can only aim to
 approximate such a canonical form for faults.  Figure \ref{diffnorm},
 in Section \ref{formalexample}, shows an AVL tree test case that
-normalizes differently.  The graph structure required for this particular fault results in
+normalizes differently.  The graph structure required for the {\tt
+  delete} fault results in
 unusually poor effectiveness for normalization.  In experiments with 82 AVL tree faults,
 the mean number of distinct failures after normalization for 1,000
 tests was just 3.1 (with median 2), while this fault produced 18

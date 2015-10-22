@@ -52,7 +52,7 @@ test cases (usually API-call sequences, but also grammar-based tests using
 string construction), and a set of tools for use in generating,
 manipulating, and understanding those test cases.  Figure
 \ref{fig:example} shows a simplified portion of a TSTL definition of
-tests of an AVL tree class, in the latest syntax for TSTL (which
+tests for an AVL tree class, in the latest syntax for TSTL (which
 differs slightly from that in the cited papers introducing TSTL).
 TSTL provides numerous features not shown in this small example,
 including automatic differential testing, complex logging, support for
@@ -93,8 +93,8 @@ actions, which is equivalent to a set of numbered steps.
 
 The definition of pools and actions in TSTL defines a \emph{total
   order} on all actions.  First, actions are ordered by their position
-in the definition file.  All {\tt insert} actions are therefore before
-all {\tt delete} actions, and all {\tt delete} actions are before {\tt
+in the definition file.  All {\tt insert} actions therefore precede
+all {\tt delete} actions, and all {\tt delete} actions precede {\tt
   find} actions.  One line of TSTL typically defines more than one action. For
 example, the line of TSTL code {\tt <avl>.insert(<int>)} defines 12 actions, one
 for each choice of {\tt avl} and {\tt int} pool instance:  the action set
@@ -105,7 +105,7 @@ precedence ({\tt avl0.insert(int2)} precedes {\tt avl1.insert(int0)},
 etc.).  Value ranges, such as in the {\tt int} initialization, are also
 ordered in the natural way, with lower values first.  Given this total
 order, each action can be assigned a unique index, from 0 up to 1 less
-than the total number of actions. Initially, this ordering (and
+than the total number of actions. Initially, this kind of ordering (and
 numbering) for each action was intended to allow for a kind of
 G\"odel-numbering of tests, for use in proofs about
 properties of test-generation algorithms
@@ -171,15 +171,14 @@ chosen will eventually end in a term (test case) that cannot be
 further rewritten.}
 
 In the setting of TSTL, where test actions have a defined total
-order, two simple principles can be applied to produce strongly
-normalizing rewrite rules.  First, rewrites should reduce the sum of the
+order, two simple principles can be applied to produce useful
+rewrite rules.  First, rewrites should reduce the sum of the
 indices of the actions in the test case, or make the test case's
-actions more ordered by index.  This approach
-provides effective normalization at a significant, but not
-impractical, computational cost.
+actions more ordered by index.  This guarantees that the rewrites are
+strongly normalizing.
 The second principle that determines the rewrite rules is that each
-rule is unlikely to change the underlying cause for test case
-failure.  To that end, the rules below always either change at most
+rule ought to be unlikely to change the underlying cause for test case
+failure.  To that end, the rules for normalization always either change at most
 one action (possibly in multiple steps, but in a uniform way) or make
 \emph{no} changes to the actions performed, only to the pools used or the
 positions of actions in the test case.  We cannot guarantee
@@ -266,11 +265,11 @@ the test case's length.
 \subsubsection{Normalization Algorithm}
 
 These rules alone do not determine a complete normalization method; it is
-also required to determine an order in which they are applied.  The
+also necessary to determine the order in which they are applied.  The
 order in our default implementation is the order above, with the
 modification that in practice the {\bf ReplacePool} and {\bf
   ReplaceMovePool} rewrites are checked in the same loop
-(e.g., for every possible replacement of a pool, both rules for pool replacement are
+(e.g., for every possible replacement of a pool, both rules are
 checked, in the order given above).  The core algorithm, given a set
 of ordered rewrite rules defining $C(t)$ is given as Algorithm
 \ref{simpalg}.  Here {\tt pred} is an arbitrary predicate indicating
@@ -328,9 +327,9 @@ an action cannot be rewritten to itself).  Each rewrite also
 requires a \emph{ddmin} call, which is quadratic in $k$ \cite{DD}.
 Substituting this expression into the expression $\frac{n(n+1)}{2}$
 above, we see that the cost for normalization is $O(k^4\alpha^2)$.  While
-worse than the quadratic cost of delta-debugging, for already
-1-minimal test cases, unlike delta-debugging; the $k$ in our quartic complexity
-is, for random test cases, typically an order of magnitude smaller
+worse than the quadratic cost of delta-debugging, this algorithm is
+applied to already 1-minimal test cases, unlike delta-debugging. The $k$ in our quartic complexity
+is therefore, for random test cases, typically an order of magnitude smaller
 than the $k$ in delta-debugging \cite{ICSEDiff,icst2014,MinUnit},
 which can partly balance the additonal cost for test cases whose
 unreduced length is less than 100.
@@ -486,7 +485,7 @@ process) but many such choices are arbitrary, or at least allow
 variance, with respect to the cause of failure.  Generalization
 performs experiments to distinguish essential and accidental aspects
 of a test case, and summarizes the results.  The core algorithm
-(Algorithm \ref{genalg}) is simple:
+(Algorithm \ref{genalg}) is simple.
 
 \begin{algorithm}
 \caption{Basic algorithm for generalization}
@@ -622,7 +621,7 @@ should be omitted from ``fresh'' values, as redundant.  However,
 calling a function on an AVL tree may modify it, making an assignment
 non-redundant, even if it is the last appearance of that pool as LHS.
 We use the {\tt CONST} tag (see Figure \ref{fig:example}) to mark
-which values can be modified on the RHS.  Further extensions of the
+values than cannot be modified on the RHS.  Further extensions of the
 fresh value generalization could be considered.  For example, if a
 fresh value for some object requires use of a complex constructor,
 values required to call the constructor can also be produced, if
@@ -648,7 +647,7 @@ One intuitive concern with this approach is that a user may not place
 actions in a ``good'' order in the TSTL definition.  What if
 normalization rewrites actions into ``more complex'' rather than
 simpler actions?  The key insight is that, with the exception of cases
-such as ordering numeric ranges naturally, the ordering \emph{does not usually
+such as ordering numeric ranges naturally, the ordering usually \emph{does not
   matter}, it only matters that there exists \emph{some order} to
 guide normalization and generalization.  Actions will
 only be replaced or swapped if, causally, the predicate is \emph{indifferent}
