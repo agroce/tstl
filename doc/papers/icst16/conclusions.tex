@@ -9,15 +9,15 @@ users of automated testing with a \emph{single test case, as short and
 rewriting numerous distinct failing test cases into a smaller, often
 minimal, set of simpler test cases.  Generalization uses
 automated experiments to identify essential and accidental aspects of
-a test case.  The algorithms for normalization and generalization rely
+a test case.   In our experiments, normalization reduces the
+number of failures a user must examine by over an order of magnitude
+compared to delta-debugging alone.  The algorithms for normalization and generalization rely
 on the ability of TSTL \cite{NFM15,ISSTA15} to define a total order
 over test actions, based on an abstract form for test cases, suitable
 for term rewriting.  TSTL-based normalization is thus applicable to
 any SUT, any source language, and any test generation method,
 including methods that already produce short tests
-\cite{FA11,SoftBET}.  In our experiments, normalization reduces the
-number of failures a user must examine by over an order of magnitude
-compared to delta-debugging alone.
+\cite{FA11,SoftBET}. 
 
 
  The goal of normalization and generalization can also be pursued in
