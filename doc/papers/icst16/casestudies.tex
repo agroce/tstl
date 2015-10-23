@@ -53,46 +53,45 @@ for an average of only 2.4 non-cache-hit rewrites of each test.  Note
 that this is with the cache starting empty for each of the 82 mutants.
 
 AVLTree mutants also provided a way to evaluate the danger of
-normalization losing faults by changing a test case failing due to one
-fault into a test case failing due to a different fault, a problem
-known as ``slippage'' when it occurs with delta-debugging
-\cite{PLDI13}.  AVLTree is a particularly challenging setting in this
-regard, as there are very few API calls, and all calls take the same
-simple inputs, so test cases for faults are likely to be very close to
-each other in the combinatorial space.  To test the slippage rates for
-normalization, we randomly selected 364 mutant pairs drawn from the 82
-detectable mutants, and produced higher-order-mutants for each of
-these by applying both mutants (using only mutants that modified
+normalization losing faults.  Faults can be lost when normalization
+changes a test case failing due to one fault into a test case failing
+due to a different fault, a problem known as ``slippage''
+\cite{PLDI13}.  AVLTree provides a slippage challenge, as there are
+very few API calls, and all calls take the same inputs, so test cases
+for faults are likely to be very close to each other in the
+combinatorial space.  To test the slippage rates for normalization, we
+randomly selected 364 mutant pairs drawn from the 82 detectable
+mutants, and produced higher-order-mutants for each of these by
+applying both mutants to the source (using only mutants that modified
 different source lines).  Of these, the set of reduced test cases
 included at least one test capable of exposing each of the two faults
-for only 238 pairs (in almost all cases due to reduction slippage, but
-in a few cases due to one fault completely masking the other fault:  e.g., if
-{\tt insert} always fails, it is not possible to produce a test case
-that exposes a fault in {\tt delete} on a non-empty tree).
+for only 238 pairs.  In almost all cases this was due to reduction
+slippage, but in a few cases it was due to one fault completely
+masking another: e.g., if {\tt insert} always fails, it is not
+possible to produce a test case that exposes a fault in {\tt delete}
+on a non-empty tree.
 
 Out of these 238 mutant pairs, normalization produced test cases
 exposing both faults for 80.7\% of pairs (19.3\% slippage at the
 suite level).  Interestingly, in 4 cases
 normalization took a set of reduced test cases not capable of exposing
 both faults, and produced a smaller set of test cases that was capable
-of detecting both faults (this is not counted into the slippage
-measure).  Arguably this is ``slippage'' in that a test case not
+of detecting both faults.  Arguably this is ``slippage'' in that a test case not
 capable of exposing fault F was modified to expose fault F (classic
 slippage) but since the new test suite exposed both faults,
 normalization actually restored fault detection.
 
-Data on slippage is not extensive (in part because few actual testers
+Data on slippage is not extensive, in part because few actual testers
 read unreduced test cases, so it is only detected if the original test
 cases before reduction are stored and re-executed after bugs have been
-fixed), but in our own previous work \cite{PLDI13}, slippage due to
+fixed.  In our own previous work \cite{PLDI13}, slippage due to
 reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
 for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For our
 own AVLTree example, the slippage rate for reduction (ignoring
 normalization) is almost 30\%.  As a simple mitigation, we propose
-storing at least reduced test cases, and ideally the original,
-unreduced test cases, as a
-slippage check when all faults detected by normalized test cases
-are fixed.  
+storing at least reduced test cases, and ideally the unreduced test
+cases, as a slippage check when all faults detected by normalized test
+cases are fixed.
 
 The reduction in test cases produced by normalization for mutant pairs
 was, as with single mutants, very large (Figure \ref{normeffect}).
@@ -101,12 +100,11 @@ For mutant pairs, the mean/median number of distinct failures was
 normalization.  The runtime for normalization was essentially
 unchanged from the single-mutant numbers given above.  For reduction
 alone, using pairs increased the number of distinct failures, while
-normalized failure counts actually decreased.  For 48.3\% (115 of 238) of
-mutant pairs where reduction did not lose a fault, normalization was
-``perfect'' --- it preserved both faults and produced only 1 or 2 test
+normalized failure counts decreased.  For 48.3\% (115 of 238) of
+mutant pairs where reduction did not lose a fault, normalization
+worked as well as possible --- it preserved both faults and produced only 1 or 2 test
 cases\footnote{It is possible to detect both faults with a single test
-  case, if that test case fails when \emph{either} fault is
-  present.}. 
+  case, if that test case fails when \emph{either} fault is present.}.
 
 \subsection{XML Parser}
 
@@ -118,19 +116,20 @@ name.  A comment in the code indicates the seeded fault is realistic.  Running 1
 produced 848 failing test cases.  Without normalization, it took only
 37.45 seconds to execute and delta-debug all 1,000 tests.  The output was 717 distinct failing test
 cases.  Normalization increased the runtime to 354.7 seconds, but
-reduced the number of failures to just 5: 3 failures
+reduced the number of failures to just 5: 3 
 for the original fault and 2 for the seeded fault.
 %Generalization took < 5 seconds.
 
 
 \subsection{TSTL}
 
-As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own API
-interface (the TSTL compiler is about 1,600 LOC; a compiled SUT is
-often 30KLOC or larger).  For the only fault discovered so far in
-testing the latest version of TSTL, the cache-related problem mentioned above, generating
-and reducing 100 test cases required 1,090 seconds and produced 90 failures.  Adding normalization and generalization increased
-the runtime to 3,690 seconds, but produced just two failures.
+As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own
+API interface (the TSTL compiler is about 1,600 LOC; a compiled SUT is
+often 30KLOC or larger).  We only discovered one fault while testing
+the latest version of TSTL, the cache-related problem shown in Figure \ref{fig:mislead}.
+Generating and reducing 100 test cases for it required 1,090 seconds
+and produced 90 failures.  Normalization and generalization
+increased total runtime to 3,690 seconds, and produced just 2 failures.
 
 \subsection{NumPy}
 
@@ -138,50 +137,49 @@ Our final two case studies provide little information on the ability
 of normalization to reduce the number of failing tests; for these
 SUTs, failure rates are low enough or test case reduction runtimes high
 enough that each failure is dealt with one-by-one.  However,
-normalization and generalization are, we claim, also useful for
+normalization and generalization are also useful for
 individual test cases.
 
-NumPy \cite{NumPy} is a very widely used Python library/extension that
+NumPy \cite{NumPy} is a widely used Python library that
 supports large, multi-dimensional matrices and provides a huge library
-of mathematical functions.  The popular SciPy library for scientific
+of mathematical functions.  The SciPy library for scientific
 computing builds on NumPy.  Developing tests for NumPy is challenging,
 because none of the authors are experts in numeric computation, and
 the specification of correct behavior is often somewhat subtle.  As a
 simple example, consider the test case in Figure \ref{numpyorig},
 normalized and generalized in Figure \ref{numpynormgen}.  Prior to
 normalization, understanding why the test case leads to a violation of
-self-equality for an array is, to say the least, non-trivial.  After
+self-equality for an array is difficult.  After
 normalization, it is much clearer what is happening: 1) {\tt array0}
-contains {\tt NaN} 2) this is in fact correct behavior (the array
+contains {\tt NaN} and 2) this is correct behavior (the array
 \emph{should} contain {\tt NaN}).  The greater length and much larger
 number of operations involved in the original reduced test case
 obscures this critical point.  In NumPy, array equality does not hold
 for objects containing {\tt NaN}, so the assertion must be modified.
 As far as we know, normalization transforms all instances of this
-fault into this canonical test case, but our data (over fewer than 30
+fault into this canonical test case, but our data (for fewer than 30
 failures) is insufficient to make a definite claim, as the failure rate
 is slightly less than 3 failures/100,000 tests on average.
 
-
-Other, more complex, failures have also made it clear that normalization
-is useful for additional test case length reduction for NumPy, and
-that generalization makes any surprising restrictions on test values
-clear.  For NumPy tests, normalization takes much longer than
-reduction, in part due to the expense of operations on large arrays.
-Over almost all examples, the average time to reduce tests is about
-4-5 seconds, and the time for normalization is between 712 and 774
-seconds.  The average time to discover a failing test case, for
-comparison, is just over 400 seconds.  Generalization takes between 52
-and 59 seconds in these cases.  The exception was a test case of
-45,206 steps (!)  leading to a memory exhaustion error and crash,
-reduced (over a period of nearly a day) to a test case with 10 steps,
-which then normalized (in only 2 hours) to a test case with 8 steps,
-involving no operations other than array initialization (with zeros or
-ones), array flattening, and array addition (the original test case
-involved larger dimensions, array multiplication, and array
-subtraction).  This is the only case in which we have seen
-normalization time lower than reduction time, without assistance from
-the cache.
+Other, more complex, failures have also made it clear that
+normalization is useful for additional test case length reduction for
+NumPy, and that generalization makes any surprising restrictions on
+test values clear.  For NumPy tests, normalization takes much longer
+than reduction, in part due to the expense of operations on large
+arrays.  For almost all test cases, the average time to reduce tests
+is about 4-5 seconds, and the time for normalization is between 712
+and 774 seconds.  The average time to discover a failing test case,
+for comparison, is just over 400 seconds.  Generalization takes
+between 52 and 59 seconds in these cases.  The exception was a test
+case of 45,206 steps (!)  leading to a memory exhaustion error and
+crash.  This was reduced (over a period of nearly a day) to a test
+case with 10 steps, which then normalized (in only 2 hours) to a test
+case with 8 steps.  The normalized test case involved no operations other than array
+initialization, array flattening, and array
+addition.  The reduced test case required larger dimensions, array
+multiplication, and array subtraction, as well.  This is the only case in
+which we have seen normalization time lower than reduction time,
+without assistance from the cache.
 
 \begin{figure}
 {\scriptsize

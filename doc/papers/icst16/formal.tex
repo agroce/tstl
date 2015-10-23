@@ -575,7 +575,7 @@ sut0.normalize(test0,pred0)            \textcolor{black!60}{\# STEP 6}
 \textcolor{black!60}{\#     )}
 \end{code}
 }
-\caption{Generalized test for TSTL itself, showing fresh-object
+\caption{Generalized test for TSTL itself, showing fresh value
   generalization.}
 \label{fig:mislead}
 \end{figure}
@@ -645,9 +645,9 @@ pools.
 One intuitive concern with this approach is that a user may not place
 actions in a ``good'' order in the TSTL definition.  What if
 normalization rewrites actions into ``more complex'' rather than
-simpler actions?  The key insight is that, with the exception of cases
-such as ordering numeric ranges naturally, the ordering usually \emph{does not
-  matter}, it only matters that there exists \emph{some order} to
+simpler actions?  In fact, the exact ordering usually \emph{does not
+  matter}, it only matters that there exists \emph{some ordering} to
 guide normalization and generalization.  Actions will
 only be replaced or swapped if, causally, the predicate is \emph{indifferent}
-to the choice.
+to the choice.  The normal form's \emph{existence} matters. not the
+precise contents, in the context of that semantic restriction.
