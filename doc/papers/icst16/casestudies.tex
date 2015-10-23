@@ -268,81 +268,80 @@ Esri is the single
 largest Geographic Information System (GIS) software vendor, with about 40\%
 of global market share.  Esri's ArcGIS tools are extremely widely
 used for GIS analysis, in government, scientific research, commercial
-enterprises, and education.  Automation for complex GIS analysis and
-data management is a frequent need, and Esri has long provided tools
-for programming their GIS software systems.  The current method of
-choice is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
+enterprises, and education.  Automation is essential for complex GIS analysis and
+data management, and Esri has long provided tools
+for programming their GIS software systems.  One such tool
+(Esri's newest) is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
 with dozens of classes and hundreds of functions distributed over
 a variety of of toolboxes.  Most of the code involved in ArcPy
-functionality is C++ for which source is unavailable (the source for
-the actual ArcGIS tools); the Python source alone is over 50,000 lines
-of code.
+functionality is the C++ source for ArcGIS itself (which is not
+available) but the released Python interface code alone is over 50KLOC.
 
-In order to improve the reliability of ArcPy, we have been
-implementing a TSTL-based framework for testing ArcPy itself as well
-as libraries based on ArcPy.  The TSTL definition is already more than
-twice as large as the next-largest example previously studied, even
-though it only includes a small portion of ArcGIS so far. The first
+In order to improve the reliability of ArcPy, we are developing a
+TSTL-based framework for testing ArcPy itself, as well as libraries
+based on ArcPy.  The ArcPy TSTL is already more than twice as large as
+the next-largest TSTL harness previously studied, even though it only
+includes a small portion of ArcGIS functionality so far. The first
 stage of testing has resulted in discovery of multiple faults in
-ArcPy/ArcGIS, six of which not only cause incorrect behavior but
-cause a crash that also ends testing.  Before proceeding to more
-nuanced testing, it is critical to understand these faults, the set of
-behaviors that trigger them, and modify the test definition to avoid
-triggering these faults with minimal limitations on thorough testing.
+ArcPy/ArcGIS, six of which not only cause incorrect behavior but cause
+a crash that also ends testing.  It is critical to understand these
+faults, the set of behaviors that trigger them, and modify the test
+definition to avoid triggering these faults while imposing minimal limitations
+on thorough testing for other faults.
 
 There is no space in this paper to elaborate on the details of this
-large test effort (which has required adding numerous additional
-features and modes to TSTL), but normalization and generalization have
-been very useful in this process.  Figures \ref{esriorig} and
+large test effort (which has introduced numerous additional features
+and modes to TSTL), but normalization and generalization have been
+very useful in this process.  Figures \ref{esriorig} and
 \ref{esrinormgen} show one crash-inducing test case, after initial
 delta-debugging (from over 2,000 test steps) (Figure \ref{esriorig})
-and with normalization and generalization (Figure \ref{esrinormgen}).
-First, in this setting normalization has contributed a surprising
-amount of additional reduction over delta-debugging.  In this example,
-normalization reduced the length from 19 steps to 11 steps; in another
-case, it reduced the test case from 18 to 14 steps, and in yet another
-crash fault, it reduced the test case from 27 to 20 steps (one crash
-fault only reduced from 10 steps to 9 steps, but the omission was
-informative).  The cost of normalization is high --- in our runs, it
-has taken from 17,340 seconds up to 24,769 seconds.  However, in this
-setting even delta-debugging is extremely expensive --- the cost of
-reduction alone has ranged from 7,930 seconds to 8,688 seconds.
-Generalization has taken from under an hour (3,203 seconds) up to
-11,149 seconds.  These costs are due in part to the need to run tests
-in a sandbox environment to avoid killing the Python testing process,
-and in part due to the cost of running complex GIS analyses.  However,
-even with this high cost, reducing, normalizing, and generalizing test
-cases has been a more effective use of our time than trying to
-understand the faults without these aids.  For example, in the test
-case shown in this paper, it was important to understand that the SQL
-query and selection type were not essential, but using a freshly
-created layer will not result in a crash: the problem appears to be
-that ArcGIS (or ArcPy) does not invalidate layers built from a feature
-class when that feature class is deleted\footnote{In this instance, a
-  generalization (the fresh values generalization in particular) is
-  informative even though it does not allow any generalization;
-  knowing that it was attempted, but prevented the failure, is also
-  valuable.}.  The original, non-normalized test case makes this far
-less clear, as the use of {\tt CopyFeatures} and the multiplicity of
-shapefiles involved disguises the essence of the problem.
+and after normalization and generalization (Figure \ref{esrinormgen}).
+In this setting normalization has contributed a significant amount of
+additional reduction over delta-debugging.  For the crash fault shown
+in this paper, normalization reduced the length from 19 steps to 11
+steps.  For three other crashes, normalization reduced the test cases
+from 18 to 14 steps, from 27 to 20 steps, and from 20 to 16 steps. One crash fault only reduced from 10 steps to 9 steps, but the
+omission was informative.  The cost of normalization is high --- in
+our runs, it has taken from 17,340 seconds up to 24,769 seconds.
+However, in this setting even delta-debugging is extremely expensive
+--- the cost of reduction alone has ranged from 7,930 seconds to 8,688
+seconds.  Generalization has taken between 3,203 and
+ 11,149 seconds.  These high costs are due to the need to run
+tests in a sandbox environment to avoid killing the Python testing
+process, and the runtime of complex GIS analyses, with individual
+actions sometimes requiring minutes to execute.
+Even under these circumstances, reducing, normalizing, and
+generalizing test cases has been a more effective use of human time than
+trying to understand the faults without these aids.  For example, in
+the test case shown in this paper, it was important to understand that
+the SQL query and selection type are not essential, but using a
+freshly created layer will not result in a crash: the problem appears
+to be that ArcGIS (or ArcPy) does not invalidate layers built from a
+feature class when that feature class is deleted\footnote{In this
+  instance, a generalization (the fresh values generalization in
+  particular) is informative even though it does not allow any
+  generalization; knowing that it was attempted, but prevented the
+  failure, is also valuable.}.  The original, non-normalized test case
+makes this far less clear, as the use of {\tt CopyFeatures} and the
+multiplicity of shapefiles involved disguises the essence of the
+problem.
 
-In addition to helping us understand failures, normalization and
-generalization are also being used to prepare an API-behavior
-regression suite for ArcPy.  One of the challenges of using a large
-API like ArcPy is that behavior of the system can change from version
-to version; in some cases this is due to new faults, or fixed faults,
-but in other cases there is simply an undocumented change.  In order
-to assist ArcPy developers, we are preparing a test suite that covers
-as much as possible of the Python source for ArcPy, in the latest version of ArcPy,
-10.3, and records the values returned in 10.3.  For future versions of
-ArcPy (or older versions), a ``semantic diff'' with 10.3, based on
-these calls, can be produced by running this suite.  The tests in the
-suite are normalized and generalized to help users understand the
-conditions behind an API usage's behavior, not just one set of
-values.  This ``coverage regression'' quick test \cite{icst2014} may
-also be useful for helping users understand the API, since the set of
-online examples of usage from Esri is usually limited to a small set
-of parameter combinations.
+Normalization and generalization are also being used to prepare an
+API-behavior regression suite for ArcPy.  One of the challenges of
+using a large API like ArcPy is that behavior of the system can change
+from version to version.  In some cases this is due to new faults, or
+fixed faults, but in other cases there is an undocumented change,
+especially for unusual input combinations.  In order to assist ArcPy
+developers, we are preparing a test suite that covers as much as
+possible of the Python source in the latest version of ArcPy, 10.3,
+and records the values returned.  For future versions of ArcPy (or
+older versions), a ``semantic diff'' with 10.3, based on these calls,
+can be produced by running this suite.  The tests in the suite are
+normalized and generalized to help users understand the set of
+conditions behind an API usage's behavior.  This ``coverage
+regression'' quick test \cite{icst2014} will also be
+useful for understanding  the API, since the set of online examples of usage
+from Esri is usually limited to a small set of parameter combinations.
 
 \begin{figure}
 {\scriptsize 
