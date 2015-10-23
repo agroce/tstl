@@ -256,10 +256,9 @@ Covers the case where two actions can be swapped in the test, with the
 lower-indexed action now appearing earlier.
 \item {\bf ReduceAction:}
 $t' = t[(i: a) \Rightarrow (i: a')]$\\
-\-\ \ \ \emph{where} $|ddmin(t')| < |ddmin(t)|$\\
+\-\ \ \ \emph{where} $|ddmin(t')| < |t|$\\
 Covers the case where an action can be replaced by any action (not just lower-indexed
-actions) and this enables further delta-debugging-based reduction of
-the test case's length.
+actions) and this enables further delta-debugging.
 \end{enumerate}
 
 \subsubsection{Normalization Algorithm}
