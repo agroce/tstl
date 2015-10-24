@@ -3,12 +3,12 @@
 This work builds on the idea behind delta-debugging \cite{DD}: test
 cases should not contain extraneous information that is not needed to
 reproduce failure (or some other behavior, as in more recent work
-\cite{icst2014,stvrcausereduce}).  It extends this concept from
-removal of test components to the modification of actions in a test.
-In some cases also allows further reduction of the length of the test
-case as well.  Delta-debugging and slicing \cite{TCminim} are limited,
-generally, to producing subsets of the original test case, not
-modifying parts of the test to obtain further simplicity.  Some
+\cite{icst2014,stvrcausereduce}).  Delta-debugging and slicing
+\cite{TCminim} are limited, generally, to producing subsets of the
+original test case, not modifying parts of the test to obtain further
+simplicity.  We extend this concept by also allowing modification or
+re-ordering of actions in a test.  In some cases these changes
+allows further reduction of the length of the test case as well.  Some
 earlier work in bounded model checking modified counterexamples to use
 numerically smaller values \cite{MakeMost} but otherwise did not aim
 to simplify or normalize failures.
@@ -41,7 +41,7 @@ related, in that it aims to ``simplify'' tests in a way that goes
 beyond measuring test length.  Work on readable tests is primarily
 intended to assist debugging in  terms of human-factors, while our
 normalization and generalization aims to increase the information
-density of a test (likely increasing readability as well), and to address the fuzzer taming problem.  The approaches are
+density of a test (potentially increasing readability as well), and to address the fuzzer taming problem.  The approaches are
 completely orthogonal: our normalized tests could be altered to
 improve readability by these methods.
 

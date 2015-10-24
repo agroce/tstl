@@ -2,7 +2,7 @@
 
 It has long been understood that effective automated testing often requires
 test case reduction \cite{DD,MinUnit,TCminim,ICSEDiff} to produce test cases
-that remove irrelevant operations\footnote{Algorithms such as
+without irrelevant operations\footnote{Algorithms such as
   bounded-exhaustive testing \cite{SoftBET} or some search-based approaches that
   optimize for short test cases \cite{FA11} may not require reduction, but random
   testing \cite{RandFormal,HamletOnly}, model-checking \cite{Gastin04minimizationof}, and other
@@ -26,7 +26,7 @@ failing test cases will present all three of these tests for a user to examine.
 While there are methods for attempting to determine which test cases
 represent distinct faults \cite{PLDI13}, the ideal solution is
 to convert all three of these test cases into a single,
-\emph{canonical} form that preserves the structure of the failure while removing
+\emph{canonical} form that preserves the structure of the failure while de-emphasizing
 such accidental aspects of each test case as the particular integer
 values and variables used, and the ordering of assignments and
 insertions.  Unlike delta-debugging, this concept applies even to 
@@ -37,10 +37,10 @@ Figure \ref{normalgen} shows the result of applying our \emph{test
 applying our \emph{test case generalization} algorithm to the
 normalized test case.  \emph{All three test cases normalize to the
   same test case}.  The test case also includes comments, produced by
-the generalization \cite{SmartCheck} algorithm, indicating
+our \emph{generalization} \cite{SmartCheck} algorithm, indicating
 what about the test case can be changed while preserving the property
 that the test fails.  For
-instance, the value 1 assigned to {\tt int0} in step 0 is not
+example, the value 1 assigned to {\tt int0} in step 0 is not
 essential.  It could be changed to any value in the range 5-20 (1-20
 is the range of values allowed by the test generator) without changing
 the final result.  The same is true of the assignment of 3 to {\tt

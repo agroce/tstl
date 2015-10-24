@@ -81,14 +81,13 @@ capable of exposing fault F was modified to expose fault F (classic
 slippage) but since the new test suite exposed both faults,
 normalization actually restored fault detection.
 
-Data on slippage is not extensive, in part because few actual testers
-read unreduced test cases, so it is only detected if the original test
+Data on slippage is not extensive, in part because it is only detected if the original test
 cases before reduction are stored and re-executed after bugs have been
 fixed.  In our own previous work \cite{PLDI13}, slippage due to
 reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
 for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For our
-own AVLTree example, the slippage rate for reduction (ignoring
-normalization) is almost 30\%.  As a simple mitigation, we propose
+own AVLTree example, the slippage rate for reduction is almost 30\%,
+considerably worse than that for normalization.  As a simple mitigation, we propose
 storing at least reduced test cases, and ideally the unreduced test
 cases, as a slippage check when all faults detected by normalized test
 cases are fixed.
@@ -137,7 +136,7 @@ Our final two case studies provide little information on the ability
 of normalization to reduce the number of failing tests; for these
 SUTs, failure rates are low enough or test case reduction runtimes high
 enough that each failure is dealt with one-by-one.  However,
-normalization and generalization are also useful for
+normalization and generalization are also useful for understanding
 individual test cases.
 
 NumPy \cite{NumPy} is a widely used Python library that
