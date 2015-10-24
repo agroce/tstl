@@ -29,15 +29,17 @@ to convert all three of these test cases into a single,
 \emph{canonical} form that preserves the structure of the failure while removing
 such accidental aspects of each test case as the particular integer
 values and variables used, and the ordering of assignments and
-insertions.
+insertions.  Unlike delta-debugging, this concept applies even to 
+test generation methods that produce short or even guaranteed-minimal tests.
 
 Figure \ref{normalgen} shows the result of applying our \emph{test
-  case normalization} algorithm to these three tests, and then
+  case normalization} algorithm to the three tests in Figure \ref{threetests}, and then
 applying our \emph{test case generalization} algorithm to the
 normalized test case.  \emph{All three test cases normalize to the
-  same test case}.  The test case also includes comments indicating
+  same test case}.  The test case also includes comments, produced by
+the generalization \cite{SmartCheck} algorithm, indicating
 what about the test case can be changed while preserving the property
-that the test fails, produced by the generalization \cite{SmartCheck} algorithm.  For
+that the test fails.  For
 instance, the value 1 assigned to {\tt int0} in step 0 is not
 essential.  It could be changed to any value in the range 5-20 (1-20
 is the range of values allowed by the test generator) without changing

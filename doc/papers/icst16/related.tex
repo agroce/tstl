@@ -21,20 +21,20 @@ application of automated testing.  Previous work on fuzzer taming
 syntactic duplicates.
 
 Zhang \cite{SaiSimple} proposed an alternative approach to semantic
-test simplification that, like our approach, is able to
-modify, rather than simply remove, portions of a test.  However,
-because Zhang operates directly over a fragment of the Java language,
-rather than using an abstraction of test actions allowed, the set of
-rewrite operations performed is highly restricted:  no new methods can
-be invoked, statements cannot be re-ordered, and no new values are
-used.  These restrictions limit the approach's ability to simplify tests and make it a
-weak normalizer.  The approach also performs little syntactic
-normalization: e.g., it does not even force a test to use fixed
-variable names when variable name is irrelevant.
-CReduce \cite{CReduce} performs some simple normalization as part of a
-complex test-case reduction scheme for C code, and the
-peephole-rewrite scheme used in CReduce is also an inspiration for the
-approach taken by our normalizer.
+test simplification that, like our approach, is able to modify, rather
+than simply remove, portions of a test.  However, because Zhang
+operates directly over a fragment of the Java language, rather than
+using an abstraction of test actions allowed, the set of rewrite
+operations performed is highly restricted: no new methods can be
+invoked, statements cannot be re-ordered, and no new values are used.
+These restrictions limit the approach's ability to simplify tests and
+make it inappropriate for  normalization, as opposed to simplification.  The approach also performs little
+syntactic normalization: e.g., it does not even force a test to use
+fixed variable names when variable name is irrelevant.  CReduce
+\cite{CReduce} performs some simple normalization as part of a complex
+test-case reduction scheme for C code, and the peephole-rewrite scheme
+used in CReduce is also an inspiration for the approach taken by our
+normalizer.
 
 Work on producing readable tests \cite{Guava,Readable} is also
 related, in that it aims to ``simplify'' tests in a way that goes

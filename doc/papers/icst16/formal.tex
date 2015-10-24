@@ -51,9 +51,10 @@ TSTL \cite{NFM15,ISSTA15} is a language for defining the structure of
 test cases (usually API-call sequences, but also grammar-based tests using
 string construction), and a set of tools for use in generating,
 manipulating, and understanding those test cases.  Figure
-\ref{fig:example} shows a simplified portion of a TSTL definition of
+\ref{fig:example} shows a simplified portion of a TSTL definition
+(called a harness) of
 tests for an AVL tree class, in the latest syntax for TSTL (which
-differs slightly from that in the cited papers introducing TSTL).
+differs slightly from syntax in the cited papers introducing TSTL).
 TSTL provides numerous features not shown in this small example,
 including automatic differential testing, complex logging, support for
 complex guards, and use of pre- and post- values.  Given a harness
@@ -73,7 +74,7 @@ example, there are two pools, one named {\tt int} and one named {\tt
   avl}.  There are four instances of the {\tt int} pool, which means
 that a test in progress can store up to 4 {\tt int}s at one time (in
 variables named {\tt int0}, {\tt int1}, {\tt int2}, and {\tt int3}), and three
-instances of the {\tt avl} pool.  The actions defined here are setting
+instances of the {\tt avl} pool.  The actions defined are: setting
 the value of an {\tt int} pool to any integer in the range 1-20
 inclusive, setting the value of an {\tt avl} pool to a newly
 constructed AVL tree, and calling an AVL tree's {\tt insert}, {\tt
@@ -152,7 +153,7 @@ rules such that for a test $t$, the rules define a
 finite set of candidate tests $t' \in C(t)$, possible simplifications
 of $t$, where each $t'$ is the result of applying some rewrite, $r_i$
 to $t$.  The notion of simplicity is defined by a restriction on the
-rewriting rules.  For any test case $t$ and rewrite $r_i \in C(t)$, we
+rewriting rules.  For any test case $t$ and rewrite $r_i : r_i(t) \in C(t)$, we
 require that $|C(r_i(t))| < |C(t)|$.  Such a rewrite system is
 necessarily \emph{strongly normalizing}: any sequence of rewrites
 chosen will eventually end in a term (test case) that cannot be
@@ -222,7 +223,7 @@ the moved steps, again preserving order.
 $t' = t[a \Rightarrow a']$\\
 \-\ \ \ \emph{where} $a' < a$\\
 Covers the case where all appearances of an action can be replaced with a 
-simpler (lower-indexed) action. 
+lower-indexed action. 
 \item {\bf ReplacePool:}
 $t' = t(i,j)[p \Rightarrow p']$\\ 
 \-\ \ \ \emph{where} $p < p'$ and $0 \leq i < j <
@@ -253,7 +254,7 @@ $t' = t[(i: a) \Rightarrow (i: b), (j: b) \Rightarrow (j: a)]$\\
 \-\ \ \ \emph{where} $i < j$ and
 $b < a$\\
 Covers the case where two actions can be swapped in the test, with the
-lower-indexed action now appearing earlier.
+lower-indexed action appearing first.
 \item {\bf ReduceAction:}
 $t' = t[(i: a) \Rightarrow (i: a')]$\\
 \-\ \ \ \emph{where} $|ddmin(t')| < |t|$\\
@@ -269,8 +270,8 @@ order in our default implementation is the order above, with the
 modification that in practice the {\bf ReplacePool} and {\bf
   ReplaceMovePool} rewrites are checked in the same loop
 (e.g., for every possible replacement of a pool, both rules are
-checked, in the order given above).  The core algorithm, given a set
-of ordered rewrite rules defining $C(t)$ is given as Algorithm
+checked, in the order given above).  The core algorithm, assuming a set
+of ordered rewrite rules defines $C(t)$, is given as Algorithm
 \ref{simpalg}.  Here {\tt pred} is an arbitrary predicate indicating
 that the candidate test still satisfies the property of interest that
 held for the original test $t$.  In most cases, this predicate will be
@@ -311,7 +312,7 @@ not usually change by more than a few steps during normalization.
 
 How many rewrites can a test case $t$ have?  Assume there are $k$
 steps in the test case and $\alpha$ possible actions.  The action
-replacements rewrites ({\bf SimplifyAll}, {\bf SimplifySingle}, and
+replacement rewrites ({\bf SimplifyAll}, {\bf SimplifySingle}, and
 {\bf ReduceAction}) allow for at most $k (\alpha-1)$ rewrites each.  There
 are $\leq k^2$ possible {\bf SwapAction} rewrites, and $\leq k^2(\alpha-1)$
 possible rewrites for each of {\bf ReplacePool}, {\bf
@@ -325,7 +326,8 @@ most $n=k^2 + 3k^2(\alpha-1) + 3k(\alpha-1)$ rewrites, over-approximating (since
 an action cannot be rewritten to itself).  Each rewrite also
 requires a \emph{ddmin} call, which is quadratic in $k$ \cite{DD}.
 Substituting this expression into the expression $\frac{n(n+1)}{2}$
-above, we see that the cost for normalization is $O(k^4\alpha^2)$.  While
+above, we see that the worst-case cost for normalization is
+$O(k^4\alpha^2)$.  While this is
 worse than the quadratic cost of delta-debugging, this algorithm is
 applied to already 1-minimal test cases, unlike delta-debugging. The $k$ in our quartic complexity
 is therefore, for random test cases, typically an order of magnitude smaller
@@ -368,7 +370,7 @@ been examined by a human, for bug triage \cite{PLDI13}.
 
 The simplest and most important optimization is to improve on the
 constant ordering of rewrite rules.  In our implementation, once a
-rule fails to produce a candidate that satisfies {\tt pred} that rule
+rule fails to produce a candidate that satisfies {\tt pred}, that rule
 is moved to the end of the ordering of rewrites.  This optimization
 followed the observation that once a rule fails once to produce any
 valid rewrites for a test case, it frequently produces no further
@@ -381,7 +383,8 @@ it still requires  less than a minute to run.  However, when test case
 execution is expensive, the set of candidate test cases must be
 further restricted.  In our experiments, we found that restricting
 action replacements to cases where the Levenshtein \cite{Lev} distance
-(text edit distance) between the code for the actions was bounded was effective in reducing runtime, while almost always having no
+(text edit distance) between the code for the actions was bounded to
+some small value (5 to 25 characters) was effective in reducing runtime, and often had no
 impact on the final result.  In practice, most test actions can only
 be replaced by syntactically similar actions, without completely
 changing test semantics.
@@ -482,7 +485,7 @@ cause the test case to no longer fail.  Many others, however, are
 values and step ordering (enforced by the normalization
 process) but many such choices are arbitrary, or at least allow
 variance, with respect to the cause of failure.  Generalization
-performs experiments to distinguish essential and accidental aspects
+automatically performs experiments to distinguish essential and accidental aspects
 of a test case, and summarizes the results.  The core algorithm
 (Algorithm \ref{genalg}) is simple.
 
