@@ -32,7 +32,11 @@ will cause the same problem): (Figure \ref{fault1}).  The underlying issue seems
 while operations on a deleted feature class properly notify a user the
 feature class does not exist, ArcPy or ArcGIS does not track that
 layers depending on that feature should also be deleted/invalidated
-when the feature class is deleted.
+when the feature class is deleted.  Layers are not copies
+of a feature class, but essentially new views of a feature class.
+This means that when the underlying feature class is modified or
+deleted, the view needs to be updated to reflect that change, and this
+is not always correctly implemented.
 
 \begin{figure}
 {\scriptsize 
@@ -85,8 +89,8 @@ ArcPy crashes when asked to compute statistics (wth the {\tt FIRST} or
 {\tt LAST} statistics types) over a field of a layer, when that field
 has been deleted from the underlying feature class:  Figure
 \ref{fault2}.  This is possibly related to the first crash fault:
-ArcGIS does not seem to properly propagate changes to an underlying
-feature class to layers created on that feature class using a {\tt
+ArcGIS again does not seem to properly propagate changes to an underlying
+feature class to layers (which seem to be views) created on that feature class using a {\tt
   MakeFeatureLayer} call.
 
 \begin{figure}
