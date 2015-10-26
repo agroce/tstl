@@ -1,14 +1,20 @@
 \section{Language Changes}
 
 The original syntax for TSTL \cite{NFM15} used the {\tt \%} sign to
-indicate TSTL constructs and pool variables.  Unfortunately, this
-produced code that was difficult to read.  The first author suggested
-using a notation more similar to that used to describe the grammar of
-TSTL itself, enclosing pools in angle brackets.  Because C++ and a few
-other languages use angle brackets for other purposes, and in order to
-avoid breaking old harnesses, TSTL continues to allow the {\tt \%}
-notation, but future TSTL harnessess for Python will use the more
-readable syntax.
+indicate TSTL constructs and pool variables.  For example, the
+assignment of range values to the integer pool in the AVL example
+would read:  {\tt \%INT\% := \%[1..20]\%}.  This syntax
+produced code that was difficult to read and (in our opinion) unattractive.  The first
+author suggested using a notation more similar to that used to
+describe the grammar of TSTL itself, enclosing pools in angle
+brackets.  On examination, this syntax better reflects the nature of
+TSTL pools, since it resembles a BNF (Backus-Naur Form) grammar, and
+pools in actions are
+conceptually more similar to a grammar non-terminals than simple variables.  Because
+C++ and a few other languages use angle brackets for other purposes,
+and in order to avoid breaking old harnesses, TSTL continues to allow
+the {\tt \%} notation, but future TSTL harnessess for Python will use
+the more readable syntax.
 
 We are also considering, as a result of the experience of developing
 the ArcPy harness, moving to a more structured form for TSTL files.
@@ -30,9 +36,10 @@ elements in action definitions.  For example, in the TSTL harness, 36
 actions allow the {\tt arcpy.ExecuteError} exception to be raised,
 which has to be stated for every individual action, and to avoid some
 faults a large number of actions may eventually be disallowed for
-feature classes or layers with active cursors.  Introducing
-nested action groups, which can share guards, allowed exceptions, and post-conditions
-could make reading complex TSTL code easier.  We are currently working to
-define these language changes, without breaking existing TSTL code.
-Discovering the need for this kind of feature without testing a system
-as complex as ArcPy would be difficult.
+feature classes or layers with active cursors.  Introducing nested
+action groups, which can share guards, allowed exceptions, and
+post-conditions could make reading complex TSTL code easier.  We are
+currently working to define these language changes in a way that does
+not break existing TSTL code.  Discovering the need for this kind of
+feature without testing a system as complex as ArcPy would be
+difficult.

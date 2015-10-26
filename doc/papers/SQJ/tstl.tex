@@ -83,7 +83,10 @@ grammar-based tests using string construction), and a set of tools for
 use in generating, manipulating, and understanding those test cases.
 Figure \ref{fig:example} shows a TSTL definition of tests (known as a
 harness definition, or \emph{harness} for short) for a Python class
-implementing AVL trees, in the latest syntax for TSTL (modified in the
+implementing AVL trees\footnote{AVL trees, named after Georgy
+  Adelson-Velsky and Evgenii Landis \cite{AVL} are balanced tree
+  structures similar to red-black trees; they are also frequently used as
+  examples in software testing \cite{FASE,ISSRE}.} \cite{avltree}, in the latest syntax for TSTL (modified in the
 course of the work described in this paper).  Given a harness like the
 one in Figure \ref{fig:example}, TSTL compiles it into a Python file
 defining a class that gives an interface for testing.  The class

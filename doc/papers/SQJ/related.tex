@@ -51,6 +51,14 @@ focus is more on general technique than details of approach
 practical aspects, however, is plentiful: e.g., Lei and Andrews
 \cite{MinUnit} demonstrated that random test generation essentially
 requires test-case minimization \cite{DD} in order to be useful.
+Recent work, in particular, has given more attention to issues of test case usability
+than in the past; we suspect this shows a growing technological
+maturity for automated test case generation.  For example, we found
+that test case readability was important in our efforts, and recent
+academic work \cite{Readable,Guava} has introduced systematic,
+principled methods for improving the readability of test cases for
+humans, even though this does not improve fault detection, coverage,
+or other traditional measures of test effectiveness.
 
 There is a significant body of work on end-user testing of software,
 part of the larger field of end-user software engineering
@@ -84,6 +92,7 @@ testing, while the correct output of a program is not known, the
 effect of certain modifications to an input is known (e.g., increasing
 a certain input should increase a certain output), allowing faults to
 be detected even without a definition of the correct result.  In this
-paper, we largely focus on building a basic framework capable of
-extension to more complex oracles.  In the long run, however, more
+paper, we largely focus on building a basic framework that works for
+crash bugs and uncaught exceptions, and is capable of
+extension to more complex correctness properties.  In the long run, however, more
 sophisticated oracles are critical to finding deep faults.

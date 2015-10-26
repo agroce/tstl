@@ -1,5 +1,17 @@
 \section{Tool Changes}
 
+Rather than major algorithmic innovations, the major changes to the
+TSTL system required to test ArcPy were fundamentally engineering
+challenges.  Only the last two changes described in this section are
+concerned with novel testing algorithms and support a research
+agenda.  One element that carried across all of these concerns was
+fixing bugs in TSTL.  TSTL has been used in several university classes
+at the graduate and undergraduate level, and used fairly extensively
+in testing research, but a large number of
+significant faults went undetected until we attempted to use TSTL to
+test ArcPy.  One change made as a result of these problems is that we
+now use TSTL to test TSTL's own API.
+
 \input{sandbox}
 
 \input{standalone}
@@ -7,3 +19,5 @@
 \input{regression}
 
 \input{normgen}
+
+\input{savestate}
