@@ -14,9 +14,13 @@ little work on allowing non-traditional software developers to apply
 automated (random) testing to APIs.
 
 The approach to testing ArcPy taken in this paper uses the TSTL tool
-for automated testing \cite{NFM15,ISSTA15,tstl}.  As part of the
-efforts described in this paper, some of the authors have submitted for review a
-paper on the normalization and generalization of test cases in TSTL
+for automated testing \cite{NFM15,ISSTA15,tstl}.  TSTL is a
+domain-specific language (DSL) \cite{Fow10} for testing, in the spirit
+of the famous QuickCheck tool for Haskell \cite{ClaessenH00}; other
+DSLs for testing exist \cite{UDITA}, but these are more limited in
+scope and function.  As part of the efforts described in this paper,
+some of the authors have submitted for review a paper on the
+normalization and generalization of test cases in TSTL
 \cite{ICSTnorm}.  The quick tests for regression across ArcPy/ArcGIS
 versions are based on using cause reduction
 \cite{icst2014,stvrcausereduce} to convert long random tests into
@@ -37,6 +41,17 @@ academic case studies.  These discussions also tend to focus on
 application testing or GUI testing, rather than testing of library
 code used across GIS applications.
 
+There is also relatively little written about software testing in the
+academic literature that focuses on the pitfalls, best practices, and
+engineering challenges of testing real-world systems.  The series of
+papers by the NASA Jet Propulsion Laboratory on testing the file
+systems for the Curiosity Mars Rover is notable, though even there the
+focus is more on general technique than details of approach
+\cite{ICSEDiff,CFV08,AMAI}.  Literature that at least touches on more
+practical aspects, however, is plentiful: e.g., Lei and Andrews
+\cite{MinUnit} demonstrated that random test generation essentially
+requires test-case minimization \cite{DD} in order to be useful.
+
 There is a significant body of work on end-user testing of software,
 part of the larger field of end-user software engineering
 \cite{burnettEUSE,Silos}.  End-user software engineering examines how
@@ -47,7 +62,9 @@ development as a profession.  GIS developers are a (we believe)
 typical example \cite{Segal07}:  they are technically skilled  individuals whose
 primary expertise is not in software development, but who, in order to
 pursue their goals, must develop, maintain, and test significant
-software systems.  The earliest work focusing on software testing for
+software systems.
+
+The earliest work focusing on software testing for
 end-user software engineers explored how to test spreadsheets
 \cite{rothermelTOSEM,rothermel2000wysiwyt}.  Other work has focused on
 errors end-users make in specifying systems \cite{Phalgune}, and how
@@ -59,10 +76,14 @@ end-users.  Previous work on API testing has largely not even included
 traditional software developers, but been performed by software
 testing researchers only.
 
-Chen et al. propose metamorphic testing \cite{MetaTest,isstamorph,metamorph,chentest} as a possible
-solution to the oracle problem for end-user programmers
-\cite{MetamorphEndUser}.  In metamorphic testing, while the correct
-output of a program is not known, the effect of certain
-modifications to an input is known (e.g., increasing a certain input
-should increase a certain output), allowing faults to be detected
-even without a definition of the correct result.
+Chen et al. propose metamorphic testing
+\cite{MetaTest,isstamorph,metamorph,chentest} as a possible solution
+to the oracle problem (defining correct behavior of a software system)
+for end-user programmers \cite{MetamorphEndUser}.  In metamorphic
+testing, while the correct output of a program is not known, the
+effect of certain modifications to an input is known (e.g., increasing
+a certain input should increase a certain output), allowing faults to
+be detected even without a definition of the correct result.  In this
+paper, we largely focus on building a basic framework capable of
+extension to more complex oracles.  In the long run, however, more
+sophisticated oracles are critical to finding deep faults.

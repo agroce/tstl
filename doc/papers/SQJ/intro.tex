@@ -1,31 +1,33 @@
 \section{Introduction}
 
 This paper presents a case study of applying a new automated test case
-generation language and tool to a large, real-world software system.
+generation language and toolchain to a large, real-world software system.
 The test effort has been driven and directed not by a software testing
 researcher (as is the usual case), but by a domain expert in the
+Geographic Information System (GIS)
 Software Under Test (SUT).  
 
 \subsection{Testing Esri ArcPy}
 
 
-Esri is the single largest Geographic Information System (GIS)
-software vendor, with about 40\% of global market share.  Esri's
-ArcGIS tools are extremely widely used for GIS analysis, in
-government, scientific research, commercial enterprises, and
-education.  Automation of complex GIS analysis and data management is
-essential, and Esri has long provided tools for programming
-their GIS software tools.  The newest method they have provided,
-introduced in ArcGIS 10.1, is a Python
-site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library, with
-dozens of classes and hundreds of functions distributed over a variety
-of of toolboxes.  Most of the code involved in ArcPy functionality is
-C++ for which source is unavailable (the source for the actual ArcGIS
-tools). The source code for the Python site-package alone, which
-interfaces the ArcGIS engine, is over 50,000 lines of code, a very
-large system, comparable in size to the largest software systems previously
-tested using automated test generation, such as core Java and Apache
-libraries \cite{FA11,Pacheco}.
+Esri is the single largest GIS software vendor, with about 40\% of
+global market share.  Esri's ArcGIS tools are extremely widely used
+for GIS analysis, in government, scientific research, commercial
+enterprises, and education.  Automation of complex GIS analysis and
+data management is essential, and Esri has long provided tools for
+programming their GIS software tools.  The newest such method,
+introduced in ArcGIS 10.1, is a Python site-package, ArcPy
+\cite{ArcPy}.  ArcPy is a complex library, with dozens of classes and
+hundreds of functions distributed over a variety of of toolboxes.
+Most of the code executed in carrying out ArcPy functions is the code
+for the ArcGIS engine itself.  This source code, written in C++, is
+not available.  The source code for the latest version (10.3) of the
+Python site-package alone, however, which interfaces with the ArcGIS
+engine, is over 50,000 lines of code.  This is a very large system
+(especially given the compactness of Python code), comparable in size
+to the largest software systems previously tested using automated test
+generation, such as core Java and Apache libraries
+\cite{FA11,Pacheco}.
 
 In order to improve the reliability of ArcPy, we are developing a
 framework for automated testing of ArcPy itself, as well as libraries
@@ -45,7 +47,7 @@ of the problems, challenges, and tool utility aspects of testing
 software than is typical in most research papers in the field.  Such
 papers are (understandably) typically focused on novel algorithms or
 empirical evaluations of known methods, rathern than the practical aspects of finding
-and understanding faults in a software system.
+and understanding faults in a real-world software system.
 
 
 \subsection{Automated Testing for the Rest of the World}
@@ -75,16 +77,16 @@ be tested is large, not a small user-developed program: ArcPy is
 a modern, complex, library, comparable in complexity and size to
 core language libraries.   ArcPy was also not written by the end-user,
 or by any of the authors of this paper, nor have the authors received
-any notable assistance in the effort from Esri.
+any  assistance in the effort from Esri.
 
 Automated testing systems more advanced than a simple hand-written loop generating 
 a few random inputs to a handful of functions, or more complicated to 
-use than a fully pushbutton system are often considered too difficult 
+use than a fully push-button system are often considered too difficult 
 for practical use even by software developers or software QA staff.
 In fact, in the experience of the second author of this paper (an
-academic software testing researcher), even ``pushbutton'' tools for
+academic software testing researcher), even ``push-button'' tools for
 automated testing are often difficult for expert users to install, apply, and
-configure.  Such tools typically do not approach the ease-of-use seen
+configure \cite{AMAI,ISSRE}.  Such tools typically do not approach the ease-of-use seen
 in commercial static analysis tools \cite{Coverity,Klocwork,CodeSonar}.  One goal of this work
 has been to mature the TSTL language and toolchain so Python
 programmers from all backgrounds can easily apply it to their
@@ -94,7 +96,7 @@ The second major contribution of this paper is a presentation of an
 approach to automated testing that has been chosen by a GIS analyst, not a
 software developer or testing researcher.  Moreover, we present this
 paper as a proof-of-concept that modern automated testing, even in a
-highly interactive, non-pushbutton form, can be used by a motivated
+highly interactive, non-push-button form, can be used by a motivated
 domain expert, with the support of  a domain-specific language and a
 set of tools for generating, analyzing, and replaying tests.
 
