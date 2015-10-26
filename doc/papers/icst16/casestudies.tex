@@ -3,8 +3,8 @@
 This section presents some initial results of applying normalization
 and generalization.   All tests were generated using
 random testing.  We also tested the Python interface to Z3 \cite{z3},
-but did not find faults thus far, though normalization did help produce more
-comprehensible and uniform
+but did not find faults thus far; normalization did help produce more
+comprehensible and uniform Z3
 quick tests \cite{icst2014}.
 
 \subsection{AVLTree}
@@ -25,7 +25,7 @@ failing test cases produced by normalization (vs. reduction only) for
 a set of 82 mutants \cite{mutant} of the AVLTree source code \cite{Hunter:2007}.  Of the 228 mutants
 produced by MutPy \cite{mutpy}, only these produced at least 1 failure
 in 1,000 test cases.  Using only delta-debugging-based reduction, the
-mean number of distinct failures for each mutant (which is, by nature,
+mean number of distinct failures for each mutant (which is, by definition,
 a single fault) was 498.4, with a median of 485.  Using normalization,
 the mean was 3.1 distinct failures, with a median of just 2 failures.
 For 38 of the 82 mutants, normalization produced only a single
@@ -53,48 +53,44 @@ for an average of only 2.4 non-cache-hit rewrites of each test.  Note
 that this is with the cache starting empty for each of the 82 mutants.
 
 AVLTree mutants also provided a way to evaluate the danger of
-normalization losing faults by changing a test case failing due to one
-fault into a test case failing due to a different fault, a problem
-known as ``slippage'' when it occurs with delta-debugging
-\cite{PLDI13}.  AVLTree is a particularly challenging setting in this
-regard, as there are very few API calls, and all calls take the same
-simple inputs, so test cases for faults are likely to be very close to
-each other in the combinatorial space.  To test the slippage rates for
-normalization, we randomly selected 364 mutant pairs drawn from the 82
-detectable mutants, and produced higher-order-mutants for each of
-these by applying both mutants (using only mutants that modified
+normalization losing faults.  Faults can be lost when normalization
+changes a test case failing due to one fault into a test case failing
+due to a different fault, a problem known as ``slippage''
+\cite{PLDI13}.  AVLTree provides a slippage challenge, as there are
+very few API calls, and all calls take the same inputs, so test cases
+for faults are likely to be very close to each other in the
+combinatorial space.  To test the slippage rates for normalization, we
+randomly selected 364 mutant pairs drawn from the 82 detectable
+mutants, and produced higher-order-mutants for each of these by
+applying both mutants to the source (using only mutants that modified
 different source lines).  Of these, the set of reduced test cases
 included at least one test capable of exposing each of the two faults
-for only 238 pairs (in almost all cases due to reduction slippage, but
-in a few cases due to one fault completely masking the other fault:  e.g., if
-{\tt insert} always fails, it is not possible to produce a test case
-that exposes a fault in {\tt delete} on a non-empty tree).
+for only 238 pairs.  In almost all cases this was due to reduction
+slippage, but in a few cases it was due to one fault completely
+masking another: e.g., if {\tt insert} always fails, it is not
+possible to produce a test case that exposes a fault in {\tt delete}
+on a non-empty tree.
 
 Out of these 238 mutant pairs, normalization produced test cases
 exposing both faults for 80.7\% of pairs (19.3\% slippage at the
 suite level).  Interestingly, in 4 cases
 normalization took a set of reduced test cases not capable of exposing
 both faults, and produced a smaller set of test cases that was capable
-of exercising both faults (this is not counted into the slippage
-measure).  Arguably this is ``slippage'' in that a test case not
+of detecting both faults.  Arguably this is ``slippage'' in that a test case not
 capable of exposing fault F was modified to expose fault F (classic
 slippage) but since the new test suite exposed both faults,
 normalization actually restored fault detection.
 
-Data on slippage is not extensive (in part because few actual testers
-read unreduced test cases, so it is only detected if the original test
+Data on slippage is not extensive, in part because it is only detected if the original test
 cases before reduction are stored and re-executed after bugs have been
-fixed), but in our own previous work \cite{PLDI13}, slippage due to
+fixed.  In our own previous work \cite{PLDI13}, slippage due to
 reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
-for other SUTs (up to 23\%) for Mozilla's JavaScript engine.  For our
-own AVLTree example, the slippage rate for reduction (ignoring
-normalization) is almost 30\%.  As a simple mitigation, we propose
-storing at least the reduced test cases, and possibly the original,
-unreduced test cases, for all failures.  These should be used as a
-regression in the event all faults detected by normalized test cases
-are fixed.  It might also be useful, in especially critical testing
-(e.g., for security problems) to run a fuzzer taming algorithm on
-reduced test cases, and examine the highest ranked failures \cite{PLDI13}.
+for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For our
+own AVLTree example, the slippage rate for reduction is almost 30\%,
+considerably worse than that for normalization.  As a simple mitigation, we propose
+storing at least reduced test cases, and ideally the unreduced test
+cases, as a slippage check when all faults detected by normalized test
+cases are fixed.
 
 The reduction in test cases produced by normalization for mutant pairs
 was, as with single mutants, very large (Figure \ref{normeffect}).
@@ -103,38 +99,36 @@ For mutant pairs, the mean/median number of distinct failures was
 normalization.  The runtime for normalization was essentially
 unchanged from the single-mutant numbers given above.  For reduction
 alone, using pairs increased the number of distinct failures, while
-normalized failure counts actually decreased.  For 115 of the 238
-mutant pairs where reduction did not lose a fault, normalization was
-``perfect'' --- it preserved both faults and produced only 1 or 2 test
+normalized failure counts decreased.  For 48.3\% (115 of 238) of
+mutant pairs where reduction did not lose a fault, normalization
+worked as well as possible --- it preserved both faults and produced only 1 or 2 test
 cases\footnote{It is possible to detect both faults with a single test
-  case, if that test case fails when \emph{either} fault is
-  present.}.  In other words, normalization produced perfect results for
-almost half (48.3\%) of all multi-fault AVLTree versions where reduction
-provided seed tests containing all faults.
+  case, if that test case fails when \emph{either} fault is present.}.
 
 \subsection{XML Parser}
 
 We also examined how normalization combined with multiple faults for a
 simple XML parser with about 260 lines of code \cite{myxml}, with one
-original fault (an uncaught exception instead of a parse error when given an empty
-tag ({\tt <>})) and one seeded fault (triggered by adding two nodes
-with the same name).  Running 1,000 tests produced 848 failing test
-cases.  Without normalization, it took only 37.45 seconds to execute
-all 1,000 tests, including delta-debugging these 848 failures.
-However, the output was 717 distinct failing test cases.  Normalizing
-increased the runtime to 354.7 seconds, but reduced the number of
-distinct failing tests to 5, with 3 variations of the original fault
-and 2 variations of the seeded fault.  Generalization only required 5 seconds.
+real fault, triggered by the empty tag ({\tt <>})), and one
+seeded fault triggered when adding two nodes with the same
+name.  A comment in the code indicates the seeded fault is realistic.  Running 1,000 tests
+produced 848 failing test cases.  Without normalization, it took only
+37.45 seconds to execute and delta-debug all 1,000 tests.  The output was 717 distinct failing test
+cases.  Normalization increased the runtime to 354.7 seconds, but
+reduced the number of failures to just 5: 3 
+for the original fault and 2 for the seeded fault.
+%Generalization took < 5 seconds.
 
 
 \subsection{TSTL}
 
-As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own API
-interface (the TSTL compiler is about 1,600 LOC; a compiled SUT is
-often 30KLOC or larger).  For the only fault discovered so far in
-testing the latest version of TSTL, the cache-related problem mentioned above, generating
-and reducing 100 test cases required 1,090 seconds and produced 90 failures.  Adding normalization and generalization increased
-the runtime to 3,690 seconds, but produced just two failures.
+As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own
+API interface (the TSTL compiler is about 1,600 LOC; a compiled SUT is
+often 30KLOC or larger).  We only discovered one fault while testing
+the latest version of TSTL, the cache-related problem shown in Figure \ref{fig:mislead}.
+Generating and reducing 100 test cases for it required 1,090 seconds
+and produced 90 failures.  Normalization and generalization
+increased total runtime to 3,690 seconds, and produced just 2 failures.
 
 \subsection{NumPy}
 
@@ -142,50 +136,49 @@ Our final two case studies provide little information on the ability
 of normalization to reduce the number of failing tests; for these
 SUTs, failure rates are low enough or test case reduction runtimes high
 enough that each failure is dealt with one-by-one.  However,
-normalization and generalization are, we claim, also useful for
+normalization and generalization are also useful for understanding
 individual test cases.
 
-NumPy \cite{NumPy} is a very widely used Python library/extension that
+NumPy \cite{NumPy} is a widely used Python library that
 supports large, multi-dimensional matrices and provides a huge library
-of mathematical functions.  The popular SciPy library for scientific
+of mathematical functions.  The SciPy library for scientific
 computing builds on NumPy.  Developing tests for NumPy is challenging,
 because none of the authors are experts in numeric computation, and
 the specification of correct behavior is often somewhat subtle.  As a
 simple example, consider the test case in Figure \ref{numpyorig},
 normalized and generalized in Figure \ref{numpynormgen}.  Prior to
 normalization, understanding why the test case leads to a violation of
-self-equality for an array is, to say the least, non-trivial.  After
+self-equality for an array is difficult.  After
 normalization, it is much clearer what is happening: 1) {\tt array0}
-contains {\tt NaN} 2) this is in fact correct behavior (the array
+contains {\tt NaN} and 2) this is correct behavior (the array
 \emph{should} contain {\tt NaN}).  The greater length and much larger
 number of operations involved in the original reduced test case
 obscures this critical point.  In NumPy, array equality does not hold
 for objects containing {\tt NaN}, so the assertion must be modified.
 As far as we know, normalization transforms all instances of this
-fault into this canonical test case, but our data (over fewer than 30
+fault into this canonical test case, but our data (for fewer than 30
 failures) is insufficient to make a definite claim, as the failure rate
 is slightly less than 3 failures/100,000 tests on average.
 
-
-Other, more complex, failures have also made it clear that normalization
-is useful for additional test case length reduction for NumPy, and
-that generalization makes any surprising restrictions on test values
-clear.  For NumPy tests, normalization takes much longer than
-reduction, in part due to the expense of operations on large arrays.
-Over almost all examples, the average time to reduce tests is about
-4-5 seconds, and the time for normalization is between 712 and 774
-seconds.  The average time to discover a failing test case, for
-comparison, is just over 400 seconds.  Generalization takes between 52
-and 59 seconds in these cases.  The exception was a test case of
-45,206 steps (!)  leading to a memory exhaustion error and crash,
-reduced (over a period of nearly a day) to a test case with 10 steps,
-which then normalized (in only 2 hours) to a test case with 8 steps,
-involving no operations other than array initialization (with zeros or
-ones), array flattening, and array addition (the original test case
-involved larger dimensions, array multiplication, and array
-subtraction).  This is the only case in which we have seen
-normalization time lower than reduction time, without assistance from
-the cache.
+Other, more complex, failures have also made it clear that
+normalization is useful for additional test case length reduction for
+NumPy, and that generalization makes any surprising restrictions on
+test values clear.  For NumPy tests, normalization takes much longer
+than reduction, in part due to the expense of operations on large
+arrays.  For almost all test cases, the average time to reduce tests
+is about 4-5 seconds, and the time for normalization is between 712
+and 774 seconds.  The average time to discover a failing test case,
+for comparison, is just over 400 seconds.  Generalization takes
+between 52 and 59 seconds in these cases.  The exception was a test
+case of 45,206 steps (!)  leading to a memory exhaustion error and
+crash.  This was reduced (over a period of nearly a day) to a test
+case with 10 steps, which then normalized (in only 2 hours) to a test
+case with 8 steps.  The normalized test case involved no operations other than array
+initialization, array flattening, and array
+addition.  The reduced test case required larger dimensions, array
+multiplication, and array subtraction, as well.  This is the only case in
+which we have seen normalization time lower than reduction time,
+without assistance from the cache.
 
 \begin{figure}
 {\scriptsize
@@ -270,85 +263,84 @@ assert (np.array\_equal(array0,array0))
 
 \subsection{Esri ArcPy}
 
-Esri (the Environmental Systems Research Institute) is the single
+Esri is the single
 largest Geographic Information System (GIS) software vendor, with about 40\%
 of global market share.  Esri's ArcGIS tools are extremely widely
 used for GIS analysis, in government, scientific research, commercial
-enterprises, and education.  Automation of complex GIS analysis and
-data management is a frequent need, and Esri has long provided tools
-for programming their GIS software tools.  The current method of
-choice is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
+enterprises, and education.  Automation is essential for complex GIS analysis and
+data management, and Esri has long provided tools
+for programming their GIS software systems.  One such tool
+(Esri's newest) is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
 with dozens of classes and hundreds of functions distributed over
 a variety of of toolboxes.  Most of the code involved in ArcPy
-functionality is C++ for which source is unavailable (the source for
-the actual ArcGIS tools); the Python source alone is over 50,000 lines
-of code.
+functionality is the C++ source for ArcGIS itself (which is not
+available) but the released Python interface code alone is over 50KLOC.
 
-In order to improve the reliability of ArcPy, we have been
-implementing a TSTL-based framework for testing ArcPy itself as well
-as libraries based on ArcPy.  The TSTL definition is already more than
-twice as large as the next-largest example previously studied, even
-though it only includes a small portion of ArcGIS so far. The first
-stage of testing has resulted in discovery of several faults in
-ArcPy/ArcGIS, some of which not only cause incorrect behavior but
-cause a crash that also ends testing.  Before proceeding to more
-nuanced testing, it is critical to understand these faults, the set of
-behaviors that trigger them, and modify the test definition to avoid
-triggering these faults with minimal limitations on thorough testing.
+In order to improve the reliability of ArcPy, we are developing a
+TSTL-based framework for testing ArcPy itself, as well as libraries
+based on ArcPy.  The ArcPy TSTL is already more than twice as large as
+the next-largest TSTL harness previously studied, even though it only
+includes a small portion of ArcGIS functionality so far. The first
+stage of testing has resulted in discovery of multiple faults in
+ArcPy/ArcGIS, six of which not only cause incorrect behavior but cause
+a crash that also ends testing.  It is critical to understand these
+faults, the set of behaviors that trigger them, and modify the test
+definition to avoid triggering these faults while imposing minimal limitations
+on thorough testing for other faults.
 
-There is no space in this paper to elaborate on the details of
-this large test effort (which has required adding numerous additional
-features and modes to TSTL), but normalization and generalization have been very useful in
-this process.  Figures \ref{esriorig} and \ref{esrinormgen} show one
-crash-inducing test case, after initial delta-debugging (from over
-2,000 test steps) (Figure \ref{esriorig}) and with normalization and
-generalization (Figure \ref{esrinormgen}).  First, in this setting
-normalization has contributed a surprising amount of additional
-reduction over delta-debugging.  In this example, normalization
-reduced the length from 19 steps to 11 steps; in another case, it
-reduced the test case from 18 to 14 steps, and in the other crash
-fault, it reduced the test case from 27 to 20 steps.  The cost of
-normalization is high --- in our runs, it has taken from 17,340
-seconds up to 24,769 seconds.  However, in this setting even
-delta-debugging is extremely expensive --- the cost of reduction alone
-has ranged from 7,930 seconds to 8,688 seconds.  Generalization has
-taken from under an hour (3,203 seconds) up to 11,149 seconds.  These
-costs are due in part to the need to run tests in a sandbox
-environment to avoid killing the Python testing process, and in part
-due to the cost of running complex GIS analyses.  However, even with
-this high cost, reducing, normalizing, and generalizing test cases has
-been a more effective use of our time than trying to understand the
-faults without these aids.  For example, in the test case shown in
-this paper, it was important to understand that the SQL query and
-selection type were not essential, but using a
-freshly created layer will not result in a crash:  the problem
-appears to be that ArcGIS (or ArcPy) does not invalidate layers built
-from a feature class when that feature class is deleted\footnote{In
-  this instance, a generalization (the fresh values generalization in
+There is no space in this paper to elaborate on the details of this
+large test effort (which has introduced numerous additional features
+and modes to TSTL), but normalization and generalization have been
+very useful in this process.  Figures \ref{esriorig} and
+\ref{esrinormgen} show one crash-inducing test case, after initial
+delta-debugging (from over 2,000 test steps) (Figure \ref{esriorig})
+and after normalization and generalization (Figure \ref{esrinormgen}).
+In this setting normalization has contributed a significant amount of
+additional reduction over delta-debugging.  For the crash fault shown
+in this paper, normalization reduced the length from 19 steps to 11
+steps.  For three other crashes, normalization reduced the test cases
+from 18 to 14 steps, from 27 to 20 steps, and from 20 to 16 steps. One crash fault only reduced from 10 steps to 9 steps, but the
+omission was informative.  The cost of normalization is high --- in
+our runs, it has taken from 17,340 seconds up to 24,769 seconds.
+However, in this setting even delta-debugging is extremely expensive
+--- the cost of reduction alone has ranged from 7,930 seconds to 8,688
+seconds.  Generalization has taken between 3,203 and
+ 11,149 seconds.  These high costs are due to the need to run
+tests in a sandbox environment to avoid killing the Python testing
+process, and the runtime of complex GIS analyses, with individual
+actions sometimes requiring minutes to execute.
+Even under these circumstances, reducing, normalizing, and
+generalizing test cases has been a more effective use of human time than
+trying to understand the faults without these aids.  For example, in
+the test case shown in this paper, it was important to understand that
+the SQL query and selection type are not essential, but using a
+freshly created layer will not result in a crash: the problem appears
+to be that ArcGIS (or ArcPy) does not invalidate layers built from a
+feature class when that feature class is deleted\footnote{In this
+  instance, a generalization (the fresh values generalization in
   particular) is informative even though it does not allow any
   generalization; knowing that it was attempted, but prevented the
-  failure, is also valuable.}.  The
-original, non-normalized test case makes this far less clear, as the
-use of {\tt CopyFeatures} and the multiplicity of shapefiles involved
-disguises the essence of the problem.
+  failure, is also valuable.}.  The original, non-normalized test case
+makes this far less clear, as the use of {\tt CopyFeatures} and the
+multiplicity of shapefiles involved disguises the essence of the
+problem.
 
-In addition to helping us understand failures, normalization and
-generalization are also being used to prepare an API-behavior
-regression suite for ArcPy.  One of the challenges of using a large
-API like ArcPy is that behavior of the system can change from version
-to version; in some cases this is due to new faults, or fixed faults,
-but in other cases there is simply an undocumented change.  In order
-to assist ArcPy developers, we are preparing a test suite that covers
-as much as possible of the Python source for ArcPy, in the latest version of ArcPy,
-10.3, and records the values returned in 10.3.  For future versions of
-ArcPy (or older versions), a ``semantic diff'' with 10.3, based on
-these calls, can be produced by running this suite.  The tests in the
-suite are normalized and generalized to help users understand the
-conditions behind an API usage's behavior, not just one set of
-values.  This ``coverage regression'' quick test \cite{icst2014} may
-also be useful for helping users understand the API, since the set of
-online examples of usage from Esri is usually limited to a small set
-of parameter combinations.
+Normalization and generalization are also being used to prepare an
+API-behavior regression suite for ArcPy.  One of the challenges of
+using a large API like ArcPy is that behavior of the system can change
+from version to version.  In some cases this is due to new faults, or
+fixed faults, but in other cases there is an undocumented change,
+especially for unusual input combinations.  In order to assist ArcPy
+developers, we are preparing a test suite that covers as much as
+possible of the Python source in the latest version of ArcPy, 10.3,
+and records the values returned.  For future versions of ArcPy (or
+older versions), a ``semantic diff'' with 10.3, based on these calls,
+can be produced by running this suite.  The tests in the suite are
+normalized and generalized to help users understand the set of
+conditions behind an API usage's behavior.  This ``coverage
+regression'' quick test \cite{icst2014} will also be
+useful for understanding  the API, since the set of online examples of usage
+from Esri is usually limited to a small set of parameter combinations.
 
 \begin{figure}
 {\scriptsize 

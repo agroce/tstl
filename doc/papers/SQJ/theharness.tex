@@ -1,10 +1,11 @@
 \section{The ArcPy TSTL Test Harness}
 
 Figures \ref{preamble}, \ref{actions1}, and \ref{actions2} show a
-version of the actual ArcPy test harness.  This version can the faults
+version of the actual ArcPy test harness.  This version can reproduce the faults
 described in this paper, though in practice some faults are easier to
 detect than others, and for practical testing it is best to disable,
-e.g., the various {\tt Delete} calls.  
+e.g., the various {\tt Delete} calls and to use guards to prevent all modifications of
+layers or classes on which cursors are active.
 
 \begin{figure}
 {\scriptsize

@@ -3,20 +3,52 @@
 \begin{figure}
 {\scriptsize
 \begin{code}
-@import avl
-\vspace{0.05in}
-pool: <int> 4 CONST
-pool: <avl> 3
-\vspace{0.05in}
-property: <avl>.check\_balanced()
-\vspace{0.05in}
-<int> := <[1..20]>
-<avl> := avl.AVLTree()
-\vspace{0.05in}
-<avl>.insert(<int>)
-<avl>.delete(<int>)
-<avl>.find(<int>)
-<avl>.inorder()
+$_{01}$ @import avl
+$_{02}$ @import math
+\vspace{0.1in}
+$_{03}$ <@
+$_{04}$ def it(s):
+$_{05}$     l = []
+$_{06}$     for i in s:
+$_{07}$        l.append(i)
+$_{08}$     return sorted(l)
+$_{09}$ @>
+\vspace{0.1in}
+$_{10}$ source: avl.py
+\vspace{0.1in}
+$_{11}$ pool: <int> 4 CONST
+$_{12}$ pool: <avl> 2 REF
+$_{13}$ pool: <list> 2
+\vspace{0.1in}
+$_{14}$ log: 1 <avl>.inorder()
+\vspace{0.1in}
+$_{15}$ property: <avl>.check\_balanced()
+\vspace{0.1in}
+$_{16}$ <list>:=[]
+$_{17}$ ~<list>.append(<int>) 
+$_{18}$ <int>:= <[1..20]>
+\vspace{0.1in}
+$_{19}$ <avl>:=avl.AVLTree()
+$_{20}$ <avl>:=avl.AVLTree(<list>)
+\vspace{0.1in}
+
+$_{21}$ ~<avl>.insert(<int>) => (len(<avl,1>.inorder()) == pre<(len(<avl,1>.inorder()))>+1) 
+  or pre<(<avl,1>.find(<int,1>))>
+$_{22}$ ~<avl>.delete(<int>) => (len(<avl,1>.inorder()) == pre<(len(<avl,1>.inorder()))>-1) 
+  or not pre<((<avl,1>.find(<int,1>)))>
+$_{23}$ ~<avl>.find(<int>)
+$_{24}$ <avl>.inorder()
+$_{25}$ len(<avl,1>.inorder()) > 5 -> <avl>.display()
+\vspace{0.1in}
+$_{26}$ reference: avl.AVLTree ==> set
+$_{27}$ reference: insert ==> add
+$_{28}$ reference: delete ==> discard
+$_{29}$ reference: find ==> \_\_contains\_\_
+$_{30}$ reference: METHOD(inorder) ==> CALL(it)
+$_{31}$ reference: METHOD(display) ==> CALL(print)
+\vspace{0.1in}
+$_{32}$ compare: find
+$_{33}$ compare: inorder
 \end{code}
 }
 \caption{Part of a TSTL definition of AVL tree tests.}
@@ -45,46 +77,63 @@ avl1.delete(int2)
 \end{figure}
 
 
-TSTL \cite{NFM15,ISSTA15,tstl} is a language for defining the structure of
-test cases (usually API-call sequences, but also grammar-based tests using
-string construction), and a set of tools for use in generating,
-manipulating, and understanding those test cases.  Figure
-\ref{fig:example} shows a simplified portion of a TSTL definition of
-tests of an AVL tree class, in the latest syntax for TSTL (modified in
-the course of the work described in this paper).
-TSTL provides numerous features not shown in this small example,
-including automatic differential testing, complex logging, support for
-complex guards, and use of pre- and post- values.  Given a harness
-like the one in Figure \ref{fig:example}, TSTL compiles it into a
-class file defining an interface for testing that provides features
-such as querying the set of available testing actions, restarting a
-test, replaying a test, collecting code coverage data, and so forth.
-The TSTL release \cite{tstl} provides testing tools that use the
-interface for test generation and debugging.
+TSTL \cite{NFM15,ISSTA15,tstl} is a language for defining the
+structure of test cases (usually API-call sequences, but also
+grammar-based tests using string construction), and a set of tools for
+use in generating, manipulating, and understanding those test cases.
+Figure \ref{fig:example} shows a TSTL definition of tests (known as a
+harness definition, or \emph{harness} for short) for a Python class
+implementing AVL trees, in the latest syntax for TSTL (modified in the
+course of the work described in this paper).  Given a harness like the
+one in Figure \ref{fig:example}, TSTL compiles it into a Python file
+defining a class that gives an interface for testing.  The class
+interface provides features such as
+querying the set of available testing actions, restarting a test,
+replaying a test, collecting data about which lines and branches in
+the source code have been executed by each test, and other commonly
+needed testing features.  The TSTL release \cite{tstl} provides
+testing tools that use the interface for test generation and
+debugging.
 
-A TSTL test harness
-defines a set of \emph{pools} that hold values produced and used
-during testing \cite{AndrewsTR} (a common approach to defining
-API-testing sequences) and a set of actions that are possible during
-testing, typically API calls and assignments to pool values.  In this
-example, there are two pools, one named {\tt int} and one named {\tt
-  avl}.  There are four instances of the {\tt int} pool, which means
-that a test in progress can store up to 4 {\tt int}s at one time (in
-variables named {\tt int0}, {\tt int1}, {\tt int2}, and {\tt int3}), and three
-instances of the {\tt avl} pool.  The actions defined here are setting
-the value of an {\tt int} pool to any integer in the range 1-20
-inclusive, setting the value of an {\tt avl} pool to a newly
-constructed AVL tree, and calling an AVL tree's {\tt insert}, {\tt
-  delete}, {\tt find} and {\tt inorder} methods.  Figure
-\ref{fig:avlrun} shows a
-valid test case produced by running a random test generator on
-the TSTL-compiled interface produced by this definition.  TSTL handles
-ensuring that tests are well-formed: for example, no pool instance
-(such as {\tt avl1} can appear in an action until it has been assigned
-a value), and no pool instance that has been assigned a value can be
-assigned a different value until it has been used in an action, to
-avoid degenerate sequences such as {\tt int3 = 10} followed by {\tt
-  int3 = 4}.  Each action in a test case is called a ``step'' --- the
-first step of the first test case in Figure \ref{fig:avlrun} is storing a new AVL tree in {\tt
-  avl1}, for example.
+A TSTL test harness defines a set of \emph{pools} that hold values
+produced and used during testing.  Pools \cite{AndrewsTR} are a common
+approach to defining API-testing sequences.  It also defines a set of
+actions that are possible during testing, typically API calls and
+assignments to pool values.  In this example, there are three pools,
+{\tt int}, {\tt list}, and {\tt avl}.  There are four instances of the
+{\tt int} pool, which means that a test in progress can store up to 4
+{\tt int}s at one time (in variables named {\tt int0}, {\tt int1},
+{\tt int2}, and {\tt int3}), and three instances of the {\tt avl}
+pool.  The actions defined here include setting the value of an {\tt int}
+pool to any integer in the range 1-20 inclusive, setting the value of
+an {\tt avl} pool to a newly constructed AVL tree, and calling an AVL
+tree's {\tt insert}, {\tt delete}, {\tt find} and {\tt inorder}
+methods.  Figure \ref{fig:avlrun} shows a valid test case produced by
+running a random test generator on the TSTL-compiled interface
+produced by this definition.  TSTL automatically enforces the requirement that
+tests are well-formed: for example, no pool instance (such as {\tt
+  avl1} can appear in an action until it has been assigned a value),
+and no pool instance that has been assigned a value can be assigned a
+different value until it has been used in an action, to avoid
+degenerate sequences such as {\tt int3 = 10} followed by {\tt int3 =
+  4}.  Each action in a test case is called a ``step'' --- the first
+step of the first test case in Figure \ref{fig:avlrun} is storing a
+new AVL tree in {\tt avl1}.
+
+Figure \ref{fig:example} shows some additional features of TSTL used
+in ArcPy testing.  The syntax {\tt guard -> action} allows {\tt
+  action} to take place only if {\tt guard} is an expression that
+evaluates to true.  In the example, only AVL trees of size 5 or larger
+are displayed.  One feature that is now shown is the syntax for
+allowing an action to throw an exception without stopping
+testing. This construct, {\tt \{exception [, exception2, ...]\}
+  action}, is used many times in the TSTL harness, because operations
+in ArcPy tend to signal failure by throwing an exception.  Because
+thus far our testing has been limited to checking for crash failures
+and comparing outputs between versions, we have not needed the TSTL
+features for checking an assertion after an action ({\tt action =>
+  pred}, but expect to use it in future testing, as discussed in
+Section \ref{conclusion}.  The final feature of interest here is Section \ref{sec:reftest} discusses the
+possibility of using differential/reference testing
+\cite{McKeeman,ICSEDiff} in ArcPy testing.  
 
