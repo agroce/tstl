@@ -22,14 +22,14 @@ def dfs(trail, depth):
         t.backtrack(old)
         a[2]()
         if (not t.check()):
-            print "Property failed!"
+            print("Property failed!")
             (_,_,tb) = t.failure()
             traceback.print_tb(tb)
-            print "TEST:"
+            print("TEST:")
             for step in (newtrail):
-                print step[0] 
+                print(step[0]) 
         dfs(newtrail, depth+1)
-    print depth, len(visited)
+    print(depth, len(visited))
 
 
 t.restart()

@@ -4,6 +4,7 @@ import re
 import sys
 import avl
 import bintree
+import imp
 class t(object):
    def act0(self):
       self.p_INT[0]=1
@@ -820,8 +821,8 @@ class t(object):
 
       self.__actions_backup = list(self.__actions)
    def restart(self):
-      reload(avl)
-      reload(bintree)
+      imp.reload(avl)
+      imp.reload(bintree)
       self.p_INT = {}
       self.p_INT_used = {}
       self.p_INT[0] = None
@@ -858,7 +859,7 @@ class t(object):
    def check(self):
       return True
    def enabled(self):
-       return filter(lambda (s, g, a): g(), self.__actions)
+       return [s_g_a for s_g_a in self.__actions if s_g_a[1]()]
    
    def features(self):
        return self.__features

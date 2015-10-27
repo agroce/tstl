@@ -53,7 +53,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -62,21 +62,21 @@ def make_config(pargs, parser):
 def handle_failure(test, msg, checkFail):
     global failCount
     failCount += 1
-    print msg
+    print(msg)
     f = t.failure()
-    print "ERROR:",f
-    print "TRACEBACK:"
+    print("ERROR:",f)
+    print("TRACEBACK:")
     traceback.print_tb(f[2])
 
-    print "Original test has",len(test),"steps"
+    print("Original test has",len(test),"steps")
     if not config.full:
         if not checkFail:
             failProp = t.fails
         else:
             failProp = t.failsCheck
-        print "REDUCING..."
+        print("REDUCING...")
         test = t.reduce(test, failProp, True, config.keep)
-        print "Reduced test has",len(test),"steps"
+        print("Reduced test has",len(test),"steps")
 
     i = 0
     if config.output != None:
@@ -89,7 +89,7 @@ def handle_failure(test, msg, checkFail):
     if config.failedLogging != None:
         t.setLog(config.failedLogging)
     for s in test:
-        print "STEP",i,s[0]
+        print("STEP",i,s[0])
         t.safely(s)
         i += 1
         if outf != None:
@@ -99,7 +99,7 @@ def handle_failure(test, msg, checkFail):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random variation of beam search using config={}'.format(config))
+print(('Random variation of beam search using config={}'.format(config)))
 
 R = random.Random(config.seed)
 
@@ -121,7 +121,7 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     t.restart()
     test = []
 
-    for s in xrange(0,config.depth):
+    for s in range(0,config.depth):
 
         count = 0
         newCover = False
@@ -142,21 +142,21 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
             if (not config.uncaught) and (not stepOk):
                 handle_failure(test, "UNCAUGHT EXCEPTION", False)
                 if not config.multiple:
-                    print "STOPPING TESTING DUE TO FAILED TEST"
+                    print("STOPPING TESTING DUE TO FAILED TEST")
                 break
 
             if (not config.ignoreprops) and (not t.check()):
                 handle_failure(test, "PROPERLY VIOLATION", True)
                 if not config.multiple:
-                    print "STOPPING TESTING DUE TO FAILED TEST"
+                    print("STOPPING TESTING DUE TO FAILED TEST")
                 break
 
             elapsed = time.time() - start
             if t.newBranches() != set([]):
                 if config.running:
-                    print "ACTION:",a[0]
+                    print("ACTION:",a[0])
                     for b in t.newBranches():
-                        print elapsed,len(t.allBranches()),"New branch",b
+                        print(elapsed,len(t.allBranches()),"New branch",b)
                 break # Continue with this choice if new branch exposed
 
             if elapsed > config.timeout:
@@ -166,24 +166,24 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
             t.backtrack(old)
 
         if elapsed > config.timeout:
-            print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+            print("STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test))
             break            
     
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:
-        print "STOPPING TESTING DUE TO TIMEOUT"
+        print("STOPPING TESTING DUE TO TIMEOUT")
         break        
 
 if not config.nocover:
-    print t.report(config.coverfile),"PERCENT COVERED"
+    print(t.report(config.coverfile),"PERCENT COVERED")
 
     if config.html:
         t.htmlReport(config.html)
 
-print ntests, "EXECUTED"
+print(ntests, "EXECUTED")
 if config.multiple:
-    print failCount,"FAILED"
+    print(failCount,"FAILED")
 if not config.nocover:
-    print len(t.allBranches()),"BRANCHES COVERED"
-    print len(t.allStatements()),"STATEMENTS COVERED"
+    print(len(t.allBranches()),"BRANCHES COVERED")
+    print(len(t.allStatements()),"STATEMENTS COVERED")

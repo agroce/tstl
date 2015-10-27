@@ -4,6 +4,7 @@ import re
 import sys
 import coverage
 import bh as b
+import imp
 class t(object):
    def act0(self):
       self.p_INT[0]=1
@@ -4978,7 +4979,7 @@ class t(object):
 
       self.__actions_backup = list(self.__actions)
    def restart(self):
-      reload(b)
+      imp.reload(b)
       self.p_INT = {}
       self.p_INT_used = {}
       self.p_INT[0] = None
@@ -5039,7 +5040,7 @@ class t(object):
    def check(self):
       return True
    def enabled(self):
-       return filter(lambda (s, g, a): g(), self.__actions)
+       return [s_g_a for s_g_a in self.__actions if s_g_a[1]()]
    
    def features(self):
        return self.__features
@@ -5103,7 +5104,7 @@ class t(object):
    def candidates(self, t, n):
        candidates = []
        s = len(t) / n
-       for i in xrange(0,n):
+       for i in range(0,n):
            tc = t[0:i*s]
            tc.extend(t[(i+1)*s:])
            candidates.append(tc)

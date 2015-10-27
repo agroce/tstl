@@ -28,7 +28,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -36,7 +36,7 @@ def make_config(pargs, parser):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random testing using config={}'.format(config))
+print(('Random testing using config={}'.format(config)))
 
 if config.seed != None:
     random.seed(config.seed)
@@ -50,21 +50,21 @@ ntests = 0
 tests = []
 branches = []
 
-zellerDD = lambda (test, pred): SUTDD.DDreduce(t, test, pred, keepLast = False)
-alex = lambda (test, pred): t.reduce(test, pred, keepLast = False)
-alexPrune = lambda (test, pred): t.reduce(test, pred, pruneGuards = True, keepLast = False)
+zellerDD = lambda test_pred: SUTDD.DDreduce(t, test_pred[0], test_pred[1], keepLast = False)
+alex = lambda test_pred1: t.reduce(test_pred1[0], test_pred1[1], keepLast = False)
+alexPrune = lambda test_pred2: t.reduce(test_pred2[0], test_pred2[1], pruneGuards = True, keepLast = False)
 reducers = [("Alex", alex, None),
             ("Alex(pruning)", alexPrune, None),
             ("Zeller", zellerDD, None)]
 
-print "GENERATING TESTS..."
+print("GENERATING TESTS...")
 while (config.maxtests == -1) or (ntests < config.maxtests):
     ntests += 1
-    print "TEST",ntests
+    print("TEST",ntests)
     t.restart()
     test = []
 
-    for s in xrange(0,config.depth):
+    for s in range(0,config.depth):
         a = random.choice(t.enabled())
         elapsed = time.time() - start
 #        print s, elapsed, a[0]
@@ -81,9 +81,9 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
 random.shuffle(branches)
 branches = branches[0:15]
 
-print "REDUCING..."
+print("REDUCING...")
 for (name, r, reset) in reducers:
-    print "REDUCER",name
+    print("REDUCER",name)
     sys.stdout.flush()
     totallen = 0.0
     totalshortlen = 0.0
@@ -94,7 +94,7 @@ for (name, r, reset) in reducers:
     minshortlen = config.depth+1
     start = time.time()
     for b in branches:
-        print "BRANCH", b
+        print("BRANCH", b)
         totalbranchtests = 0.0
         totalbranchlen = 0.0
         maxbranchlen = 0
@@ -107,8 +107,8 @@ for (name, r, reset) in reducers:
                     return b in t.currBranches()
                 bpred = t.coversBranches([b], catchUncaught=True)
                 if not bpred(test):
-                    print b
-                    print test
+                    print(b)
+                    print(test)
                 assert bpred(test)
                 if config.prereduce:
                     short = t.replayUntil(test, covered, catchUncaught=True)
@@ -136,16 +136,16 @@ for (name, r, reset) in reducers:
                 totalbranchtests += 1.0
                 if (totaltests % 100) == 0:
                     elapsed = time.time()-start
-                    print elapsed, totaltests, "REDUCED"
+                    print(elapsed, totaltests, "REDUCED")
                     sys.stdout.flush()
         elapsed = time.time()-start
-        print elapsed, "DONE WITH BRANCH: TESTS:", totalbranchtests, "AVG:", totalbranchlen/totalbranchtests, "MIN:", minbranchlen, "MAX:", maxbranchlen
+        print(elapsed, "DONE WITH BRANCH: TESTS:", totalbranchtests, "AVG:", totalbranchlen/totalbranchtests, "MIN:", minbranchlen, "MAX:", maxbranchlen)
     elapsed = time.time()-start
-    print "TIME:",elapsed,"AVG:",totallen/totaltests,"MIN:",minlen,"MAX:",maxlen,"TOTAL:",int(totaltests)
+    print("TIME:",elapsed,"AVG:",totallen/totaltests,"MIN:",minlen,"MAX:",maxlen,"TOTAL:",int(totaltests))
     sys.stdout.flush()
 if config.prereduce:
-    print "STARTING AVG:", totalshortlen / totaltests, "MIN STARTING:", minshortlen, "MAX STARTING:", maxshortlen
+    print("STARTING AVG:", totalshortlen / totaltests, "MIN STARTING:", minshortlen, "MAX STARTING:", maxshortlen)
 
-print ntests, "EXECUTED"
+print(ntests, "EXECUTED")
 
 

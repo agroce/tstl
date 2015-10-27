@@ -43,6 +43,6 @@ np.copyto(array1,array3)
 array4 = array2.flatten()
 array1 = array1 * array4
 
-print array1
+print(array1)
 
 assert (np.array_equal(array1,array1))

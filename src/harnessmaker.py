@@ -77,7 +77,7 @@ def make_config(pargs, parser):
         raise ValueError('The output file is not specified.')
     
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -187,7 +187,7 @@ def expandRange(original):
                 low = int(c[lpos+2:dotpos])
                 high = int(c[dotpos+2:endpos])
                 rexp = c[lpos:endpos+2]
-                for x in xrange(low,high+1):
+                for x in range(low,high+1):
                     newVersion.append(c.replace(rexp, str(x), 1))
             else:
                 newVersion.append(c)
@@ -251,7 +251,7 @@ def genInitialization():
             s = baseIndent
             s += 'self.__consts.append("' + poolPrefix + p.replace("%","") + '")'
             genCode.append(s + "\n")            
-        for x in xrange(0,poolSet[p]+1):
+        for x in range(0,poolSet[p]+1):
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "[" + str(x) + "] = None"
             genCode.append(s + "\n")    
@@ -289,7 +289,7 @@ def main():
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print('Generating harness core using config={}'.format(config))
+    print(('Generating harness core using config={}'.format(config)))
 
     if config.debug:
         from pprint import pprint
@@ -298,6 +298,7 @@ def main():
     outf = open(config.output,'w')
 
     # Handle raw python, imports
+    outf.write("import imp\n")
     outf.write("import copy\n")
     outf.write("import traceback\n")
     outf.write("import re\n")
@@ -397,7 +398,7 @@ def main():
             elif l[0] == "*":       # include action multiple times
                 spos = l.find(" ")
                 times = int(l[1:spos])
-                for n in xrange(0,times):
+                for n in range(0,times):
                     code.append(l[spos:])
             else:
                 code.append(l)
@@ -860,7 +861,7 @@ def main():
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     genCode.append("# BEGIN RELOAD CODE\n")
     for l in import_modules:
-        s = baseIndent + 'reload({})\n'.format(l)
+        s = baseIndent + 'imp.reload({})\n'.format(l)
         genCode.append(s)
     genCode.append("# END RELOAD CODE\n")        
     if (not config.nocover) and config.coverreload:
@@ -985,11 +986,11 @@ def main():
     ###############################################################################
 
     for l in boilerplate:
-        outf.write(baseIndent + l)
+        outf.write(baseIndent + l.decode('utf-8'))
 
     if not config.nocover:
         for l in boilerplate_cov:
-            outf.write(baseIndent + l)    
+            outf.write(baseIndent + l.decode('utf-8'))
 
     outf.close()
 

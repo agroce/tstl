@@ -2,7 +2,7 @@
 # Using delta debugging on an SUT
 
 import DD
-import commands
+import subprocess
 import string
 
 class MyDD(DD.DD):
@@ -60,7 +60,7 @@ def DDreduce(SUT, test, pred, keepLast = True):
 #    print "The 1-minimal failure-inducing input is", mydd.coerce(c)
 #    print "Removing any element will make the failure go away."
 
-    return map(lambda x:x[1], c) + addLast
+    return [x[1] for x in c] + addLast
 
 
 # Local Variables:

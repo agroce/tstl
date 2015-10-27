@@ -27,7 +27,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -35,7 +35,7 @@ def make_config(pargs, parser):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random testing using config={}'.format(config))
+print(('Random testing using config={}'.format(config)))
 
 if config.seed != None:
     mrandom = random.Random(config.seed)
@@ -50,7 +50,7 @@ def foo(code, text):
     if text in seenvalues:
         return
     seenvalues.append(text)
-    print "NEW VALUE FOR V:",text 
+    print("NEW VALUE FOR V:",text) 
 
 t = SUT.t()
 
@@ -59,7 +59,7 @@ test = []
 while (config.maxtests == -1) or (ntests < config.maxtests):
     ntests += 1
 
-    print "STARTING NEW TEST"
+    print("STARTING NEW TEST")
 #    print "OLD TEST WAS:"
 #    nstep = 0
 #    for s in test:
@@ -69,7 +69,7 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     test = []
     full = []
 
-    for s in xrange(0,config.depth):
+    for s in range(0,config.depth):
         a = mrandom.choice(t.enabled())
         (text, guard, action) = a
         test.append(text)
@@ -81,55 +81,55 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         except:
                 _,_,tb = sys.exc_info()
                 traceback.print_tb(tb)
-                print "TEST:"
+                print("TEST:")
                 for step in test:
-                    print step 
-                print "EXITING DUE TO FAILED TEST"
-                print len(test)
-                print "REDUCING..."
+                    print(step) 
+                print("EXITING DUE TO FAILED TEST")
+                print(len(test))
+                print("REDUCING...")
                 newtest = t.reduce(full, t.fails)
                 t.restart()
                 t.logAll()
                 for step in newtest:
-                    print step[0]
+                    print(step[0])
                     if not t.safely(step[2]):
-                        print t.failure()
+                        print(t.failure())
                         _,_,tb = t.failure()
                         traceback.print_tb(tb)
-                print len(newtest)    
+                print(len(newtest))    
                 sys.exit(1)
 
         if not t.check():
-            print "Property failed!"
+            print("Property failed!")
             (_,_,tb) = t.failure()
             traceback.print_tb(tb)
-            print "TEST:"
+            print("TEST:")
             for step in test:
-                print step 
-            print len(test)
-            print "REDUCING..."
+                print(step) 
+            print(len(test))
+            print("REDUCING...")
             newtest = t.reduce(full, t.failsCheck)
             t.restart()
             t.logAll()
             for step in newtest:
-                print step[0]
+                print(step[0])
                 if not t.safely(step[2]):
-                    print t.failure()
+                    print(t.failure())
                     _,_,tb = t.failure()
                     traceback.print_tb(tb)
-            print len(newtest)    
-            print "EXITING DUE TO FAILED TEST"
+            print(len(newtest))    
+            print("EXITING DUE TO FAILED TEST")
             sys.exit(1)
             
         elapsed = time.time() - start
         if elapsed > config.timeout:
-            print "EXITING DUE TO TIMEOUT"
-            print ntests, "EXECUTED"
+            print("EXITING DUE TO TIMEOUT")
+            print(ntests, "EXECUTED")
             t.report()
             sys.exit(2)
 
 t.report()
 
-print ntests, "EXECUTED"
+print(ntests, "EXECUTED")
 
 

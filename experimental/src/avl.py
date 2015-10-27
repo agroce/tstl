@@ -4,7 +4,7 @@ outputdebug = False
 
 def debug(msg):
     if outputdebug:
-        print msg
+        print(msg)
 
 class Node:
     def __init__(self, key):
@@ -270,11 +270,11 @@ class AVLTree:
         self.updateheights()  # Must update heights before balances 
         self.update_balances()
         if(self.node != None): 
-            print '-' * level * 2, pref, self.node.key, "[" + str(self.height) + ":" + str(self.balance) + "]",
+            print('-' * level * 2, pref, self.node.key, "[" + str(self.height) + ":" + str(self.balance) + "]", end=' ')
             if self.is_leaf():
-                print 'L'
+                print('L')
             else:
-                print
+                print()
             if self.node.left != None: 
                 self.node.left.display(level + 1, '<')
             if self.node.left != None:

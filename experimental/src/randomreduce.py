@@ -27,7 +27,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -35,7 +35,7 @@ def make_config(pargs, parser):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random testing using config={}'.format(config))
+print(('Random testing using config={}'.format(config)))
 
 if config.seed != None:
     mrandom = random.Random(config.seed)
@@ -54,7 +54,7 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
     t.restart()
     test = []
 
-    for s in xrange(0,config.depth):
+    for s in range(0,config.depth):
         a = mrandom.choice(t.enabled())
         (text, guard, action) = a
         test.append(a)
@@ -66,35 +66,35 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
         except:
                 _,_,tb = sys.exc_info()
                 traceback.print_tb(tb)
-                print "TEST:"
+                print("TEST:")
                 for (step,_,_) in test:
-                    print step 
-                print "EXITING DUE TO FAILED TEST"
+                    print(step) 
+                print("EXITING DUE TO FAILED TEST")
                 sys.exit(1)
 
         if not t.check():
-            print "Property failed!"
+            print("Property failed!")
             (_,_,tb) = t.failure()
             traceback.print_tb(tb)
-            print "TEST:"
+            print("TEST:")
             for (step,_,_) in test:
-                print step 
-            print "EXITING DUE TO FAILED TEST"
+                print(step) 
+            print("EXITING DUE TO FAILED TEST")
             t2 = t.reduce(test, t.failsCheck, keepLast = False)
-            print "REDUCED:"
+            print("REDUCED:")
             for (step,_,_) in t2:
-                print step
+                print(step)
             sys.exit(1)
             
         elapsed = time.time() - start
         if elapsed > config.timeout:
-            print "EXITING DUE TO TIMEOUT"
-            print ntests, "EXECUTED"
+            print("EXITING DUE TO TIMEOUT")
+            print(ntests, "EXECUTED")
             t.report()
             sys.exit(2)
 
 t.report()
 
-print ntests, "EXECUTED"
+print(ntests, "EXECUTED")
 
 

@@ -316,7 +316,7 @@ def test_match(strategies, setup=match_setup):
 
     Returns the winning strategies.
     """
-    DECK, DISCARD, HAND, TURNS, ATTACKS = range(5)
+    DECK, DISCARD, HAND, TURNS, ATTACKS = list(range(5))
     supply = setup_supply(len(strategies))
     players = [setup() for _ in strategies]
     player_index = 0
@@ -324,9 +324,9 @@ def test_match(strategies, setup=match_setup):
     while True:
         if supply[PROVINCE] == 0:
             break
-        if len(strategies) <= 4 and supply.values().count(0) >= 3:
+        if len(strategies) <= 4 and list(supply.values()).count(0) >= 3:
             break
-        if len(strategies) > 4 and supply.values().count(0) >= 4:
+        if len(strategies) > 4 and list(supply.values()).count(0) >= 4:
             break
         p = players[player_index]
         name, strategy, kwargs = strategies[player_index]
@@ -385,21 +385,21 @@ def test(name, tries, strategy, runner=test_game, **kwargs):
             scores.append(score)
     times.sort()
     scores.sort()
-    print name
+    print(name)
     num = len(times)
-    print "Num = %d" % num
-    print "Tot = %d" % total_tries
-    print "Min = %d" % times[0]
+    print("Num = %d" % num)
+    print("Tot = %d" % total_tries)
+    print("Min = %d" % times[0])
     if num % 2 == 1:
-        print "Med = %d" % times[num // 2]
+        print("Med = %d" % times[num // 2])
     else:
-        print "Med = %f" % (float(times[num // 2 - 1] + times[num // 2]) / 2)
-    print "Max = %d" % times[-1]
+        print("Med = %f" % (float(times[num // 2 - 1] + times[num // 2]) / 2))
+    print("Max = %d" % times[-1])
     avg = float(sum(times)) / num
-    print "Avg = %f" % avg
-    print "StD = %f" % ((sum((x-avg)**2 for x in times) / (num-1)) ** 0.5)
-    print "Avg Score = %f" % (float(sum(scores)) / num)
-    print
+    print("Avg = %f" % avg)
+    print("StD = %f" % ((sum((x-avg)**2 for x in times) / (num-1)) ** 0.5))
+    print("Avg Score = %f" % (float(sum(scores)) / num))
+    print()
 
 
 def test_matches(tries, strategies, runner=test_match, **kwargs):
@@ -415,12 +415,12 @@ def test_matches(tries, strategies, runner=test_match, **kwargs):
             matches += 1
         except InvalidGameError:
             pass
-    print "Num = %d" % matches
-    print "Tot = %d" % total_tries
+    print("Num = %d" % matches)
+    print("Tot = %d" % total_tries)
     for strategy in strategies:
         name = strategy[0]
-        print name, winners.count(name), float(winners.count(name)) / matches
-    print
+        print(name, winners.count(name), float(winners.count(name)) / matches)
+    print()
 
 
 # Strategy functions
@@ -616,7 +616,7 @@ def chapel(deck, discard, hand, turn, supply, attacks=None):
             coppers = min(coppers, coins - COST[DUCHY])
         elif coins >= COST[GOLD]:
             coppers = min(coppers, coins - COST[GOLD])
-        for i in xrange(coppers):
+        for i in range(coppers):
             hand.remove(COPPER)
         coins -= coppers
     if coins < 5 and CHAPEL not in all_cards and gain(CHAPEL, supply, discard): pass
@@ -639,7 +639,7 @@ def multi_chapel(deck, discard, hand, turn, supply):
                 hand.remove(target)
         if turn > 4:
             chapels = hand.count(CHAPEL) - 1
-            for i in xrange(chapels):
+            for i in range(chapels):
                 hand.remove(CHAPEL)
         coppers = hand.count(COPPER)
         all_coins = count_coins(all_cards)
@@ -648,7 +648,7 @@ def multi_chapel(deck, discard, hand, turn, supply):
             coppers = min(coppers, coins - COST[PROVINCE])
         elif coins >= COST[GOLD]:
             coppers = min(coppers, coins - COST[GOLD])
-        for i in xrange(coppers):
+        for i in range(coppers):
             hand.remove(COPPER)
         coins -= coppers
     if turn <= 2 and gain(CHAPEL, supply, discard): pass
@@ -685,7 +685,7 @@ def chapel_lab(deck, discard, hand, turn, supply, labs=2):
             coppers = min(coppers, coins - COST[GOLD])
         elif coins >= COST[LABORATORY] and labs > 0 and LABORATORY not in all_cards:
             coppers = min(coppers, coins - COST[LABORATORY])
-        for i in xrange(coppers):
+        for i in range(coppers):
             hand.remove(COPPER)
         coins -= coppers
     if coins < 5 and CHAPEL not in all_cards and gain(CHAPEL, supply, discard): pass

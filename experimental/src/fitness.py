@@ -6,11 +6,11 @@ t = sut.t()
 LEN = 2000
 N = 1000
 
-for n in xrange(0,N):
+for n in range(0,N):
     t.restart()
-    for s in xrange(0,LEN):
+    for s in range(0,LEN):
         oldstate = t.state()
-        next = []
+        nxt = []
         for action in t.enabled():
             action[2]()
             assert(t.check())
@@ -21,8 +21,8 @@ for n in xrange(0,N):
                 fitness = len(avl1.inorder_traverse())
             if avl2 != None:
                 fitness = max(fitness, len(avl2.inorder_traverse()))
-            next.append((action, fitness))
+            nxt.append((action, fitness))
             t.backtrack(oldstate)
-        sortedacts = sorted(next, key=lambda x : x[1], reverse = True)
-        print sortedacts[0]
+        sortedacts = sorted(nxt, key=lambda x : x[1], reverse = True)
+        print(sortedacts[0])
         sortedacts[0][0][2]()

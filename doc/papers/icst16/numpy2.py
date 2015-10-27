@@ -25,6 +25,6 @@ array0 = array0 - array0                                                        
 #  or array4 = array0 - array0 
 #  or array5 = array0 - array0
 
-print array0
+print(array0)
 
 assert (np.array_equal(array0,array0))

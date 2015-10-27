@@ -69,13 +69,13 @@ def replayable(self,stest):
     steps = stest.split("#!#!")
     if steps == ['']:
         return []
-    return map(self.playable, steps)
+    return list(map(self.playable, steps))
 
 def enabled(self):
     """
     Returns all enabled action objects.
     """
-    return filter(lambda (s, g, a): g(), self.__actions)
+    return [s_g_a for s_g_a in self.__actions if s_g_a[1]()]
 
 def features(self):
     return self.__features
@@ -185,15 +185,15 @@ def setLogAction(self, f):
     self.__logAction = f
 
 def logPrint(self, name, code, text, after):
-    print "[",
+    print("[", end=' ')
     if after:
-        print "POST",
-    print "LOG " + name + "  :  " + str(code) + "] " + str(text)
+        print("POST", end=' ')
+    print("LOG " + name + "  :  " + str(code) + "] " + str(text))
 
 def __candidates(self, t, n):
     candidates = []
     s = len(t) / n
-    for i in xrange(0,n):
+    for i in range(0,n):
         tc = t[0:i*s]
         tc.extend(t[(i+1)*s:])
         candidates.append(tc)
@@ -298,7 +298,7 @@ def reduceEssentials(self, test, original, pred, pruneGuards = False, keepLast =
                 break
         if foundSuperset:
             continue
-        newOrig = filter(lambda x: x not in rset, original)
+        newOrig = [x for x in original if x not in rset]
         if pred(newOrig):
             reduced = self.reduce(newOrig, pred, pruneGuards, keepLast)
             workingRemovals.append((rset,reduced))
@@ -314,7 +314,7 @@ def actionModify(self,action,old,new):
 def levDist(self,s1,s2):
     if len(s1) > len(s2):
         s1,s2 = s2,s1
-    distances = range(len(s1) + 1)
+    distances = list(range(len(s1) + 1))
     for index2,char2 in enumerate(s2):
         newDistances = [index2+1]
         for index1,char1 in enumerate(s1):
@@ -329,17 +329,17 @@ def levDist(self,s1,s2):
 
 def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print "STARTING REDUCE LENGTH STEP"
+        print("STARTING REDUCE LENGTH STEP")
     # Replace any action with another action, if that allows test to be further reduced
     enableChange = {}
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         if checkEnabled:
-            enableChange[i] = map(lambda x:x[0], self.enabled())
+            enableChange[i] = [x[0] for x in self.enabled()]
             self.safely(test[i])
         else:
-            enableChange[i] = map(lambda x:x[0], self.actions())
+            enableChange[i] = [x[0] for x in self.actions()]
     
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         name1 = test[i][0]
         if i not in enableChange:
             continue        
@@ -352,24 +352,24 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
                     rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
                     if len(rtestC) < len(test):
                         if verbose:
-                            print "NORMALIZER: RULE ReduceAction: STEP",i,name1,"-->",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
+                            print("NORMALIZER: RULE ReduceAction: STEP",i,name1,"-->",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC))
                         return (True, rtestC)
     return (False, test)
 
 def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print "STARTING REPLACE ALL STEP"    
+        print("STARTING REPLACE ALL STEP")    
     # Replace all occurrences of an action with a simpler action
     enableChange = {}
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         if checkEnabled:
-            enableChange[i] = map(lambda x:x[0], self.enabled())
+            enableChange[i] = [x[0] for x in self.enabled()]
             self.safely(test[i])
         else:
-            enableChange[i] = map(lambda x:x[0], self.actions())
+            enableChange[i] = [x[0] for x in self.actions()]
 
     donePairs = []
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         name1 = test[i][0]
         if i not in enableChange:
             continue        
@@ -378,16 +378,16 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
                     continue
                 donePairs.append((name1,name2))
-                testC = map(lambda x: self.actionModify(x,name1,name2), test)
+                testC = [self.actionModify(x,name1,name2) for x in test]
                 if pred(testC):
                     if verbose:
-                        print "NORMALIZER: RULE SimplifyAll:",name1,"-->",name2
+                        print("NORMALIZER: RULE SimplifyAll:",name1,"-->",name2)
                     return (True, testC)
     return (False, test)
 
 def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print "STARTING REPLACE POOL STEP"        
+        print("STARTING REPLACE POOL STEP")        
     # Replace pools with lower-numbered pools
     pools = []
     for s in test:
@@ -396,51 +396,51 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
                 pools.append(p)
 
     # Reduce number of pools but may need to move assignment to a later position, or only change after the position
-    for pos in xrange(0,len(test)):
+    for pos in range(0,len(test)):
         for (p,i) in pools:
-            for n in xrange(0,int(i)):
+            for n in range(0,int(i)):
                 new = p.replace("["+i+"]","[" + str(n) + "]")    
                 prefix = []
                 moved = []
-                for j in xrange(0,pos):
+                for j in range(0,pos):
                     if new in test[j][0]:
                         moved.append(test[j])
                     else:
                         prefix.append(test[j])
-                suffix = map(lambda x: self.actionModify(x,p,new), moved + test[pos:])
-                testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
+                suffix = [self.actionModify(x,p,new) for x in moved + test[pos:]]
+                testC = prefix + [self.actionModify(x,p,new) for x in suffix]
                 if (testC != test) and pred(testC):
                     if verbose:
                         if pos == 0:
-                            print "NORMALIZER: RULE ReplacePool:",p,"WITH",new
+                            print("NORMALIZER: RULE ReplacePool:",p,"WITH",new)
                         else:
-                            print "NORMALIZER: RULE ReplaceMovePool:",p,"WITH",new," -- MOVED TO",pos
+                            print("NORMALIZER: RULE ReplaceMovePool:",p,"WITH",new," -- MOVED TO",pos)
                     return (True, testC)
                 # Not possible, try with only replacing between pos and pos2
-                for pos2 in xrange(len(test),pos,-1):
+                for pos2 in range(len(test),pos,-1):
                     prefix = test[:pos]
-                    suffix = map(lambda x: self.actionModify(x,p,new), test[pos:pos2])
+                    suffix = [self.actionModify(x,p,new) for x in test[pos:pos2]]
                     testC = prefix + suffix + test[pos2:]
                     if (testC != test) and pred(testC):
                         if verbose:
-                            print "NORMALIZER: RULE ReplacePool:",p,"WITH",new,"FROM",pos,"TO",pos2
+                            print("NORMALIZER: RULE ReplacePool:",p,"WITH",new,"FROM",pos,"TO",pos2)
                         return (True, testC)
     return (False, test)
 
 
 def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print "STARTING REPLACE SINGLE STEP"        
+        print("STARTING REPLACE SINGLE STEP")        
     # Replace any single action with a lower-numbered action
     enableChange = {}
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         if checkEnabled:
-            enableChange[i] = map(lambda x:x[0], self.enabled())
+            enableChange[i] = [x[0] for x in self.enabled()]
             self.safely(test[i])
         else:
-            enableChange[i] = map(lambda x:x[0], self.actions())
+            enableChange[i] = [x[0] for x in self.actions()]
     
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         name1 = test[i][0]
         if i not in enableChange:
             continue        
@@ -451,13 +451,13 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if pred(testC):
                     if verbose:
-                        print "NORMALIZER: RULE SimplifySingle: STEP",i,name1,"-->",name2
+                        print("NORMALIZER: RULE SimplifySingle: STEP",i,name1,"-->",name2)
                     return (True, testC)
     return (False, test)
 
 def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print "STARTING SWAP POOL STEP"        
+        print("STARTING SWAP POOL STEP")        
     # Swap two pool uses in between two positions, if this lowers the minimal action ordering between them
     pools = []
     for s in test:
@@ -468,18 +468,18 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
     swaps = []
     for (p1,i1) in pools:
         for (p2,i2) in pools:
-            for pos1 in xrange(0,len(test)):
-                for pos2 in xrange(len(test),pos1,-1):
+            for pos1 in range(0,len(test)):
+                for pos2 in range(len(test),pos1,-1):
                     if (p1 != p2) and (p1.split("[")[0] == p2.split("[")[0]):
                         p1new = p1.replace("[" + i1 + "]", "[" + i2 + "]")
                         p2new = p2.replace("[" + i2 + "]", "[" + i1 + "]")
                         p2newTemp = p2.replace("[" + i2 + "]", "[**]")
-                        tempTest = map(lambda x:(x[0].replace(p2,p2newTemp),x[1],x[2]), test[pos1:pos2])
-                        tempTest2 = map(lambda x:(x[0].replace(p1,p1new),x[1],x[2]), tempTest)
-                        testC = test[:pos1] + map(lambda x: self.actionModify(x,p2newTemp,p2new), tempTest2) + test[pos2:]
+                        tempTest = [(x[0].replace(p2,p2newTemp),x[1],x[2]) for x in test[pos1:pos2]]
+                        tempTest2 = [(x[0].replace(p1,p1new),x[1],x[2]) for x in tempTest]
+                        testC = test[:pos1] + [self.actionModify(x,p2newTemp,p2new) for x in tempTest2] + test[pos2:]
                         leastTestC = -1
                         leastTest = -1
-                        for s in xrange(0,len(test)):
+                        for s in range(0,len(test)):
                             if test[s] != testC[s]:
                                 ordTest = self.__orderings[test[s][0]]
                                 if (leastTest == -1) or (ordTest < leastTest):
@@ -490,20 +490,20 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
                         if leastTestC < leastTest:
                             if pred(testC):
                                 if verbose:
-                                    print "NORMALIZER: RULE SwapPool:",p1,"AND",p2,"BETWEEN STEP",pos1,"AND",pos2
+                                    print("NORMALIZER: RULE SwapPool:",p1,"AND",p2,"BETWEEN STEP",pos1,"AND",pos2)
                                 return (True, testC)
     return (False, test)
 
 def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print "STARTING SWAP ACTION ORDER STEP"        
+        print("STARTING SWAP ACTION ORDER STEP")        
     # Try to swap any out-of-order actions
     lastMover = len(test)
     if keepLast:
         lastMover -= 1
         
-    for i in xrange(0,lastMover):
-        for j in xrange(i+1,lastMover):
+    for i in range(0,lastMover):
+        for j in range(i+1,lastMover):
             step1 = test[i][0]
             step2 = test[j][0]
             if self.__orderings[step2] < self.__orderings[step1]:
@@ -515,7 +515,7 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
                     testC = frag1 + frag2 + frag3 + frag4 + frag5
                     if pred(testC):
                         if verbose:
-                            print "NORMALIZER: RULE SwapAction:",i,test[i][0],"WITH STEP",j,test[j][0]
+                            print("NORMALIZER: RULE SwapAction:",i,test[i][0],"WITH STEP",j,test[j][0])
                         return (True, testC)
     return (False, test)
 
@@ -532,7 +532,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     stest = self.captureReplay(test)
     if stest in self.__simplifyCache:
         if verbose:
-            print "NORMALIZER: FOUND TEST IN CACHED RESULTS"
+            print("NORMALIZER: FOUND TEST IN CACHED RESULTS")
         return self.__simplifyCache[stest]
     history = [stest]
         
@@ -583,7 +583,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
                 stest = self.captureReplay(test)
                 if stest in self.__simplifyCache:
                     if verbose:
-                        print "NORMALIZER: FOUND TEST IN CACHED RESULTS"
+                        print("NORMALIZER: FOUND TEST IN CACHED RESULTS")
                     result = self.__simplifyCache[stest]
                     for t in history:
                         self.__simplifyCache[t] = result
@@ -613,7 +613,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
 
 def freshSimpleVariants(self, name, previous, replacements):
 #    print "FINDING FRESH SIMPLES FOR",name
-    prevNames = map(lambda x:x[0], previous)
+    prevNames = [x[0] for x in previous]
     prevNames.reverse()
     lastAppear = []
     eqFind = name.find("=")
@@ -630,8 +630,8 @@ def freshSimpleVariants(self, name, previous, replacements):
                     continue
             lastAppearMap[p] = [n]
             break
-        skeys = replacements.keys()
-        skeys = filter(lambda x: x < len(previous), skeys)
+        skeys = list(replacements.keys())
+        skeys = [x for x in skeys if x < len(previous)]
         skeys = sorted(skeys, reverse = True)
         for i in skeys:
 #            print "i = ",i
@@ -669,19 +669,19 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     self.relax()
     
     enableChange = {}
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         if checkEnabled:
-            enableChange[i] = map(lambda x:x[0], self.enabled())
+            enableChange[i] = [x[0] for x in self.enabled()]
             self.safely(test[i])
         else:
-            enableChange[i] = map(lambda x:x[0], self.actions())
+            enableChange[i] = [x[0] for x in self.actions()]
     
     canReplace = {}
     canSwap = {}
     canMakeSimple = {}
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         canSwap[i] = []
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         canReplace[i] = []
         canMakeSimple[i] = []
         if i not in enableChange:
@@ -693,7 +693,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 testC = test[:i] + [self.__names[a]] + test[i+1:]
                 if pred(testC):
                     canReplace[i].append(a)
-        for j in xrange(i+1,len(test)):
+        for j in range(i+1,len(test)):
             if i == j or test[i][0] == test[j][0]:
                 continue
             testC = test[:i]+[test[j]]+test[i+1:j]+[test[i]]+test[j+1:]
@@ -706,14 +706,14 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 canMakeSimple[i].append(v)
     noOrder = []
     endSwappable = -1
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         if endSwappable >= i:
             continue
         foundSwap = False
-        for j in xrange(len(test)-1,i,-1):
+        for j in range(len(test)-1,i,-1):
             allSwappable = True
-            for k1 in xrange(i,j+1):
-                for k2 in xrange(k1+1,j+1):
+            for k1 in range(i,j+1):
+                for k2 in range(k1+1,j+1):
                         if k2 not in canSwap[k1]:
                                 allSwappable = False
                                 break
@@ -721,20 +721,20 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                     break
             if allSwappable:
                 noOrder.append((i,j))
-                for k1 in xrange(i,j+1):
-                    for k2 in xrange(i,j+1):
+                for k1 in range(i,j+1):
+                    for k2 in range(i,j+1):
                         if k2 in canSwap[k1]:
                             canSwap[k1].remove(k2)
                 endSwappable = j
                 break
 
-    for i in xrange(0,len(test)):
+    for i in range(0,len(test)):
         for (begin,end) in noOrder:
             if i == begin:
-                print "#["
+                print("#[")
         pn = self.prettyName(test[i][0])
         spaces = " " * (90-len(pn)-len(" # STEP"))
-        print self.prettyName(test[i][0]),spaces,"# STEP",i
+        print(self.prettyName(test[i][0]),spaces,"# STEP",i)
         if canReplace[i] != []:
             firstRep = None
             lastRep = None
@@ -744,37 +744,37 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                     lastRep = rep
                 elif self.__orderings[rep] != (self.__orderings[lastRep] + 1):
                     if firstRep == lastRep:
-                        print "#  or",self.prettyName(firstRep)
+                        print("#  or",self.prettyName(firstRep))
                     else:
-                        print "#  or",self.prettyName(firstRep)
-                        print "#   -",self.prettyName(lastRep)
+                        print("#  or",self.prettyName(firstRep))
+                        print("#   -",self.prettyName(lastRep))
                     firstRep = rep
                     lastRep = rep
                 else:
                     lastRep = rep
             if firstRep == lastRep:
-                print "#  or",self.prettyName(firstRep)
+                print("#  or",self.prettyName(firstRep))
             else:
-                print "#  or",self.prettyName(firstRep)
-                print "#   -",self.prettyName(lastRep)
+                print("#  or",self.prettyName(firstRep))
+                print("#   -",self.prettyName(lastRep))
         if canMakeSimple[i] != []:
             for v in canMakeSimple[i]:
-                print "#  or ("
+                print("#  or (")
                 for s in v[:-1]:
-                    print "#     ",self.prettyName(s[0]),";"
-                print "#     ",self.prettyName(v[-1][0])
-                print "#     )"
+                    print("#     ",self.prettyName(s[0]),";")
+                print("#     ",self.prettyName(v[-1][0]))
+                print("#     )")
         if canSwap[i] != []:
             if len(canSwap[i]) == 1:
-                print "#  swaps with step",
+                print("#  swaps with step", end=' ')
             else:
-                print "#  swaps with steps",
+                print("#  swaps with steps", end=' ')
             for j in canSwap[i]:
-                print j,
-            print
+                print(j, end=' ')
+            print()
         for (begin,end) in noOrder:
             if i == end:
-                print "#] (steps in [] can be in any order)"
+                print("#] (steps in [] can be in any order)")
 
     self.stopRelax()
     # Make sure to restore normal semantics!

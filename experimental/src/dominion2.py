@@ -112,7 +112,7 @@ def shuffle(player,state):
     state.randomState = random.getstate()
 
 def thehand(state):
-    return map(lambda x: cardlist.index(x), state.hand[state.whoseTurn])
+    return [cardlist.index(x) for x in state.hand[state.whoseTurn]]
 
 def drawCard(player,state):
     if len(state.deck[player])>= 1:
@@ -291,7 +291,7 @@ def cardEffect(card,c1,c2,c3,state,bonus):
         return 0
     elif card == "Embargo":
         choice1 = cardlist[c1]
-        if choice1 not in state.embargoTokens.keys():
+        if choice1 not in list(state.embargoTokens.keys()):
             return -1
         updateCoins(state.whoseTurn,state,2)
         discardCard("Embargo",state.whoseTurn,state,1)

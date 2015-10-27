@@ -113,7 +113,7 @@ class BinomialHeap(object):
         def __init__(self, get_heap, key, val=None):
             self.degree = 0
             self.parent = None
-            self.next   = None
+            self.nxt   = None
             self.child  = None
             self.key    = key
             self.ref    = ItemRef(self, get_heap)
@@ -128,12 +128,12 @@ class BinomialHeap(object):
                 return 'NIL'
             
         def __str__(self):
-            return '(%s, c:%s, n:%s)' % (getStrKey(self), getStrKey(self.child), getStrKey(self.next))
+            return '(%s, c:%s, n:%s)' % (getStrKey(self), getStrKey(self.child), getStrKey(self.nxt))
 
         def link(self, other):
             "Makes other a subtree of self."
             other.parent  = self
-            other.next    = self.child
+            other.nxt    = self.child
             self.child    = other
             self.degree  += 1
 
@@ -166,23 +166,23 @@ class BinomialHeap(object):
                 return h1
             if h1.degree < h2.degree:
                 h  = h1
-                h1 = h.next
+                h1 = h.nxt
             else:
                 h  = h2
-                h2 = h2.next
+                h2 = h2.nxt
             p = h
             while h2 and h1:
                 if h1.degree < h2.degree:
-                    p.next = h1
-                    h1 = h1.next
+                    p.nxt = h1
+                    h1 = h1.nxt
                 else:
-                    p.next = h2
-                    h2 = h2.next
-                p = p.next
+                    p.nxt = h2
+                    h2 = h2.nxt
+                p = p.nxt
             if h2:
-                p.next = h2
+                p.nxt = h2
             else:
-                p.next = h1
+                p.nxt = h1
             return h
 
         @staticmethod
@@ -193,15 +193,15 @@ class BinomialHeap(object):
             if not h:
                 return None
             tail = None
-            next = h
+            nxt = h
             h.parent = None
-            while h.next:
-                next = h.next
-                h.next = tail
+            while h.nxt:
+                nxt = h.nxt
+                h.nxt = tail
                 tail   = h
-                h = next
+                h = nxt
                 h.parent = None
-            h.next = tail
+            h.nxt = tail
             return h
 
     class __Ref(object):
@@ -276,16 +276,16 @@ class BinomialHeap(object):
             (x, prev) = pos
             # remove from list
             if prev:
-                prev.next = x.next
+                prev.nxt = x.nxt
             else:
-                self.head = x.next
+                self.head = x.nxt
             kids = BinomialHeap.Node.roots_reverse(x.child)
             self.__union(kids)
             x.ref.in_tree = False
             self.size -= 1
             return x.val
 
-    def __nonzero__(self):
+    def __bool__(self):
         """True if the heap is not empty; False otherwise."""
         return self.head != None
 
@@ -312,7 +312,7 @@ class BinomialHeap(object):
         self.union(other)
         return self
 
-    def next(self):
+    def nxt(self):
         """Returns the value with the minimum key (= highest priority) in the heap
         AND removes it from the heap; raises StopIteration if the heap is empty.
         """
@@ -325,7 +325,7 @@ class BinomialHeap(object):
         """Test whether a given reference 'ref' (of ItemRef) is in this heap.
         """
         if type(ref) != ItemRef:
-            raise TypeError, "Expected an ItemRef"
+            raise TypeError("Expected an ItemRef")
         else:
             return ref.in_heap(self)
 
@@ -335,13 +335,13 @@ class BinomialHeap(object):
         min  = self.head
         min_prev = None
         prev = min
-        cur  = min.next
+        cur  = min.nxt
         while cur:
             if cur.key < min.key:
                 min = cur
                 min_prev = prev
             prev = cur
-            cur  = cur.next
+            cur  = cur.nxt
         return (min, min_prev)
 
     def __union(self, h2):
@@ -355,28 +355,28 @@ class BinomialHeap(object):
         h1 = BinomialHeap.Node.roots_merge(h1, h2)
         prev = None
         x    = h1
-        next = x.next
-        while next:
-            if x.degree != next.degree or \
-                    (next.next and next.next.degree == x.degree):
+        nxt = x.nxt
+        while nxt:
+            if x.degree != nxt.degree or \
+                    (nxt.nxt and nxt.nxt.degree == x.degree):
                 prev = x
-                x    = next
-            elif x.key <= next.key:
-                # x becomes the root of next
-                x.next = next.next
-                x.link(next)
+                x    = nxt
+            elif x.key <= nxt.key:
+                # x becomes the root of nxt
+                x.nxt = nxt.nxt
+                x.link(nxt)
             else:
-                # next becomes the root of x
+                # nxt becomes the root of x
                 if not prev:
                     # update the "master" head
-                    h1 = next
+                    h1 = nxt
                 else:
                     # just update previous link
-                    prev.next = next
-                next.link(x)
+                    prev.nxt = nxt
+                nxt.link(x)
                 # x is not toplevel anymore, update ref by advancing
-                x = next
-            next = x.next
+                x = nxt
+            nxt = x.nxt
         self.head = h1
 
 def heap(lst=[]):
@@ -418,20 +418,20 @@ if __name__ == "__main__":
              h3.insert(666, "Blue Devils") ]
 
     ref = bad[0]
-    print "%s: \n\tin h1: %s\n\tin h2: %s\n\tin h3: %s" % \
-        (str(ref), ref in h1, ref in h2, ref in h3)
+    print("%s: \n\tin h1: %s\n\tin h2: %s\n\tin h3: %s" % \
+        (str(ref), ref in h1, ref in h2, ref in h3))
 
-    print "Merging h3 into h2..."
+    print("Merging h3 into h2...")
     h2 += h3
 
-    print "%s: \n\tin h1: %s\n\tin h2: %s\n\tin h3: %s" % \
-        (str(ref), ref in h1, ref in h2, ref in h3)
+    print("%s: \n\tin h1: %s\n\tin h2: %s\n\tin h3: %s" % \
+        (str(ref), ref in h1, ref in h2, ref in h3))
 
-    print "Merging h2 into h1..."
+    print("Merging h2 into h1...")
     h1 += h2
 
-    print "%s: \n\tin h1: %s\n\tin h2: %s\n\tin h3: %s" % \
-        (str(ref), ref in h1, ref in h2, ref in h3)
+    print("%s: \n\tin h1: %s\n\tin h2: %s\n\tin h3: %s" % \
+        (str(ref), ref in h1, ref in h2, ref in h3))
 
     t1ref.decrease(-1)
     t2ref.decrease(99)
@@ -439,5 +439,5 @@ if __name__ == "__main__":
     for ref in bad:
         ref.delete()
     for x in h1:
-        print x,
+        print(x, end=' ')
 

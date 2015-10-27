@@ -26,4 +26,4 @@ while True:
                 nextstates.append(t.state())
             t.backtrack(s)    
     frontier = nextstates
-    print n,len(frontier),len(visited)
+    print(n,len(frontier),len(visited))

@@ -27,7 +27,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -35,7 +35,7 @@ def make_config(pargs, parser):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Model checking using config={}'.format(config))
+print(('Model checking using config={}'.format(config)))
 
 if config.seed != None:
     random.seed(config.seed)
@@ -43,7 +43,7 @@ if config.seed != None:
 def dfs (test):
     elapsed = time.time()-start
     if (elapsed > config.timeout):
-        print "EXITING DUE TO TIMEOUT"
+        print("EXITING DUE TO TIMEOUT")
         sys.exit(2)
     if len(test) == config.depth:
         return
@@ -66,10 +66,10 @@ def dfs (test):
             traceback.print_tb(tb)
             tbInfo = traceback.extract_tb(tb)
             filename,line,func,text = tbInfo[-1]
-            print "TEST:"
+            print("TEST:")
             for step in newtest:
-                print step
-            print "EXITING DUE TO FAILED TEST"
+                print(step)
+            print("EXITING DUE TO FAILED TEST")
             sys.exit(1)
         if t.state() not in visited:
             dfs (newtest)
