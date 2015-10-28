@@ -16,6 +16,18 @@ and in order to avoid breaking old harnesses, TSTL continues to allow
 the {\tt \%} notation, but future TSTL harnessess for Python will use
 the more readable syntax.
 
+Another language improvement inspited by development of the ArcPy harness was
+extending the range construct {\tt <[start..end]>} to also express a
+list of options, which can be constants or python expressions.  An
+action containg {\tt <[item1, item2, ...]>} expands to multiple
+actions, each of which has the literal text of one item.  The
+construct {\tt <,[item1,, item2,, ...],>} works the same way, except
+that items are delimited by double-commas, allowing the items to even
+be partial Python expressions containing commas, for use in,
+e.g. constructing function arguments.  The second form is not used in
+the ArcPy harness at this time, because it is powerful but somewhat
+difficult to read.
+
 We are also considering, as a result of the experience of developing
 the ArcPy harness, moving to a more structured form for TSTL files.
 The current language allows pool definitions, actions, logging code,
