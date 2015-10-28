@@ -7,6 +7,63 @@ detect than others, and for practical testing it is best to disable,
 e.g., the various {\tt Delete} calls and to use guards to prevent all modifications of
 layers or classes on which cursors are active.
 
+Figure \ref{preamble} contains the small amount of code needed to
+prepare a temporary workspace for each test sequence.  This code
+handles deleting any live cursors (the pool variables are guaranteed
+to be deleted before each test, and garbage collection ensures the
+cursors are deactivated), removing any layers created on feature
+classes, and then setting the environment.  The system will scan for a
+``free'' environment location, to handle cases where locks prevent
+re-using an old directory\footnote{The problem of locked directories
+  seldom surfaces, now that layers are deleted before each test, but
+  may be needed when saving states.}.  The other utility functions
+allow discovering the feature classes in a geodatabase and produce a
+report on screen when a complex ArcGIS operation completes
+successfully.
+
+One critical design decision taken early in the development of this
+harness was that there is no explicit definition of the starting data
+used for testing.  Any data stored in the {\tt Arcbase} directory can
+be used, and the system supports shapefiles and file geodatabases.
+This has two purposes:  first, testing can be customize to use any
+starting data, including a user's own shapefiles.  Second, this makes
+it easy to implement deep state testing, since no assumptions are made
+about the structure or number of data files used.  The lack of
+dependence on specific files is implemented by having the test harness
+use Python's {\tt glob} function to collect all files of a given
+extension in a directory in a list, then chose an item from the list.
+In order to make sure that behavior is deterministic (up to the choice
+of actual data files), the glob results are sorted.  This approach
+does bias random testing to using files earlier in alphabetical order,
+but we do not expect base testing data to include a large number of
+files.
+
+The key driving requirements for this harness design are given in the
+title of this paper:  the test harness must be \emph{extensible} and
+it must be \emph{usable}.
+
+Because ArcPy is large and complex, the effort to produce a
+complete test harness and more effective specification of correctness
+is a long-term effort, and may be carried out by other users:  the
+harness therefore must be \emph{extensible}.  The
+harness should also be suitable for use by ArcPy developers testing
+how their own extensions to ArcPy interact with the base ArcPy API.
+Adding new API calls to the harness should be easy:  we have defined
+the pools for basic ArcPy object types and provided tools that should
+handle much more complex test cases.  The decision discussed above to
+make the test harness independent of specific data files is a good
+example of our emphasis on extensibility.
+
+The idea that other ArcPy developers, testing researchers, and perhaps
+(end-user) software developers in other fields looking for a large
+scale example of how to test systems with TSTL, will need to read and
+modify the code also drives our emphasis on a truly usable system.
+Usability has a more direct impact on the modifications to the TSTL
+language and tools than on the test harness itself, but the test
+harness is developed in the context of the improvements to the TSTL
+ecosystem, such as standalone tests and normalization and
+generalization.
+
 \begin{figure}
 {\scriptsize
 \begin{code}
