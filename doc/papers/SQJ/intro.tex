@@ -1,11 +1,19 @@
 \section{Introduction}
 
+Software test automation can be divided into two aspects:  automated execution
+and determination of results for existing, human-created tests, and
+the automatic generation of tests, based on some definition of valid
+tests.  Both are critical for effective, efficient software testing,
+but only automatic generation offers the promise of discovering faults
+without human determination that a particular execution scenario has
+the potential to behave incorrectly.
 This paper presents a case study of applying a new automated test case
 generation language and toolchain to a large, real-world software system.
 The test effort has been driven and directed not by a software testing
 researcher (as is the usual case), but by a domain expert in the
 Geographic Information System (GIS)
-Software Under Test (SUT).  
+Software Under Test (SUT).  In the process, multiple faults and
+undocumented restrictions of the API under test have been discovered.
 
 \subsection{Testing Esri ArcPy}
 
@@ -39,7 +47,7 @@ large as the next-largest such definition previously implemented in
 TSTL, even though the harness so far only includes a small portion of ArcPy
 API (Application Program Interface) calls. The first stage of testing has resulted in discovery of
 multiple faults in ArcPy/ArcGIS, and has required modifications to the
-TSTL language and, especially, to the toolchain supporting testing,
+TSTL language and, especially, to the toolchain supporting test replay,
 debugging, and test case understanding.
 
 One of the contributions of this paper is a more in-depth discussion
@@ -55,23 +63,23 @@ and understanding faults in a real-world software system.
 Previous work on automated testing for APIs has been largely carried
 out by software testing researchers only, or (at most) by software
 testing researchers working with individuals who are primarily
-software developers.  This paper presents work largely directed by an
-individual (the first author) who is not a software developer by
+software developers.  This paper presents work largely directed by
+the first author, who is not a software developer by
 profession or education, but a GIS analyst.  
 
 The problem of end-user testing
 \cite{burnettEUSE,Silos,rothermelTOSEM} is known to be difficult.
 Previous work has focused on end-users of systems that are not
-traditional programming languages: e.g. spreadsheets, visual
-languages, or machine-learning systems.  This paper aims to describe a
-case study in how a user who is familliar with a software library but
+traditional programming languages: e.g. spreadsheets \cite{rothermelTOSEM}, visual
+languages, or machine-learning systems \cite{OnlyOracle}.  This paper aims to describe a
+case study in how a user who is familiar with a software library but
 not expert in software testing techniques can use (and adapt) existing
 tools to test a traditional software API library.  In one sense, this
 is a less difficult end-user testing scenario than testing
 spreadsheets or visual forms, in that the testing is directed by an
 individual used to writing and thinking about software source code.
 The concepts in modern automated software testing are most easily
-understood by individuals familiar with the structure and semantics of
+understood by those who are also familiar with the structure and semantics of
 conventional programming languages.  On the other hand, the system to
 be tested is large, not a small user-developed program: ArcPy is
 a modern, complex, library, comparable in complexity and size to
@@ -82,22 +90,22 @@ any  assistance in the effort from Esri.
 Automated testing systems more advanced than a simple hand-written loop generating 
 a few random inputs to a handful of functions, or more complicated to 
 use than a fully push-button system are often considered too difficult 
-for practical use even by software developers or software QA staff.
+for practical use even by software developers or software QA staff \cite{ISSRE}.
 In fact, in the experience of the second author of this paper (an
 academic software testing researcher), even ``push-button'' tools for
 automated testing are often difficult for expert users to install, apply, and
-configure \cite{AMAI,ISSRE}.  Such tools typically do not approach the ease-of-use seen
+configure \cite{AMAI,CFV08,ISSRE}.  Such tools typically do not approach the ease-of-use seen
 in commercial static analysis tools \cite{Coverity,Klocwork,CodeSonar}.  One goal of this work
 has been to mature the TSTL language and toolchain so Python
 programmers from all backgrounds can easily apply it to their
 automated testing problems.
 
-The second major contribution of this paper is a presentation of an
+The second major contribution of this paper is therefore a presentation of an
 approach to automated testing that has been chosen by a GIS analyst, not a
 software developer or testing researcher.  Moreover, we present this
 paper as a proof-of-concept that modern automated testing, even in a
 highly interactive, non-push-button form, can be used by a motivated
-domain expert, with the support of  a domain-specific language and a
-set of tools for generating, analyzing, and replaying tests.
+domain expert, with the support of  a domain-specific language
+\cite{Fow10} and a set of tools for generating, analyzing, and replaying tests.
 
 

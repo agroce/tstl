@@ -18,18 +18,20 @@ the more readable syntax.
 
 Another language improvement inspited by development of the ArcPy harness was
 extending the range construct {\tt <[start..end]>} to also express a
-list of options, which can be constants or python expressions.  An
-action containg {\tt <[item1, item2, ...]>} expands to multiple
+list of options, which can be constants or Python expressions.  An
+action containing {\tt <[item1, item2, ...]>} expands to multiple
 actions, each of which has the literal text of one item.  The
 construct {\tt <,[item1,, item2,, ...],>} works the same way, except
 that items are delimited by double-commas, allowing the items to even
 be partial Python expressions containing commas, for use in,
 e.g. constructing function arguments.  The second form is not used in
 the ArcPy harness at this time, because it is powerful but somewhat
-difficult to read.
+difficult to read.  In some cases, using multiple lines to define
+actions that, in theory, could be handled with a single line is best
+for readability reasons (see Section \ref{harness}).
 
 We are also considering, as a result of the experience of developing
-the ArcPy harness, moving to a more structured form for TSTL files.
+the ArcPy harness, moving to a more structured form for TSTL harness definitions.
 The current language allows pool definitions, actions, logging code,
 raw Python code, and all other TSTL elements to be freely mixed,
 without any requirements as to order.  Each line must indicate if it
@@ -43,12 +45,14 @@ would allow all pool declarations to be prefaced by a single {\tt
 code to be contained in a section marked{\tt raw:}, and all other
 non-action declarations to be handled in the same way. 
 
-There is also be a need for richer structure to avoid repeated
+There is also a need for richer structure to avoid repeated
 elements in action definitions.  For example, in the TSTL harness, 36
 actions allow the {\tt arcpy.ExecuteError} exception to be raised,
 which has to be stated for every individual action, and to avoid some
 faults a large number of actions may eventually be disallowed for
-feature classes or layers with active cursors.  Introducing nested
+feature classes or layers with active cursors\footnote{The reader
+  not familiar with GIS terminology is directed to the ArcPy
+  documentation \cite{ArcPy} and Esri's GIS dictionary \cite{GISDict}.}.  Introducing nested
 action groups, which can share guards, allowed exceptions, and
 post-conditions could make reading complex TSTL code easier.  We are
 currently working to define these language changes in a way that does

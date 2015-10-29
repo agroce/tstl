@@ -24,7 +24,7 @@ checks, and handling for allowed exceptions (omitted only if the exception does 
 actually take place when the test is replayed).  The reason for disabling
 the last functionality is interesting:  most test cases that are
 stored are minimized \cite{DD} test cases, from which all actions not
-neccessary to produce a failure or obtain desired code coverage have
+necessary to produce a failure or obtain desired code coverage have
 been removed.  In most cases, this means that most ArcPy calls are
 successful.  Adding code to handle potential exceptions makes
 standalone test cases much longer and harder to read.

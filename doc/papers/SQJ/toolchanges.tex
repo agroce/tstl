@@ -10,7 +10,12 @@ at the graduate and undergraduate level, and used fairly extensively
 in testing research, but a large number of
 significant faults went undetected until we attempted to use TSTL to
 test ArcPy.  One change made as a result of these problems is that we
-now use TSTL to test TSTL's own API.
+now use TSTL to test TSTL's own API.  TSTL faults included subtle
+errors in the system for generating unique names for actions, problems
+with test replay in some unusual situations, and some faults related
+to collecting and analyzing code coverage\footnote{The authors are
+  greatful to Ned Batchelder for fixing some related faults in the
+  coverage.py \cite{Coveragepy}  Python library for code coverage, at our request.}.
 
 \input{sandbox}
 
@@ -21,3 +26,4 @@ now use TSTL to test TSTL's own API.
 \input{normgen}
 
 \input{savestate}
+

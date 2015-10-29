@@ -77,9 +77,9 @@ avl1.delete(int2)
 \end{figure}
 
 
-TSTL \cite{NFM15,ISSTA15,tstl} is a language for defining the
+TSTL, the Template Scripting Testing Language, \cite{NFM15,ISSTA15,tstl} is a language for defining the
 structure of test cases (usually API-call sequences, but also
-grammar-based tests using string construction), and a set of tools for
+grammar based tests using string construction), and a set of tools for
 use in generating, manipulating, and understanding those test cases.
 Figure \ref{fig:example} shows a TSTL definition of tests (known as a
 harness definition, or \emph{harness} for short) for a Python class
@@ -131,7 +131,7 @@ Figure \ref{fig:avlrun} shows a valid test case produced by
 running a random test generator on the TSTL-compiled interface
 produced by this definition.  TSTL automatically enforces the requirement that
 tests are well-formed: for example, no pool instance (such as {\tt
-  avl1} can appear in an action until it has been assigned a value),
+  avl1}) can appear in an action until it has been assigned a value,
 and no pool instance that has been assigned a value can be assigned a
 different value until it has been used in an action, to avoid
 degenerate sequences such as {\tt int3 = 10} followed by {\tt int3 =

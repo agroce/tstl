@@ -5,13 +5,16 @@ tests for (API-based) software systems
 \cite{Pacheco,FA11,GodefroidKS05} and random testing in particular
 \cite{ICSEDiff,Pacheco,AMFL11,ARTChen,ISSTAART,FASE,HamletOnly,Hamlet94,ClaessenH00,CiupaLOM07,RandFormal,WODA08,andrews-etal-rute-rt,ASE08,evalrand,csmith},
 some dating back to the early 1980s. It is far beyond the scope of
-this paper to explore that literature in detail.  We rely primarily on past
-results showing that random testing can be highly effective for
+this paper to explore that literature in detail.  The interested
+reader is directed to the cited papers, as well as general surveys of
+automated test generation in particular \cite{anand2013orchestrated}
+or recent software testing research in general \cite{orsofuse}.  This paper relies primarily on past
+results showing that random testing \cite{Hamlet94,Fuzz} can be highly effective for
 finding software faults in large libraries
 \cite{Pacheco,ICSEDiff,RandFormal,CFV08,AMAI}.  To our knowledge, there is almost
-no work on automated/random testing for GIS in particular, and very
-little work on allowing non-traditional software developers to apply
-automated (random) testing to APIs.
+no work on automated/random test generation for GIS in particular, and
+little or no work on allowing non-traditional software developers to apply
+automated (random) test generation to APIs.
 
 The approach to testing ArcPy taken in this paper uses the TSTL tool
 for automated testing \cite{NFM15,ISSTA15,tstl}.  TSTL is a
@@ -39,7 +42,9 @@ discussion of automated testing for GIS in various blog posts and
 discussion groups (e.g., \cite{gisblog1,gisblog2}), but no formal
 academic case studies.  These discussions also tend to focus on
 application testing or GUI testing, rather than testing of library
-code used across GIS applications.
+code used across GIS applications.  There is a simple extension to
+Python unit testing modules for the GRASS open source GIS system
+\cite{GRASSunit}, but this does not provide any automated test generation.
 
 There is also relatively little written about software testing in the
 academic literature that focuses on the pitfalls, best practices, and
@@ -64,9 +69,9 @@ There is a significant body of work on end-user testing of software,
 part of the larger field of end-user software engineering
 \cite{burnettEUSE,Silos}.  End-user software engineering examines how
 software can best be produced by developers who do not have a
-traditional computer-science background, and are often primarily
+traditional computer science background, and are often primarily
 interested in an application of programming, rather than software
-development as a profession.  GIS developers are a (we believe)
+development as a profession.  GIS developers are (we believe) a
 typical example \cite{Segal07}:  they are technically skilled  individuals whose
 primary expertise is not in software development, but who, in order to
 pursue their goals, must develop, maintain, and test significant

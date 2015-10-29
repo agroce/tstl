@@ -60,3 +60,21 @@ in parallel using either cloud computing or virtualization on a
 single multicore machine could improve test throughput.   This is
 possibly more important for ArcPy than in many other testing
 scenarios, given the unusually high cost of even single API calls.
+
+\subsection{Alternative Test Generation Techniques}
+
+TSTL is meant to provide a platform for experimenting with various
+methods for generating tests \cite{NFM15}.  To date, we have only used
+pure random testing, since for our purposes simply generating tests as
+quickly and simply as possible has been highly effective.  However, in
+the future we plan to explore alternative generation methods.  In some
+cases, this should be simple.  For example, swarm testing
+\cite{ISSTA12} only requires identifying features \cite{groce2013help}
+(which for ArcPy will simply be different API functions) that can be
+omitted from tests, to concentrate testing on a particular aspect of
+the API.  Various search-based \cite{FA11} and machine-learning-based
+\cite{ISSRE} approaches to test case generation can also be implemented
+  using TSTL.  The inabilty to save ArcPy memory state and the high
+  cost of backtracking via replay makes methods such as BFS and DFS
+  exploration \cite{NFM15} that resemble model-checking
+  \cite{ModelChecking,ModelDriven} unlikely to pay off, however.
