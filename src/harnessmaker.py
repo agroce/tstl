@@ -88,6 +88,8 @@ def preprocess_angle_brackets(line):
         return line
     repLine = line.replace("<[","%[")
     repLine = repLine.replace("]>","]%")
+    repLine = repLine.replace("<,[","%,[")
+    repLine = repLine.replace("],>","],%")        
     repLine = repLine.replace("PRE<","pre<")
     prePos = repLine.find("pre<(")
     while prePos != -1:
@@ -179,16 +181,30 @@ def expandRange(original):
         anyChanged = False
         newVersion = []
         for c in current:
-            if "%[" in c:
+            if "%,[" in c:
+                anyChanged = True
+                lpos = c.find("%,[")
+                endpos = c.find("],%",lpos)
+                rexp = c[lpos:endpos+3]
+                ilist = c[lpos+3:endpos].split(",,")
+                for i in ilist:
+                    newVersion.append(c.replace(rexp, i, 1))                
+            elif "%[" in c:
                 anyChanged = True
                 lpos = c.find("%[")
+                endpos = c.find("]%",lpos)
                 dotpos = c.find("..",lpos)
-                endpos = c.find("]%",dotpos)
-                low = int(c[lpos+2:dotpos])
-                high = int(c[dotpos+2:endpos])
+                commapos = c.find(",",lpos)
                 rexp = c[lpos:endpos+2]
-                for x in xrange(low,high+1):
-                    newVersion.append(c.replace(rexp, str(x), 1))
+                if (dotpos != -1) and (dotpos < endpos):
+                    low = int(c[lpos+2:dotpos])
+                    high = int(c[dotpos+2:endpos])
+                    for x in xrange(low,high+1):
+                        newVersion.append(c.replace(rexp, str(x), 1))
+                elif (commapos != -1) and (commapos < endpos):
+                    ilist = c[lpos+2:endpos].split(",")
+                    for i in ilist:
+                        newVersion.append(c.replace(rexp, i, 1))
             else:
                 newVersion.append(c)
         current = newVersion
