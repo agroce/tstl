@@ -327,10 +327,8 @@ def levDist(self,s1,s2):
         distances = newDistances
     return distances[-1]
 
-def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
-    if verbose == "VERY":
-        print "STARTING REDUCE LENGTH STEP"
-    # Replace any action with another action, if that allows test to be further reduced
+def getEnabled(self, test, checkEnabled):
+    self.restart()
     enableChange = {}
     for i in xrange(0,len(test)):
         if checkEnabled:
@@ -338,6 +336,13 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
             self.safely(test[i])
         else:
             enableChange[i] = map(lambda x:x[0], self.actions())
+    return enableChange
+
+def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+    if verbose == "VERY":
+        print "STARTING REDUCE LENGTH STEP"
+    # Replace any action with another action, if that allows test to be further reduced
+    enableChange = self.getEnabled(test,checkEnabled)
     
     for i in xrange(0,len(test)):
         name1 = test[i][0]
@@ -360,13 +365,7 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
     if verbose == "VERY":
         print "STARTING REPLACE ALL STEP"    
     # Replace all occurrences of an action with a simpler action
-    enableChange = {}
-    for i in xrange(0,len(test)):
-        if checkEnabled:
-            enableChange[i] = map(lambda x:x[0], self.enabled())
-            self.safely(test[i])
-        else:
-            enableChange[i] = map(lambda x:x[0], self.actions())
+    enableChange = self.getEnabled(test,checkEnabled)    
 
     donePairs = []
     for i in xrange(0,len(test)):
@@ -432,13 +431,7 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
     if verbose == "VERY":
         print "STARTING REPLACE SINGLE STEP"        
     # Replace any single action with a lower-numbered action
-    enableChange = {}
-    for i in xrange(0,len(test)):
-        if checkEnabled:
-            enableChange[i] = map(lambda x:x[0], self.enabled())
-            self.safely(test[i])
-        else:
-            enableChange[i] = map(lambda x:x[0], self.actions())
+    enableChange = self.getEnabled(test,checkEnabled)    
     
     for i in xrange(0,len(test)):
         name1 = test[i][0]
@@ -673,13 +666,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     # Change so double assignments are allowed
     self.relax()
 
-    enableChange = {}
-    for i in xrange(0,len(test)):
-        if checkEnabled:
-            enableChange[i] = map(lambda x:x[0], self.enabled())
-            self.safely(test[i])
-        else:
-            enableChange[i] = map(lambda x:x[0], self.actions())
+    enableChange = self.getEnabled(test,checkEnabled)
     
     canReplace = {}
     canSwap = {}
