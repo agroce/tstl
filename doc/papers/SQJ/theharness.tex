@@ -403,8 +403,8 @@ messages, but this tends to produce an overwhelming amount of output.
 One critical design decision taken early in the development of this
 harness was that there is no explicit definition of the starting data
 used for testing.  Any data stored in the {\tt Arcbase} directory can
-be used, and the system supports shapefiles and file geodatabases.
-This has two purposes:  first, testing can be customize to use any
+be used, and the harness supports both shapefiles and file geodatabases.
+This has two purposes:  first, testing can be customized to use any
 starting data, including a user's own shapefiles.  Second, this makes
 it easy to implement deep state testing, since no assumptions are made
 about the structure or number of data files used.  The lack of
