@@ -664,10 +664,15 @@ def freshSimpleVariants(self, name, previous, replacements):
     freshSimples = sorted(freshSimples,key = lambda x:self.__orderings[x[0][0]])
     return freshSimples
 
-def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None,
+               returnCollect = False, collected = None, depth = 0, silent=False):
+    
+    if collected is None:
+        collected = {}
+    
     # Change so double assignments are allowed
     self.relax()
-    
+
     enableChange = {}
     for i in xrange(0,len(test)):
         if checkEnabled:
@@ -692,90 +697,109 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             if a != test[i][0]:
                 testC = test[:i] + [self.__names[a]] + test[i+1:]
                 if pred(testC):
+                    if returnCollect:
+                        stestC = self.captureReplay(testC)
+                        if stestC not in collected:
+                            collected[stestC] = True
                     canReplace[i].append(a)
         for j in xrange(i+1,len(test)):
             if i == j or test[i][0] == test[j][0]:
                 continue
             testC = test[:i]+[test[j]]+test[i+1:j]+[test[i]]+test[j+1:]
             if pred(testC):
+                if returnCollect:
+                    stestC = self.captureReplay(testC)
+                    if stestC not in collected:
+                        collected[stestC] = True
                 canSwap[i].append(j)
                 canSwap[j].append(i)
         for v in self.freshSimpleVariants(test[i][0],test[:i],canReplace):
             testC = test[:i] + v + test[i+1:]
             if pred(testC):
                 canMakeSimple[i].append(v)
-    noOrder = []
-    endSwappable = -1
-    for i in xrange(0,len(test)):
-        if endSwappable >= i:
-            continue
-        foundSwap = False
-        for j in xrange(len(test)-1,i,-1):
-            allSwappable = True
-            for k1 in xrange(i,j+1):
-                for k2 in xrange(k1+1,j+1):
-                        if k2 not in canSwap[k1]:
-                                allSwappable = False
-                                break
-                if not allSwappable:
-                    break
-            if allSwappable:
-                noOrder.append((i,j))
+    if not silent:
+        noOrder = []
+        endSwappable = -1
+        for i in xrange(0,len(test)):
+            if endSwappable >= i:
+                continue
+            foundSwap = False
+            for j in xrange(len(test)-1,i,-1):
+                allSwappable = True
                 for k1 in xrange(i,j+1):
-                    for k2 in xrange(i,j+1):
-                        if k2 in canSwap[k1]:
-                            canSwap[k1].remove(k2)
-                endSwappable = j
-                break
-
-    for i in xrange(0,len(test)):
-        for (begin,end) in noOrder:
-            if i == begin:
-                print "#["
-        pn = self.prettyName(test[i][0])
-        spaces = " " * (90-len(pn)-len(" # STEP"))
-        print self.prettyName(test[i][0]),spaces,"# STEP",i
-        if canReplace[i] != []:
-            firstRep = None
-            lastRep = None
-            for rep in canReplace[i]:
-                if firstRep == None:
-                    firstRep = rep
-                    lastRep = rep
-                elif self.__orderings[rep] != (self.__orderings[lastRep] + 1):
-                    if firstRep == lastRep:
-                        print "#  or",self.prettyName(firstRep)
+                    for k2 in xrange(k1+1,j+1):
+                            if k2 not in canSwap[k1]:
+                                    allSwappable = False
+                                    break
+                    if not allSwappable:
+                        break
+                if allSwappable:
+                    noOrder.append((i,j))
+                    for k1 in xrange(i,j+1):
+                        for k2 in xrange(i,j+1):
+                            if k2 in canSwap[k1]:
+                                canSwap[k1].remove(k2)
+                    endSwappable = j
+                    break
+        for i in xrange(0,len(test)):
+            for (begin,end) in noOrder:
+                if i == begin:
+                    print "#["
+            pn = self.prettyName(test[i][0])
+            spaces = " " * (90-len(pn)-len(" # STEP"))
+            print self.prettyName(test[i][0]),spaces,"# STEP",i
+            if canReplace[i] != []:
+                firstRep = None
+                lastRep = None
+                for rep in canReplace[i]:
+                    if firstRep == None:
+                        firstRep = rep
+                        lastRep = rep
+                    elif self.__orderings[rep] != (self.__orderings[lastRep] + 1):
+                        if firstRep == lastRep:
+                            print "#  or",self.prettyName(firstRep)
+                        else:
+                            print "#  or",self.prettyName(firstRep)
+                            print "#   -",self.prettyName(lastRep)
+                        firstRep = rep
+                        lastRep = rep
                     else:
-                        print "#  or",self.prettyName(firstRep)
-                        print "#   -",self.prettyName(lastRep)
-                    firstRep = rep
-                    lastRep = rep
+                        lastRep = rep
+                if firstRep == lastRep:
+                    print "#  or",self.prettyName(firstRep)
                 else:
-                    lastRep = rep
-            if firstRep == lastRep:
-                print "#  or",self.prettyName(firstRep)
-            else:
-                print "#  or",self.prettyName(firstRep)
-                print "#   -",self.prettyName(lastRep)
-        if canMakeSimple[i] != []:
-            for v in canMakeSimple[i]:
-                print "#  or ("
-                for s in v[:-1]:
-                    print "#     ",self.prettyName(s[0]),";"
-                print "#     ",self.prettyName(v[-1][0])
-                print "#     )"
-        if canSwap[i] != []:
-            if len(canSwap[i]) == 1:
-                print "#  swaps with step",
-            else:
-                print "#  swaps with steps",
-            for j in canSwap[i]:
-                print j,
-            print
-        for (begin,end) in noOrder:
-            if i == end:
-                print "#] (steps in [] can be in any order)"
-
+                    print "#  or",self.prettyName(firstRep)
+                    print "#   -",self.prettyName(lastRep)
+            if canMakeSimple[i] != []:
+                for v in canMakeSimple[i]:
+                    print "#  or ("
+                    for s in v[:-1]:
+                        print "#     ",self.prettyName(s[0]),";"
+                    print "#     ",self.prettyName(v[-1][0])
+                    print "#     )"
+            if canSwap[i] != []:
+                if len(canSwap[i]) == 1:
+                    print "#  swaps with step",
+                else:
+                    print "#  swaps with steps",
+                for j in canSwap[i]:
+                    print j,
+                print
+            for (begin,end) in noOrder:
+                if i == end:
+                    print "#] (steps in [] can be in any order)"
+    if returnCollect:
+        if depth == 0:
+            return dict(collected)
+        else:
+            newCollected = dict(collected)
+            for c in collected:
+                cGen = self.generalize(self.replayable(c), pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit, returnCollect=True, collected = {},
+                                       depth = depth-1, silent=True)
+                for c2 in cGen:
+                    if c2 not in newCollected:
+                        newCollected[c2] = True
+            return dict(newCollected)
     self.stopRelax()
     # Make sure to restore normal semantics!
 

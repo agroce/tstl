@@ -29,6 +29,8 @@ def parse_args():
                         help="Determine essential elements in failing test.")
     parser.add_argument('-G', '--generalize', action='store_true',
                         help="Generalize tests.")
+    parser.add_argument('-D', '--gendepth', type=int, default=None,
+                        help = "Generalization depth for cloud overlap comparisons (default = None).")
     parser.add_argument('-e', '--speed', type=str, default="FAST",
                         help='Normalization/simplification speed (default = FAST).')    
     parser.add_argument('-k', '--keep', action='store_true',
@@ -78,7 +80,7 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail, newCov = False):
-    global failCount, reduceTime, repeatCount, failures, quickCount
+    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures
 
     sys.stdout.flush()
 
@@ -151,6 +153,16 @@ def handle_failure(test, msg, checkFail, newCov = False):
             test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
+        cloudMatch = False
+        if (config.gendepth != None) and (test not in failures):
+            thisCloud = t.generalize(test, failProp, silent=True, returnCollect=True, depth=config.gendepth)
+            print "CLOUD LENGTH =",len(thisCloud)
+            for t1 in thisCloud:
+                for tcloud in failCloud:
+                    if t1 in tcloud:
+                        print "CLOUD MATCH WITH",t1
+                        cloudMatch = True
+                        cloudFailures.append(test)
         if config.generalize and (test not in failures):
             startGeneralize = time.time()
             print "GENERALIZING..."
@@ -159,7 +171,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         reduceTime += time.time()-startReduce
 
     i = 0
-    if (config.output != None) or (config.quickTests):
+    if ((config.output != None) and (test not in failures)) or (config.quickTests):
         outname = config.output
         if config.quickTests:
             for s in t.allStatements():
@@ -194,11 +206,13 @@ def handle_failure(test, msg, checkFail, newCov = False):
     if outf != None:
         outf.close()
     if config.multiple:
-        if test in failures:
+        if (test in failures) or (test in cloudFailures) or cloudMatch:
             print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
             repeatCount += 1
         else:
             failures.append(test)
+            if config.gendepth != None:
+                failCloud[t.captureReplay(test)] = thisCloud
             print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
 
     
@@ -215,6 +229,10 @@ failCount = 0
 quickCount = 0
 repeatCount = 0
 failures = []
+cloudFailures = []
+
+if config.gendepth != None:
+    failCloud = {}
 
 t = SUT.sut()
 if config.logging != None:
@@ -386,6 +404,8 @@ print reduceTime, "TIME SPENT REDUCING TEST CASES"
 if config.multiple:
     print failCount,"FAILED"
     print repeatCount,"REPEATS OF FAILURES"
+    print len(failures),"ACTUAL DISTINCT FAILURES"
+    print 
     n = 0
     for test in failures:
         print "FAILURE",n
