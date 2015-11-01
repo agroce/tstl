@@ -658,11 +658,13 @@ def freshSimpleVariants(self, name, previous, replacements):
     return freshSimples
 
 def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None,
-               returnCollect = False, collected = None, depth = 0, silent=False):
+               returnCollect = False, collected = None, depth = 0, silent=False, targets = None):
     
     if collected is None:
         collected = {}
-    
+
+    newCollected = {}
+        
     # Change so double assignments are allowed
     self.relax()
 
@@ -688,6 +690,9 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                         stestC = self.captureReplay(testC)
                         if stestC not in collected:
                             collected[stestC] = True
+                            newCollected[stestC] = True                            
+                        if stestC in targets:
+                            return (True, stestC, dict(collected))                                                    
                     canReplace[i].append(a)
         for j in xrange(i+1,len(test)):
             if i == j or test[i][0] == test[j][0]:
@@ -698,6 +703,9 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                     stestC = self.captureReplay(testC)
                     if stestC not in collected:
                         collected[stestC] = True
+                        newCollected[stestC] = True                        
+                        if stestC in targets:
+                            return (True, stestC, dict(collected))                        
                 canSwap[i].append(j)
                 canSwap[j].append(i)
         for v in self.freshSimpleVariants(test[i][0],test[:i],canReplace):
@@ -777,16 +785,19 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                     print "#] (steps in [] can be in any order)"
     if returnCollect:
         if depth == 0:
-            return dict(collected)
+            return (False, None, dict(collected))
         else:
-            newCollected = dict(collected)
-            for c in collected:
-                cGen = self.generalize(self.replayable(c), pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit, returnCollect=True, collected = {},
-                                       depth = depth-1, silent=True)
+            allCollected = dict(collected)
+            for c in newCollected:
+                (found, stest, cGen) = self.generalize(self.replayable(c), pred, pruneGuards, keepLast, verbose, checkEnabled,
+                                                distLimit, returnCollect=True, collected = allCollected,
+                                                depth = depth-1, silent=True, targets = targets)
                 for c2 in cGen:
-                    if c2 not in newCollected:
-                        newCollected[c2] = True
-            return dict(newCollected)
+                    if c2 not in allCollected:
+                        allCollected[c2] = True
+                if found == True:
+                    return (True, stest, dict(allCollected))
+            return (False, None, dict(allCollected))
     self.stopRelax()
     # Make sure to restore normal semantics!
 

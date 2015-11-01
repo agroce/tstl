@@ -80,7 +80,7 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail, newCov = False):
-    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures
+    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds
 
     sys.stdout.flush()
 
@@ -155,14 +155,19 @@ def handle_failure(test, msg, checkFail, newCov = False):
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
         cloudMatch = False
         if (config.gendepth != None) and (test not in failures):
-            thisCloud = t.generalize(test, failProp, silent=True, returnCollect=True, depth=config.gendepth)
+            startCheckCloud = time.time()
+            print "GENERATING GENERALIZATION CLOUD"
+            (cloudFound,matchTest,thisCloud) = t.generalize(test, failProp, silent=True, returnCollect=True, depth=config.gendepth, targets = allClouds)
+            print "CLOUD GENERATED IN",time.time()-startCheckCloud,"SECONDS"
             print "CLOUD LENGTH =",len(thisCloud)
-            for t1 in thisCloud:
-                for tcloud in failCloud:
-                    if t1 in tcloud:
-                        print "CLOUD MATCH WITH",t1
-                        cloudMatch = True
-                        cloudFailures.append(test)
+            if cloudFound:
+                print "CLOUD MATCH",
+                for cfail in failCloud:
+                    if matchTest in failCloud[cfail]:
+                        print matchTest,"FROM",cfail
+                        break
+                cloudMatch = True
+                cloudFailures.append(test)
         if config.generalize and (test not in failures):
             startGeneralize = time.time()
             print "GENERALIZING..."
@@ -213,6 +218,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
             failures.append(test)
             if config.gendepth != None:
                 failCloud[t.captureReplay(test)] = thisCloud
+                for c in thisCloud:
+                    allClouds[c] = True
             print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
 
     
@@ -233,6 +240,7 @@ cloudFailures = []
 
 if config.gendepth != None:
     failCloud = {}
+    allClouds = {}
 
 t = SUT.sut()
 if config.logging != None:
