@@ -692,6 +692,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                             collected[stestC] = True
                             newCollected[stestC] = True                            
                         if stestC in targets:
+                            self.stopRelax()
                             return (True, stestC, dict(collected))                                                    
                     canReplace[i].append(a)
         for j in xrange(i+1,len(test)):
@@ -705,6 +706,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                         collected[stestC] = True
                         newCollected[stestC] = True                        
                         if stestC in targets:
+                            self.stopRelax()
                             return (True, stestC, dict(collected))                        
                 canSwap[i].append(j)
                 canSwap[j].append(i)
@@ -783,6 +785,8 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             for (begin,end) in noOrder:
                 if i == end:
                     print "#] (steps in [] can be in any order)"
+    # Restore semantics
+    self.stopRelax()
     if returnCollect:
         if depth == 0:
             return (False, None, dict(collected))
@@ -798,8 +802,6 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 if found == True:
                     return (True, stest, dict(allCollected))
             return (False, None, dict(allCollected))
-    self.stopRelax()
-    # Make sure to restore normal semantics!
 
 def relax(self):
     self.__relaxUsedRestriction = True

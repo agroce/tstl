@@ -154,7 +154,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
         cloudMatch = False
-        if (config.gendepth != None) and (test not in failures):
+        if (config.gendepth != None) and (test not in failures) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print "GENERATING GENERALIZATION CLOUD"
             (cloudFound,matchTest,thisCloud) = t.generalize(test, failProp, silent=True, returnCollect=True, depth=config.gendepth, targets = allClouds)
@@ -162,10 +162,18 @@ def handle_failure(test, msg, checkFail, newCov = False):
             print "CLOUD LENGTH =",len(thisCloud)
             if cloudFound:
                 print "CLOUD MATCH",
-                for cfail in failCloud:
+                faili = 0
+                for cfailbase in failures:
+                    cfail = t.captureReplay(cfailbase)
                     if matchTest in failCloud[cfail]:
-                        print matchTest,"FROM",cfail
+                        print "THIS TEST CAN BE CONVERTED TO:"
+                        i = 0
+                        for s in t.replayable(matchTest):
+                            print t.prettyName(s[0]),"  # STEP",i
+                            i += 1
+                        print "MATCHING FAILURE",faili
                         break
+                    faili += 1
                 cloudMatch = True
                 cloudFailures.append(test)
         if config.generalize and (test not in failures):
