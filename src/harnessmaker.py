@@ -19,6 +19,7 @@ import pkg_resources
 
 config = None
 poolSet = {}
+poolType = {}
 initSet = []
 firstInit = True
 baseIndent = ""
@@ -294,6 +295,7 @@ def main():
 
     global config
     global poolSet
+    global poolType
     global initSet
     global constSet
     global firstInit
@@ -462,6 +464,9 @@ def main():
                 poolSet[cs[1]+"_REF"] = int(cs[2])
             if (len(cs)>3) and ("CONST" in cs):
                 constSet.append(cs[1])
+            if (":" in cs):
+                tpos = cs.index(":")
+                poolType[cs[1]] = cs[tpos+1]
         elif cs[0] == "reference:":
             baseRefSplit = c.split("reference: ")[1]
             rs = baseRefSplit.split(" ==> ")
@@ -960,13 +965,18 @@ def main():
         genCode.append(baseIndent + "pass\n")
 
     genCode.append("def check(self):\n")
-    if propSet != []:
+    if (propSet != []) or (len(poolType) > 0):
         genCode.append(baseIndent + "try:\n")
         if not config.nocover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__cov.start()\n")
         genCode.append(baseIndent + baseIndent + "# BEGIN CHECK CODE\n")
         checkGlobals = []
+        for p in poolType:
+            pname = poolPrefix + p.replace("%","")
+            genCode.append(baseIndent+ baseIndent + baseIndent + "for __pind in " + pname + ":" + "\n")
+            genCode.append(baseIndent+ baseIndent + baseIndent + baseIndent + "assert (" + pname + "[__pind] == None) or (type("+pname+"[__pind]) == " + poolType[p] + ")\n")
+            
         for (p, u) in propSet:
             if u != []:
                 pr = baseIndent + baseIndent + "if True"
