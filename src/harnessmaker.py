@@ -444,13 +444,41 @@ def main():
     featureSet = []
     logSet = []
     referenceMap = {}
-
+    autoPrefix = ""
+    
     # Parse the code to process the "tag lines"
     newCode = []
+    noAutoPrefix = ["pools:","actions:","properties:","logs:","inits:","references:","compares:","features:","sources:"]
+    
     for c in code:
+        if config.debug:
+            print "CODE:",c
         cs = c.split()
         if cs == []:
             continue
+        if (cs[0] not in noAutoPrefix) and (cs[0][0] != "#"):
+            c = autoPrefix + c
+        cs = c.split()
+        if cs[0][0] == "#":
+            continue
+        elif cs[0] == "pools:":
+            autoPrefix = "pool: "
+        elif cs[0] == "properties:":
+            autoPrefix = "property: "
+        elif cs[0] == "logs:":
+            autoPrefix = "log: "
+        elif cs[0] == "inits:":
+            autoPrefix = "init: "
+        elif cs[0] == "references:":
+            autoPrefix = "reference: "
+        elif cs[0] == "compares:":
+            autoPrefix = "compare: "
+        elif cs[0] == "features:":
+            autoPrefix = "feature: "
+        elif cs[0] == "sources:":
+            autoPrefix = "source: "                        
+        elif cs[0] == "actions:":
+            autoPrefix = ""                        
         elif cs[0] == "init:":
             initSet.append(c.replace("init: ",""))
         elif cs[0] == "log:":
