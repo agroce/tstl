@@ -155,7 +155,6 @@ def parse_import_line(line):
     assert len(mod_names) > 0
     return mod_names
 
-
 def expandPool(original):
     """
     Expand pool references
@@ -457,7 +456,7 @@ def main():
         if cs == []:
             continue
         if (cs[0] not in noAutoPrefix) and (cs[0][0] != "#"):
-            c = autoPrefix + c
+            c = autoPrefix + c.lstrip()
         cs = c.split()
         if cs[0][0] == "#":
             continue
