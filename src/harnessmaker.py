@@ -872,7 +872,7 @@ def main():
         genCode.append(baseIndent + "self.__currStatements = set()\n")
         genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
-        genCode.append(baseIndent + "self.__oldCovData = None\n")
+        genCode.append(baseIndent + "self.__oldCovData = None; print 'COV: CLEARING OLD DATA'\n")
     genInitialization()
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")

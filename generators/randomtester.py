@@ -55,6 +55,8 @@ def parse_args():
                         help="Repeat last action if it is enabled and improved coverage.")
     parser.add_argument('-n', '--nocover', action='store_true',
                         help="Don't produce a coverage report at the end.")
+    parser.add_argument('-I', '--internal', action='store_true',
+                        help="Produce internal coverage report at the end, as sanity check on coverage.py results.")    
     parser.add_argument('-c', '--coverfile', type=str, default="coverage.out",
                         help="File to write coverage report to ('coverage.out' default).")
     parser.add_argument('-q', '--quickTests', action='store_true',
@@ -404,6 +406,9 @@ if not config.nocover:
     t.restart()
     print t.report(config.coverfile),"PERCENT COVERED"
 
+    if config.internal:
+        t.internalReport()
+    
     if config.html:
         t.htmlReport(config.html)
 
