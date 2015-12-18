@@ -1,0 +1,49 @@
+@import numpy as np
+
+pool: %ARRAY% 4
+pool: %INT% 4
+pool: %FLOAT% 4
+pool: %DIM% 4
+pool: %SHAPE% 4
+pool: %INDEX% 4
+
+%INT% := %[-100..100]%
+%FLOAT% := float(%INT%)
+
+%DIM% := 1
+%DIM% := 10
+%DIM% := 100
+%DIM,2% > 1 -> ~%DIM% = ~%DIM% - 1 
+~%DIM% = ~%DIM% + 1
+
+%SHAPE% := (%DIM%)
+%SHAPE% := (%DIM%, %DIM%)
+%SHAPE% := (%DIM%, %DIM%, %DIM%)
+
+%INDEX% := %DIM%
+
+%ARRAY% := np.empty(%SHAPE%)
+%ARRAY% := np.zeros(%SHAPE%)
+%ARRAY% := np.ones(%SHAPE%)
+%ARRAY% := np.empty_like(%ARRAY%)
+%ARRAY% := np.zeros_like(%ARRAY%)
+%ARRAY% := np.ones_like(%ARRAY%)
+
+{IndexError,TypeError} %ARRAY%[%INDEX%] = %FLOAT%
+{IndexError,TypeError} %ARRAY%[%INDEX%][%INDEX%] = %FLOAT%
+{IndexError,TypeError} %ARRAY%[%INDEX%][%INDEX%][%INDEX%] = %FLOAT%
+
+{ValueError} %ARRAY% := %ARRAY% + %ARRAY%
+{ValueError} %ARRAY% := %ARRAY% * %ARRAY%
+{ValueError} %ARRAY% := %ARRAY% - %ARRAY%
+{ValueError} %ARRAY% := %ARRAY% / %ARRAY%
+
+{ValueError} %ARRAY% := np.reshape(%ARRAY%,%SHAPE%)
+%ARRAY% := np.ravel(%ARRAY%)
+%ARRAY% := %ARRAY%.flatten()
+
+{ValueError} np.copyto(%ARRAY%,%ARRAY%)
+
+%ARRAY% := np.unique(%ARRAY%)
+
+{ValueError} np.trim_zeros(%ARRAY%)

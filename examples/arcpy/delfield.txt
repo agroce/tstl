@@ -1,0 +1,337 @@
+SIMPLIFIER: SWAPPED STEP 11 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf"  WITH STEP 16 self.p_val[0] = "100" 
+SIMPLIFIER: SWAPPED STEP 11 self.p_val[0] = "100"  WITH STEP 18 self.p_op[0] = ">" 
+SIMPLIFIER: SWAPPED STEP 13 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 14 self.p_statfields[0] = [] 
+SIMPLIFIER: SWAPPED STEP 13 self.p_statfields[0] = []  WITH STEP 15 self.p_stattype[0] = "FIRST" 
+SIMPLIFIER: SWAPPED STEP 13 self.p_stattype[0] = "FIRST"  WITH STEP 16 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf" 
+SIMPLIFIER: SWAPPED STEP 12 self.p_fieldnamelist[0] = []  WITH STEP 13 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf" 
+SIMPLIFIER: SWAPPED STEP 12 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf"  WITH STEP 18 self.p_val[0] = "100" 
+SIMPLIFIER: SWAPPED STEP 14 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 15 self.p_statfields[0] = [] 
+SIMPLIFIER: SWAPPED STEP 14 self.p_statfields[0] = []  WITH STEP 16 self.p_stattype[0] = "FIRST" 
+SIMPLIFIER: SWAPPED STEP 14 self.p_stattype[0] = "FIRST"  WITH STEP 18 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf" 
+SIMPLIFIER: SWAPPED STEP 13 self.p_fieldnamelist[0] = []  WITH STEP 14 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf" 
+SIMPLIFIER: SWAPPED STEP 15 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 16 self.p_statfields[0] = [] 
+SIMPLIFIER: SWAPPED STEP 15 self.p_statfields[0] = []  WITH STEP 18 self.p_stattype[0] = "FIRST" 
+SIMPLIFIER: SWAPPED STEP 15 self.p_stattype[0] = "FIRST"  WITH STEP 19 self.p_fieldlist[0] = arcpy.ListFields(self.p_featureclass[0]) 
+SIMPLIFIER: SWAPPED STEP 14 self.p_fieldnamelist[0] = []  WITH STEP 15 self.p_fieldlist[0] = arcpy.ListFields(self.p_featureclass[0]) 
+SIMPLIFIER: SWAPPED STEP 16 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 17 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report() 
+SIMPLIFIER: SWAPPED STEP 16 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report()  WITH STEP 18 self.p_statfields[0] = [] 
+SIMPLIFIER: SWAPPED STEP 16 self.p_statfields[0] = []  WITH STEP 19 self.p_stattype[0] = "FIRST" 
+SIMPLIFIER: SWAPPED STEP 17 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 18 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report() 
+SIMPLIFIER: SWAPPED STEP 17 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report()  WITH STEP 19 self.p_statfields[0] = [] 
+SIMPLIFIER: SWAPPED STEP 18 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 19 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report() 
+SIMPLIFIER: SWAPPED STEP 18 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report()  WITH STEP 20 self.p_statfields[0].append([self.p_fieldname[0],self.p_stattype[0]]) 
+SIMPLIFIER: SWAPPED STEP 19 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 20 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report() 
+SIMPLIFIER: SWAPPED STEP 20 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 21 self.p_fieldname[0] = self.p_fieldlist[0] [0].name 
+SIMPLIFIER: SWAPPED STEP 21 arcpy.Buffer_analysis(self.p_classorlayer[0],self.p_featureclass[0],self.p_dist[0],dissolve_option="LIST",dissolve_field=self.p_fieldnamelist[0]); report()  WITH STEP 22 arcpy.MakeFeatureLayer_management(self.p_featureclass[0],self.p_newlayer[0],where_clause=' "' + self.p_fieldname[0] + '" ' + self.p_op[0] + self.p_val[0]); report() 
+SIMPLIFIER: REPLACED STEP 2 self.p_shapefile[0] = arcpy.env.workspace + "\new1.shp"  WITH self.p_shapefile[1] = arcpy.env.workspace + "\new1.shp"  REDUCING LENGTH FROM 27 TO 20
+SIMPLIFIER: SWAPPED STEP 8 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf"  WITH STEP 16 self.p_classorlayer[0] = self.p_newlayer[0] 
+SIMPLIFIER: SWAPPED STEP 4 self.p_fieldtype[0] = "DATE"  WITH STEP 8 self.p_classorlayer[0] = self.p_newlayer[0] 
+SIMPLIFIER: SWAPPED STEP 5 self.p_fieldname[0] = "newf1"  WITH STEP 8 self.p_fieldtype[0] = "DATE" 
+SIMPLIFIER: SWAPPED STEP 6 self.p_op[0] = ">"  WITH STEP 8 self.p_fieldname[0] = "newf1" 
+SIMPLIFIER: SWAPPED STEP 7 self.p_val[0] = "100"  WITH STEP 8 self.p_op[0] = ">" 
+SIMPLIFIER: SWAPPED STEP 15 arcpy.MakeFeatureLayer_management(self.p_featureclass[0],self.p_newlayer[0],where_clause=' "' + self.p_fieldname[0] + '" ' + self.p_op[0] + self.p_val[0]); report()  WITH STEP 16 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf" 
+SIMPLIFIER: SWAPPED STEP 14 self.p_fieldname[0] = self.p_fieldlist[0] [0].name  WITH STEP 15 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf" 
+SIMPLIFIER: SWAPPED STEP 9 self.p_fieldlist[0] = arcpy.ListFields(self.p_featureclass[0])  WITH STEP 14 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf" 
+SIMPLIFIER: SWAPPED STEP 12 self.p_statfields[0].append([self.p_fieldname[0],self.p_stattype[0]])  WITH STEP 14 self.p_fieldlist[0] = arcpy.ListFields(self.p_featureclass[0]) 
+SIMPLIFIER: SWAPPED STEP 10 self.p_stattype[0] = "FIRST"  WITH STEP 12 self.p_fieldlist[0] = arcpy.ListFields(self.p_featureclass[0]) 
+SIMPLIFIER: SWAPPED STEP 11 self.p_statfields[0] = []  WITH STEP 12 self.p_stattype[0] = "FIRST" 
+SIMPLIFIER: SWAPPED STEP 13 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report()  WITH STEP 14 self.p_statfields[0].append([self.p_fieldname[0],self.p_stattype[0]]) 
+SIMPLIFIED IN: 24769.6059999
+STEP 0 self.p_shapefilelist[0] = sorted(glob.glob(arcpy.env.workspace + "\*.shp")) 
+STEP 0 self.p_shapefile[0] = self.p_shapefilelist[0] [0] 
+STEP 0 self.p_newlayer[0] = "l1" 
+STEP 0 self.p_featureclass[0] = self.p_shapefile[0] 
+STEP 0 self.p_classorlayer[0] = self.p_newlayer[0] 
+STEP 0 self.p_fieldtype[0] = "DATE" 
+STEP 0 self.p_fieldname[0] = "newf1" 
+STEP 0 self.p_op[0] = ">" 
+STEP 0 self.p_val[0] = "100" 
+STEP 0 self.p_stattable[0] = arcpy.env.workspace + "\stats.dbf" 
+STEP 0 self.p_fieldlist[0] = arcpy.ListFields(self.p_featureclass[0]) 
+STEP 0 self.p_stattype[0] = "FIRST" 
+STEP 0 self.p_statfields[0] = [] 
+STEP 0 self.p_statfields[0].append([self.p_fieldname[0],self.p_stattype[0]]) 
+STEP 0 arcpy.AddField_management(self.p_featureclass[0],self.p_fieldname[0],self.p_fieldtype[0]); report() 
+STEP 0 self.p_fieldname[0] = self.p_fieldlist[0] [0].name 
+STEP 0 arcpy.MakeFeatureLayer_management(self.p_featureclass[0],self.p_newlayer[0],where_clause=' "' + self.p_fieldname[0] + '" ' + self.p_op[0] + self.p_val[0]); report() 
+STEP 0 self.p_fieldname[0] = "newf1" 
+STEP 0 arcpy.DeleteField_management(self.p_featureclass[0],self.p_fieldname[0]); report() 
+STEP 0 arcpy.Statistics_analysis(self.p_classorlayer[0],self.p_stattable[0],self.p_statfields[0]); report() 
+GENERALIZING (5)
+shapefilelist0 = sorted(glob.glob(arcpy.env.workspace + "\*.shp"))                   # STEP 0
+#[
+shapefile0 = shapefilelist0 [0]                                                      # STEP 1
+newlayer0 = "l1"                                                                     # STEP 2
+#  or newlayer0 = "l2" 
+#  or newlayer0 = "l3" 
+#  swaps with step 3
+#] (steps in [] can be in any order)
+#[
+featureclass0 = shapefile0                                                           # STEP 3
+#  or (
+#      shapefile0 = arcpy.env.workspace + "\new1.shp"  ;
+#      featureclass0 = shapefile0 
+#     )
+#  or (
+#      shapefile0 = arcpy.env.workspace + "\new2.shp"  ;
+#      featureclass0 = shapefile0 
+#     )
+#  or (
+#      shapefile0 = arcpy.env.workspace + "\new3.shp"  ;
+#      featureclass0 = shapefile0 
+#     )
+#  swaps with step 2
+classorlayer0 = newlayer0                                                            # STEP 4
+#  swaps with steps 10 11 12
+fieldtype0 = "DATE"                                                                  # STEP 5
+#  or fieldtype0 = "TEXT" 
+#  or fieldtype0 = "FLOAT" 
+#  or fieldtype0 = "DOUBLE" 
+#  or fieldtype0 = "SHORT" 
+#  or fieldtype0 = "LONG" 
+#  swaps with steps 10 11 12
+fieldname0 = "newf1"                                                                 # STEP 6
+#  swaps with steps 10 11 12
+op0 = ">"                                                                            # STEP 7
+#  or op0 = "<" 
+#  or op0 = "<=" 
+#  or op0 = ">=" 
+#  or op0 = "=" 
+#  swaps with steps 10 11 12 14
+val0 = "100"                                                                         # STEP 8
+#  or val0 = "1000" 
+#  swaps with steps 10 11 12 14
+stattable0 = arcpy.env.workspace + "\stats.dbf"                                      # STEP 9
+#  swaps with steps 10 11 12 14
+#] (steps in [] can be in any order)
+#[
+fieldlist0 = arcpy.ListFields(featureclass0)                                         # STEP 10
+#  swaps with steps 4 5 6 7 8 9 14
+stattype0 = "FIRST"                                                                  # STEP 11
+#  or stattype0 = "LAST" 
+#  swaps with steps 4 5 6 7 8 9
+statfields0 = []                                                                     # STEP 12
+#  swaps with steps 4 5 6 7 8 9
+#] (steps in [] can be in any order)
+#[
+statfields0.append([fieldname0,stattype0])                                           # STEP 13
+#  or (
+#      fieldname0 = "newf2"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      fieldname0 = "newf3"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "SUM"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "MEAN"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "MIN"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "MAX"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "RANGE"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "STD"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "COUNT"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+arcpy.AddField_management(featureclass0,fieldname0,fieldtype0); report()             # STEP 14
+#  swaps with steps 7 8 9 10
+#] (steps in [] can be in any order)
+fieldname0 = fieldlist0 [0].name                                                     # STEP 15
+arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report()   # STEP 16
+#  or (
+#      fieldname0 = "newf1"  ;
+#      arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report() 
+#     )
+#  or (
+#      fieldname0 = "newf2"  ;
+#      arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report() 
+#     )
+#  or (
+#      fieldname0 = "newf3"  ;
+#      arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report() 
+#     )
+#  or (
+#      op0 = "!="  ;
+#      arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report() 
+#     )
+fieldname0 = "newf1"                                                                 # STEP 17
+arcpy.DeleteField_management(featureclass0,fieldname0); report()                     # STEP 18
+#  or (
+#      fieldname0 = "newf2"  ;
+#      arcpy.DeleteField_management(featureclass0,fieldname0); report() 
+#     )
+#  or (
+#      fieldname0 = "newf3"  ;
+#      arcpy.DeleteField_management(featureclass0,fieldname0); report() 
+#     )
+arcpy.Statistics_analysis(classorlayer0,stattable0,statfields0); report()            # STEP 19
+GENERALIZED IN: 3203.63199997
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+shapefilelist0 = sorted(glob.glob(arcpy.env.workspace + "\*.shp"))                   # STEP 0
+#[
+shapefile0 = shapefilelist0 [0]                                                      # STEP 1
+newlayer0 = "l1"                                                                     # STEP 2
+#  or newlayer0 = "l2" 
+#  or newlayer0 = "l3" 
+#  swaps with step 3
+#] (steps in [] can be in any order)
+#[
+featureclass0 = shapefile0                                                           # STEP 3
+#  or (
+#      shapefile0 = arcpy.env.workspace + "\new1.shp"  ;
+#      featureclass0 = shapefile0 
+#     )
+#  or (
+#      shapefile0 = arcpy.env.workspace + "\new2.shp"  ;
+#      featureclass0 = shapefile0 
+#     )
+#  or (
+#      shapefile0 = arcpy.env.workspace + "\new3.shp"  ;
+#      featureclass0 = shapefile0 
+#     )
+#  swaps with step 2
+classorlayer0 = newlayer0                                                            # STEP 4
+#  swaps with steps 10 11 12
+fieldtype0 = "DATE"                                                                  # STEP 5
+#  or fieldtype0 = "TEXT" 
+#  or fieldtype0 = "FLOAT" 
+#  or fieldtype0 = "DOUBLE" 
+#  or fieldtype0 = "SHORT" 
+#  or fieldtype0 = "LONG" 
+#  swaps with steps 10 11 12
+fieldname0 = "newf1"                                                                 # STEP 6
+#  swaps with steps 10 11 12
+op0 = ">"                                                                            # STEP 7
+#  or op0 = "<" 
+#  or op0 = "<=" 
+#  or op0 = ">=" 
+#  or op0 = "=" 
+#  swaps with steps 10 11 12 14
+val0 = "100"                                                                         # STEP 8
+#  or val0 = "1000" 
+#  swaps with steps 10 11 12 14
+stattable0 = arcpy.env.workspace + "\stats.dbf"                                      # STEP 9
+#  swaps with steps 10 11 12 14
+#] (steps in [] can be in any order)
+#[
+fieldlist0 = arcpy.ListFields(featureclass0)                                         # STEP 10
+#  swaps with steps 4 5 6 7 8 9 14
+stattype0 = "FIRST"                                                                  # STEP 11
+#  or stattype0 = "LAST" 
+#  swaps with steps 4 5 6 7 8 9
+statfields0 = []                                                                     # STEP 12
+#  swaps with steps 4 5 6 7 8 9
+#] (steps in [] can be in any order)
+#[
+statfields0.append([fieldname0,stattype0])                                           # STEP 13
+#  or (
+#      fieldname0 = "newf2"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      fieldname0 = "newf3"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "SUM"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "MEAN"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "MIN"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "MAX"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "RANGE"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "STD"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+#  or (
+#      stattype0 = "COUNT"  ;
+#      statfields0.append([fieldname0,stattype0]) 
+#     )
+arcpy.AddField_management(featureclass0,fieldname0,fieldtype0); report()             # STEP 14
+#  swaps with steps 7 8 9 10
+#] (steps in [] can be in any order)
+fieldname0 = fieldlist0 [0].name                                                     # STEP 15
+arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report()   # STEP 16
+#  or (
+#      fieldname0 = "newf1"  ;
+#      arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report() 
+#     )
+#  or (
+#      fieldname0 = "newf2"  ;
+#      arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report() 
+#     )
+#  or (
+#      fieldname0 = "newf3"  ;
+#      arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report() 
+#     )
+#  or (
+#      op0 = "!="  ;
+#      arcpy.MakeFeatureLayer_management(featureclass0,newlayer0,where_clause=' "' + fieldname0 + '" ' + op0 + val0); report() 
+#     )
+fieldname0 = "newf1"                                                                 # STEP 17
+arcpy.DeleteField_management(featureclass0,fieldname0); report()                     # STEP 18
+#  or (
+#      fieldname0 = "newf2"  ;
+#      arcpy.DeleteField_management(featureclass0,fieldname0); report() 
+#     )
+#  or (
+#      fieldname0 = "newf3"  ;
+#      arcpy.DeleteField_management(featureclass0,fieldname0); report() 
+#     )
+arcpy.Statistics_analysis(classorlayer0,stattable0,statfields0); report()            # STEP 19
+

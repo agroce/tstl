@@ -1,0 +1,103 @@
+@import avl as avl
+@import math
+@import time
+
+# tells TSTL where the source code of the module tested is, to enable code coverage
+source: avl.py
+
+# @ indicates raw python code, such as imports, and is usually not parsed by TSTL, but available for use in testing
+
+# below is a larger block of raw python code, in <@...@> (put these on their own line), defining some functions used in testing
+<@
+def heightOk(tree):
+    h = tree.tree_height()
+    l = len(tree.inorder())
+    if (l == 0):
+       return True
+    m = math.log(l,2)
+    # pre<(...)> is handled by TSTL, and is the value of ... at entry to the function
+    assert(pre<(tree.inorder())> == tree.inorder())
+    return h <= (m + 1)
+
+def items(s):
+    l = []
+    for i in s:
+       l.append(i)
+    return sorted(l)
+
+# the function test_after_reduce is called whenever reduction of test cases completes
+def test_after_reduce(sut): 
+    sut.setLog(0) # if this was 1, there would be heavy logging of replays after reduction
+@>
+
+# logging -- POST means log after the step executes, the number indicates logging level needed for this logging to appear
+logs:
+	1 <avl>.inorder()
+	POST 1 <avl>.inorder()
+
+# pools are where TSTL stores state of the SUT; REF indicates a pool that is mirrored by a reference implementation
+pools:
+	<int> 4 CONST
+	<avl> 3 REF
+
+# properties are invariants to check after each step of testing
+properties:
+	heightOk(<avl>) 
+	<avl>.check_balanced()
+
+actions:
+
+# this initializes an int value, the range is 1 to 20 inclusive -- <[i..j]> is TSTL shorthand for integer ranges
+# this is equivalent to having a long series of assignments like:
+# <int> := 1
+# <int> := 2
+# <int> := 3
+# ...
+<int> := <[1..20]>
+
+# initialize an empty AVL tree
+<avl> := avl.AVLTree()
+
+# insert an int into an avl tree.  this action is disabled unless we have an initialized int and an initialized avl tree
+# \ at end of line indicates the action continues on the next line
+# ~ before <avl> indicates this action does not "use" the avl, so it cannot be initialized again yet
+# => after an action indicates that after this action takes place, the property after is to be checked
+# <avl,1> is a way to repeat the choice of avl pool that was taken in the first syntactic appearance of <avl>
+# pre<(...)> works as in the function example above
+~<avl>.insert(<int>) => \
+   (len(<avl,1>.inorder()) == pre<(len(<avl,1>.inorder()))>+1) \
+   or pre<(<avl,1>.find(<int,1>))>
+
+# delete is symmetric with insert
+~<avl>.delete(<int>) => \
+   (len(<avl,1>.inorder()) == pre<(len(<avl,1>.inorder()))>-1) \
+   or not pre<((<avl,1>.find(<int,1>)))>
+
+# no explicit properties on find
+~<avl>.find(<int>)
+
+# after doing an inorder traversal, we can re-initalize an avl pool
+<avl>.inorder()
+
+~<avl> == ~<avl>
+
+# -> before an action indicates a user-defined guard
+len(<avl,1>.inorder()) > 5 -> <avl>.display()
+
+# reference keyword tells TSTL how to map SUT code into the equivalent for a reference object
+# here an AVL tree is compared with Python's built-in set
+
+references:
+	avl.AVLTree ==> set
+	insert ==> add
+	delete ==> discard
+	find ==> __contains__
+# there is shorthand for when a method call (avl.method) needs to be mapped with a function call (call(set))
+  	METHOD(inorder) ==> CALL(items)
+	METHOD(display) ==> CALL(print)
+
+# compare keywords says that when an action matching this text is taken, the return values for the pool and the
+# reference pool should be compared
+compares:
+	find
+	inorder

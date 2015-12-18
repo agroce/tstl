@@ -1,0 +1,39 @@
+\section{Conclusions and Future Work}
+
+This paper introduces test case normalization and generalization.  The
+methods presented are significant steps towards a difficult goal: providing
+users of automated testing with a \emph{single test case, as short and
+  simple as possible, for each underlying fault in the SUT}, and
+\emph{annotations describing the general conditions under which the
+  fault manifests as failure}.  Normalization approaches this ideal by
+rewriting numerous distinct failing test cases into a smaller, often
+minimal, set of simpler test cases.  Generalization uses
+automated experiments to identify essential and accidental aspects of
+a test case.   In our experiments, normalization reduced the
+number of failures a user must examine by well over an order of magnitude
+compared to reduction alone, often  to the ideal of one per fault.  The algorithms for normalization and generalization rely
+on the ability of TSTL \cite{NFM15,ISSTA15} to define a total order
+over test actions, based on an abstract form for test cases, suitable
+for term rewriting.  TSTL-based normalization is thus applicable to
+any SUT, any source language, and any test generation method,
+including methods that already produce short tests
+\cite{FA11,SoftBET}. 
+
+
+ The goal of normalization and generalization can also be pursued in
+settings other than API sequence or string grammar testing.  The
+difficulties of defining a normal form for JavaScript \cite{jsfunfuzz}
+or C \cite{CReduce} test cases are formidable. Less effective methods
+than ours might still aid debugging and assist fuzzer taming
+\cite{PLDI13}.  Simple generalization (e.g., is this numeric constant
+essential, can these two statements be swapped?) and a limited form of
+fresh value generalization should be easy to apply, even for complex
+programming language test cases.  
+
+TSTL is available in a working version for Python \cite{tstl} that
+supports normalization and generalization.  Further experimental
+evaluation of normalization and generalization over more SUTs is
+important to quantify effectiveness and motivate new rewrites and
+generalizations.  The TSTL implementations are designed to allow these
+to be easily added, in order to bring testing closer to the
+goal of ``one test case to rule them all.''

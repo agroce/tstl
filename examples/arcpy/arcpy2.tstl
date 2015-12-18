@@ -1,0 +1,134 @@
+@import shutil
+@import os
+@import glob
+@import arcpy
+
+<@
+def cleanupFiles():
+    # First get rid of modified files
+    for f in glob.glob("C:\\Arctmp\\*"):
+        try:
+            os.remove(f)
+        except:
+            print "UNABLE TO REMOVE:",f
+    # Now move in fresh copies
+    for f in glob.glob("C:\\Arcbase\\*"):
+        shutil.copy(f, f.replace("Arcbase","arctmp"))
+@>
+
+pool: <layerfilelist> 3
+pool: <layerfile> 3
+pool: <shapefilelist> 3
+pool: <shapefile> 3
+pool: <featureclass> 3
+pool: <description> 3
+pool: <spatialref> 3
+pool: <prjfilelist> 3
+pool: <prjfile> 3
+pool: <transformlist> 3
+pool: <transform> 3
+pool: <newlayer> 3
+pool: <layerlist> 3
+pool: <layer> 3
+pool: <fieldname> 3
+pool: <fieldtype> 3
+pool: <fieldlist> 3
+pool: <bufferdist> 3
+pool: <overlaptype> 3
+pool: <selectiontype> 3
+pool: <op> 3
+pool: <val> 3
+
+init: cleanupFiles()
+
+log: 1 arcpy.GetMessages()
+
+<layerfilelist> := glob.glob("C:\\Arctmp\\*.lyr")
+len(<layerfilelist,1>) >= 1 -> <layerfile> := <layerfilelist> [0]
+<layerfilelist> = <layerfilelist> [1:]
+
+<shapefilelist> := glob.glob("C:\\Arctmp\\*.shp")
+len(<shapefilelist,1>) >= 1 -> <shapefile> := <shapefilelist> [0]
+<shapefilelist> = <shapefilelist> [1:]
+
+<layerfile> := "C:\\arctmp\\new1.lyr"
+<layerfile> := "C:\\arctmp\\new2.lyr"
+<layerfile> := "C:\\arctmp\\new3.lyr"
+
+<shapefile> := "C:\\arctmp\\new1.shp"
+<shapefile> := "C:\\arctmp\\new2.shp"
+<shapefile> := "C:\\arctmp\\new3.shp"
+
+<prjfilelist> := glob.glob("C:\\Program Files (x86)\\ArcGIS\\Desktop10.3\\Reference Systems\\*.prj")
+len(<prjfilelist,1>) >= 1 -> <prjfile> := <prjfilelist> [0]
+<prjfilelist> = <prjfilelist> [1:]
+
+<transformlist> := arcpy.ListTransformations(<spatialref>,<spatialref>)
+<transformlist> = <transformlist> [1:]
+len(<transformlist,1>) >= 1 -> <transform> := <transformlist> [0]
+
+<newlayer> := "l1"
+<newlayer> := "l2"
+<newlayer> := "l3"
+
+{IOError} <description> := arcpy.Describe(<layerfile>)
+
+<spatialref> := <description>.spatialReference
+<spatialref> := arcpy.SpatialReference(<prjfile>)
+
+<featureclass> := <layerfile>
+<featureclass> := <shapefile>
+
+<fieldtype> := "TEXT"
+<fieldtype> := "FLOAT"
+<fieldtype> := "DOUBLE"
+<fieldtype> := "SHORT"
+<fieldtype> := "LONG"
+<fieldtype> := "DATE"
+
+<fieldname> := "newf1"
+<fieldname> := "newf2"
+<fieldname> := "newf3"
+
+<bufferdist> := "100 Feet"
+<bufferdist> := "1 Mile"
+<bufferdist> := "1000 Feet"
+
+<overlaptype> := "INTERSECT"
+<overlaptype> := "CONTAINS"
+<overlaptype> := "COMPLETELY_CONTAINS"
+<overlaptype> := "WITHIN"
+<overlaptype> := "SHARE_A_LINE_SEGMENT_WITH"
+<overlaptype> := "CROSSED_BY_THE_OUTLINE_OF"
+
+<selectiontype> := "NEW_SELECTION"
+<selectiontype> := "ADD_TO_SELECTION"
+<selectiontype> := "REMOVE_FROM_SELECTION"
+<selectiontype> := "SUBSET_SELECTION"
+<selectiontype> := "SWITCH_SELECTION"
+<selectiontype> := "CLEAR_SELECTION"
+
+<op> := ">"
+<op> := "<"
+
+<val> := "100"
+<val> := "1000"
+
+{IOError} <fieldlist> := arcpy.ListFields(<featureclass>)
+len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
+<fieldlist> = <fieldlist> [1:]
+
+{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(<featureclass>, <newlayer>); print arcpy.GetMessages()
+
+{arcpy.ExecuteError} arcpy.Project_management(<featureclass>, <featureclass>, <spatialref>, <transform>); print arcpy.GetMessages()
+
+{arcpy.ExecuteError} arcpy.AddField_management(<featureclass>,<fieldname>,<fieldtype>); print arcpy.GetMessages()
+
+{arcpy.ExecuteError} arcpy.DeleteField_management(<featureclass>,<fieldname>); print arcpy.GetMessages()
+
+{arcpy.ExecuteError} arcpy.Buffer_analysis(<featureclass>,<featureclass>,<bufferdist>); print arcpy.GetMessages()
+
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,<overlaptype>,<newlayer>); print arcpy.GetMessages()
+
+{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(<newlayer>,<selectiontype>,' "' + <fieldname> + '" ' + <op> + <val>); print arcpy.GetMessages()
+

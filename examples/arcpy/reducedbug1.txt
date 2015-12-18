@@ -1,0 +1,20 @@
+self.p_FIELDNAME[2] = "newf1" 
+self.p_OP[2] = "<" 
+self.p_VAL[0] = "100" 
+self.p_SHAPEFILE[2] = "C:\arctmp\new2.shp" 
+self.p_SHAPEFILELIST[0] = glob.glob("C:\Arctmp\*.shp") 
+self.p_SELECTIONTYPE[0] = "NEW_SELECTION" 
+self.p_SHAPEFILE[1] = self.p_SHAPEFILELIST[0] [0] 
+self.p_FEATURECLASS[0] = self.p_SHAPEFILE[2] 
+self.p_BUFFERDIST[2] = "1000 Feet" 
+self.p_FEATURECLASS[1] = self.p_SHAPEFILE[1] 
+arcpy.Buffer_analysis(self.p_FEATURECLASS[1],self.p_FEATURECLASS[0],self.p_BUFFERDIST[2]); print arcpy.GetMessages() 
+self.p_SHAPEFILE[1] = "C:\arctmp\new2.shp" 
+self.p_FEATURECLASS[1] = self.p_SHAPEFILE[1] 
+self.p_NEWLAYER[1] = "l1" 
+arcpy.MakeFeatureLayer_management(self.p_FEATURECLASS[1], self.p_NEWLAYER[1]); print arcpy.GetMessages() 
+arcpy.SelectLayerByAttribute_management(self.p_NEWLAYER[1],self.p_SELECTIONTYPE[0],' "' + self.p_FIELDNAME[2] + '" ' + self.p_OP[2] + self.p_VAL[0]); print arcpy.GetMessages() 
+<<RESTART>>
+self.p_NEWLAYER[0] = "l1" 
+self.p_OVERLAPTYPE[1] = "CONTAINS" 
+arcpy.SelectLayerByLocation_management(self.p_NEWLAYER[0],self.p_OVERLAPTYPE[1],self.p_NEWLAYER[0]); print arcpy.GetMessages() 

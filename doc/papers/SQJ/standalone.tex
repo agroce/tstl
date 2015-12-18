@@ -1,0 +1,36 @@
+\subsection{Standalone Test Case Generation}
+
+TSTL test cases are saved as text files, where each line of the text
+file contains a string representation of an action (with a unique
+such string ``name'' for each action).  This format is somewhat human
+readable, but is not machine-executable without the assistance of the
+TSTL interface.  These test cases are also somewhat misleading for
+readers, since guards, post-conditions, reference pool actions, and
+allowed exceptions do not appear in this format.
+
+Publishing test cases (or submitting them to Esri) is impractical,
+however, if it requires use of the entire TSTL toolchain.  Moreover,
+making tests only work within TSTL means it is not possible to
+experiment with changing test cases in ways that are not in the TSTL
+action set.  It is not  even possible to add print statements to help understand
+behavior, without using TSTL's complex logging mechanisms.  
+
+In order to address these problems, we implemented a new TSTL utility
+that takes a test case stored in TSTL's internal format and produces a
+standalone Python file that does not require any TSTL support.  The
+standalone test case generator has options to control whether the
+generated test case includes actions on reference pools, property
+checks, and handling for allowed exceptions (omitted only if the exception does not
+actually take place when the test is replayed).  The reason for disabling
+the last functionality is interesting:  most test cases that are
+stored are minimized \cite{DD} test cases, from which all actions not
+necessary to produce a failure or obtain desired code coverage have
+been removed.  In most cases, this means that most ArcPy calls are
+successful.  Adding code to handle potential exceptions makes
+standalone test cases much longer and harder to read.
+
+In the process of producing the standalone test case utility, we
+introduced a more readable format for TSTL action names that is closer
+to the code in standalone test cases.  This has, to our surprise, made
+reading TSTL test cases in tool output, not just in standalone test
+cases, much easier.  The new format has been integrated into new TSTL features.

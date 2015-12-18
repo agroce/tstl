@@ -1,0 +1,16 @@
+featureclass0 = C:\Arctmp\states.shp
+Executing: MakeFeatureLayer C:\arctmp\new1.shp l1 # # "FID FID VISIBLE NONE;Shape Shape VISIBLE NONE;STATE_NAME STATE_NAME VISIBLE NONE;DRAWSEQ DRAWSEQ VISIBLE NONE;STATE_FIPS STATE_FIPS VISIBLE NONE;SUB_REGION SUB_REGION VISIBLE NONE;STATE_ABBR STATE_ABBR VISIBLE NONE"
+Start Time: Wed Sep 23 11:59:25 2015
+Succeeded at Wed Sep 23 11:59:25 2015 (Elapsed Time: 0.01 seconds)
+Executing: SelectLayerByLocation l1 COMPLETELY_CONTAINS l1 # NEW_SELECTION NOT_INVERT
+Start Time: Wed Sep 23 11:59:25 2015
+Succeeded at Wed Sep 23 11:59:25 2015 (Elapsed Time: 0.05 seconds)
+UNABLE TO REMOVE: C:\Arctmp\new1.shp.JOSIEHOLMES-PC.2808.956.sr.lock
+Executing: Delete C:\arctmp\new1.shp.JOSIEHOLMES-PC.2808.956.sr.lock File
+Start Time: Wed Sep 23 11:59:25 2015
+ERROR 000601: Cannot delete C:\arctmp\new1.shp.JOSIEHOLMES-PC.2808.956.sr.lock.  May be locked by another application.
+Failed to execute (Delete).
+Failed at Wed Sep 23 11:59:25 2015 (Elapsed Time: 0.00 seconds)
+arcpy crashes Python on the next call
+
+>>> ================================ RESTART ================================

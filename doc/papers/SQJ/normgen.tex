@@ -1,0 +1,49 @@
+\subsection{Test Case Normalization and Generalization}
+
+Understanding ArcPy failures without delta-debugging \cite{DD} to reduce the
+test cases to a readable size is, essentially, impossible \cite{MinUnit}.  The
+typical test case, before reduction, is 600-2,000 steps long.  Even
+after delta-debugging, however, once test cases are more
+comprehensible in size, and contain no purely extraneous steps,
+understanding ArcPy failures is difficult.
+
+To address this problem, as well as other issues (some of which, such
+as triaging large numbers of failing tests, are not at present
+problems for ArcPy testing), we developed an algorithm to
+\emph{normalize} test cases \cite{ICSTnorm}.  This algorithm applies a series of term
+rewriting rules to reduce the number of variables in a test case,
+reduce the complexity of API calls made, and other modifications.  In
+the case of ArcPy, this often also further reduces test case length
+beyond what standard delta-debugging can achieve.  For example, of the
+first five crashes detected (some of which turned out to be variations
+of one underlying problem), normalization reduced the length of the
+delta-debugged test case from 19 to 11 steps, from 18 to 14 steps,
+from 27 to 20 steps, from 20 to 16 steps, and from 10 to 9 steps.  In
+the last case, the one step removed gave important information about
+the problem.
+
+In addition to normalization, we found it essential to apply
+generalization \cite{SmartCheck,ICSTnorm} to test cases.  This
+algorithm, also produced to aid ArcPy testing, is in a sense the
+opposite of normalization.  Normalization takes many tests that differ
+in unimportant ways and converts them to one, simple, sometimes
+canonical (one test per fault) form.  Generalization takes a single
+test, and produces annotations that describe how the test could be
+modified while retaining the property of interest --- e.g.,
+generalization answers such questions as:
+
+\begin{itemize}
+\item Could this
+constant value be different, and the test still fail?
+\item Could these two API calls be swapped in their position in the
+  test case, and the test still fail?
+\item Could this freshly created object replace this complex,
+  much-modified object in this API call, and the test still fail?
+\end{itemize}
+
+Together, normalization and generalization have greatly aided our
+understanding of complex ArcPy test cases:  normalization provides a
+standard structure for failures, and makes constant values as small as
+possible. Generalization tells us when these values can be changed,
+without altering the disposition of the test.  The faults described in
+this paper are all presented as normalized and generalized test cases.

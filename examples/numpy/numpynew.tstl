@@ -1,0 +1,52 @@
+@import numpy as np
+
+pool: <array> 6
+pool: <int> 3
+pool: <float> 3
+pool: <dim> 3
+pool: <shape> 3
+pool: <index> 2
+
+<int> := %[-10..10]%
+<float> := float(<int>)
+
+<dim> := 1
+<dim> := 10
+#<dim> := 100
+<dim,2> > 1 -> ~<dim> = ~<dim> - 1 
+~<dim> = ~<dim> + 1
+
+<shape> := (<dim>)
+<shape> := (<dim>, <dim>)
+<shape> := (<dim>, <dim>, <dim>)
+
+<index> := <dim>
+
+#<array> := np.empty(<shape>)
+<array> := np.zeros(<shape>)
+<array> := np.ones(<shape>)
+#<array> := np.empty_like(<array>)
+<array> := np.zeros_like(<array>)
+<array> := np.ones_like(<array>)
+
+{IndexError,TypeError} <array>[<index>] = <float>
+{IndexError,TypeError} <array>[<index>][<index>] = <float>
+{IndexError,TypeError} <array>[<index>][<index>][<index>] = <float>
+
+{ValueError} <array> := <array> + <array>
+{ValueError} <array> := <array> * <array>
+{ValueError} <array> := <array> - <array>
+#{ValueError} <array> := <array> / <array>
+
+{ValueError} <array> := np.reshape(<array>,<shape>)
+<array> := np.ravel(<array>)
+<array> := <array>.flatten()
+
+{ValueError} np.copyto(<array>,<array>)
+
+<array> := np.unique(<array>)
+
+{ValueError} np.trim_zeros(<array>)
+
+property: (np.isnan(<array>)).any() or (np.array_equal(<array,1>,<array,1>))
+#property: np.array_equal(<array>,<array,1>)) # version for paper bug

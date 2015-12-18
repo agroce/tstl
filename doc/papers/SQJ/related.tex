@@ -1,0 +1,103 @@
+\section{Related Work}
+
+There is a vast amount of previous work on automated generation of
+tests for (API-based) software systems
+\cite{Pacheco,FA11,GodefroidKS05} and random testing in particular
+\cite{ICSEDiff,Pacheco,AMFL11,ARTChen,ISSTAART,FASE,HamletOnly,Hamlet94,ClaessenH00,CiupaLOM07,RandFormal,WODA08,andrews-etal-rute-rt,ASE08,evalrand,csmith},
+some dating back to the early 1980s. It is far beyond the scope of
+this paper to explore that literature in detail.  The interested
+reader is directed to the cited papers, as well as general surveys of
+automated test generation in particular \cite{anand2013orchestrated}
+or recent software testing research in general \cite{orsofuse}.  This paper relies primarily on past
+results showing that random testing \cite{Hamlet94,Fuzz} can be highly effective for
+finding software faults in large libraries
+\cite{Pacheco,ICSEDiff,RandFormal,CFV08,AMAI}.  To our knowledge, there is almost
+no work on automated/random test generation for GIS in particular, and
+little or no work on allowing non-traditional software developers to apply
+automated (random) test generation to APIs.
+
+The approach to testing ArcPy taken in this paper uses the TSTL tool
+for automated testing \cite{NFM15,ISSTA15,tstl}.  TSTL is a
+domain-specific language (DSL) \cite{Fow10} for testing, in the spirit
+of the famous QuickCheck tool for Haskell \cite{ClaessenH00}; other
+DSLs for testing exist \cite{UDITA}, but these are more limited in
+scope and function.  As part of the efforts described in this paper,
+some of the authors have submitted for review a paper on the
+normalization and generalization of test cases in TSTL
+\cite{ICSTnorm}.  The quick tests for regression across ArcPy/ArcGIS
+versions are based on using cause reduction
+\cite{icst2014,stvrcausereduce} to convert long random tests into
+short sequences that preserve code coverage, and a large body of
+previous work on test case selection and prioritization that indicates
+code coverage \cite{ISSTA13,ICSE14Cov} can be a useful measure of test
+case effectiveness
+\cite{SelectTest,YooHarman,Graves:2001:ESR:367008.367020}.
+
+The literature on testing GIS software in particular seems to consist
+of one paper proposing a very limited application of automated testing
+to assist GIS users, primarily in model development \cite{GISTest}.
+That work does not target the reliability or correctness of the
+underlying GIS engine, or GIS libraries.  There is also some
+discussion of automated testing for GIS in various blog posts and
+discussion groups (e.g., \cite{gisblog1,gisblog2}), but no formal
+academic case studies.  These discussions also tend to focus on
+application testing or GUI testing, rather than testing of library
+code used across GIS applications.  There is a simple extension to
+Python unit testing modules for the GRASS open source GIS system
+\cite{GRASSunit}, but this does not provide any automated test generation.
+
+There is also relatively little written about software testing in the
+academic literature that focuses on the pitfalls, best practices, and
+engineering challenges of testing real-world systems.  The series of
+papers by the NASA Jet Propulsion Laboratory on testing the file
+systems for the Curiosity Mars Rover is notable, though even there the
+focus is more on general technique than details of approach
+\cite{ICSEDiff,CFV08,AMAI}.  Literature that at least touches on more
+practical aspects, however, is plentiful: e.g., Lei and Andrews
+\cite{MinUnit} demonstrated that random test generation essentially
+requires test-case minimization \cite{DD} in order to be useful.
+Recent work, in particular, has given more attention to issues of test case usability
+than in the past; we suspect this shows a growing technological
+maturity for automated test case generation.  For example, we found
+that test case readability was important in our efforts, and recent
+academic work \cite{Readable,Guava} has introduced systematic,
+principled methods for improving the readability of test cases for
+humans, even though this does not improve fault detection, coverage,
+or other traditional measures of test effectiveness.
+
+There is a significant body of work on end-user testing of software,
+part of the larger field of end-user software engineering
+\cite{burnettEUSE,Silos}.  End-user software engineering examines how
+software can best be produced by developers who do not have a
+traditional computer science background, and are often primarily
+interested in an application of programming, rather than software
+development as a profession.  GIS developers are (we believe) a
+typical example \cite{Segal07}:  they are technically skilled  individuals whose
+primary expertise is not in software development, but who, in order to
+pursue their goals, must develop, maintain, and test significant
+software systems.
+
+The earliest work focusing on software testing for
+end-user software engineers explored how to test spreadsheets
+\cite{rothermelTOSEM,rothermel2000wysiwyt}.  Other work has focused on
+errors end-users make in specifying systems \cite{Phalgune}, and how
+end-users of machine learning systems (who may be machine learning
+experts, or individuals with no programming knowledge at all) can test
+such systems \cite{OnlyOracle,kulesza-eud11,shinsel-vlhcc}.  To our
+knowledge, no previous work considers API-sequence testing for
+end-users.  Previous work on API testing has largely not even included
+traditional software developers, but been performed by software
+testing researchers only.
+
+Chen et al. propose metamorphic testing
+\cite{MetaTest,isstamorph,metamorph,chentest} as a possible solution
+to the oracle problem (defining correct behavior of a software system)
+for end-user programmers \cite{MetamorphEndUser}.  In metamorphic
+testing, while the correct output of a program is not known, the
+effect of certain modifications to an input is known (e.g., increasing
+a certain input should increase a certain output), allowing faults to
+be detected even without a definition of the correct result.  In this
+paper, we largely focus on building a basic framework that works for
+crash bugs and uncaught exceptions, and is capable of
+extension to more complex correctness properties.  In the long run, however, more
+sophisticated oracles are critical to finding deep faults.

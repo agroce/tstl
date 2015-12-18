@@ -1,0 +1,80 @@
+\section{Work In-Progress}
+\label{future}
+
+While not all of the language and tool changes discussed above have
+been introduced in the release version of TSTL, all of these features are at
+minimum undergoing testing prior to release.  The features discussed
+in this section are in the early, exploratory, design phase.
+
+\subsection{More Complete Correctness Checks}
+\label{futureoracle}
+
+One key omission in the ArcPy test harness is the lack of correctness
+properties.  This version only fails tests when 1) the system crashes
+or 2) an unexpected exception is raised.  Determining the proper
+results for complex operation sequences on arbitrary data is
+difficult.  To support conditional metamorphic properties \cite{MetaTest}, we plan to
+add a TSTL feature to check a property conditional on the set of
+actions called.  For example, if fields are never added or deleted, the number of
+fields for each feature class should remain constant.  Unfortunately,
+the set of properties that are independent of the underlying data used
+may be relatively small, or the conditions under which a property
+should hold so limited it may be hard to produce highly effective
+testing based just on conventional correctness properties or limited
+metamorphic testing.
+
+\subsection{Differential Testing within One Version}
+\label{sec:reftest}
+
+One way to work around the difficulties of specifying properties of
+complex systems is to use differential testing \cite{Differential,ICSEDiff}:  if two systems
+implement the same functionality, and are given the same inputs, they
+should produce the same output.  This approach can also be applied
+within a single version of ArcPy:  because ArcGIS supports more than
+one storage format (shapefiles, file geodatabases, and personal
+geodatabases), the same data can be stored in multiple formats.  Using
+TSTL's support for reference pools, the same operations can be
+performed on the same data stored in different formats, and the
+results can be checked, including success or failure of ArcPy calls
+and spatial properties and field values of the manipulated data.
+
+\subsection{Testing Multiprocessing}
+
+ArcPy scripts can use Python's multiprocessing features to exploit
+multicore machines and gain efficiency.  However, this can expose
+ArcGIS or ArcPy faults, especially problems with the (not well
+documented) locking system.  TSTL can use multiprocessing in actions
+(since actions can call arbitrary Python code), but does not include
+support for running multiple threads of execution at the TSTL level.
+One problem with testing multiprocessing use of ArcPy is that
+concurrency is much more likely to produce nondeterministic test
+behavior than our existing testing.
+
+%\subsection{Optimizations for Testing}
+
+\subsection{Parallel Testing}
+
+While multiprocessing on a single machine can introduce additional
+problems with test determinism and locking interactions, running tests
+in parallel using either cloud computing or virtualization on a
+single multicore machine could improve test throughput.   This is
+possibly more important for ArcPy than in many other testing
+scenarios, given the unusually high cost of even single API calls.
+
+\subsection{Alternative Test Generation Techniques}
+
+TSTL is meant to provide a platform for experimenting with various
+methods for generating tests \cite{NFM15}.  To date, we have only used
+pure random testing, since for our purposes simply generating tests as
+quickly and simply as possible has been highly effective.  However, in
+the future we plan to explore alternative generation methods.  In some
+cases, this should be simple.  For example, swarm testing
+\cite{ISSTA12} only requires identifying features \cite{groce2013help}
+(which for ArcPy will simply be different API functions) that can be
+omitted from tests, to concentrate testing on a particular aspect of
+the API.  Various search-based \cite{FA11} and machine-learning-based
+\cite{ISSRE} approaches to test case generation can also be implemented
+  using TSTL.  The inabilty to save ArcPy memory state and the high
+  cost of backtracking via replay makes methods such as BFS and DFS
+  exploration \cite{NFM15} that resemble model-checking
+  \cite{ModelChecking,ModelDriven} unlikely to pay off, however.

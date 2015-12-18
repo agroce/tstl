@@ -48,17 +48,21 @@
 \documentclass{sig-alternate}
 
 \usepackage{code}
+\usepackage{comment}
 \usepackage{url}
 
 \begin{document}
+\conferenceinfo{ISSTA'15}{, July 12--17, 2015, Baltimore, MD, USA}
+\CopyrightYear{2015}
+\crdata{978-1-4503-3620-8/15/07}
 %
 % --- Author Metadata here ---
-\conferenceinfo{ISSTA}{'15 Baltimore, MA USA}
+%\conferenceinfo{ISSTA}{'15 Baltimore, MA USA}
 %\CopyrightYear{2007} % Allows default copyright year (20XX) to be over-ridden - IF NEED BE.
 %\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{Demo: TSTL: a Language and Tool for Testing}
+\title{TSTL: A Language and Tool for Testing (Demo)}
 %
 % You need the command \numberofauthors to handle the 'placement
 % and alignment' of the authors beneath the title.
@@ -102,7 +106,7 @@
 % 1st. author
 \alignauthor
 Alex Groce, Jervis Pinto, Pooria Azimi, Pranjal Mittal \\
-\affaddr{Oregon State University}
+\affaddr{Oregon State University, USA}
 \email{agroce@gmail.com,pinto@eecs.oregonstate.edu,\\
 azimip@onid.oregonstate.edu,mittal.pranjal@gmail.com}
 }
@@ -127,11 +131,11 @@ email: {\texttt{jsmith@affiliation.org}}) and Julius P.~Kumquat
   industry.  This paper presents TSTL, the Template Scripting Testing
   Language, which allows users to specify the general form of valid
   tests for a system in a simple but expressive language, and tools
-  to support testing based on a TSTL definition.  TSTL is a minimal
+  to support testing based on a TSTL definition.  TSTL is a minimalist
   template-based domain-specific language, using the source language
   of the Software Under Test (SUT) to support most operations, but
   adding declarative idioms for testing.  TSTL compiles to a common
-  testing interface that hides that details of the SUT and provides
+  testing interface that hides the details of the SUT and provides
   support for logging, code coverage, delta debugging, and other core
   testing functionality, making it easy to write universal testing
   tools such as random testers or model checkers that apply to all
@@ -170,8 +174,8 @@ provides support for many common testing idioms.  Second, adapting a
 more declarative approach allows TSTL to output a generalized
 interface for testing: a class that allows a testing tool to determine
 available test actions, check for success or failure of tests as they
-progress, and even automatically produce logging, collect and analyze
-code coverage, and delta debug failed tests, without change for
+progress, and even automatically produce logs, collect and analyze
+code coverage, and delta-debug failed tests, without change for
 different SUTs, but without sacrificing the generality of a hand-built
 test generator: the definition of valid tests also encodes the
 idiosyncrasies of the SUT.
@@ -207,7 +211,7 @@ $_{07}$     if (l == 0):
 $_{08}$        return True
 $_{09}$     m = math.log(l,2)
 $_{10}$     \# Demonstrate PRE
-$_{11}$     assert (PRE[tree.inorder()] 
+$_{11}$     assert (PRE\%(tree.inorder())\% 
 $_{12}$             == tree.inorder())
 $_{13}$     return h <= (m + 1)
 \vspace{0.1in}
@@ -236,22 +240,33 @@ $_{29}$ %INT%:=%[1..20]%
 $_{30}$ %AVL%:=avl.AVLTree()
 $_{31}$ %AVL%:=avl.AVLTree(%LIST%)
 \vspace{0.1in}
-$_{32}$ ~%AVL%.insert(%INT%)
-$_{33}$ ~%AVL%.delete(%INT%)
+
+$_{32}$ ~%AVL%.insert(%INT%) => 
+   (len(%AVL,1%.inorder()) ==
+      PRE%(len(%AVL,1%.inorder()))%+1) 
+   or PRE%(%AVL,1%.find(%INT,1%))%
+$_{33}$ ~%AVL%.delete(%INT%) => 
+   (len(%AVL,1%.inorder()) ==
+      PRE%(len(%AVL,1%.inorder()))%-1) 
+   or not PRE%((%AVL,1%.find(%INT,1%)))%
 $_{34}$ ~%AVL%.find(%INT%)
 $_{35}$ %AVL%.inorder()
+$_{36}$ len(%AVL,1%.inorder()) > 5 -> 
+   %AVL%.display()
 \vspace{0.1in}
-$_{36}$ reference: avl.AVLTree ==> set
-$_{37}$ reference: insert ==> add
-$_{38}$ reference: delete ==> discard
-$_{39}$ reference: find ==> \_\_contains\_\_
-$_{40}$ reference: (\\S+)\\.inorder\\(\\) ==> it(\\1)
+$_{37}$ reference: avl.AVLTree ==> set
+$_{38}$ reference: insert ==> add
+$_{39}$ reference: delete ==> discard
+$_{40}$ reference: find ==> \_\_contains\_\_
+$_{41}$ reference: (\\S+)\\.inorder\\(\\) ==> it(\\1)
+$_{42}$ reference: METHOD(display) ==> CALL(print)
 \vspace{0.1in}
-$_{41}$ compare: find
-$_{42}$ compare: inorder
+$_{43}$ compare: find
+$_{44}$ compare: inorder
 \end{code}
-\caption{A simple TSTL file to test an AVL tree implementation,
-  demonstrating various features of TSTL.  The {\tt AVLTree} class defines methods including {\tt insert}, {\tt delete}, {\tt find}, etc.; it is not shown here due to lack of space.}
+\caption{Simple TSTL file to test an AVL tree class,
+  showing various features of TSTL.  {\tt AVLTree} defines methods
+  including {\tt insert}, {\tt delete}, {\tt find}, etc.}
 \label{fig:avl}
 \end{figure}
 
@@ -297,7 +312,7 @@ the design choices behind TSTL.  Since that paper was finalized, TSTL
 has been used by over 100 students, and refined based on their
 feedback and our own work in practical testing problems and research.
 New features include the ability to refer to the value of an
-expression at function entry with the construct {\tt PRE[expr]}, a
+expression at function entry with the construct {\tt PRE\%(expr)\%}, a
 logging facility, support for serializing tests in order to save them
 to a file, a method for expecting certain changes in values from a
 call, and a generalized delta debugging \cite{DD} facility supporting
@@ -310,7 +325,7 @@ can also support grammar-based testing, as shown in the NFM paper
 
 \section{A Brief TSTL Tutorial}
 
-We demonstrate TSTL's usage on a Python implementation of AVL trees as an example of a typical SUT.  In the following sections, we step through the harness definition shown in Figure \ref{fig:avl}.
+We demonstrate TSTL's use to test an AVL tree implementaiton (Figure \ref{fig:avl}) as an example of a typical SUT.
 
 
 \subsection{Section 1: Python Code}
@@ -336,7 +351,7 @@ at function entry.  TSTL automatically expands this into the
 equivalent Python code, caching {\tt PRE} expressions used multiple
 times in the body.  The {\tt it} function returns an ``inorder
 traversal'' of the Python set used as a reference implementation for the AVL
-tree, discussed below.
+tree.
 
 \subsection{Section 2: Preamble}
 
@@ -369,7 +384,7 @@ after each test action: first, the height of every AVL tree must be
 ok, as defined by our Python function, and second the AVL
 implementation's own function for ensuring it is balanced must return
 {\tt True}.  Recall that our harness maintains two AVL pool values, so
-TSTL produces these for each AVL tree in the pool.
+TSTL checks these properties for each AVL tree in the pool.
 
 \subsection{Section 3: Actions}
 \label{sec:actions}
@@ -378,13 +393,21 @@ Lines 27-34 are the heart of the harness definition, the actual steps
 that can be taken in a valid test.  Lines 27-28 allow the construction
 of arbitrary length lists of integers.  Line 29 defines the range of
 integers allowed in the {\tt INT} pool, using the {\tt \%[..]\%}
-construct..  Lines 30 and 31 provide for initialization of AVL trees,
+construct.  Lines 30 and 31 provide for initialization of AVL trees,
 either with the constructor for an empty tree or the constructor that
 takes a list and produces an AVL tree containing all elements in the
-list.  Lines 32-35 allow the basic AVL tree API calls --- insertion,
-deletion, searching, and inorder traversal.  Note that code can be
+list.  Lines 32-36 allow the basic AVL tree API calls --- insertion,
+deletion, searching, inorder traversal, and printing.  Note that code can be
 proceeded by a list (in curly braces) of exceptions to be expected as possible valid
-behavior.
+behavior.  The two most interesting recently added features shown here are 1) that
+guards can be defined by a user, limiting the conditions in which an
+action is enabled, using the syntax {\tt guard -> action} and 2) a check
+to perform after an action has been performed (which can include use
+of {\tt PRE}) can be provided, using the syntax {\tt action =>
+  check}.  This code also uses the ability to back (or forward)
+reference the pool variable chosen in an expansion, e.g. {\tt \%INT,1\%}
+is expanded to the same INT used in the first ``normal'' pool
+reference in the action.
 
 In large part, this section of the harness is just Python
 code, with one line for each action.  The TSTL compiler is responsible
@@ -397,7 +420,7 @@ sequences such as assigning first 1 and then 5 to the same {\tt INT}
 pool value.  The use of a ``\verb|~|'' before a pool value use indicates that
 this usage should not enable re-initialization.  Appending an item to
 a LIST, for example, does not ``use it up'' but constructing an AVL
-tree from a list allows that pool value to be re-initialized.  AVL
+tree from a list allows that list pool value to be re-initialized.  AVL
 trees cannot be over-written until they have been traversed at least
 once.
 
@@ -416,20 +439,17 @@ indicate, using textual patterns, how calls to the SUT are to be
 transformed into calls to a reference, and which return values from
 the SUT and reference should be compared for equivalence.
 
-Lines 36-40 show that to create a reference for an AVLTree, the
+Lines 37-42 show that to create a reference for an AVLTree, the
 matching constructor (either taking no argument or a list) should be
 called in Python's built-in {\tt set} class.  AVL insertion is handled
 by the {\tt add} method for sets, and deletion with {\tt discard}.
 AVLTree {\tt find} is equivalent to the {\tt \_\_contains\_\_} method
 on Python sets, and an inorder traversal (sorted list of elements) is
 provided by our {\tt it} function.  Note that the last reference
-definition, on line 40, has to use regular expressions to transform an
+definition, on line 41, has to use regular expressions to transform an
 AVLTree method call into a function call on the reference set.  There
-is also syntactic sugar for this transformation ({\tt CALL}), but we
-show the regular expression equivalent to show that syntactic
-reference transformations can perform considerable work.  In many
-cases, a reference function's return value has to be transformed to
-match the SUT.  Finally, lines 41 and 42 tell TSTL that whenever an
+is also, as shown in line 42, syntactic sugar for this transformation
+(or the opposite). Finally, lines 43 and 44 tell TSTL that whenever an
 action containing a {\tt find} call or an {\tt inorder} call is
 performed, the return values for the operation on the SUT should be
 compared to the operation on the reference.  If there is no {\tt
@@ -440,31 +460,23 @@ possible).
 
 \subsection{Using the Harness}
 
-In order to test {\tt avl.py},  a TSTL user would first compile the
-harness:
-
-\begin{verbatim}
-tstl -a avl.tstl
-\end{verbatim}
-
-The {\tt tstl} tool takes several command line arguments, such as the
-class and Python file to output, but by default compiles the given
-file into {\tt sut.py} and makes a class called {\tt sut}.  The file
-{\tt sut.py} produced from our example harness is over 2,500 lines of
-Python code.  If the random tester in Figure \ref{fig:rt} is in a file called
-{\tt rt.py} the user can then test the AVL implementation (or any
-other SUT compiled into {\tt sut.py}) by typing:
-
-\begin{verbatim}
-python rt.py
-\end{verbatim}
-
-If the AVL tree code has a bug, it is likely the tool will quickly
-detect it and print out a short test case that exposes the problem.
-The TSTL release includes some simple testers, including a much more
-configurable random tester than is shown here, a rudimentary model
-checker, and some artificial-intelligence based algorithms for testing
-(a variant of beam search \cite{NFM15}, for example).
+In order to test {\tt avl.py}, a TSTL user would first compile the
+harness by typing: {\tt tstl avl.tstl}.  The {\tt tstl} tool takes
+several command line arguments, such as the class and Python file to
+output, and whether to include code coverage instrumentation, but by
+default compiles the given file into {\tt sut.py} and makes a class
+called {\tt sut}.  The self-contained file {\tt sut.py} produced from
+our example harness is over 7,000 lines of Python code (this includes
+actual testing code plus support code common to all TSTL-generated
+harnesses).  If the random tester in Figure \ref{fig:rt} is in a file
+called {\tt rt.py} the user can then test the AVL implementation (or
+any other SUT compiled into {\tt sut.py}) by typing: {\tt python
+  rt.py}.  If the AVL tree code has a bug, it is likely the tool will
+quickly detect it and print out a short test case that exposes the
+problem.  The TSTL release includes some simple testers, including a
+much more configurable random tester than is shown here, a rudimentary
+model checker, and machine-learning-based algorithms for
+testing (e.g. a variant of beam search \cite{NFM15}).
 
 \section{Related Work}
 
@@ -478,7 +490,7 @@ Generation Air Transportation System (NextGen) software
 \cite{TameInputs}.  The closest of these is the UDITA language
 \cite{UDITA}, a Java extension with non-deterministic choice
 operators and {\tt assume}, which yields a different language but
-that shares some of TSTL's goal.  TSTL aims more at the \emph{generation} of
+shares some of TSTL's goals.  TSTL aims more at the \emph{generation} of
 tests than the \emph{filtering} of tests (as defined in the UDITA
 paper), while UDITA supports both approaches.  This goal of UDITA (and
 resulting need for first-class {\tt assume}) means that it is hosted
@@ -487,9 +499,10 @@ inside a complex tool, JPF
 an SUT.  Building a version of UDITA for a new language is
 far more challenging than porting TSTL.  UDITA also supports many fewer
 constructs to assist test harness development; e.g., users must
-implement their own logging, delta debugging, etc..
+implement their own logging, delta-debugging, and must write what
+looks like harness code.
 Work at JPL on languages for analyzing spacecraft telemetry
-logs \cite{scriptstospecs} is another example of a working example of a
+logs \cite{scriptstospecs} is a working example of a
 Python-based declarative language for testing purposes.  The pool
 approach to test case construction is derived from work on canonical
 forms and enumeration of unit tests \cite{AndrewsTR}.
@@ -534,6 +547,7 @@ model checkers such as CBMC \cite{CBMCp} and SPIN \cite{SPIN}.
 
 \newpage
 
+\begin{comment}
 \appendix
 
 \section{Tool Demonstration}
@@ -652,6 +666,7 @@ class sut(object):
 \caption{Code from AVL harness.}
 \label{fig:code}
 \end{figure}
+\end{comment}
 
 \end{document}
 

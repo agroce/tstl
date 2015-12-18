@@ -1,0 +1,57 @@
+\subsection{Deep State Startup Testing}
+
+One of the most challenging problems in testing ArcPy is that
+individual test operations may take much more time than in traditional
+API-based testing.  In traditional API testing, it is assumed that
+each step of execution takes at most a few seconds.  Performing a
+complex GIS analysis such as a Buffer or Intersect, however, can require
+many seconds, or even many minutes (the largest time for a single
+operation during a test we have seen is almost 30 minutes).  If some faults depend
+on the interactions of multiple complex analyses, detecting them will
+be extremely expensive.  Simply reaching system states that are due to
+many successful operations is a rare achievement in pure random
+testing.  For software where the state of the system is mostly a
+matter of the contents of volatile memory, saving state is difficult
+and many methods require access to source code \cite{ModelDriven}.  For ArcPy,
+however, the most important system state is the changes made to
+feature classes stored in non-volatile memory.
+
+The ArcPy test harness already makes use of a set of ``seed'' files as
+an initial state for testing.  There is no reason that all test
+sequences must start from the same set of data, however.  The
+flexibility that allows users to test ArcPy over their own data also
+makes it possible to start testing from files resulting from previous
+testing, without repeating the operations involved, trading storage
+space (to hold the modified files) for testing runtime.  Simply
+copying the workspace after each test completes and randomly selecting a
+previously produced workspace to begin testing with is trivial to
+implement.  However, this naive approach has two problems:
+
+\begin{enumerate}
+\item First, if a fault is detected using a complex starting state,
+  the fault may be due to the actions that produced that state, not
+  test actions that follow in the ``new'' test.  Providing only the
+  seed files and the actions may make it very hard to understand and
+  debug the fault.
+
+\item Second, how do we determine which workspaces to store?  In many
+  cases, due to the high probability of operation failure, the files
+  involved will be unchanged, or only changed in small, uninteresting
+  ways, after hundreds of actions.  Storing so many copies of the
+  feature classes used in testing is highly inefficient.
+\end{enumerate}
+
+We propose combining our approach to producing regression tests with an
+analysis of file contents in order to 1) filter out which workspace states to
+store and 2) capture the action sequence (a test prefix) that produces a given workspace.
+This not only enables debugging (including test case reduction,
+normalization, and generalization) of test cases that start from a
+saved \emph{deep state}, but allows a workspace to be ``zipped'' for download by only
+providing the action sequence to produce it.
+
+Our efforts along these lines are preliminary.  However, we believe
+that a thorough investigation of the possibilities of saving system
+state after long test sequences and starting testing from complex
+states is a promising direction for future research.  Recent work has
+shown that test startup costs are very high, relative to the actual
+tested behavior \cite{Bell}.

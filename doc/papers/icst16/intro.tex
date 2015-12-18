@@ -1,0 +1,193 @@
+\section{Introduction}
+
+It has long been understood that effective automated testing often requires
+test case reduction \cite{DD,MinUnit,TCminim,ICSEDiff} to produce test cases
+without irrelevant operations\footnote{Algorithms such as
+  bounded-exhaustive testing \cite{SoftBET} or some search-based approaches that
+  optimize for short test cases \cite{FA11} may not require reduction, but random
+  testing \cite{RandFormal,HamletOnly}, model-checking \cite{Gastin04minimizationof}, and other
+  approaches, including symbolic execution \cite{issta14} can benefit from
+  test case/counterexample reduction.}.  In fact, test case reduction is
+now standard practice in industrial testing tools such as Mozilla's
+{\tt jsfunfuzz} \cite{jsfunfuzz,jsfunfuzz2,lithium}.  However, simply reducing the length of a test case
+does not produce any kind of semantic simplicity.  There may be many
+(often far more than a thousand, in practice) 1-minimal test cases
+that present different variations of a single fault.  Far too often,
+reading more than one of these test cases provides no useful
+additional information on the cause of failure. 
+
+Consider the three test cases shown in Figure \ref{threetests}.  These
+test cases are obviously very similar, and in fact all lead to a
+violation of the property that an AVL tree must always be nearly
+balanced, due to a missing call to {\tt rebalance} in {\tt delete} in
+a Python implementation.  However, the test cases are
+syntactically very different, and a testing system that collects
+failing test cases will present all three of these tests for a user to examine.
+While there are methods for attempting to determine which test cases
+represent distinct faults \cite{PLDI13}, the ideal solution is
+to convert all three of these test cases into a single,
+\emph{canonical} form that preserves the structure of the failure while de-emphasizing
+such accidental aspects of each test case as the particular integer
+values and variables used, and the ordering of assignments and
+insertions.  Unlike delta-debugging, this concept applies even to 
+test generation methods that produce short or even guaranteed-minimal tests.
+
+Figure \ref{normalgen} shows the result of applying our \emph{test
+  case normalization} algorithm to the three tests in Figure \ref{threetests}, and then
+applying our \emph{test case generalization} algorithm to the
+normalized test case.  \emph{All three test cases normalize to the
+  same test case}.  The test case also includes comments, produced by
+our \emph{generalization} \cite{SmartCheck} algorithm, indicating
+what about the test case can be changed while preserving the property
+that the test fails.  For
+example, the value 1 assigned to {\tt int0} in step 0 is not
+essential.  It could be changed to any value in the range 5-20 (1-20
+is the range of values allowed by the test generator) without changing
+the final result.  The same is true of the assignment of 3 to {\tt
+  int1}.  Similarly, the exact ordering of many steps in the test case
+is not important.  Finally, step 9 is annotated to show that instead
+of using the existing value of {\tt int1} (4), a fresh assignment
+could be inserted before the {\tt delete} call, setting {\tt int1} to
+3 instead.  These possible changes are not meant to be combined ---
+the annotation claims only that changing these aspects of the test
+case one at a time will preserve failure.  This annotation provides
+information allowing a user to understand that a single test case is
+representative of a \emph{family} of test cases that cause the same
+kind of failure.
+
+Combining normalization and generalization avoids some common problems
+with understanding automatically generated test cases.  For instance,
+when a large integer appears in such a test case, the question always
+arises --- is this unusual value important, or just a random number of
+no significance \cite{MakeMost}?  After normalization, any large
+values in a test case are essential, rather than
+accidental, because normalization includes value minimization.
+Without the additional step of generalization it would be
+easy to assume all small numeric values in normalized
+tests are accidental.  Generalization informs a user when a small
+value is required to reproduce a failure, and when it is simply an
+artifact of normalization.
+
+Normalization is not a complete solution to the problem of identifying
+distinct faults (e.g., our algorithms do not apply to complex custom
+test generators such as CSmith \cite{csmith} or {\tt jsfunfuzz}
+\cite{jsfunfuzz}), but it is often highly effective.  Running 100,000
+tests (of length 100) on the faulty AVL tree produces 860 failing test
+cases with no duplicates.  Normalizing these reduces the number of
+distinct failing test cases to just 22.  Ideally \emph{all} failures
+due to the same fault in the SUT (Software Under Test) would normalize
+to a single, representative test case.  We aim to
+\emph{approximate} such a canonical form for faults.  Figure \ref{diffnorm},
+in Section \ref{formalexample}, shows an AVL tree test case that
+normalizes differently.  The graph structure required for the {\tt
+  delete} fault results in an
+unusually poor effectiveness for normalization.  In experiments with 82 AVL tree faults,
+the mean number of distinct failures after normalization for 1,000
+tests was just 3.1 (with median 2). This fault, in contrast, produced 18
+distinct failures.  Nonetheless, determining that the failure in Figure
+\ref{diffnorm} (or one of the similarly structured other 20 failures)
+is due to the same fault as the failure in Figure \ref{normalgen}
+should be much less difficult than performing the same task over many hundreds of failures with much more extreme variation. 
+
+The contributions of this paper are 1) normalization and
+generalization for API-based test cases presented as key steps towards a goal of
+``one test case to rule them all'' (per fault), 2) algorithms for
+normalizing and generalizing test cases that make use of the abstract
+graph interface for testing provided by the TSTL
+\cite{tstl,NFM15,ISSTA15} domain-specific language (DSL) \cite{Fow10}, and 3) initial
+experimental results showing the value of normalization and
+generalization.  Normalization preserves fault
+detection approximately as well as test case reduction via
+delta-debugging, and often reduces the set of test cases to be
+examined by more than an order of magnitude. In many cases, the
+normalization is perfect (one test case per fault).  Normalization and generalization have also been useful in
+understanding complicated test cases for a variety of software systems, including
+TSTL itself, the NumPy library for numeric computation, and
+ArcPy, a widely-used, highly complex package for Geographic
+Information System (GIS) automation.
+
+\begin{figure}
+{\scriptsize
+{\bf Test case \#1}
+\begin{code}
+avl0 = avl.AVLTree() 
+int0 = 4 
+int2 = 13 
+int3 = 7 
+avl0.insert(int2) 
+avl0.insert(int3) 
+int1 = 15 
+avl0.insert(int1) 
+avl0.insert(int0) 
+avl0.delete(int2)
+\end{code}
+{\bf Test case \#2}
+\begin{code}
+int0 = 14 
+avl0 = avl.AVLTree() 
+int2 = 13 
+int1 = 15 
+avl0.insert(int1) 
+int1 = 11 
+avl0.insert(int2) 
+avl0.insert(int0) 
+avl0.insert(int1) 
+avl0.delete(int0) 
+\end{code}
+{\bf Test case \#3}
+\begin{code}
+avl1 = avl.AVLTree() 
+int3 = 18 
+avl1.insert(int3) 
+int0 = 5 
+int3 = 12 
+avl1.insert(int0) 
+int0 = 15 
+avl1.insert(int0) 
+avl1.insert(int3) 
+int1 = 15 
+avl1.delete(int1) 
+\end{code}
+}
+\caption {Three randomly generated test cases for the same fault.}
+\label{threetests}
+\end{figure}
+
+\begin{figure}
+{\scriptsize
+\begin{code}
+\textcolor{black!60}{\#[}
+int0 = 1                              \textcolor{black!60}{\# STEP 0}
+\textcolor{black!60}{\#  or int0 = 5 }
+\textcolor{black!60}{\#   - int0 = 20} 
+\textcolor{black!60}{\#  swaps with step 4}
+int1 = 3                              \textcolor{black!60}{\# STEP 1}
+\textcolor{black!60}{\#  or int1 = 5 }
+\textcolor{black!60}{\#   - int1 = 20} 
+\textcolor{black!60}{\#  swaps with step 6}
+avl0 = avl.AVLTree()                  \textcolor{black!60}{\# STEP 2}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+avl0.insert(int0)                     \textcolor{black!60}{\# STEP 3}
+\textcolor{black!60}{\#[}
+int0 = 2                              \textcolor{black!60}{\# STEP 4}
+\textcolor{black!60}{\#  swaps with step 0}
+avl0.insert(int1)                     \textcolor{black!60}{\# STEP 5}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+int1 = 4                              \textcolor{black!60}{\# STEP 6}
+\textcolor{black!60}{\#  or int1 = 5 }
+\textcolor{black!60}{\#   - int1 = 20} 
+\textcolor{black!60}{\#  swaps with step 1}
+avl0.insert(int1)                     \textcolor{black!60}{\# STEP 7}
+avl0.insert(int0)                     \textcolor{black!60}{\# STEP 8}
+avl0.delete(int1)                     \textcolor{black!60}{\# STEP 9}
+\textcolor{black!60}{\#  or (}
+\textcolor{black!60}{\#      int1 = 3  ;}
+\textcolor{black!60}{\#      avl0.delete(int1) }
+\textcolor{black!60}{\#     )}
+\end{code}
+}
+\caption{Normalization and generalization for all three test cases.
+  Lines beginning with \# are comments in Python, used for annotations.}
+\label{normalgen}
+\end{figure}
+

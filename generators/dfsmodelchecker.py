@@ -29,8 +29,14 @@ def parse_args():
                         help="Filename to save failing test(s).")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
+    parser.add_argument('-D', '--deterministic', action='store_true',
+                        help="Force deterministic transition ordering (no shuffle).")
+    parser.add_argument('-N', '--novisited', action='store_true',
+                        help="Don't track visited states.")     
     parser.add_argument('-l', '--logging', type=int, default=None,
                         help="Set logging level")
+    parser.add_argument('-F', '--failedLogging', type=int, default=None,
+                        help="Set failed test case logging level")        
     parser.add_argument('-r', '--running', action='store_true',
                         help="Produce running branch coverage report.")
     parser.add_argument('-n', '--nocover', action='store_true',
@@ -82,8 +88,11 @@ def handle_failure(test, msg, checkFail):
         outf = open(outname,'w')
     else:
         outf = None
+    if config.failedLogging != None:
+        t.setLog(config.failedLogging)        
     for s in test:
         print "STEP",i,s[0]
+        t.safely(s)
         i += 1
         if outf != None:
             outf.write(t.serializeable(s)+"\n")
@@ -92,7 +101,9 @@ def handle_failure(test, msg, checkFail):
     
 parsed_args, parser = parse_args()
 config = make_config(parsed_args, parser)
-print('Random testing using config={}'.format(config))
+print('DFS exploration using config={}'.format(config))
+
+R = random.Random(config.seed)
 
 start = time.time()
 elapsed = time.time()-start
@@ -114,8 +125,9 @@ while (stack != []):
     (s, test) = stack.pop()
     if len(test) > maxDepth:
         maxDepth = len(test)
-    if s not in visited:
-        visited.append(s)
+    if config.novisited or (s not in visited):
+        if not config.novisited:
+            visited.append(s)
         if config.verbose:
             print len(visited), "NEW STATE:"
             print s
@@ -125,9 +137,11 @@ while (stack != []):
         continue
     t.backtrack(s)
     shuffleActs = t.enabled()
-    random.shuffle(shuffleActs)
+    if not config.deterministic:
+        R.shuffle(shuffleActs)
     for c in shuffleActs:
         stepOk = t.safely(c)
+        test.append(c)
         thisBug = False
         if (not config.uncaught) and (not stepOk):
             handle_failure(test, "UNCAUGHT EXCEPTION", False)
@@ -140,17 +154,28 @@ while (stack != []):
             if not config.multiple:
                 print "STOPPING TESTING DUE TO FAILED TEST"
             thisBug = True
+        ns = t.state()
         if not thisBug:
-            stack.append((t.state(), test + [c]))
+            if config.novisited or (ns not in visited):
+                if not config.novisited:
+                    visited.append(s)
+                    if config.verbose:
+                        print len(visited), "NEW STATE:"
+                        print s
+                stack.append((ns, test))
+        elif not config.multiple:
+            break
         elapsed = time.time() - start
         if config.running:
-            if t.newBranches() != None:
+            if t.newBranches() != set([]):
+                print "ACTION:",c[0]
                 for b in t.newBranches():
                     print elapsed,len(t.allBranches()),"New branch",b
-        
         if elapsed > config.timeout:
             print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
             break
+        test = test [:-1]
+        t.backtrack(s)
     if (not config.multiple) and (failCount > 0):
         break
     if elapsed > config.timeout:

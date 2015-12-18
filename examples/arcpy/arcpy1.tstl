@@ -1,0 +1,154 @@
+
+@import shutil
+@import os
+@import glob
+@import arcpy
+
+#@def test_after_simplify(self):
+#@   self.setLog(1)
+
+<@
+def cleanupFiles():
+    # First get rid of modified files
+    for f in glob.glob("C:\\Arctmp\\*"):
+        try:
+            os.remove(f)
+        except:
+            print "UNABLE TO REMOVE:",f
+    # Now move in fresh copies
+    for f in glob.glob("C:\\Arcbase\\*"):
+        shutil.copy(f, f.replace("Arcbase","arctmp"))
+@>
+
+pool: %LAYERFILELIST% 3
+pool: %LAYERFILE% 3
+
+pool: %SHAPEFILELIST% 3
+pool: %SHAPEFILE% 3
+
+pool: %FEATURECLASS% 3
+
+pool: %DESCRIPTION% 3
+pool: %SPATIALREF% 3
+
+pool: %PRJFILELIST% 3
+pool: %PRJFILE% 3
+
+pool: %TRANSFORMLIST% 3
+pool: %TRANSFORM% 3
+
+pool: %NEWLAYER% 3
+
+pool: %LAYERLIST% 3
+pool: %LAYER% 3
+
+pool: %FIELDNAME% 3
+pool: %FIELDTYPE% 3
+
+pool: %FIELDLIST% 3
+
+pool: %BUFFERDIST% 3
+
+pool: %OVERLAPTYPE% 3
+
+pool: %SELECTIONTYPE% 3
+
+pool: %OP% 3
+
+pool: %VAL% 3
+
+init: cleanupFiles()
+
+log: 1 arcpy.GetMessages()
+
+%LAYERFILELIST% := glob.glob("C:\\Arctmp\\*.lyr")
+len(%LAYERFILELIST,1%) >= 1 -> %LAYERFILE% := %LAYERFILELIST% [0]
+%LAYERFILELIST% = %LAYERFILELIST% [1:]
+
+%SHAPEFILELIST% := glob.glob("C:\\Arctmp\\*.shp")
+len(%SHAPEFILELIST,1%) >= 1 -> %SHAPEFILE% := %SHAPEFILELIST% [0]
+%SHAPEFILELIST% = %SHAPEFILELIST% [1:]
+
+%LAYERFILE% := "C:\\arctmp\\new1.lyr"
+%LAYERFILE% := "C:\\arctmp\\new2.lyr"
+%LAYERFILE% := "C:\\arctmp\\new3.lyr"
+
+%SHAPEFILE% := "C:\\arctmp\\new1.shp"
+%SHAPEFILE% := "C:\\arctmp\\new2.shp"
+%SHAPEFILE% := "C:\\arctmp\\new3.shp"
+
+%PRJFILELIST% := glob.glob("C:\\Program Files (x86)\\ArcGIS\\Desktop10.3\\Reference Systems\\*.prj")
+len(%PRJFILELIST,1%) >= 1 -> %PRJFILE% := %PRJFILELIST% [0]
+%PRJFILELIST% = %PRJFILELIST% [1:]
+
+%TRANSFORMLIST% := arcpy.ListTransformations(%SPATIALREF%,%SPATIALREF%)
+%TRANSFORMLIST% = %TRANSFORMLIST% [1:]
+len(%TRANSFORMLIST,1%) >= 1 -> %TRANSFORM% := %TRANSFORMLIST% [0]
+
+#%LAYERLIST% := arcpy.ListLayers(%FEATURECLASS%)
+#len(%LAYERLIST,1%) >= 1 -> %LAYER% := %LAYERLIST% [0]
+#%LAYERLIST% = %LAYERLIST% [1:]
+
+%NEWLAYER% := "l1"
+%NEWLAYER% := "l2"
+%NEWLAYER% := "l3"
+
+{IOError} %DESCRIPTION% := arcpy.Describe(%LAYERFILE%)
+
+%SPATIALREF% := %DESCRIPTION%.spatialReference
+%SPATIALREF% := arcpy.SpatialReference(%PRJFILE%)
+
+%FEATURECLASS% := %LAYERFILE%
+%FEATURECLASS% := %SHAPEFILE%
+
+%FIELDTYPE% := "TEXT"
+%FIELDTYPE% := "FLOAT"
+%FIELDTYPE% := "DOUBLE"
+%FIELDTYPE% := "SHORT"
+%FIELDTYPE% := "LONG"
+%FIELDTYPE% := "DATE"
+
+%FIELDNAME% := "newf1"
+%FIELDNAME% := "newf2"
+%FIELDNAME% := "newf3"
+
+%BUFFERDIST% := "100 Feet"
+%BUFFERDIST% := "1 Mile"
+%BUFFERDIST% := "1000 Feet"
+
+%OVERLAPTYPE% := "INTERSECT"
+%OVERLAPTYPE% := "CONTAINS"
+%OVERLAPTYPE% := "COMPLETELY_CONTAINS"
+%OVERLAPTYPE% := "WITHIN"
+%OVERLAPTYPE% := "SHARE_A_LINE_SEGMENT_WITH"
+%OVERLAPTYPE% := "CROSSED_BY_THE_OUTLINE_OF"
+
+%SELECTIONTYPE% := "NEW_SELECTION"
+%SELECTIONTYPE% := "ADD_TO_SELECTION"
+%SELECTIONTYPE% := "REMOVE_FROM_SELECTION"
+%SELECTIONTYPE% := "SUBSET_SELECTION"
+%SELECTIONTYPE% := "SWITCH_SELECTION"
+%SELECTIONTYPE% := "CLEAR_SELECTION"
+
+%OP% := ">"
+%OP% := "<"
+
+%VAL% := "100"
+%VAL% := "1000"
+
+{IOError} %FIELDLIST% := arcpy.ListFields(%FEATURECLASS%)
+len(%FIELDLIST,1%) >= 1 -> %FIELDNAME% := %FIELDLIST% [0].name
+%FIELDLIST% = %FIELDLIST% [1:]
+
+{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(%FEATURECLASS%, %NEWLAYER%); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.Project_management(%FEATURECLASS%, %FEATURECLASS%, %SPATIALREF%, %TRANSFORM%); print arcpy.GetMessages()
+
+{arcpy.ExecuteError} arcpy.AddField_management(%FEATURECLASS%,%FIELDNAME%,%FIELDTYPE%); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.DeleteField_management(%FEATURECLASS%,%FIELDNAME%); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.Buffer_analysis(%FEATURECLASS%,%FEATURECLASS%,%BUFFERDIST%); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(%NEWLAYER%,%OVERLAPTYPE%,%NEWLAYER%); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(%NEWLAYER%,%SELECTIONTYPE%,' "' + %FIELDNAME% + '" ' + %OP% + %VAL%); print arcpy.GetMessages()
+
+#%LAYER%.visible = True
+#%LAYER%.visible = False
+#%LAYER%.transparency = 50
