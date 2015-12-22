@@ -478,12 +478,18 @@ variance, with respect to the cause of failure.  Generalization
 automatically performs experiments to distinguish essential and accidental aspects
 of a test case, and summarizes the results.  The essential point is that we
 can define a finite set of variations on a test case, and summarize which
-variations maintain the property that the test fails.
+variations maintain the property that the test fails.  Formally
+speaking, a generalization algorithm produces as output \emph{a set of
+  rewrites} of a test $t$ satisfying $pred$ such that each rewrites of
+$t$ also fails.  Presenting a generalization to a user simply requires
+concisely expressing the set of rewrites; concise presentation should
+be easy since the rewrites should be small modifications of $t$.
 
 \subsubsection{Generalization Algorithm}
 
 The core algorithm
-(Algorithm \ref{genalg}) is simple:
+(Algorithm \ref{genalg}) is simple, with the rewrites we have chosen
+to include (swaps and single action replacements only):
 
 \begin{algorithm}
 \caption{Basic algorithm for generalization}
