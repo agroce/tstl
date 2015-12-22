@@ -1,10 +1,10 @@
-\section {Case Studies}
+\section {Experimental Results}
 
 This section presents some initial results of applying normalization
-and generalization.   All tests were generated using
-random testing.  We also tested the Python interface to Z3 \cite{z3},
-but did not find faults thus far; normalization did help produce more
-comprehensible and uniform Z3
+and generalization.  All tests were generated using random testing,
+based on TSTL harnesses we developed previously.  We also tested the
+Python interface to Z3 \cite{z3}, but did not find faults thus far;
+normalization did help produce more comprehensible and uniform Z3
 quick tests \cite{icst2014}.
 
 \subsection{AVLTree}
@@ -12,7 +12,7 @@ quick tests \cite{icst2014}.
 For basic experiments on the ability of normalization to reduce the
 number of failing test cases and preserve fault detection, we used a
 simple Python implementation of AVL trees found on the web
-\cite{avltree}, with 225 lines of code\footnote{All code sizes non-comment, non-blank lines, measured by cloc \cite{cloc}.}.
+\cite{avltree}, with 225 lines of code\footnote{All sizes non-comment, non-blank lines, by cloc \cite{cloc}.}.
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{length}
@@ -23,8 +23,9 @@ simple Python implementation of AVL trees found on the web
 Figure \ref{normeffect} shows the reduction in number of distinct
 failing test cases produced by normalization (vs. reduction only) for
 a set of 82 mutants \cite{mutant} of the AVLTree source code \cite{Hunter:2007}.  Of the 228 mutants
-produced by MutPy \cite{mutpy}, only these produced at least 1 failure
-in 1,000 test cases.  Using only delta-debugging-based reduction, the
+produced by MutPy \cite{mutpy}, only these 82 produced at least 1 failure
+in 1,000 test cases (other mutants either were equivalent or only
+caused failures at a rate less than 1 in 1,000 tests).  Using only delta-debugging-based reduction, the
 mean number of distinct failures for each mutant (which is, by definition,
 a single fault) was 498.4, with a median of 485.  Using normalization,
 the mean was 3.1 distinct failures, with a median of just 2 failures.
@@ -288,10 +289,12 @@ faults, the set of behaviors that trigger them, and modify the test
 definition to avoid triggering these faults while imposing minimal limitations
 on thorough testing for other faults.
 
-There is no space in this paper to elaborate on the details of this
-large test effort (which has introduced numerous additional features
-and modes to TSTL), but normalization and generalization have been
-very useful in this process.  Figures \ref{esriorig} and
+%There is no space in this paper to elaborate on the details of this
+%large test effort (which has introduced numerous additional features
+%and modes to TSTL), but normalization and generalization have been
+%very useful in this process.  
+
+Figures \ref{esriorig} and
 \ref{esrinormgen} show one crash-inducing test case, after initial
 delta-debugging (from over 2,000 test steps) (Figure \ref{esriorig})
 and after normalization and generalization (Figure \ref{esrinormgen}).
@@ -342,7 +345,7 @@ regression'' quick test \cite{icst2014} will also be
 useful for understanding  the API, since the set of online examples of usage
 from Esri is usually limited to a small set of parameter combinations.
 
-\begin{figure}
+\begin{figure}[t]
 {\scriptsize 
 \begin{code}
 shapefile2 = "C:\\arctmp\\new3.shp" 
@@ -373,11 +376,11 @@ arcpy.SelectLayerByAttribute\_management
    ' "'+fieldname1+'" '+op0+val1) 
 \end{code}
 }
-\caption{Original test case for ArcPy library (19 steps).}
+\caption{Original test case for ArcPy (19 steps).}
 \label{esriorig}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[t]
 {\scriptsize 
 \begin{code}
 shapefilelist0 = 
@@ -422,7 +425,7 @@ arcpy.SelectLayerByAttribute\_management
    ' "'+ fieldname0+'" '+op0+val0)     \textcolor{black!60}{\# STEP 11}
 \end{code}
 }
-\caption{Normalized and generalized test case for ArcPy library
+\caption{Normalized and generalized test case for ArcPy 
   (12 steps).}
 \label{esrinormgen}
 \end{figure}

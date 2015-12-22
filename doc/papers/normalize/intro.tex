@@ -6,8 +6,7 @@ without irrelevant operations\footnote{Algorithms such as
   bounded-exhaustive testing \cite{SoftBET} or some search-based approaches that
   optimize for short test cases \cite{FA11} may not require reduction, but random
   testing \cite{RandFormal,HamletOnly}, model-checking \cite{Gastin04minimizationof}, and other
-  approaches, including symbolic execution \cite{issta14} can benefit from
-  test case/counterexample reduction.}.  In fact, test case reduction is
+  approaches, including symbolic execution \cite{issta14} can benefit.}.  In fact, test case reduction is
 now standard practice in industrial testing tools such as Mozilla's
 {\tt jsfunfuzz} \cite{jsfunfuzz,jsfunfuzz2,lithium}.  However, simply reducing the length of a test case
 does not produce any kind of semantic simplicity.  There may be many
@@ -17,10 +16,9 @@ reading more than one of these test cases provides no useful
 additional information on the cause of failure. 
 
 Consider the three test cases shown in Figure \ref{threetests}.  These
-test cases are obviously very similar, and in fact all lead to a
+test cases are obviously very similar, and all lead to a
 violation of the property that an AVL tree must always be nearly
-balanced, due to a missing call to {\tt rebalance} in {\tt delete} in
-a Python implementation.  However, the test cases are
+balanced (due to a missing call to {\tt rebalance} in {\tt delete}).  However, the test cases are
 syntactically very different, and a testing system that collects
 failing test cases will present all three of these tests for a user to examine.
 While there are methods for attempting to determine which test cases
@@ -29,8 +27,8 @@ to convert all three of these test cases into a single,
 \emph{canonical} form that preserves the structure of the failure while de-emphasizing
 such accidental aspects of each test case as the particular integer
 values and variables used, and the ordering of assignments and
-insertions.  Unlike delta-debugging, this concept applies even to 
-test generation methods that produce short or even guaranteed-minimal tests.
+insertions.  Unlike delta-debugging, this concept applies to 
+test generation methods that produce short or even minimal tests.
 
 Figure \ref{normalgen} shows the result of applying our \emph{test
   case normalization} algorithm to the three tests in Figure \ref{threetests}, and then
@@ -108,31 +106,34 @@ Information System (GIS) automation.
 
 \begin{figure}
 {\scriptsize
-{\bf Test case \#1}
+{\bf Test case \#1}\hspace{0.415in} {\bf Test case \#2} \hspace{0.41in}
+{\bf Test case \#3}
+\begin{verbatim}
+avl0 = avl.AVLTree()   int0 = 14              avl1 = avl.AVLTree()
+int0 = 4               avl0 = avl.AVLTree()   int3 = 18 
+int2 = 13              int2 = 13              avl1.insert(int3) 
+int3 = 7               int1 = 15              int0 = 5 
+avl0.insert(int2)      avl0.insert(int1)      int3 = 12 
+avl0.insert(int3)      int1 = 11              avl1.insert(int0) 
+int1 = 15              avl0.insert(int2)      int0 = 15 
+avl0.insert(int1)      avl0.insert(int0)      avl1.insert(int0) 
+avl0.insert(int0)      avl0.insert(int1)      avl1.insert(int3) 
+avl0.delete(int2)      avl0.delete(int0)      int1 = 15 
+                                              avl1.delete(int1) 
+\end{verbatim}
+\mycomment{
+{\bf Test case \#1}\hspace{1.2in}                                     {\bf Test case \#2}
 \begin{code}
-avl0 = avl.AVLTree() 
-int0 = 4 
-int2 = 13 
-int3 = 7 
-avl0.insert(int2) 
-avl0.insert(int3) 
-int1 = 15 
-avl0.insert(int1) 
-avl0.insert(int0) 
-avl0.delete(int2)
-\end{code}
-{\bf Test case \#2}
-\begin{code}
-int0 = 14 
-avl0 = avl.AVLTree() 
-int2 = 13 
-int1 = 15 
-avl0.insert(int1) 
-int1 = 11 
-avl0.insert(int2) 
-avl0.insert(int0) 
-avl0.insert(int1) 
-avl0.delete(int0) 
+avl0 = avl.AVLTree()            int0 = 14 
+int0 = 4                        avl0 = avl.AVLTree() 
+int2 = 13                       int2 = 13 
+int3 = 7                        int1 = 15 
+avl0.insert(int2)               avl0.insert(int1) 
+avl0.insert(int3)               int1 = 11 
+int1 = 15                       avl0.insert(int2) 
+avl0.insert(int1)               avl0.insert(int0) 
+avl0.insert(int0)               avl0.insert(int1)
+avl0.delete(int2)               avl0.delete(int0) 
 \end{code}
 {\bf Test case \#3}
 \begin{code}
@@ -149,7 +150,8 @@ int1 = 15
 avl1.delete(int1) 
 \end{code}
 }
-\caption {Three randomly generated test cases for the same fault.}
+}
+\caption {\scriptsize{Three random test cases for one fault.}}
 \label{threetests}
 \end{figure}
 
@@ -186,8 +188,8 @@ avl0.delete(int1)                     \textcolor{black!60}{\# STEP 9}
 \textcolor{black!60}{\#     )}
 \end{code}
 }
-\caption{Normalization and generalization for all three test cases.
-  Lines beginning with \# are comments in Python, used for annotations.}
+\caption{\scriptsize{Normalization and generalization for all three test cases.
+  Lines beginning with \# are comments in Python, used for annotations.}}
 \label{normalgen}
 \end{figure}
 
