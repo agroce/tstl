@@ -323,7 +323,7 @@ possible rewrites for each of {\bf ReplacePool}, {\bf
   changes, are not critical, and a more detailed analysis is somewhat
   involved, and beyond the scope of this paper; we note that like
   delta-debugging, the worst-case complexity is seldom observed, and
-  offer some further optimizations below.}.  There are therefore at
+  offer some further optimizations.}.  There are therefore at
 most $n=k^2 + 3k^2(\alpha-1) + 3k(\alpha-1)$ rewrites, over-approximating (since
 an action cannot be rewritten to itself).  Each rewrite also
 requires a \emph{ddmin} call, which is quadratic in $k$ \cite{DD}.
@@ -370,41 +370,31 @@ been examined by a human, for bug triage \cite{PLDI13}.
 
 %\subsubsection{Normalization Optimizations}
 
-The simplest and most important optimization is to improve on the
-constant ordering of rewrite rules.  In our implementation, once a
-rule fails to produce a candidate that satisfies {\tt pred}, that rule
-is moved to the end of the ordering of rewrites.  This optimization
-followed the observation that once a rule fails once to produce any
-valid rewrites for a test case, it frequently produces no further
-reductions.  This simple change typically halves the time required for
-normalization.  For test cases with a very short runtime, this
-optimization typically suffices.  However, when test case
-execution is very expensive, the set of candidate test cases must be
-further restricted: limiting
-action replacements to cases where Levenshtein \cite{Lev} distance
-(text edit distance) between the code for the actions was bounded to
-some small value was effective in reducing runtime, and often had little
-impact on final results. 
-
+The simplest optimization is to improve on the constant ordering of
+rewrite rules.  Once a rule fails to produce a candidate that
+satisfies {\tt pred}, that rule should be moved to the end of the
+ordering of rewrites, since once a rule fails once to produce any
+valid rewrites, it frequently produces no further reductions.  This
+simple change typically halves the time required for normalization.
+When test case execution is very expensive, the set of candidate test
+cases can further restricted: limiting action replacements to cases
+where Levenshtein \cite{Lev} distance (text edit distance) between the
+code for actions is bounded to a small value was effective in
+reducing runtime, and often had little impact on final results.
 A further useful optimization when normalizing large numbers of tests
-of the same SUT is to cache results across tests: as soon as the rewrite
-sequence produces a previously seen test, the final result can be
-returned (since the algorithm is deterministic).   For very large
+is to cache results across tests (since the algorithm is deterministic).   For very large
 numbers of tests, this is the most important optimization.
 For systems with
-very expensive replay, the delta-debugging of each new base test case
-can also be omitted: the {\bf ReduceAction} rewrite will
-eventually remove the extraneous steps.  
-It is also trivial to parallelize the normalization of a test case by
+expensive replay, delta-debugging of each new base test case
+can be omitted: the {\bf ReduceAction} rewrite will
+eventually remove extraneous steps.  
+It is also trivial to parallelize normalization by
 checking the predicate over multiple candidates at once.  As soon as a
-candidate satisfies the predicate, a parallel implementation faces two
-possible choices.
-Either the normalization can proceed with that candidate as the new
+candidate satisfies the predicate, a parallel implementation can proceed with that candidate as the new
 base, making the algorithm nondeterministic (in practice, we suspect
 the same final result will usually appear), or the algorithm can wait
 for all earlier-in-sequence candidates to be checked, and only proceed
-when no candidate that would be checked first in the sequential
-version of the algorithm is in the work queue.
+when no candidate that would be checked earlier is in the work queue.
 
 \subsection{Normalization Example}
 \label{formalexample}
