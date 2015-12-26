@@ -401,20 +401,20 @@ when no candidate that would be checked earlier is in the work queue.
 
 \begin{figure}
 {\scriptsize
-{\bf Original test case:}
-\begin{code}
-  0: int0 = 10 
-  1: int2 = 7 
-  2: avl1 = avl.AVLTree() 
-  3: avl1.insert(int2) 
-  4: avl1.insert(int0) 
-  5: int1 = 1 
-  6: int3 = 1 
-  7: avl1.insert(int3) 
-  8: int3 = 15 
-  9: avl1.insert(int3) 
+{\bf Original test case:}\hspace{0.83in}{\bf Normalized:}
+\begin{verbatim}
+  0: int0 = 10                            0: int0 = 1
+  1: int2 = 7                             1: int1 = 2
+  2: avl1 = avl.AVLTree()                 2: avl0 = avl.AVLTree()
+  3: avl1.insert(int2)                    3: avl0.insert(int0) 
+  4: avl1.insert(int0)                    4: avl0.insert(int1) 
+  5: int1 = 1                             5: 5: int1 = 3
+  6: int3 = 1                             6: avl0.insert(int1) 
+  7: avl1.insert(int3)                    7: int1 = 4
+  8: int3 = 15                            8: avl0.insert(int1)
+  9: avl1.insert(int3)                    9: avl0.delete(int0)
  10: avl1.delete(int1) 
-\end{code}
+\end{verbatim}
 {\bf Normalization Steps:}
 \begin{code}
 {\bf SimplifyAll}: int0 = 10 $\Rightarrow$ int0 = 2 
@@ -426,19 +426,6 @@ when no candidate that would be checked earlier is in the work queue.
 {\bf SwapAction}: (0: int0 = 2)  $\Leftrightarrow$ (6: int0 = 1)
 {\bf SwapPool}: int0 $\Leftrightarrow$ int1 (between steps 2 and 10)
 {\bf SwapAction}: (1: int1 = 3)  $\Rightarrow$ (5: int1 = 2)
-\end{code}
-{\bf Normalized:}
-\begin{code}
-  0: int0 = 1
-  1: int1 = 2
-  2: avl0 = avl.AVLTree()
-  3: avl0.insert(int0) 
-  4: avl0.insert(int1) 
-  5: int1 = 3  
-  6: avl0.insert(int1) 
-  7: int1 = 4  
-  8: avl0.insert(int1)  
-  9: avl0.delete(int0) 
 \end{code}
 }
 \caption{An example of normalization steps.}
