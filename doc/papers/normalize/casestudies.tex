@@ -7,10 +7,22 @@ Python interface to Z3 \cite{z3}, but did not find faults thus far;
 normalization did help produce more comprehensible and uniform Z3
 quick tests \cite{icst2014}.
 
+Our experiments were not intended
+to provide a full evaluation of normalization and generalization, but
+to establish the basic value of the techniques, and some initial data
+on core research questions.  {\bf RQ1:} How effectively does
+normalization reduce the number of failures reported? {\bf RQ2:} How
+often does normalization lose faults? {\bf RQ3:} What is the cost of
+normalization? {\bf RQ4:} How much additional reduction over
+delta-debugging does normalization provide? {\bf RQ5:} Does
+normalization and generalization provide substantial benefits in
+understanding complex test cases?  Note that the final question is
+essentially qualitative in nature, and would need a human study to
+fully evaluate.
+
 \subsection{AVLTree}
 
-For basic experiments on the ability of normalization to reduce the
-number of failing test cases and preserve fault detection, we used a
+For basic experiments on {\bf RQ1-3}, we used a
 simple Python implementation of AVL trees found on the web
 \cite{avltree}, with 225 lines of code\footnote{All sizes non-comment, non-blank lines, by cloc \cite{cloc}.}.
 
@@ -22,7 +34,8 @@ simple Python implementation of AVL trees found on the web
 
 Figure \ref{normeffect} shows the reduction in number of distinct
 failing test cases produced by normalization (vs. reduction only) for
-a set of 82 mutants \cite{mutant} of the AVLTree source code \cite{Hunter:2007}.  Of the 228 mutants
+a set of 82 mutants \cite{mutant} of the AVLTree source code
+\cite{Hunter:2007} ({\bf RQ1}).  Of the 228 mutants
 produced by MutPy \cite{mutpy}, only these 82 produced at least 1 failure
 in 1,000 test cases (other mutants either were equivalent or only
 caused failures at a rate less than 1 in 1,000 tests).  Using only delta-debugging-based reduction, the
@@ -34,27 +47,9 @@ representative failure.  For every mutant, normalization reduced the
 number of distinct failures, and no mutant produced more than 27
 distinct failures, after normalization.
 
-The mean cost to reduce a
-test case was 0.05 seconds, with a median of 0.03 seconds.  The mean
-cost for normalization was 0.38 seconds, with a median of 0.1 seconds.
-The minimum runtime for both algorithms was negligible (less than 1
-millisecond), but the maximums were 1.3 seconds for reduction and 17.6
-seconds for normalization.  Note that in all our results the cost of
-normalization is given on an already-reduced test case, so the inputs
-for normalization are smaller than those for reduction; however, this
-is the expected use-case for normalization.  Comparing on equal-sized
-tests would simply involve adding the costs for reduction to those for
-normalization, as an additional step of normalization.  Finally, the
-criticality of caching for normalizing large numbers of tests is
-evident.  Out of 60,226 normalizations performed in our full AVLTree mutant
-experiments, 59,972 (99.6\%) resulted in a cache hit (most of these
-after a small number of normalization steps).  In fact, the total
-number of rewrites performed during the experiments was only 145,780,
-for an average of only 2.4 non-cache-hit rewrites of each test.  Note
-that this is with the cache starting empty for each of the 82 mutants.
 
 AVLTree mutants also provided a way to evaluate the danger of
-normalization losing faults.  Faults can be lost when normalization
+normalization losing faults, {\bf RQ2}.  Faults can be lost when normalization
 changes a test case failing due to one fault into a test case failing
 due to a different fault, a problem known as ``slippage''
 \cite{PLDI13}.  AVLTree provides a slippage challenge, as there are
@@ -106,13 +101,33 @@ worked as well as possible --- it preserved both faults and produced only 1 or 2
 cases\footnote{It is possible to detect both faults with a single test
   case, if that test case fails when \emph{either} fault is present.}.
 
+AVLTree also provided basic results for {\bf RQ3}. The mean cost to reduce a
+test case was 0.05 seconds, with a median of 0.03 seconds.  The mean
+cost for normalization was 0.38 seconds, with a median of 0.1 seconds.
+The minimum runtime for both algorithms was negligible (less than 1
+millisecond), but the maximums were 1.3 seconds for reduction and 17.6
+seconds for normalization.  Note that in all our results the cost of
+normalization is given on an already-reduced test case, so the inputs
+for normalization are smaller than those for reduction; however, this
+is the expected use-case for normalization.  Comparing on equal-sized
+tests would simply involve adding the costs for reduction to those for
+normalization, as an additional step of normalization.  Finally, the
+criticality of caching for normalizing large numbers of tests is
+evident.  Out of 60,226 normalizations performed in our full AVLTree mutant
+experiments, 59,972 (99.6\%) resulted in a cache hit (most of these
+after a small number of normalization steps).  In fact, the total
+number of rewrites performed during the experiments was only 145,780,
+for an average of only 2.4 non-cache-hit rewrites of each test.  Note
+that this is with the cache starting empty for each of the 82 mutants.
+
 \subsection{XML Parser}
 
-We also examined how normalization combined with multiple faults for a
-simple XML parser with about 260 lines of code \cite{myxml}, with one
+We also investigate {\bf RQ1-3} for a
+Python XML parser with about 260 lines of code \cite{myxml}, with one
 real fault, triggered by the empty tag ({\tt <>})), and one
 seeded fault triggered when adding two nodes with the same
-name.  A comment in the code indicates the seeded fault is realistic.  Running 1,000 tests
+name.  A comment in the code indicates the seeded fault is realistic,
+and possibly existed in an earlier version of the code.  Running 1,000 tests
 produced 848 failing test cases.  Without normalization, it took only
 37.45 seconds to execute and delta-debug all 1,000 tests.  The output was 717 distinct failing test
 cases.  Normalization increased the runtime to 354.7 seconds, but
@@ -133,13 +148,13 @@ increased total runtime to 3,690 seconds, and produced just 2 failures.
 
 \subsection{NumPy}
 
-Our final two case studies provide little information on the ability
-of normalization to reduce the number of failing tests; for these
-SUTs, failure rates are low enough or test case reduction runtimes high
-enough that each failure is dealt with one-by-one.  However,
-normalization and generalization are also useful for understanding
-individual test cases.
-
+Our final two case studies provide little information on {\bf RQ1} and
+{\bf RQ2}; for these SUTs, failure rates are low enough or test case
+reduction runtimes high enough that each failure is usually dealt with
+one-by-one.  However, the value of normalization and generalization
+for further reduction ({\bf RQ4} and aiding in understanding test cases ({\bf
+  RQ5}) is best shown by these complex programs.  They also provide
+results for {\bf RQ3} when even simple test case reduction is expensive.
 NumPy \cite{NumPy} is a widely used Python library that
 supports large, multi-dimensional matrices and provides a huge library
 of mathematical functions.  The SciPy library for scientific
