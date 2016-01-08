@@ -436,20 +436,21 @@ if config.multiple:
             i += 1
         n += 1
     i = -1
-    for test1 in failures:
-        i += 1
-        j = -1
-        for test2 in failures:
-            j += 1
-            if (j > i):
-                print "COMPARING FAILURE",i,"AND FAILURE",j
-                for k in xrange(0,max(len(test1),len(test2))):
-                    if k >= len(test1):
-                        print "STEP",k,"-->",test2[k][0]
-                    elif k >= len(test2):
-                        print "STEP",k,test1[k][0],"-->"                        
-                    elif test1[k] != test2[k]:
-                        print "STEP",k,test1[k][0],"-->",test2[k][0]
+    if False:
+        for test1 in failures:
+            i += 1
+            j = -1
+            for test2 in failures:
+                j += 1
+                if (j > i):
+                    print "COMPARING FAILURE",i,"AND FAILURE",j
+                    for k in xrange(0,max(len(test1),len(test2))):
+                        if k >= len(test1):
+                            print "STEP",k,"-->",test2[k][0]
+                        elif k >= len(test2):
+                            print "STEP",k,test1[k][0],"-->"                        
+                        elif test1[k] != test2[k]:
+                            print "STEP",k,test1[k][0],"-->",test2[k][0]
         
 if not config.nocover:
     print len(t.allBranches()),"BRANCHES COVERED"
