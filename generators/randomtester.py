@@ -121,6 +121,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         beforeReduceS = set(t.allStatements())
         beforeReduceB = set(t.allBranches())
     print "Original test has",len(test),"steps"
+    cloudMatch = False
     if not config.full:
         if not checkFail:
             failProp = t.fails
@@ -155,7 +156,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
             test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
-        cloudMatch = False
         if (config.gendepth != None) and (test not in failures) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print "GENERATING GENERALIZATION CLOUD"
@@ -317,7 +317,10 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
                     print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
                     tryStutter = True
             if not tryStutter:
-                p = R.randint(0,len(acts)-1)
+                if len(acts) == 1:
+                    p = 0
+                else:    
+                    p = R.randint(0,len(acts)-1)
                 a = acts[p]
             if a[1]():
                 break
