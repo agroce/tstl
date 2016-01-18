@@ -432,11 +432,11 @@ if config.multiple:
         print "FAILURE",n
         i = 0
         for s in test:
-            print "STEP",i,s[0]
+            print "STEP",i,t.prettyName(s[0])
             i += 1
         n += 1
     i = -1
-    if False:
+    if False: # Comparison feature normally not useful, just for researching normalization
         for test1 in failures:
             i += 1
             j = -1
