@@ -1,0 +1,110 @@
+@import thissut as s
+@import random as r
+
+<@
+def prettyPrintTest(sut, test):
+    print "PRETTY PRINTING TEST"    
+    if test == None:
+       return
+    i = 0
+    for s in test:
+    	print "STEP",i,sut.prettyName(s[0])
+	i += 1
+@>
+
+pool: <rand> 1
+pool: <last> 1
+pool: <sut> 1
+pool: <test> 4
+pool: <actionlist> 4
+pool: <action> 4
+pool: <pred> 4
+
+pool: <name> 4
+pool: <loglevel> 4
+
+pool: <storable> 3
+
+pool: <bool> 2
+pool: <speed> 2
+pool: <dist> 2
+
+pool: <branches> 4
+pool: <statements> 4
+
+init: <sut> = s.sut()
+init: <rand> = r.Random()
+init: <rand>.seed(1)
+init: <last> = "None = None"
+
+#<test> := []
+#<test> := <sut>.test()
+#~<test>.append(<action>)
+
+#<actionlist> := <sut>.actions()
+<actionlist> := <sut>.enabled()
+<actionlist> := ~<actionlist>[1:]
+<rand>.shuffle(~<actionlist>)
+
+#<bool> := False
+#<bool> := True
+
+#<speed> := "FAST"
+#<speed> := "VERYFAST"
+#<speed> := "SLOW"
+#<speed> := "VERYFASTREDUCE"
+
+#<dist> := <[1..10]>
+
+len(<actionlist,1>) > 0 -> <action> := <actionlist>[0]
+
+if (<action,1> [1] ()): newLast = <action,1> [0]; print "ACTIONS",newLast, "LAST:",<last,1>; assert (("__result" in newLast) or (" = " not in newLast) or (newLast.split(" = ")[0] != <last>.split(" = ")[0])); <last> = newLast; <sut>.safely(<action>)
+<sut>.restart(); <last> = "None = None"
+
+#<pred> := <sut>.fails
+#<pred> := <sut>.failsCheck
+#<pred> := <sut>.coversBranches(<branches>)
+#<pred> := <sut>.coversStatements(<statements>)
+#<pred> := lambda x: True
+#<pred> := lambda x: False
+
+#<test> := <sut>.reduce(<test>,<pred>); <last> = "None = None"
+#<test> := <sut>.reduce(<test>,<pred>,keepLast=False); <last> = "None = None"
+#prettyPrintTest(<sut>,<test,1>); <test> := <sut>.reduce(<test>,<pred>,pruneGuards=True); <last> = "None = None"
+#<test> := <sut>.reduce(<test>,<pred>,keepLast=False,pruneGuards=True); <last> = "None = None"
+#<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>); <last> = "None = None"
+#<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>,distLimit=<dist>); <last> = "None = None"
+#<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>,keepLast=False); <last> = "None = None"
+#<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>,distLimit=<dist>,keepLast=False); <last> = "None = None"
+#<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>,pruneGuards=True); <last> = "None = None"
+#<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>,distLimit=<dist>,pruneGuards=True); <last> = "None = None"
+#<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>,keepLast=False,pruneGuards=True); <last> = "None = None"
+#<test> := <sut>.normalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,speed=<speed>,keepLast=False,distLimit=<dist>,pruneGuards=True); <last> = "None = None"
+#<sut>.generalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>); <last> = "None = None"
+#<sut>.generalize(<test>,<pred>,checkEnabled=<bool>,verbose=<bool>,distLimit=<dist>); <last> = "None = None"
+
+#<sut>.internalReport()
+#<sut>.cleanCov()
+#<sut>.resetCov()
+#<branches> := <sut>.allBranches()
+#<statements> := <sut>.allStatements()
+#<branches> := <sut>.currBranches()
+#<statements> := <sut>.currStatements()
+#<sut>.startCoverage()
+#<sut>.stopCoverage()
+
+#<loglevel> := <[-1..5]>
+
+#<name> := <action>[0]
+#<sut>.prettyName(<name>)
+#<sut>.setLog(<loglevel>)
+#<sut>.logOff()
+#<sut>.logAll()
+
+#<storable> = <sut>.captureReplay(<test>)
+#<test> = <sut>.replayable(<storable>)
+
+<sut>.getOkExceptions(<name>)
+<sut>.getPreCode(<name>)
+<sut>.getPropCode(<name>)
+<sut>.getRefCode(<name>)
