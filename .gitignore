@@ -1,0 +1,6 @@
+*.*~
+*.py[c|m]
+venv/*
+tstl.egg-info/*
+build/*
+dist/*
