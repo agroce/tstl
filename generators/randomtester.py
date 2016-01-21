@@ -121,6 +121,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         beforeReduceS = set(t.allStatements())
         beforeReduceB = set(t.allBranches())
     print "Original test has",len(test),"steps"
+    cloudMatch = False
     if not config.full:
         if not checkFail:
             failProp = t.fails
@@ -155,7 +156,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
             test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
-        cloudMatch = False
         if (config.gendepth != None) and (test not in failures) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print "GENERATING GENERALIZATION CLOUD"
@@ -317,7 +317,10 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
                     print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
                     tryStutter = True
             if not tryStutter:
-                p = R.randint(0,len(acts)-1)
+                if len(acts) == 1:
+                    p = 0
+                else:    
+                    p = R.randint(0,len(acts)-1)
                 a = acts[p]
             if a[1]():
                 break
@@ -432,24 +435,25 @@ if config.multiple:
         print "FAILURE",n
         i = 0
         for s in test:
-            print "STEP",i,s[0]
+            print "STEP",i,t.prettyName(s[0])
             i += 1
         n += 1
     i = -1
-    for test1 in failures:
-        i += 1
-        j = -1
-        for test2 in failures:
-            j += 1
-            if (j > i):
-                print "COMPARING FAILURE",i,"AND FAILURE",j
-                for k in xrange(0,max(len(test1),len(test2))):
-                    if k >= len(test1):
-                        print "STEP",k,"-->",test2[k][0]
-                    elif k >= len(test2):
-                        print "STEP",k,test1[k][0],"-->"                        
-                    elif test1[k] != test2[k]:
-                        print "STEP",k,test1[k][0],"-->",test2[k][0]
+    if False: # Comparison feature normally not useful, just for researching normalization
+        for test1 in failures:
+            i += 1
+            j = -1
+            for test2 in failures:
+                j += 1
+                if (j > i):
+                    print "COMPARING FAILURE",i,"AND FAILURE",j
+                    for k in xrange(0,max(len(test1),len(test2))):
+                        if k >= len(test1):
+                            print "STEP",k,"-->",test2[k][0]
+                        elif k >= len(test2):
+                            print "STEP",k,test1[k][0],"-->"                        
+                        elif test1[k] != test2[k]:
+                            print "STEP",k,test1[k][0],"-->",test2[k][0]
         
 if not config.nocover:
     print len(t.allBranches()),"BRANCHES COVERED"

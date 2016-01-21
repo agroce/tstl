@@ -60,7 +60,7 @@ for l in open(sutFile):
 outf.write("\n\n")
 
 for i in initCode:
-    outf.write(i)
+    outf.write(t.prettyName(i))
 
 outf.write("\n\n")
 
