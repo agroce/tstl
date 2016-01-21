@@ -24,5 +24,8 @@ setup(
       "Development Status :: 4 - Beta",
       "Programming Language :: Python :: 2",
       ],
+    install_requires=[
+      'coverage',
+    ],
     url='https://github.com/agroce/tstl',
 )
