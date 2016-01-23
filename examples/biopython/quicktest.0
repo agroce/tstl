@@ -1,0 +1,31 @@
+self.p_alphabet[0] = generic_rna 
+self.p_base[2] = 'C' 
+self.p_table[1] = 12 
+self.p_base[3] = 'A' 
+self.p_bool[0] = False 
+self.p_bases[2] = "" 
+self.p_seq[2] = Seq(self.p_bases[2]) 
+self.p_seq[2].reverse_complement() 
+self.p_seq[1] = Seq(self.p_bases[2]) 
+print "TRANSLATE:",self.p_seq[2],"=",self.p_seq[2].translate(to_stop=self.p_bool[0]) 
+self.p_bases[1] = self.p_bases[2] + self.p_base[3] 
+self.p_bases[0] = self.p_bases[1] + self.p_bases[1] 
+self.p_base[3] = 'C' 
+self.p_alphabet[2] = IUPAC.protein 
+self.p_seq[3] = Seq(self.p_bases[1]) 
+self.p_bases[1] = self.p_bases[0] + self.p_base[3] 
+self.p_bases[0] = self.p_bases[1] + self.p_base[2] 
+self.p_alphabet[1] = IUPAC.unambiguous_dna 
+self.p_bases[2] = self.p_bases[2] + self.p_bases[0] 
+self.p_bases[1] = self.p_bases[2] + self.p_bases[1] 
+self.p_alignments[1] = pairwise2.align.globalxx(self.p_seq[1],self.p_seq[3]) 
+self.p_seq[1] = Seq(self.p_bases[2],self.p_alphabet[2]) 
+self.p_seq[2] = Seq(self.p_bases[1],self.p_alphabet[1]) 
+self.p_seq[0] = Seq(self.p_bases[1],self.p_alphabet[0]) 
+self.p_seq[0].complement() 
+print "TRANSLATE:",self.p_seq[0],"=",self.p_seq[0].translate(to_stop=self.p_bool[0],table=self.p_table[1]) 
+self.p_bases[3] = "" 
+self.p_seq[2].reverse_complement() 
+self.p_bases[2] = self.p_bases[3] + self.p_base[2] 
+self.p_seq[2] = Seq(self.p_bases[2],self.p_alphabet[2]) 
+self.p_alignments[2] = pairwise2.align.globalxx(self.p_seq[2],self.p_seq[1]) 
