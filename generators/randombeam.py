@@ -1,10 +1,15 @@
+import os
+import sys
+
+# Appending current working directory to sys.path
+current_working_dir = os.getcwd()
+sys.path.append(current_working_dir)
+
 import sut as SUT
 import random
 import time
-import sys
 import traceback
 import argparse
-import os
 from collections import namedtuple
 
 def parse_args():
@@ -97,93 +102,98 @@ def handle_failure(test, msg, checkFail):
     if outf != None:
         outf.close()
     
-parsed_args, parser = parse_args()
-config = make_config(parsed_args, parser)
-print('Random variation of beam search using config={}'.format(config))
 
-R = random.Random(config.seed)
+def main():
+    parsed_args, parser = parse_args()
+    config = make_config(parsed_args, parser)
+    print('Random variation of beam search using config={}'.format(config))
 
-start = time.time()
-elapsed = time.time()-start
+    R = random.Random(config.seed)
 
-failCount = 0
+    start = time.time()
+    elapsed = time.time()-start
 
-t = SUT.sut()
-if config.logging != None:
-    t.setLog(config.logging)
+    failCount = 0
 
-tacts = t.actions()
-    
-ntests = 0
-while (config.maxtests == -1) or (ntests < config.maxtests):
-    ntests += 1
+    t = SUT.sut()
+    if config.logging != None:
+        t.setLog(config.logging)
 
-    t.restart()
-    test = []
+    tacts = t.actions()
+        
+    ntests = 0
+    while (config.maxtests == -1) or (ntests < config.maxtests):
+        ntests += 1
 
-    for s in xrange(0,config.depth):
+        t.restart()
+        test = []
 
-        count = 0
-        newCover = False
-        acts = tacts
-        old = t.state()
-        while (count <= config.width):
-            count += 1
-            while True:
-                p = R.randint(0,len(acts)-1)
-                a = acts[p]
-                if a[1]():
+        for s in xrange(0,config.depth):
+
+            count = 0
+            newCover = False
+            acts = tacts
+            old = t.state()
+            while (count <= config.width):
+                count += 1
+                while True:
+                    p = R.randint(0,len(acts)-1)
+                    a = acts[p]
+                    if a[1]():
+                        break
+                    acts = acts[:p] + acts[p+1:]
+
+                test.append(a)
+
+                stepOk = t.safely(a)
+                if (not config.uncaught) and (not stepOk):
+                    handle_failure(test, "UNCAUGHT EXCEPTION", False)
+                    if not config.multiple:
+                        print "STOPPING TESTING DUE TO FAILED TEST"
                     break
-                acts = acts[:p] + acts[p+1:]
 
-            test.append(a)
+                if (not config.ignoreprops) and (not t.check()):
+                    handle_failure(test, "PROPERLY VIOLATION", True)
+                    if not config.multiple:
+                        print "STOPPING TESTING DUE TO FAILED TEST"
+                    break
 
-            stepOk = t.safely(a)
-            if (not config.uncaught) and (not stepOk):
-                handle_failure(test, "UNCAUGHT EXCEPTION", False)
-                if not config.multiple:
-                    print "STOPPING TESTING DUE TO FAILED TEST"
-                break
+                elapsed = time.time() - start
+                if t.newBranches() != set([]):
+                    if config.running:
+                        print "ACTION:",a[0]
+                        for b in t.newBranches():
+                            print elapsed,len(t.allBranches()),"New branch",b
+                    break # Continue with this choice if new branch exposed
 
-            if (not config.ignoreprops) and (not t.check()):
-                handle_failure(test, "PROPERLY VIOLATION", True)
-                if not config.multiple:
-                    print "STOPPING TESTING DUE TO FAILED TEST"
-                break
+                if elapsed > config.timeout:
+                    break
 
-            elapsed = time.time() - start
-            if t.newBranches() != set([]):
-                if config.running:
-                    print "ACTION:",a[0]
-                    for b in t.newBranches():
-                        print elapsed,len(t.allBranches()),"New branch",b
-                break # Continue with this choice if new branch exposed
+                test = test[:-1]
+                t.backtrack(old)
 
             if elapsed > config.timeout:
-                break
-
-            test = test[:-1]
-            t.backtrack(old)
-
+                print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+                break            
+        
+        if (not config.multiple) and (failCount > 0):
+            break
         if elapsed > config.timeout:
-            print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
-            break            
-    
-    if (not config.multiple) and (failCount > 0):
-        break
-    if elapsed > config.timeout:
-        print "STOPPING TESTING DUE TO TIMEOUT"
-        break        
+            print "STOPPING TESTING DUE TO TIMEOUT"
+            break        
 
-if not config.nocover:
-    print t.report(config.coverfile),"PERCENT COVERED"
+    if not config.nocover:
+        print t.report(config.coverfile),"PERCENT COVERED"
 
-    if config.html:
-        t.htmlReport(config.html)
+        if config.html:
+            t.htmlReport(config.html)
 
-print ntests, "EXECUTED"
-if config.multiple:
-    print failCount,"FAILED"
-if not config.nocover:
-    print len(t.allBranches()),"BRANCHES COVERED"
-    print len(t.allStatements()),"STATEMENTS COVERED"
+    print ntests, "EXECUTED"
+    if config.multiple:
+        print failCount,"FAILED"
+    if not config.nocover:
+        print len(t.allBranches()),"BRANCHES COVERED"
+        print len(t.allStatements()),"STATEMENTS COVERED"
+
+if __name__ == '__main__':
+    main()
