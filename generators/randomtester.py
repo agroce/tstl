@@ -361,21 +361,11 @@ def main():
             stepOk = t.safely(a)
             opTime += (time.time()-startOp)
             if tryStutter:
-                if (config.stutter == None) or (R.random() > config.stutter):
-                    tryStutter = False
-                if (config.greedyStutter) and sawNew:
-                    print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
-                    tryStutter = True
-            if not tryStutter:
-                if len(acts) == 0:
-                    print "THERE SHOULD NOT BE A DEADLOCK"
-                    sys.exit(0)
-                if len(acts) == 1:
-                    p = 0
-                else:    
-                    p = R.randint(0,len(acts)-1)
-                a = acts[p]
-            if a[1]():
+                print "DONE STUTTERING"
+            if (not config.uncaught) and (not stepOk):
+                handle_failure(test, "UNCAUGHT EXCEPTION", False)
+                if not config.multiple:
+                    print "STOPPING TESTING DUE TO FAILED TEST"
                 break
 
             startCheck = time.time()
