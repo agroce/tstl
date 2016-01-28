@@ -1,0 +1,47 @@
+@import time
+
+<@
+def displayResults(sorttime,sortcalls,sortedtime,sortedcalls):
+    if sortcalls > 0:
+       print "SORT AVG:", sorttime/sortcalls,
+    else:
+	print "SORT AVG: N/A",
+    if sortedcalls > 0:
+       print "SORTED AVG:", sortedtime/sortedcalls
+    else:
+	print "SORTED AVG: N/A"
+@>
+
+pool: <list> 4
+pool: <int> 3
+pool: <string> 3
+pool: <char> 3
+pool: <sorttotaltime> 1
+pool: <sortedtotaltime> 1
+pool: <sortcalls> 1
+pool: <sortedcalls> 1
+pool: <count> 1
+
+<sorttotaltime> := 0.0
+<sortedtotaltime> := 0.0
+<sortcalls> := 0
+<sortedcalls> := 0 
+
+<int> := <[0..100]>
+<char> := <['a','b','c','d']>
+<string> := ''
+~<string> = ~<string> + <char>
+
+~<list> := []
+~<list>.append(<int>)
+~<list>.append(<string>)
+len(~<list,1>) < 1000 -> ~<list>.extend(~<list>)
+len(~<list,1>) < 1000 -> ~<list> = ~<list> + ~<list>
+
+<count> := 0
+
+print "LENGTH",len(<list>)
+
+len(<list,1>) > 1000 -> ~<count> += 1; <sortcalls> += 1; <sortedcalls> += 1; start = time.time(); sorted(<list>); <sortedtotaltime> = (time.time() - start); start = time.time(); <list,1>.sort(); <sorttotaltime> = (time.time() - start); print "DATAPOINT", ~<count>, <sortedtotaltime>,<sorttotaltime>
+
+
