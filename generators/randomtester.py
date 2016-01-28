@@ -317,6 +317,9 @@ while (config.maxtests == -1) or (ntests < config.maxtests):
                     print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
                     tryStutter = True
             if not tryStutter:
+                if len(acts) == 0:
+                    print "THERE SHOULD NOT BE A DEADLOCK"
+                    sys.exit(0)
                 if len(acts) == 1:
                     p = 0
                 else:    
