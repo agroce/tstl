@@ -1,0 +1,44 @@
+@from Bio.Seq import Seq
+@from Bio.Alphabet import IUPAC
+@from Bio.Alphabet import generic_rna
+@from Bio import pairwise2
+
+pool: <base> 4
+pool: <bases> 4
+
+pool: <alphabet> 3
+pool: <seq> 4
+
+pool: <bool> 1
+pool: <table> 2
+
+pool: <alignments> 3
+
+<base> := <['A','C','G','T']>
+<bases> := ""
+<bases> := <bases> + <base>
+<bases> := <bases> + <bases>
+
+<alphabet> := IUPAC.protein
+<alphabet> := IUPAC.unambiguous_dna
+<alphabet> := generic_rna
+
+<seq> := Seq(<bases>)
+<seq> := Seq(<bases>,<alphabet>)
+#<seq,1>.alphabet == <seq,2>.alphabet -> <seq> := <seq> + <seq> 
+
+<seq,1>.alphabet != IUPAC.protein -> <seq>.complement()
+<seq,1>.alphabet != IUPAC.protein -> <seq>.reverse_complement()
+
+<alignments> := pairwise2.align.globalxx(<seq>,<seq>)
+print "ALIGNMENTS:",<alignments>
+
+<bool> := <[True,False]>
+
+<table> := <[1..6]>
+<table> := <[9..16]>
+<table> := <[21..24]>
+<table> := "Vertebrate Mitochondrial"
+
+<seq,1>.alphabet != IUPAC.protein -> print "TRANSLATE:",<seq,1>,"=",<seq>.translate(to_stop=<bool>)
+<seq,1>.alphabet != IUPAC.protein -> print "TRANSLATE:",<seq,1>,"=",<seq>.translate(to_stop=<bool>,table=<table>)

@@ -5,8 +5,8 @@ import sys, os
 
 setup(
     name='tstl',
-    version='0.1',
-    description='Template scripting testing language (TSTL) based on research by by Dr. Alex Groce & Jervis Pinto. EECS, Oregon State University',
+    version='0.2',
+    description='Template scripting testing language (TSTL)',
     long_description=open('README.md').read(),
     packages=['src',],
     include_package_data = True,
@@ -24,5 +24,8 @@ setup(
       "Development Status :: 4 - Beta",
       "Programming Language :: Python :: 2",
       ],
+    install_requires=[
+      'coverage',
+    ],
     url='https://github.com/agroce/tstl',
 )

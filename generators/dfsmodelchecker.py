@@ -1,10 +1,15 @@
+import os
+import sys
+
+# Appending current working directory to sys.path
+current_working_dir = os.getcwd()
+sys.path.append(current_working_dir)
+
 import sut as SUT
 import random
 import time
-import sys
 import traceback
 import argparse
-import os
 from collections import namedtuple
 
 def parse_args():
@@ -98,100 +103,105 @@ def handle_failure(test, msg, checkFail):
             outf.write(t.serializeable(s)+"\n")
     if outf != None:
         outf.close()
-    
-parsed_args, parser = parse_args()
-config = make_config(parsed_args, parser)
-print('DFS exploration using config={}'.format(config))
-
-R = random.Random(config.seed)
-
-start = time.time()
-elapsed = time.time()-start
-
-failCount = 0
-maxDepth = 0
-
-t = SUT.sut()
-if config.logging != None:
-    t.setLog(config.logging)
 
 
-stack = []
-visited = []
-test = []
-t.restart()
-stack.append((t.state(), test))
-while (stack != []):
-    (s, test) = stack.pop()
-    if len(test) > maxDepth:
-        maxDepth = len(test)
-    if config.novisited or (s not in visited):
-        if not config.novisited:
-            visited.append(s)
-        if config.verbose:
-            print len(visited), "NEW STATE:"
-            print s
-    else:
-        continue
-    if len(test) == config.depth:
-        continue
-    t.backtrack(s)
-    shuffleActs = t.enabled()
-    if not config.deterministic:
-        R.shuffle(shuffleActs)
-    for c in shuffleActs:
-        stepOk = t.safely(c)
-        test.append(c)
-        thisBug = False
-        if (not config.uncaught) and (not stepOk):
-            handle_failure(test, "UNCAUGHT EXCEPTION", False)
-            if not config.multiple:
-                print "STOPPING TESTING DUE TO FAILED TEST"
-            thisBug = True
-                
-        if (not config.ignoreprops) and (not t.check()):
-            handle_failure(test, "PROPERLY VIOLATION", True)
-            if not config.multiple:
-                print "STOPPING TESTING DUE TO FAILED TEST"
-            thisBug = True
-        ns = t.state()
-        if not thisBug:
-            if config.novisited or (ns not in visited):
-                if not config.novisited:
-                    visited.append(s)
-                    if config.verbose:
-                        print len(visited), "NEW STATE:"
-                        print s
-                stack.append((ns, test))
-        elif not config.multiple:
-            break
-        elapsed = time.time() - start
-        if config.running:
-            if t.newBranches() != set([]):
-                print "ACTION:",c[0]
-                for b in t.newBranches():
-                    print elapsed,len(t.allBranches()),"New branch",b
-        if elapsed > config.timeout:
-            print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
-            break
-        test = test [:-1]
+def main():
+    parsed_args, parser = parse_args()
+    config = make_config(parsed_args, parser)
+    print('DFS exploration using config={}'.format(config))
+
+    R = random.Random(config.seed)
+
+    start = time.time()
+    elapsed = time.time()-start
+
+    failCount = 0
+    maxDepth = 0
+
+    t = SUT.sut()
+    if config.logging != None:
+        t.setLog(config.logging)
+
+
+    stack = []
+    visited = []
+    test = []
+    t.restart()
+    stack.append((t.state(), test))
+    while (stack != []):
+        (s, test) = stack.pop()
+        if len(test) > maxDepth:
+            maxDepth = len(test)
+        if config.novisited or (s not in visited):
+            if not config.novisited:
+                visited.append(s)
+            if config.verbose:
+                print len(visited), "NEW STATE:"
+                print s
+        else:
+            continue
+        if len(test) == config.depth:
+            continue
         t.backtrack(s)
-    if (not config.multiple) and (failCount > 0):
-        break
-    if elapsed > config.timeout:
-        print "STOPPING TESTING DUE TO TIMEOUT"
-        break        
+        shuffleActs = t.enabled()
+        if not config.deterministic:
+            R.shuffle(shuffleActs)
+        for c in shuffleActs:
+            stepOk = t.safely(c)
+            test.append(c)
+            thisBug = False
+            if (not config.uncaught) and (not stepOk):
+                handle_failure(test, "UNCAUGHT EXCEPTION", False)
+                if not config.multiple:
+                    print "STOPPING TESTING DUE TO FAILED TEST"
+                thisBug = True
+                    
+            if (not config.ignoreprops) and (not t.check()):
+                handle_failure(test, "PROPERLY VIOLATION", True)
+                if not config.multiple:
+                    print "STOPPING TESTING DUE TO FAILED TEST"
+                thisBug = True
+            ns = t.state()
+            if not thisBug:
+                if config.novisited or (ns not in visited):
+                    if not config.novisited:
+                        visited.append(s)
+                        if config.verbose:
+                            print len(visited), "NEW STATE:"
+                            print s
+                    stack.append((ns, test))
+            elif not config.multiple:
+                break
+            elapsed = time.time() - start
+            if config.running:
+                if t.newBranches() != set([]):
+                    print "ACTION:",c[0]
+                    for b in t.newBranches():
+                        print elapsed,len(t.allBranches()),"New branch",b
+            if elapsed > config.timeout:
+                print "STOPPING EXPLORATION DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+                break
+            test = test [:-1]
+            t.backtrack(s)
+        if (not config.multiple) and (failCount > 0):
+            break
+        if elapsed > config.timeout:
+            print "STOPPING TESTING DUE TO TIMEOUT"
+            break        
 
-if not config.nocover:
-    print t.report(config.coverfile),"PERCENT COVERED"
+    if not config.nocover:
+        print t.report(config.coverfile),"PERCENT COVERED"
 
-    if config.html:
-        t.htmlReport(config.html)
-            
-print len(visited), "STATES VISITED"
-print maxDepth,"MAX SEARCH DEPTH"
-if config.multiple:
-    print failCount,"FAILED"
-if not config.nocover:
-    print len(t.allBranches()),"BRANCHES COVERED"
-    print len(t.allStatements()),"STATEMENTS COVERED"
+        if config.html:
+            t.htmlReport(config.html)
+                
+    print len(visited), "STATES VISITED"
+    print maxDepth,"MAX SEARCH DEPTH"
+    if config.multiple:
+        print failCount,"FAILED"
+    if not config.nocover:
+        print len(t.allBranches()),"BRANCHES COVERED"
+        print len(t.allStatements()),"STATEMENTS COVERED"
+
+if __name__ == '__main__':
+    main()
