@@ -252,6 +252,7 @@ def genInitialization():
     global firstInit
     genCode.append(baseIndent + "self.__test = []\n")
     genCode.append(baseIndent + "self.__pools = []\n")
+    genCode.append(baseIndent + "self.__psize = {}\n")    
     genCode.append(baseIndent + "self.__consts = []\n")
     for p in poolSet:
         s = baseIndent
@@ -260,6 +261,10 @@ def genInitialization():
         s = baseIndent
         s += poolPrefix + p.replace("%","") + "_used = {}"
         genCode.append(s + "\n")
+        s = baseIndent
+        s += 'self.__psize["' + p.replace("%","") + '"] = ' + str(poolSet[p])
+        genCode.append(s + "\n")
+        
         s = baseIndent
         s += 'self.__pools.append("' + poolPrefix + p.replace("%","") + '")'
         genCode.append(s + "\n")
@@ -872,7 +877,7 @@ def main():
         genCode.append(baseIndent + "self.__currStatements = set()\n")
         genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
-        genCode.append(baseIndent + "self.__oldCovData = None; print 'COV: CLEARING OLD DATA'\n")
+        genCode.append(baseIndent + "self.__oldCovData = None\n")
     genInitialization()
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")

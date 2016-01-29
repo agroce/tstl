@@ -221,7 +221,11 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
         addLast = []
     n = 2
     count = 0
+    stests = {}
     while True:
+        stest = self.captureReplay(tb)
+        assert ((stest,n) not in stests)
+        stests[(stest,n)] = True
         count += 1
         c = self.__candidates(tb, n)
         reduced = False
@@ -338,11 +342,31 @@ def getEnabled(self, test, checkEnabled):
             enableChange[i] = map(lambda x:x[0], self.actions())
     return enableChange
 
+def numReassigns(self, test):
+    lhsPools = []
+    reuses = []
+
+    i = 0
+    for s in test:
+        if " = " in s[0]:
+            lhs = s[0].split(" = ")[0]
+            lhsp = self.poolUses(lhs)
+            if len(lhsp) == 1:
+                for p in self.poolUses(lhs):
+                    if p in lhsPools:
+                        reuses.append((i,p))
+                    else:
+                        lhsPools.append(p)
+        i += 1
+    return len(reuses)
+
 def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING REDUCE LENGTH STEP"
     # Replace any action with another action, if that allows test to be further reduced
     enableChange = self.getEnabled(test,checkEnabled)
+
+    reassignCount = self.numReassigns(test)
     
     for i in xrange(0,len(test)):
         name1 = test[i][0]
@@ -353,7 +377,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
                     continue
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
-                if pred(testC):
+                if (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
                     if len(rtestC) < len(test):
                         if verbose:
@@ -367,6 +391,8 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
     # Replace all occurrences of an action with a simpler action
     enableChange = self.getEnabled(test,checkEnabled)    
 
+    reassignCount = self.numReassigns(test)
+    
     donePairs = []
     for i in xrange(0,len(test)):
         name1 = test[i][0]
@@ -378,7 +404,7 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
                     continue
                 donePairs.append((name1,name2))
                 testC = map(lambda x: self.actionModify(x,name1,name2), test)
-                if pred(testC):
+                if (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     if verbose:
                         print "NORMALIZER: RULE SimplifyAll:",name1,"-->",name2
                     return (True, testC)
@@ -388,12 +414,28 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
     if verbose == "VERY":
         print "STARTING REPLACE POOL STEP"        
     # Replace pools with lower-numbered pools
+
     pools = []
     for s in test:
         for p in self.poolUses(s[0]):
             if p not in pools:
                 pools.append(p)
 
+    reassignCount = self.numReassigns(test)                
+
+    # First try the simple version:
+
+    for (p,i) in pools:
+        for n in xrange(0,int(i)):
+            new = p.replace("["+i+"]","[" + str(n) + "]")    
+            testC = map(lambda x: self.actionModify(x,p,new), test)
+            if (testC != test) and (self.numReassigns(testC) <= reassignCount) and pred(testC):
+                if verbose:
+                    print "NORMALIZER: RULE ReplacePool:",p,"WITH",new
+                return (True, testC)    
+    
+    return (False, test)
+    
     # Reduce number of pools but may need to move assignment to a later position, or only change after the position
     for pos in xrange(0,len(test)):
         for (p,i) in pools:
@@ -408,7 +450,7 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
                         prefix.append(test[j])
                 suffix = map(lambda x: self.actionModify(x,p,new), moved + test[pos:])
                 testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
-                if (testC != test) and pred(testC):
+                if (testC != test) and (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     if verbose:
                         if pos == 0:
                             print "NORMALIZER: RULE ReplacePool:",p,"WITH",new
@@ -420,7 +462,7 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
                     prefix = test[:pos]
                     suffix = map(lambda x: self.actionModify(x,p,new), test[pos:pos2])
                     testC = prefix + suffix + test[pos2:]
-                    if (testC != test) and pred(testC):
+                    if (testC != test) and (self.numReassigns(testC) <= reassignCount) and pred(testC):
                         if verbose:
                             print "NORMALIZER: RULE ReplacePool:",p,"WITH",new,"FROM",pos,"TO",pos2
                         return (True, testC)
@@ -432,6 +474,8 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
         print "STARTING REPLACE SINGLE STEP"        
     # Replace any single action with a lower-numbered action
     enableChange = self.getEnabled(test,checkEnabled)    
+
+    reassignCount = self.numReassigns(test)
     
     for i in xrange(0,len(test)):
         name1 = test[i][0]
@@ -442,7 +486,7 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
                     continue
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
-                if pred(testC):
+                if (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     if verbose:
                         print "NORMALIZER: RULE SimplifySingle: STEP",i,name1,"-->",name2
                     return (True, testC)
@@ -457,7 +501,9 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
         for p in self.poolUses(s[0]):
             if p not in pools:
                 pools.append(p)
-    
+
+    reassignCount = self.numReassigns(test)
+                
     swaps = []
     for (p1,i1) in pools:
         for (p2,i2) in pools:
@@ -481,10 +527,59 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
                                 if (leastTestC == -1) or (ordTestC < leastTestC):
                                     leastTestC = ordTestC
                         if leastTestC < leastTest:
-                            if pred(testC):
+                            if (self.numReassigns(testC) <= reassignCount) and pred(testC):
                                 if verbose:
                                     print "NORMALIZER: RULE SwapPool:",p1,"AND",p2,"BETWEEN STEP",pos1,"AND",pos2
                                 return (True, testC)
+    return (False, test)
+
+def noReassignStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+    if verbose == "VERY":
+        print "STARTING NOREASSIGNS STEP"
+    # Replace reassignments with fresh variables
+    pools = []
+    lhsPools = []
+    reuses = []
+
+    #return (False, test)
+    
+    i = 0
+    for s in test:
+        if " = " in s[0]:
+            lhs = s[0].split(" = ")[0]
+            lhsp = self.poolUses(lhs)
+            if len(lhsp) == 1:
+                for p in self.poolUses(lhs):
+                    if p in lhsPools:
+                        reuses.append((i,p))
+                    else:
+                        lhsPools.append(p)
+        for p in self.poolUses(s[0]):
+            if p not in pools:
+                pools.append(p[0])
+        i += 1
+
+    for (i,pu) in reuses:
+        prefix = test[0:i]
+        (p,pnum) = pu
+        newp = None
+        for ni in xrange(0,self.__psize[p.split("[")[0].replace(self.__poolPrefix,"")]):
+            if int(ni) == int(pnum):
+                continue
+            tnewp = p.replace("[" + str(pnum) + "]","[" + str(ni) + "]")
+            print "REPLACING",tnewp,ni,p,pnum
+            if tnewp not in pools:
+                newp = tnewp
+                break
+        if newp == None:
+            continue
+        if verbose:
+            print "NORMALIZER: RULE NoReassigns:",i,test[i][0],p,"TO",newp
+        suffix = []
+        for s in test[i:]:
+            suffix.append(self.actionModify(s,p,newp))
+        return (True, prefix+suffix)
+            
     return (False, test)
 
 def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
@@ -533,7 +628,8 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     self.relax()
              
     # Default speed is fast, if speed not recognized
-    simplifiers = [self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep, self.reduceLengthStep]
+    simplifiers = [self.noReassignStep, self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep, self.reduceLengthStep]
+    #simplifiers = [self.noReassignStep, self.replaceAllStep, self.replaceSingleStep, self.swapActionOrderStep, self.reduceLengthStep]
     # Default approach tries a reduce after any change
     reduceOnChange = True
     if speed == "SLOW":
@@ -562,8 +658,11 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
 
     numChanges = 0
     changed = True
+    stests = {}
     while changed:
         stest = self.captureReplay(test)
+        assert (stest not in stests)
+        stests[stest] = True
         changed = False
         if reorder:
             newSimplifiers = list(simplifiers)
