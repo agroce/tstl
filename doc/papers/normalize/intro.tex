@@ -37,10 +37,10 @@ Figure \ref{normalgen} shows the result of applying our \emph{test
   generalization} algorithm to the normalized test case.  \emph{All
   three test cases normalize to the same test case}.  Our normalization is
 enabled by a strongly normalizing term rewriting algorithm that operates
-on the level of test actions, and can therefore be language-agnostic:
+on the level of test actions, and is thus language-agnostic:
 it works by successively rewriting test cases into ``simpler''
-versions that preserve failure and are highly likely to retain the
-underlying cause of the failure in the original test case; many
+versions that preserve failure and are likely to retain the
+underlying cause of the failure in the original test case. Many
 different reduced test cases therefore normalize to the same form.
 
 The test case also includes comments, produced by our

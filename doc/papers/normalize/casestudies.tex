@@ -17,7 +17,7 @@ much additional reduction over delta-debugging does normalization
 provide? {\bf RQ5:} Does normalization and generalization provide
 substantial benefits in understanding complex test cases?  The primary
 threat to validity is that we have only applied normalization and
-generalzation to tests produced using random testing for a small
+generalization to tests produced using random testing for a small
 number of subjects in Python (some small, some large), using our TSTL
 implementation.  Note that {\bf RQ5} is essentially
 qualitative in nature, and would need a human study to fully evaluate.
@@ -84,7 +84,7 @@ fixed.  In our previous work \cite{PLDI13}, slippage due to
 reduction was very rare for some SUTs (GCC 4.3.0) but common
 for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For the AVLTree example, the slippage rate for reduction is almost 30\%,
 10\% \emph{worse} than that for normalization.  As a mitigation, we propose
-storing at reduced test cases (and ideally unreduced test
+storing reduced test cases (and/or unreduced test
 cases) as a slippage check when all faults detected by normalized test
 cases are fixed.
 

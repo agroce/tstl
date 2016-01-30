@@ -89,7 +89,9 @@ avoid degenerate sequences such as {\tt int3 = 10} followed by {\tt
   int3 = 4}.  Each action in a test case is called a ``step'' --- the
 first step of the first test case in Figure \ref{threetests} is storing a new AVL tree in {\tt
   avl0}, for example.  A test case is just an ordered sequence of
-actions, which is equivalent to a set of numbered steps.
+actions, which is equivalent to a set of numbered steps.  Because our
+normalization is defined in terms of actions, steps, and pools, it is
+language agnostic.
 
 The definition of pools and actions in TSTL defines a \emph{total
   order} on all actions.  First, actions are ordered by their position
@@ -501,7 +503,7 @@ In that worst case, no swaps are possible.  The complexity of checking
 for swaps in the worst case is quadratic in $k$.  In practice, most
 actions are not enabled at most steps, and most actions in a test case
 are not the lowest-indexed action.  Basic generalization is trivial to
-parallelize, as all checks are independent.
+parallelize.
 
 
 \subsubsection{Fresh Values and Misleading Test Cases}
