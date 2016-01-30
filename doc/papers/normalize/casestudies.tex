@@ -83,7 +83,7 @@ fixed.  In our own previous work \cite{PLDI13}, slippage due to
 reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
 for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For our
 own AVLTree example, the slippage rate for reduction is almost 30\%,
-considerably worse than that for normalization.  As a simple mitigation, we propose
+10\% \emph{worse} than that for normalization.  As a simple mitigation, we propose
 storing at least reduced test cases, and ideally the unreduced test
 cases, as a slippage check when all faults detected by normalized test
 cases are fixed.
@@ -296,29 +296,25 @@ assert (np.array\_equal(array0,array0))
 \subsection{Esri ArcPy}
 
 Esri is the single
-largest Geographic Information System (GIS) software vendor, with about 40\%
-of global market share.  Esri's ArcGIS tools are extremely widely
-used for GIS analysis, in government, scientific research, commercial
-enterprises, and education.  Automation is essential for complex GIS analysis and
+largest Geographic Information System (GIS) software vendor.  Esri's ArcGIS tools are widely
+used for GIS analysis.  Automation is essential for complex GIS analysis and
 data management, and Esri has long provided tools
-for programming their GIS software systems.  One such tool
+for programming GIS software systems.  One such tool
 (Esri's newest) is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
-with dozens of classes and hundreds of functions distributed over
-a variety of of toolboxes.  Most of the code involved in ArcPy
+with dozens of classes and hundreds of functions.  Most of the code involved in ArcPy
 functionality is the C++ source for ArcGIS itself (which is not
-available) but the released Python interface code alone is over 50KLOC.
-
+available), but the released Python interface code alone is over 50KLOC.
 In order to improve the reliability of ArcPy, we are developing a
-TSTL-based framework for testing ArcPy itself, as well as libraries
+TSTL-based framework for testing ArcPy and libraries
 based on ArcPy.  The ArcPy TSTL is already more than twice as large as
-the next-largest TSTL harness previously studied, even though it only
+the next-largest TSTL harness previously studied, though it only
 includes a small portion of ArcGIS functionality so far. The first
 stage of testing has resulted in discovery of multiple faults in
 ArcPy/ArcGIS, six of which not only cause incorrect behavior but cause
-a crash that also ends testing.  It is critical to understand these
-faults, the set of behaviors that trigger them, and modify the test
-definition to avoid triggering these faults while imposing minimal limitations
-on thorough testing for other faults.
+a crash that ends testing.  It is critical to understand these
+faults and the behaviors that trigger them to modify the harness to
+avoid triggering these faults, while restricting other testing as
+little as possible.
 
 %There is no space in this paper to elaborate on the details of this
 %large test effort (which has introduced numerous additional features

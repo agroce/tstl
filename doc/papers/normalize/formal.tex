@@ -1,6 +1,6 @@
-\section{Formal Definitions of Normalization and Generalization}
+\section{Formal Definitions}
 
-\subsection{A Brief Introduction to TSTL}
+%\subsection{A Brief Introduction to TSTL}
 
 \begin{figure}[t]
 {\scriptsize
@@ -53,8 +53,7 @@ string construction), and a set of tools for use in generating,
 manipulating, and understanding those test cases.  Figure
 \ref{fig:example} shows a simplified portion of a TSTL definition
 (called a harness) of
-tests for an AVL tree class, in the latest syntax for TSTL (which
-differs slightly from syntax in the cited papers introducing TSTL).
+tests for an AVL tree class, in the latest syntax for TSTL.
 TSTL provides numerous features not shown in this small example,
 including automatic differential testing, complex logging, support for
 complex guards, and use of pre- and post- values.  Given a harness
@@ -113,12 +112,12 @@ properties of test-generation algorithms
 
 The ordering of actions also allows us to concisely define a
 practical method for normalizing test cases, by
-simple syntactic means, by considering an action simpler than another
+simple syntactic means, by considering an action ``simpler'' than another
 action if it has a lower index.  One intuitive concern with normalization
 based on action ordering is that a user may not place actions
 in a ``good'' order in the TSTL definition.  What if normalization
 rewrites actions into ``more complex'' rather than simpler actions?
-In fact, the exact ordering usually \emph{does not matter}, it only
+The exact ordering usually \emph{does not matter}, it only
 matters that there exists \emph{some ordering} to guide normalization
 and generalization.  Actions will only be replaced or swapped if,
 causally, the predicate (failure) is \emph{indifferent} to the choice.  The
@@ -132,9 +131,9 @@ produce a function $f : t \rightarrow t$ (a function that takes a test
 case and returns a test case) such that:
 
 \begin{enumerate}
-\item If $t$ fails, $f(t)$ fails\footnote{In fact, normalization can
-    be generalized to apply to any predicate over tests, not just failure, but
-    failure is the most obviously useful predicate for normalization.}.
+\item If $t$ fails, $f(t)$ fails\footnote{Normalization can
+    be generalized to apply to any predicate over tests, not just
+    failure \cite{icst2014}.}.
 \item If $t_1$ and $t_2$ fail due to the same fault, $f(t_1) = f(t_2)$.
 \item If $t_1$ and $t_2$ fail due to different faults, $f(t_1) \not=
   f(t_2)$.
@@ -187,8 +186,8 @@ one action (possibly in multiple steps, but in a uniform way) or make
 positions of actions in the test case.  We cannot guarantee
 normalization does not change the underlying fault in a test; however,
 the limited scope of rewrites should at least make the likelihood of
-fault change (known as ``slippage'' \cite{PLDI13}) no worse than that of
-delta-debugging, which is widely accepted as a reasonable tradeoff.
+fault change (known as ``slippage'' \cite{PLDI13}) like that of
+delta-debugging, which is accepted as a reasonable tradeoff.
 
 \subsubsection{Definitions and Notation}
 
@@ -364,8 +363,7 @@ was only very expensive when delta-debugging was also costly, and
 appeared to be worse than delta-debugging by a constant factor,
 somewhere in the range of 2-10x, usually closer to 10x.  Measuring the
 payoff from improved understanding of test cases is difficult;
-however, in multiple fault settings, normalization can often
-provide a quantifiable value in shorter time until all faults have
+however, in multiple fault settings, normalization can provide a quantifiable value in shorter time until all faults have
 been examined by a human, for bug triage \cite{PLDI13}.
 
 %\subsubsection{Normalization Optimizations}
@@ -377,7 +375,7 @@ ordering of rewrites, since once a rule fails once to produce any
 valid rewrites, it frequently produces no further reductions.  This
 simple change typically halves the time required for normalization.
 When test case execution is very expensive, the set of candidate test
-cases can further restricted: limiting action replacements to cases
+cases can be further restricted: limiting action replacements to cases
 where Levenshtein \cite{Lev} distance (text edit distance) between the
 code for actions is bounded to a small value was effective in
 reducing runtime, and often had little impact on final results.
