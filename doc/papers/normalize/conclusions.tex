@@ -15,15 +15,16 @@ compared to reduction alone, often  to the ideal of one per fault.  The algorith
 on the ability of TSTL \cite{NFM15,ISSTA15} to define a total order
 over test actions, based on an abstract form for test cases, suitable
 for term rewriting.  TSTL-based normalization is thus applicable to
-any SUT, any source language, and any test generation method,
-including methods that already produce short tests
+any SUT, any source language, and many different test generation methods,
+including those that already produce short tests
 \cite{FA11,SoftBET}. 
 
 
  The goal of normalization and generalization can also be pursued in
 settings other than API sequence or string grammar testing.  The
 difficulties of defining a normal form for JavaScript \cite{jsfunfuzz}
-or C \cite{CReduce} test cases are formidable. Less effective methods
+or C \cite{csmith} test cases are non-trivial, but not obviously
+overwhelming \cite{CReduce}. Less effective methods
 than ours might still aid debugging and assist fuzzer taming
 \cite{PLDI13}.  Simple generalization (e.g., is this numeric constant
 essential, can these two statements be swapped?) and a limited form of
