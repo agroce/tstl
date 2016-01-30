@@ -36,13 +36,11 @@ used in CReduce is also an inspiration for the approach taken by our
 normalizer.
 
 Work on producing readable tests \cite{Guava,Readable} is also
-related, in that it aims to ``simplify'' tests in a way that goes
-beyond measuring test length.  Work on readable tests is primarily
-intended to assist debugging in  terms of human-factors, while our
+related, in that it aims to ``simplify'' tests.  Readable tests are
+intended to assist debugging by humans, while our
 normalization and generalization aims to increase the information
-density of a test (potentially increasing readability as well), and to address the fuzzer taming problem.  The approaches are
-completely orthogonal: our normalized tests could be altered to
-improve readability by these methods.
+density of a test, further reduce length, and address the fuzzer taming problem.  The approaches are
+orthogonal.
 
 The most closely related work to our generalization efforts is Pike's
 SmartCheck \cite{SmartCheck}.  SmartCheck targets algebraic data in

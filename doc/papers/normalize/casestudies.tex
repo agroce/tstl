@@ -7,18 +7,20 @@ Python interface to Z3 \cite{z3}, but did not find faults thus far;
 normalization did help produce more comprehensible and uniform Z3
 quick tests \cite{icst2014}.
 
-Our experiments were not intended
-to provide a full evaluation of normalization and generalization, but
-to establish the basic value of the techniques, and some initial data
-on core research questions.  {\bf RQ1:} How effectively does
-normalization reduce the number of failures reported? {\bf RQ2:} How
-often does normalization lose faults? {\bf RQ3:} What is the cost of
-normalization? {\bf RQ4:} How much additional reduction over
-delta-debugging does normalization provide? {\bf RQ5:} Does
-normalization and generalization provide substantial benefits in
-understanding complex test cases?  Note that the final question is
-essentially qualitative in nature, and would need a human study to
-fully evaluate.
+Our experiments were not intended to provide a full evaluation of
+normalization and generalization, but to establish the basic value of
+the techniques, and some initial data on core research questions.
+{\bf RQ1:} How effectively does normalization reduce the number of
+failures reported? {\bf RQ2:} How often does normalization lose
+faults? {\bf RQ3:} What is the cost of normalization? {\bf RQ4:} How
+much additional reduction over delta-debugging does normalization
+provide? {\bf RQ5:} Does normalization and generalization provide
+substantial benefits in understanding complex test cases?  The primary
+threat to validity is that we have only applied normalization and
+generalzation to tests produced using random testing for a small
+number of subjects in Python (some small, some large), using our TSTL
+implementation.  Note that {\bf RQ5} is essentially
+qualitative in nature, and would need a human study to fully evaluate.
 
 \subsection{AVLTree}
 
@@ -33,19 +35,18 @@ simple Python implementation of AVL trees found on the web
 \end{figure}
 
 Figure \ref{normeffect} shows the reduction in number of distinct
-failing test cases produced by normalization (vs. reduction only) for
+failing test cases produced by normalization and reduction (vs. reduction only) for
 a set of 82 mutants \cite{mutant} of the AVLTree source code
 \cite{Hunter:2007} ({\bf RQ1}).  Of the 228 mutants
 produced by MutPy \cite{mutpy}, only these 82 produced at least 1 failure
 in 1,000 test cases (other mutants either were equivalent or only
-caused failures at a rate less than 1 in 1,000 tests).  Using only delta-debugging-based reduction, the
+caused failures at a rate less than 1 in 1,000 tests).  Using only reduction, the
 mean number of distinct failures for each mutant (which is, by definition,
-a single fault) was 498.4, with a median of 485.  Using normalization,
-the mean was 3.1 distinct failures, with a median of just 2 failures.
+a single fault) was 498.4 (median 485).  Using normalization,
+the mean was 3.1 distinct failures (median 2).
 For 38 of the 82 mutants, normalization produced only a single
-representative failure.  For every mutant, normalization reduced the
-number of distinct failures, and no mutant produced more than 27
-distinct failures, after normalization.
+representative failure.   Differences were 
+statistically significant by U-test with $p=1\times10^{-15}$.
 
 
 AVLTree mutants also provided a way to evaluate the danger of
@@ -77,29 +78,30 @@ capable of exposing fault F was modified to expose fault F (classic
 slippage) but since the new test suite exposed both faults,
 normalization actually restored fault detection.
 
-Data on slippage is not extensive, in part because it is only detected if the original test
-cases before reduction are stored and re-executed after bugs have been
-fixed.  In our own previous work \cite{PLDI13}, slippage due to
-reduction was extremely rare for some SUTs (GCC 4.3.0) and very common
-for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For our
-own AVLTree example, the slippage rate for reduction is almost 30\%,
-10\% \emph{worse} than that for normalization.  As a simple mitigation, we propose
-storing at least reduced test cases, and ideally the unreduced test
-cases, as a slippage check when all faults detected by normalized test
+Data on slippage is not extensive, since it is only detected if the original test
+cases before reduction are re-executed after bugs have been
+fixed.  In our previous work \cite{PLDI13}, slippage due to
+reduction was very rare for some SUTs (GCC 4.3.0) but common
+for other SUTs (up to 23\% for Mozilla's JavaScript engine).  For the AVLTree example, the slippage rate for reduction is almost 30\%,
+10\% \emph{worse} than that for normalization.  As a mitigation, we propose
+storing at reduced test cases (and ideally unreduced test
+cases) as a slippage check when all faults detected by normalized test
 cases are fixed.
 
 The reduction in test cases produced by normalization for mutant pairs
 was, as with single mutants, very large (Figure \ref{normeffect}).
 For mutant pairs, the mean/median number of distinct failures was
-554.4/607 for reduction alone, but only 2.8/2 for reduction +
-normalization.  The runtime for normalization was essentially
-unchanged from the single-mutant numbers given above.  For reduction
+554.4/607 for reduction alone, but only 2.8/2 with
+normalization.  The runtime for normalization was almost
+unchanged from the single-mutant times.  For reduction
 alone, using pairs increased the number of distinct failures, while
 normalized failure counts decreased.  For 48.3\% (115 of 238) of
 mutant pairs where reduction did not lose a fault, normalization
 worked as well as possible --- it preserved both faults and produced only 1 or 2 test
 cases\footnote{It is possible to detect both faults with a single test
-  case, if that test case fails when \emph{either} fault is present.}.
+  case, if that test case fails when \emph{either} fault is
+  present.}.  The improvement due to normalization was
+statistically significant by U-test with $p=1\times10^{-80}$.
 
 AVLTree also provided basic results for {\bf RQ3}. The mean cost to reduce a
 test case was 0.05 seconds, with a median of 0.03 seconds.  The mean
@@ -136,26 +138,29 @@ for the original fault and 2 for the seeded fault.
 %Generalization took < 5 seconds.
 
 In addition to these realistic faults, we performed the same
-mutation-based analysis as with AVLTree (Figure \ref{normeffect}). In this case, a weaker
-specification (no reference implementation) resulted in fault
-detection for only 5 of 357 mutants.  For these mutants, reduction
-alone produced an average of 107.6 failures (median 27); normalization
-reduced that to only 6.2 failures (median 7) ({\bf RQ1}).  With mutant pairs,
-these numbers increased to 181.9 mean faults (median 175) with
-reduction only, compared to 7.7 mean faults (median 7) when using
-normalization ({\bf RQ1}).  Normalization was perfect in only one case for the
-XML parser mutants, and perfect for no mutant pairs.  
-For combined mutants, the slippage rate was only 12.5\% for the XML
-parser ({\bf RQ2}).   Reduction alone introduced no slippage for XML
-parser mutants.  Adding normalization to reduction
-increased the runtime by approximately 10x, from a mean runtime of 12.6 seconds to
-a mean runtime of 120.8 seconds ({\bf RQ3}).
+mutation-based analysis as with AVLTree (Figure \ref{normeffect}). In
+this case, a weaker specification (no reference implementation)
+resulted in fault detection for only 5 of 357 mutants.  For these
+mutants, reduction alone produced an average of 107.6 failures (median
+27); normalization reduced that to only 6.2 failures (median 7) ({\bf
+  RQ1}).  The difference was not statistically significant, due to the
+small sample size.  With mutant pairs, these numbers increased to
+181.9 mean faults (median 175) with reduction only, compared to 7.7
+mean faults (median 7) when using normalization ({\bf RQ1}).  This
+difference was statistically significant, with U-test $p$-value of 0.007.
+Normalization was perfect in only one case for the XML parser mutants,
+and perfect for no mutant pairs.  For combined mutants, the slippage
+rate was only 12.5\% for the XML parser ({\bf RQ2}).  Reduction alone
+introduced no slippage for XML parser mutants.  Adding normalization
+to reduction increased the runtime by approximately 10x, from a mean
+runtime of 12.6 seconds to a mean runtime of 120.8 seconds ({\bf
+  RQ3}).
 
 \subsection{TSTL}
 
 As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own
-API interface (the TSTL compiler is about 1,600 LOC; a compiled SUT is
-often 30KLOC or larger).  We only discovered one fault while testing
+API interface (the compiler is about 1,600 LOC; a compiled SUT is
+often $>$ 30KLOC).  We discovered one fault while testing
 the latest version of TSTL, the cache-related problem shown in Figure \ref{fig:mislead}.
 Generating and reducing 100 test cases for it required 1,090 seconds
 and produced 90 failures.  Normalization and generalization
@@ -348,9 +353,8 @@ freshly created layer will not result in a crash: the problem appears
 to be that ArcGIS (or ArcPy) does not invalidate layers built from a
 feature class when that feature class is deleted\footnote{In this
   instance, a generalization (the fresh values generalization in
-  particular) is informative even though it does not allow any
-  generalization; knowing that it was attempted, but prevented the
-  failure, is also valuable.}.  The original, non-normalized test case
+  particular) is informative by its absence: we know that it was attempted, but prevented the
+  failure.}.  The original, non-normalized test case
 makes this far less clear, as the use of {\tt CopyFeatures} and the
 multiplicity of shapefiles involved disguises the essence of the
 problem.
