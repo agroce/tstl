@@ -46,7 +46,7 @@ a single fault) was 498.4 (median 485).  Using normalization,
 the mean was 3.1 distinct failures (median 2).
 For 38 of the 82 mutants, normalization produced only a single
 representative failure.   Differences were 
-statistically significant by U-test with $p=1\times10^{-15}$.
+statistically significant by Wilcoxon test with $p=1\times10^{-15}$.
 
 
 AVLTree mutants also provided a way to evaluate the danger of
@@ -101,7 +101,7 @@ worked as well as possible --- it preserved both faults and produced only 1 or 2
 cases\footnote{It is possible to detect both faults with a single test
   case, if that test case fails when \emph{either} fault is
   present.}.  The improvement due to normalization was
-statistically significant by U-test with $p=1\times10^{-80}$.
+statistically significant by Wilcoxon test with $p=1\times10^{-80}$.
 
 AVLTree also provided basic results for {\bf RQ3}. The mean cost to reduce a
 test case was 0.05 seconds, with a median of 0.03 seconds.  The mean
@@ -143,18 +143,18 @@ this case, a weaker specification (no reference implementation)
 resulted in fault detection for only 5 of 357 mutants.  For these
 mutants, reduction alone produced an average of 107.6 failures (median
 27); normalization reduced that to only 6.2 failures (median 7) ({\bf
-  RQ1}).  The difference was not statistically significant, due to the
-small sample size.  With mutant pairs, these numbers increased to
-181.9 mean faults (median 175) with reduction only, compared to 7.7
-mean faults (median 7) when using normalization ({\bf RQ1}).  This
-difference was statistically significant, with U-test $p$-value of 0.007.
-Normalization was perfect in only one case for the XML parser mutants,
-and perfect for no mutant pairs.  For combined mutants, the slippage
-rate was only 12.5\% for the XML parser ({\bf RQ2}).  Reduction alone
-introduced no slippage for XML parser mutants.  Adding normalization
-to reduction increased the runtime by approximately 10x, from a mean
-runtime of 12.6 seconds to a mean runtime of 120.8 seconds ({\bf
-  RQ3}).
+  RQ1}).  The difference was significant at the 95\% confidence level,
+by Wilcoxon test, with $p=0.042$.  With mutant pairs, these numbers
+increased to 181.9 mean faults (median 175) with reduction only,
+compared to 7.7 mean faults (median 7) when using normalization ({\bf
+  RQ1}).  This difference was statistically significant, with Wilcoxon
+$p=0.007$.  Normalization was perfect in only one case for
+the XML parser mutants, and perfect for no mutant pairs.  For combined
+mutants, the slippage rate was only 12.5\% for the XML parser ({\bf
+  RQ2}).  Reduction alone introduced no slippage for XML parser
+mutants.  Adding normalization to reduction increased the runtime by
+approximately 10x, from a mean runtime of 12.6 seconds to a mean
+runtime of 120.8 seconds ({\bf RQ3}).
 
 \subsection{TSTL}
 
