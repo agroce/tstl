@@ -197,10 +197,16 @@ def expandRange(original):
                 commapos = c.find(",",lpos)
                 rexp = c[lpos:endpos+2]
                 if (dotpos != -1) and (dotpos < endpos):
-                    low = int(c[lpos+2:dotpos])
-                    high = int(c[dotpos+2:endpos])
-                    for x in xrange(low,high+1):
-                        newVersion.append(c.replace(rexp, str(x), 1))
+                    if c[lpos+2] == "'": # must be 'a'..'b' etc.
+                        lowc = c[lpos+3:dotpos-1]
+                        highc = c[dotpos+3:endpos-1]
+                        for x in xrange(ord(lowc),ord(highc)+1):
+                            newVersion.append(c.replace(rexp, "'" + chr(x) + "'", 1))
+                    else:
+                        low = int(c[lpos+2:dotpos])
+                        high = int(c[dotpos+2:endpos])
+                        for x in xrange(low,high+1):
+                            newVersion.append(c.replace(rexp, str(x), 1))
                 elif (commapos != -1) and (commapos < endpos):
                     ilist = c[lpos+2:endpos].split(",")
                     for i in ilist:
@@ -250,6 +256,7 @@ def genInitialization():
     Generate initialization from configuration, poolSet
     """
     global firstInit
+    genCode.append(baseIndent + "self.__noReassigns = False\n")
     genCode.append(baseIndent + "self.__test = []\n")
     genCode.append(baseIndent + "self.__pools = []\n")
     genCode.append(baseIndent + "self.__psize = {}\n")    
