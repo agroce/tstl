@@ -58,6 +58,13 @@ def prettyName(self, name):
             pfind = newName.find(p+"[")
     return newName
 
+def prettyPrintTest(self, test, columns=80):
+    i = 0
+    for (s,_,_) in test:
+        steps = "# STEP " + str(i)
+        print self.prettyName(s).ljust(columns - len(steps),' '),steps
+        i += 1
+
 def captureReplay(self, test):
     captured = ""
     for step in test:
@@ -343,6 +350,10 @@ def getEnabled(self, test, checkEnabled):
     return enableChange
 
 def numReassigns(self, test):
+
+    if not self.__noReassigns:
+        return 0
+    
     lhsPools = []
     reuses = []
 
@@ -425,16 +436,19 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
 
     # First try the simple version:
 
-    for (p,i) in pools:
-        for n in xrange(0,int(i)):
-            new = p.replace("["+i+"]","[" + str(n) + "]")    
-            testC = map(lambda x: self.actionModify(x,p,new), test)
-            if (testC != test) and (self.numReassigns(testC) <= reassignCount) and pred(testC):
-                if verbose:
-                    print "NORMALIZER: RULE ReplacePool:",p,"WITH",new
-                return (True, testC)    
+    if self.__noReassigns:
     
-    return (False, test)
+        for (p,i) in pools:
+            for n in xrange(0,int(i)):
+                new = p.replace("["+i+"]","[" + str(n) + "]")    
+                testC = map(lambda x: self.actionModify(x,p,new), test)
+                if (testC != test) and (self.numReassigns(testC) <= reassignCount) and pred(testC):
+                    if verbose:
+                        print "NORMALIZER: RULE ReplacePool:",p,"WITH",new
+                    return (True, testC)    
+
+        # Remained of this code is now not needed, probably, due to noReassignRule
+        return (False, test)
     
     # Reduce number of pools but may need to move assignment to a later position, or only change after the position
     for pos in xrange(0,len(test)):
@@ -534,6 +548,9 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
     return (False, test)
 
 def noReassignStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+    if not self.__noReassigns:
+        return (False, test)
+    
     if verbose == "VERY":
         print "STARTING NOREASSIGNS STEP"
     # Replace reassignments with fresh variables
@@ -541,8 +558,6 @@ def noReassignStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
     lhsPools = []
     reuses = []
 
-    #return (False, test)
-    
     i = 0
     for s in test:
         if " = " in s[0]:
@@ -607,7 +622,8 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
                         return (True, testC)
     return (False, test)
 
-def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True):
+def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
+              noReassigns = False):
     """
     Attempts to produce a normalized test case
     """
@@ -616,6 +632,11 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     except:
         pass
 
+    if noReassigns:
+        self.__noReassigns = True
+    else:
+        self.__noReassigns = False
+    
     # Check the cache
     stest = self.captureReplay(test)
     if stest in self.__simplifyCache:

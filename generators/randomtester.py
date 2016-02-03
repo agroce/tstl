@@ -67,6 +67,8 @@ def parse_args():
                         help="File to write coverage report to ('coverage.out' default).")
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage.")
+    parser.add_argument('-a', '--noreassign', action='store_true',
+                        help="Add noReassign rule to normalization steps.")
     parser.add_argument('-v', '--verbose', action='store_true',
                         help="Run in verbose mode.")
     parser.add_argument('-H', '--html', type=str, default=None,
@@ -141,10 +143,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         test = t.reduce(test, failProp, True, config.keep)
         print "Reduced test has",len(test),"steps"
         print "REDUCED IN",time.time()-startReduce,"SECONDS"
-        i = 0
-        for s in test:
-            print "STEP",i,t.prettyName(s[0])
-            i += 1
+        t.prettyPrintTest(test)
         if config.essentials:
             print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
             (canRemove, cannotRemove) = t.reduceEssentials(test, original, failProp, True, config.keep)
@@ -152,17 +151,15 @@ def handle_failure(test, msg, checkFail, newCov = False):
             for (c,reducec) in canRemove:
                 print "CAN BE REMOVED:",map(lambda x:x[0], c)
                 i = 0
-                for s in reducec:
-                    print t.prettyName(s[0]),"# STEP",i
-                    i += 1
+                t.prettyPrintTest(reducec)
         sys.stdout.flush()
         if config.normalize:
             startSimplify = time.time()
             print "NORMALIZING..."
-            test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed)
+            test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noreassign)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
-        if (config.gendepth != None) and (test not in failures) and (test not in cloudFailures):
+        if (config.gendepth != None) and (test not in map(lambda x:x[0],failures)) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print "GENERATING GENERALIZATION CLOUD"
             (cloudFound,matchTest,thisCloud) = t.generalize(test, failProp, silent=True, returnCollect=True, depth=config.gendepth, targets = allClouds)
@@ -171,20 +168,17 @@ def handle_failure(test, msg, checkFail, newCov = False):
             if cloudFound:
                 print "CLOUD MATCH",
                 faili = 0
-                for cfailbase in failures:
+                for (cfailbase,err) in failures:
                     cfail = t.captureReplay(cfailbase)
                     if matchTest in failCloud[cfail]:
                         print "THIS TEST CAN BE CONVERTED TO:"
-                        i = 0
-                        for s in t.replayable(matchTest):
-                            print t.prettyName(s[0]),"  # STEP",i
-                            i += 1
+                        t.prettyPrintTest(matchTest)
                         print "MATCHING FAILURE",faili
                         break
                     faili += 1
                 cloudMatch = True
                 cloudFailures.append(test)
-        if config.generalize and (test not in failures):
+        if config.generalize and (test not in map(lambda x:x[0],failures)):
             startGeneralize = time.time()
             print "GENERALIZING..."
             t.generalize(test, failProp, verbose = True)
@@ -192,7 +186,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         reduceTime += time.time()-startReduce
 
     i = 0
-    if ((config.output != None) and (test not in failures)) or (config.quickTests):
+    if ((config.output != None) and (test not in map(lambda x:x[0],failures))) or (config.quickTests):
         outname = config.output
         if config.quickTests:
             for s in t.allStatements():
@@ -212,8 +206,10 @@ def handle_failure(test, msg, checkFail, newCov = False):
         t.setLog(config.failedLogging)
     print
     print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
+    i = 0
     for s in test:
-        print t.prettyName(s[0]),"  # STEP",i
+        steps = "# STEP " + str(i)
+        print t.prettyName(s[0]).ljust(80-len(steps),' '),steps
         t.safely(s)
         i += 1
         if outf != None:
@@ -227,11 +223,11 @@ def handle_failure(test, msg, checkFail, newCov = False):
     if outf != None:
         outf.close()
     if config.multiple:
-        if (test in failures) or (test in cloudFailures) or cloudMatch:
+        if (test in map(lambda x:x[0], failures)) or (test in cloudFailures) or cloudMatch:
             print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
             repeatCount += 1
         else:
-            failures.append(test)
+            failures.append((test,t.failure()))
             if config.gendepth != None:
                 failCloud[t.captureReplay(test)] = thisCloud
                 for c in thisCloud:
@@ -240,7 +236,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
 
 
 def main():
-
+    global failCount,t,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
+    
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
     print('Random testing using config={}'.format(config))
@@ -439,13 +436,13 @@ def main():
         print len(failures),"ACTUAL DISTINCT FAILURES"
         print 
         n = 0
-        for test in failures:
+        for (test, err) in failures:
             print "FAILURE",n
-            i = 0
-            for s in test:
-                print "STEP",i,t.prettyName(s[0])
-                i += 1
+            t.prettyPrintTest(test)
             n += 1
+            print "ERROR:", err
+            print "TRACEBACK:"
+            traceback.print_tb(err[2])
         i = -1
         if False: # Comparison feature normally not useful, just for researching normalization
             for test1 in failures:
