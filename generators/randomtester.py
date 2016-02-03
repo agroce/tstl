@@ -188,6 +188,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
     i = 0
     if ((config.output != None) and (test not in map(lambda x:x[0],failures))) or (config.quickTests):
         outname = config.output
+        if config.multiple:
+            outname += ("." + str(failCount))
         if config.quickTests:
             for s in t.allStatements():
                 if s not in beforeReduceS:
@@ -197,8 +199,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
                     print "NEW BRANCH FROM REDUCTION",b
             outname = "quicktest." + str(quickCount)
             quickCount += 1
-        if config.multiple:
-            outname += ("." + str(failCount))
         outf = open(outname,'w')
     else:
         outf = None
@@ -440,9 +440,10 @@ def main():
             print "FAILURE",n
             t.prettyPrintTest(test)
             n += 1
-            print "ERROR:", err
-            print "TRACEBACK:"
-            traceback.print_tb(err[2])
+            if err != None:
+                print "ERROR:", err
+                print "TRACEBACK:"
+                traceback.print_tb(err[2])
         i = -1
         if False: # Comparison feature normally not useful, just for researching normalization
             for test1 in failures:
