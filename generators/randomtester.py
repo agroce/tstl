@@ -186,11 +186,12 @@ def handle_failure(test, msg, checkFail, newCov = False):
         reduceTime += time.time()-startReduce
 
     i = 0
+    outf = None
     if ((config.output != None) and (test not in map(lambda x:x[0],failures))) or (config.quickTests):
         outname = config.output
-        if config.multiple:
+        if (outname != None) and config.multiple and not newCov:
             outname += ("." + str(failCount))
-        if config.quickTests:
+        if config.quickTests and newCov:
             for s in t.allStatements():
                 if s not in beforeReduceS:
                     print "NEW STATEMENT FROM REDUCTION",s
@@ -199,9 +200,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
                     print "NEW BRANCH FROM REDUCTION",b
             outname = "quicktest." + str(quickCount)
             quickCount += 1
-        outf = open(outname,'w')
-    else:
-        outf = None
+        if outname != None:
+            outf = open(outname,'w')
     if config.failedLogging != None:
         t.setLog(config.failedLogging)
     print
