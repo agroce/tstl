@@ -3,11 +3,11 @@ import sut as SUT
 import subprocess
 import time
 
-infile = "fulltest.txt"
-outfile = "reduceddist4.txt"
-simpfile = "simplifieddist4.txt"
+infile = sys.argv[1]
+outfile = sys.argv[2]
+simpfile = sys.argv[3]
 
-print "REDUCING",infile,"TO",outfile,"THEN SIMPLIFYING TO",simpfile
+print "REDUCING",infile,"TO",outfile,"THEN NORMALIZING TO",simpfile
 
 def sandboxReplay(test):
     print "ATTEMPTING SANDBOX REPLAY WITH",len(test),"STEPS"
@@ -50,7 +50,7 @@ for s in reduced:
     reduceF.write(s[0] + "\n")
 reduceF.close()
 
-simplified = t.simplify(reduced, sandboxReplay, distLimit=4)
+simplified = t.normalize(reduced, sandboxReplay, distLimit=4)
 simpF = open(simpfile,'w')
 i = 0
 for s in simplified:

@@ -30,6 +30,8 @@ def __updateCov(self):
                 
 def internalReport(self):
     print "TSTL INTERNAL COVERAGE REPORT:"
+    if self.__oldCovData == None:
+        return
     for src_file in self.__oldCovData.measured_files():
         adata = self.__oldCovData.arcs(src_file)
         print src_file,"ARCS:",len(adata),sorted(adata)
