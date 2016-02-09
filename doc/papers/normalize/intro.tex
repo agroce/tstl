@@ -35,8 +35,8 @@ Figure \ref{normalgen} shows the result of applying our \emph{test
   case normalization} algorithm to the three tests in Figure
 \ref{threetests}, and then applying our \emph{test case
   generalization} algorithm to the normalized test case.  \emph{All
-  three test cases normalize to the same test case}.  Our normalization is
-enabled by a strongly normalizing term rewriting algorithm that operates
+  three test cases normalize to the same test case}.  Normalization is
+enabled by a strongly normalizing term rewriting algorithm \cite{term2,term1} that operates
 on the level of test actions, and is thus language-agnostic:
 it works by successively rewriting test cases into ``simpler''
 versions that preserve failure and are likely to retain the

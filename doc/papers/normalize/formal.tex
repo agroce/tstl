@@ -67,7 +67,7 @@ interface for testing and debugging.
 The key point for our purposes is merely that a TSTL test harness
 defines a set of \emph{pools} that hold values produced and used
 during testing \cite{AndrewsTR} (a common approach to defining
-API-testing sequences) and a set of actions that are possible during
+API-testing sequences) and a \emph{finite} set of actions that are possible during
 testing, typically API calls and assignments to pool values.  In this
 example, there are two pools, one named {\tt int} and one named {\tt
   avl}.  There are four instances of the {\tt int} pool, which means
@@ -76,8 +76,8 @@ variables named {\tt int0}, {\tt int1}, {\tt int2}, and {\tt int3}), and three
 instances of the {\tt avl} pool.  The actions defined are: setting
 the value of an {\tt int} pool to any integer in the range 1-20
 inclusive, setting the value of an {\tt avl} pool to a newly
-constructed AVL tree, and calling an AVL tree's {\tt insert}, {\tt
-  delete}, {\tt find} and {\tt inorder} methods.  Figure
+constructed AVL tree, and calling {\tt insert}, {\tt
+  delete}, {\tt find} and {\tt inorder} with chosen pools.  Figure
 \ref{threetests} in the introduction shows three
 valid test cases produced by running a random test generator on
 the TSTL-compiled interface produced by this definition.  TSTL handles
@@ -153,15 +153,14 @@ and (3) $f$ is not unreasonably expensive to compute.  The implementation
 for $f$ (in fact, for a family of $f$-approximating functions, with
 different tradeoffs in runtime and level of normalization) involves
 defining a set of rewrite rules such that for a test $t$, the rules
-define a finite set of candidate tests $t' \in C(t)$, possible
+define a finite set of candidate tests $C(t): t' . t \Rightarrow t'$, possible
 simplifications of $t$, where each $t'$ is the result of applying some
-rewrite, $r_i$ to $t$.  The notion of simplicity is defined by a
-restriction on the rewriting rules.  For any test case $t$ and rewrite
-$r_i : r_i(t) \in C(t)$, we require that $|C(r_i(t))| < |C(t)|$.  Such
+rewrite rule to $t$.  The notion of simplicity is defined by a
+restriction on the rewriting rules.  For any rewrite $t \Rightarrow t'$, we require that $|C(t')| < |C(t)|$.  Such
 a rewrite system is necessarily \emph{strongly normalizing}: any
 sequence of rewrites chosen will eventually end in a term (test case)
-that cannot be further rewritten, and the total length of a rewrite
-sequence in this case is bounded by the initial $|C(t)|$.
+that cannot be further rewritten, since the total length of a rewrite
+sequence is bounded by the initial $|C(t)|$ \cite{term1}.
 
 \mycomment{, let $R(t)$ be the length of the maximum number of
 rewrites that can be applied to $t$, e.g., the longest possible
@@ -176,7 +175,7 @@ further rewritten.}
 
 In the setting of TSTL, where test actions have a defined total
 order, two simple principles can be applied to produce useful
-rewrite rules.  First, rewrites must reduce the sum of the
+rewrite rules.  All rewrites reduce the sum of the
 indices of the actions in the test case, make the test case's
 actions more ordered by index, or reduce test length.  This guarantees that the rewrites are
 strongly normalizing.
@@ -209,10 +208,10 @@ these to compare sets:  $s_1 < s_2$ iff $min(s_1) < min(s_2)$. For pools,
 $p < p'$ if and only if $p$'s index is lower than the index for $p'$
 \emph{and} $p$ and $p'$ are from the same pool.
 
-The rewrite $t[x \Rightarrow y]$ denotes the test t with all instances of $x$
+The term $t[x \mapsto y]$ denotes the test t with all instances of $x$
 replaced by $y$.  Here, $x$ and $y$ can be actions, steps, or pools.
-$t[x \Leftrightarrow y]$ is similar, except that $x$ and $y$ are
-swapped.  Rewrite $t(i,j)[x \Rightarrow y]$ is the same as $t[x \Rightarrow
+$t[x \leftrightarrow y]$ is similar, except that $x$ and $y$ are
+swapped.  Term $t(i,j)[x \mapsto y]$ is the same as $t[x \mapsto
 y]$, except that the replacement is only applied between steps $i$ and
 $j$, inclusive.  Finally, $t_{\rightarrow i}(x)$ denotes $t$ with all steps
 containing $x$ that are before step $i$ moved to step $i$, preserving
@@ -223,43 +222,43 @@ the moved steps, again preserving order.
 
 \begin{enumerate}
 \item {\bf SimplifyAll:}
-$t' = t[a \Rightarrow a']$\\
+$t \Rightarrow t[a \mapsto a']$\\
 \-\ \ \ \emph{where} $a' < a$\\
 Covers the case where all appearances of an action can be replaced with a 
 lower-indexed action. 
 \item {\bf ReplacePool:}
-$t' = t(i,j)[p \Rightarrow p']$\\ 
+$t \Rightarrow t(i,j)[p \mapsto p']$\\ 
 \-\ \ \ \emph{where} $p < p'$ and $0 \leq i < j <
 |t|$\\
 Covers the case when all appearances of an instance of a pool can be replaced with 
 a lower-indexed instance of that pool (with possible restriction to a range of steps).
 \item {\bf ReplaceMovePool:}
-$t' = t_{\rightarrow i}(p')[p \Rightarrow p']$\\
+$t \Rightarrow t_{\rightarrow i}(p')[p \mapsto p']$\\
 \-\ \ \ \emph{where} $p < p'$ and $0
 \leq i < |t|$\\
 Covers the case when all appearances of an instance of a pool can be replaced with
 a lower-indexed instance of that pool, if all assignments to the new instance before a
 certain step are moved to that step.
 \item {\bf SimplifySingle:}
-$t' = t[(i: a) \Rightarrow (i: a')]$\\
+$t \Rightarrow t[(i: a) \mapsto (i: a')]$\\
 \-\ \ \ \emph{where} $a' < a$\\
 Covers the case where one action can be replaced with a 
 simpler (lower-indexed) action. 
 \item {\bf SwapPool:}
-$t' = t(i,j)[p \Leftrightarrow p']$\\
+$t \Rightarrow t(i,j)[p \Leftrightarrow p']$\\
 \-\ \ \ \emph{where} $\Delta(t',t) < \Delta(t,t')$\\
 \-\ \ \ and $0 \leq i < j < |t|$\\
 \-\ \ \ and $p < p'$\\
 Covers the case where swapping two pool instances (within a range of steps) reduces
 the minimal action index of the modified steps.
 \item {\bf SwapAction:}
-$t' = t[(i: a) \Rightarrow (i: b), (j: b) \Rightarrow (j: a)]$\\
+$t \Rightarrow t[(i: a) \mapsto (i: b), (j: b) \mapsto (j: a)]$\\
 \-\ \ \ \emph{where} $i < j$ and
 $b < a$\\
 Covers the case where two actions can be swapped in the test, with the
 lower-indexed action appearing first.
 \item {\bf ReduceAction:}
-$t' = t[(i: a) \Rightarrow (i: a')]$\\
+$t \Rightarrow t[(i: a) \mapsto (i: a')]$\\
 \-\ \ \ \emph{where} $|ddmin(t')| < |t|$\\
 Covers the case where an action can be replaced by any action (not just lower-indexed
 actions) and this enables further delta-debugging.
@@ -366,7 +365,7 @@ appeared to be worse than delta-debugging by a constant factor,
 somewhere in the range of 2-10x, usually closer to 10x.  Measuring the
 payoff from improved understanding of test cases is difficult;
 however, in multiple fault settings, normalization can provide a quantifiable value in shorter time until all faults have
-been examined by a human, for bug triage \cite{PLDI13}.
+been examined by a human \cite{PLDI13}.
 
 %\subsubsection{Normalization Optimizations}
 
@@ -417,15 +416,15 @@ when no candidate that would be checked earlier is in the work queue.
 \end{verbatim}
 {\bf Normalization Steps:}
 \begin{code}
-{\bf SimplifyAll}: int0 = 10 $\Rightarrow$ int0 = 2 
-{\bf SimplifyAll}: int2 = 7  $\Rightarrow$ int2 = 3 
-{\bf SimplifyAll}: int3 = 15  $\Rightarrow$ int3 = 4 
-{\bf ReplacePool}: int2 $\Rightarrow$ int1
-{\bf ReplacePool}: avl1 $\Rightarrow$ avl0
-{\bf ReplacePool}: int3 $\Rightarrow$ int0
-{\bf SwapAction}: (0: int0 = 2)  $\Leftrightarrow$ (6: int0 = 1)
-{\bf SwapPool}: int0 $\Leftrightarrow$ int1 (between steps 2 and 10)
-{\bf SwapAction}: (1: int1 = 3)  $\Rightarrow$ (5: int1 = 2)
+{\bf SimplifyAll}: int0 = 10 $\mapsto$ int0 = 2 
+{\bf SimplifyAll}: int2 = 7  $\mapsto$ int2 = 3 
+{\bf SimplifyAll}: int3 = 15  $\mapsto$ int3 = 4 
+{\bf ReplacePool}: int2 $\mapsto$ int1
+{\bf ReplacePool}: avl1 $\mapsto$ avl0
+{\bf ReplacePool}: int3 $\mapsto$ int0
+{\bf SwapAction}: (0: int0 = 2)  $\leftrightarrow$ (6: int0 = 1)
+{\bf SwapPool}: int0 $\leftrightarrow$ int1 (between steps 2 and 10)
+{\bf SwapAction}: (1: int1 = 3)  $\mapsto$ (5: int1 = 2)
 \end{code}
 }
 \caption{An example of normalization steps.}
@@ -476,12 +475,12 @@ to include (swaps and single action replacements only):
 \State {replace = $\emptyset$}
 \For {$(i, a) \in t$}
 \For {$a' : a' > a$}:
-\If {pred($t[(i,a) \Rightarrow (i,a')]$)}
+\If {pred($t[(i,a) \mapsto (i,a')]$)}
 \State replace = replace $\cup ((i,a),(i,a'))$
 \EndIf
 \EndFor 
 \For{$j : i < j < |t|-1 \wedge (j: b) > (i: a) $}
-\If {pred($t[(i: a) \Rightarrow (i: b), (j: b) \Rightarrow (j: a)]$)}
+\If {pred($t[(i: a) \mapsto (i: b), (j: b) \mapsto (j: a)]$)}
 \State swap = swap $\cup ((i,a),(j,b))$
 \EndIf
 \EndFor
@@ -589,8 +588,7 @@ position one higher.
 \end{algorithm}
 
 In practice, the {\tt fresh} set returned should be pruned to avoid
-redundant actions.  It is not useful information that the sequence
-{\tt int0 = 1 ; int1 = 2; int0 = 1; f(int0)} fails if {\tt int0 = 1;
+redundant actions.  It is not useful information that {\tt int0 = 1 ; int1 = 2; int0 = 1; f(int0)} fails if {\tt int0 = 1;
   int1 = 2; f(int0)} fails.  Redundancy elimination also needs to take
 into account the potential assignments to a pool from the {\tt
   replace} generalization, which are also redundant.  Furthermore, it

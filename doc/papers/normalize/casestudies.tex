@@ -1,21 +1,26 @@
 \section {Experimental Results}
 
 This section presents some initial results of applying normalization
-and generalization.  All tests were generated using random testing,
-based on TSTL harnesses we developed previously.  We also tested the
+and generalization.  All tests were generated using pure random testing,
+based on TSTL harnesses we developed previously, all included in the
+TSTL release \cite{tstl}.  We also tested the
 Python interface to Z3 \cite{z3}, but did not find faults thus far;
 normalization did help produce more comprehensible and uniform Z3
 quick tests \cite{icst2014}.
 
-Our experiments were not intended to provide a full evaluation of
-normalization and generalization, but to establish the basic value of
+These experiments are not intended to provide a full evaluation of
+normalization and generalization, but to establish the basic potential
+value of
 the techniques, and some initial data on core research questions.
+These are:
 {\bf RQ1:} How effectively does normalization reduce the number of
 failures reported? {\bf RQ2:} How often does normalization lose
-faults? {\bf RQ3:} What is the cost of normalization? {\bf RQ4:} How
-much additional reduction over delta-debugging does normalization
-provide? {\bf RQ5:} Does normalization and generalization provide
-substantial benefits in understanding complex test cases?  The primary
+faults? {\bf RQ3:} What is the cost of normalization and generalization? {\bf RQ4:} How
+much additional reduction over delta-debugging can normalization
+provide? and {\bf RQ5:} Does normalization and generalization provide
+substantial benefits in understanding complex test cases?
+
+The primary
 threat to validity is that we have only applied normalization and
 generalization to tests produced using random testing for a small
 number of subjects in Python (some small, some large), using our TSTL
