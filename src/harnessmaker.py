@@ -354,6 +354,8 @@ def main():
             if l[-1] != "\n":
                 l += "\n"
             if len(l)>1:
+                if l[-2] == "'":
+                    l = l[:-1] + ' ' + "\n"
                 if l[-2] == "\\":
                     continuedLine = True
                     contLine += l[:-2]
