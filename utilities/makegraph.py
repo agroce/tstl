@@ -138,14 +138,9 @@ def merge2(s1,s2):
     return news
 
 def merge3(s1,s2):
-    if ("avl<[0..1]> = avl.AVLTree()" not in s1) or ("avl2 = avl.AVLTree()" not in s2):
-        return None
-    print "3 CHECKING",s1,s2
     alreadyDiverge = False
     b1 = breakByRanges(s1)
     b2 = breakByNumber(s2)
-    print "B1=",b1
-    print "B2=",b2    
     matching = True
     news = ""
     while matching:
@@ -169,10 +164,6 @@ def merge3(s1,s2):
                 b2 = b2[1:]
             b2 = b1[1:]
             matching = True
-    print "AFTER MATCHING:"
-    print "B1=",b1
-    print "B2=",b2
-    print "news=",news
     try:
         low1 = int(b1[0].split("..")[0])
         high1 = int(b1[0].split("..")[1])
@@ -181,10 +172,6 @@ def merge3(s1,s2):
             news += "<[" + str(low1) + ".." + str(v2) + "]>"
         b1 = b1[1:]
         b2 = b2[1:]
-        print "AFTER EXTRACT:"
-        print "B1=",b1
-        print "B2=",b2
-        print "news=",news
         matching = True
         while matching and not ((b1 == []) and (b2 == [])):
             matching = False
@@ -217,11 +204,9 @@ def collapse(strings):
     changed = True
     cstrings = list(strings)
     while changed:
-        print cstrings
         changed = False
         for s1 in cstrings:
             for s2 in cstrings:
-                print "CHECKING",s1,s2
                 if (s1 == s2):
                     continue
                 m = merge1(s1,s2)
