@@ -143,7 +143,7 @@ for i in xrange(0,traces):
     d = 0
     s = 0
     state = str(i) + "\<init\>"
-    dot.node(state, "\<init\>", penwidth="3.0")
+    dot.node(state, "\<init\>", penwidth="3.0",shape='box')
 
     t = sut.sut()
     t.restart()
@@ -156,6 +156,8 @@ for i in xrange(0,traces):
 
     last = state
 
+    midFlip = True
+    
     while d <= depth:
         nexta = t.enabled()
         act = random.choice(nexta)
@@ -167,16 +169,20 @@ for i in xrange(0,traces):
         random.shuffle(eqnexts)
         eqnexts = eqnexts[-(k-1):]
         mid = len(eqnexts) / 2
+        if ((len(eqnexts) % 2) != 0):
+            if midFlip:
+                mid = mid + 1
+            midFlip = not midFlip
         eqnexts = eqnexts[:mid] + [aname] + eqnexts[mid:]
         for name in eqnexts:
             s += 1
             state = str(i) + "s" + str(s)
             if name == aname:
                 newLast = state
-                dot.node(state,name,penwidth="3.0")
+                dot.node(state,name,penwidth="3.0",shape='box')
                 dot.edge(last,state,penwidth="3.0")            
             else:
-                dot.node(state,name)
+                dot.node(state,name,fontsize="10.0")
                 dot.edge(last,state)
         last = newLast
         t.safely(act)
