@@ -18,18 +18,25 @@ def breakByNumber(s):
         breaks.append(curr)
     return breaks
 
-def breakByRanges(s):
-    breaks = []
+def breaksApart(s):
+    breaks1 = []
     s2 = str(s)
     while "<[" in s2:
         p1 = s2.find("<[")
         p2 = s2.find("]>")
-        breaks.append(s2[:p1])
-        breaks.append(s2[p1+2:p2])
+        breaks1.append(s2[:p1])
+        breaks1.append(s2[p1:p2+2])
         s2 = s2[p2+2:]
-    if s2 != "":
-        breaks.append(s2)
-    return breaks
+    breaks1.append(s2)
+    breaks2 = []
+    for b1 in breaks1:
+        if b1.find("<[") != 0:
+            breaks3 = breakByNumber(b1)
+            for b3 in breaks3:
+                breaks2.append(b3)
+        else:
+            breaks2.append(b1)
+    return breaks2
 
 def intOrNone(v):
     try:
@@ -37,169 +44,64 @@ def intOrNone(v):
     except:
         return None
 
-def tempMatches(template,list):
-    nonMatch = []
-    abstractions = []
-    tbreaks = breakByNumber(template)
-    indices = {}
-    p = 0
-    for i in tbreaks:
-        if intOrNone(i) != None:
-            indices[p] = [intOrNone(i)]
-            p += 1
-    tindices = filter(lambda x: x != None, map (lambda y: intOrNone(y), tbreaks))
-    allindices = [tindices]
-    for i in list:
-        breaks = breakByNumber(i)
-        if len(breaks) != len(tlist):
-            nonMatch.append(i)
-        else:
-            badMatch = False
-            bindices = []
-            for b in xrange(len(breaks)):
-                if breaks[i] != tbreaks[i]:
-                    v = intOrNone(breaks[i])
-                    tv = intOrNone(tbreaks[i])
-                    if (v == None) or (tv == None):
-                        badMatch = True
-                        break
-                    bindices.append(v)
-        allindices.append(bindices)
-    maxes = list(tindices)
-    mins = list(tindices)
-    for i in allindices:
-        for j in len(i):
-            if j[i] > maxes[i]:
-                maxes[i] = j[i]
-            if j[i] < mins[i]:
-                mins[i] = j[i]                
-    iranges = zip(mins,maxes)
-    rangesets = [iranges]
-    while changed:
-        for irange in rangesets:
-            return None
-    
-
-def merge1(s1,s2):
-    alreadyDiverge = False
-    b1 = breakByNumber(s1)
-    b2 = breakByNumber(s2)
-    if len(b1) != len(b2):
-        return None
-    news = ""
-    for i in xrange(0,len(b1)):
-        if b1[i] != b2[i]:
-            if alreadyDiverge:
-                return None
-            try:
-                v1 = int(b1[i])
-                v2 = int(b2[i])
-                alreadyDiverge = True
-                if (v2 == (v1 + 1)):
-                    news += "<[" + b1[i] + ".." + b2[i] + "]>"
-                else:
-                    return None
-            except ValueError:
-                return None
-        else:
-            news += b1[i]
-    return news
-
-
-
-def merge2(s1,s2):
-    alreadyDiverge = False
-    b1 = breakByRanges(s1)
-    b2 = breakByRanges(s2)
-    if len(b1) != len(b2):
-        return None
-    news = ""
-    for i in xrange(0,len(b1)):
-        if b1[i] != b2[i]:
-            if alreadyDiverge:
-                return None
-            try:
-                low1 = int(b1[i].split("..")[0])
-                high1 = int(b1[i].split("..")[1])
-                low2 = int(b2[i].split("..")[0])
-                high2 = int(b2[i].split("..")[1])                                
-                alreadyDiverge = True
-                if (high1 + 1) == low2:
-                    news += "<[" + str(low1) + ".." + str(high2) + "]>"
-                else:
-                    return None
-            except ValueError:
-                return None
-        else:
-            if ".." in b1[i]:
-                news += "<[" + b1[i] + "]>"
-            else:
-                news += b1[i]
-    return news
-
-def merge3(s1,s2):
-    print "TRYING MERGE3",s1,s2
-    alreadyDiverge = False
-    b1 = breakByRanges(s1)
-    b2 = breakByNumber(s2)
-    matching = True
-    news = ""
-    while matching:
-        matching = False
-        if b1[0] == b2[0]:
-            news += b1[0]
-            b1 = b1[1:]
-            b2 = b2[1:]
-            matching = True
-        elif b1[0].find(b2[0]) == 0:
-            news += b2[0]
-            b1[0] = b1[0].split(b2[0],1)[1]
-            if b1[0] == "":
-                b1 = b1[1:]
-            b2 = b2[1:]
-            matching = True
-        elif b2[0].find(b1[0]) == 0:
-            news += b1[0]            
-            b2[0] = b2[0].split(b1[0],1)[1]
-            if b2[0] == "":
-                b2 = b2[1:]
-            b2 = b1[1:]
-            matching = True
+def rangeOrNone(v):
     try:
-        low1 = int(b1[0].split("..")[0])
-        high1 = int(b1[0].split("..")[1])
-        v2 = int(b2[0])
-        if v2 == high1 + 1:
-            news += "<[" + str(low1) + ".." + str(v2) + "]>"
-        b1 = b1[1:]
-        b2 = b2[1:]
-        matching = True
-        while matching and not ((b1 == []) and (b2 == [])):
-            matching = False
-            if b1[0] == b2[0]:
-                news += b1[0]
-                b1 = b1[1:]
-                b2 = b2[1:]
-                matching = True
-            elif b1[0].find(b2[0]) == 0:
-                news += b2[0]
-                b1[0] = b1[0].split(b2[0],1)[1]
-                if b1[0] == "":
-                    b1 = b1[1:]
-                b2 = b2[1:]
-                matching = True
-            elif b2[0].find(b1[0]) == 0:
-                news += b1[0]            
-                b2[0] = b2[0].split(b1[0],1)[1]
-                if b2[0] == "":
-                    b2 = b2[1:]
-                b2 = b1[1:]
-                matching = True
-        if (b1 != []) or (b2 != []):
-            return None
+        if "<[" in v:
+            vs = v.split("..")
+            return (int(vs[0][2:]),int(vs[1][:-2]))
+        return None
     except:
         return None
-    return news
+    
+def merge(s1,s2):
+    b1 = breaksApart(s1)
+    b2 = breaksApart(s2)
+    if len(b1) != len(b2):
+        return None
+    merged = ""
+    diverged = False
+    for i in xrange(len(b1)):
+        if b1[i] == b2[i]:
+            merged += b1[i]
+        elif not diverged:
+            diverged = True
+            v1 = intOrNone(b1[i])
+            v2 = intOrNone(b2[i])
+            r1 = rangeOrNone(b1[i])
+            r2 = rangeOrNone(b2[i])
+            if (v1 != None):
+                if (v2 != None): # 2 values
+                    if (min(v1,v2) + 1 == max(v1,v2)):
+                        merged += "<[" + str(min(v1,v2)) + ".." + str(max(v1,v2)) + "]>"
+                    else:
+                        return None
+                elif (r2 != None): # value and range
+                    (low2,high2) = r2
+                    if (v1 == (low2 - 1)) or (v1 == (high2 + 1)):
+                        merged += "<[" + str(min(v1,low2)) + ".." + str(max(v1,high2)) + "]>"
+                    else:
+                        return None
+            elif (r1 != None):
+                if (v2 != None): # range and value
+                    (low1,high1) = r1
+                    if (v2 == (low1 - 1)) or (v2 == (high1 + 1)):
+                        merged += "<[" + str(min(v2,low1)) + ".." + str(max(v2,high1)) + "]>"
+                    else:
+                        return None
+                elif (r2 != None): # range and range
+                    (low1,high1) = r1
+                    (low2,high2) = r2
+                    if ((high1+1) == low2) or ((high2+1) == low1):
+                        merged += "<[" + str(min(low1,low2)) + ".." + str(max(high1,high2)) + "]>"
+                    else:
+                        return None
+                else:
+                    return None
+            else:
+                return None
+        else:
+            return None
+    return merged
 
 def collapse(strings):
     changed = True
@@ -210,30 +112,13 @@ def collapse(strings):
             for s2 in cstrings:
                 if (s1 == s2):
                     continue
-                m = merge1(s1,s2)
+                m = merge(s1,s2)
                 if m != None:
-                    print "MERGED1",s1,"AND",s2,"INTO",m
                     cstrings.remove(s1)
                     cstrings.remove(s2)
                     cstrings.append(m)
                     changed = True
-                    break
-                m = merge2(s1,s2)
-                if m != None:
-                    print "MERGED2",s1,"AND",s2,"INTO",m
-                    cstrings.remove(s1)
-                    cstrings.remove(s2)
-                    cstrings.append(m)
-                    changed = True
-                    break
-                m = merge3(s1,s2)
-                if m != None:
-                    print "MERGED3",s1,"AND",s2,"INTO",m
-                    cstrings.remove(s1)
-                    cstrings.remove(s2)
-                    cstrings.append(m)
-                    changed = True
-                    break
+                    break                
             if changed:
                 break
     return cstrings
@@ -242,50 +127,59 @@ def collapse(strings):
 outfile = sys.argv[1]
 depth = int(sys.argv[2])
 k = int(sys.argv[3])
-seed = int(sys.argv[4])
+if len(sys.argv) > 5:
+    seed = int(sys.argv[4])
+    random.seed(seed)
+if len(sys.argv) > 5:
+    traces = int(sys.argv[5])
+else:
+    traces = 1
 
-random.seed(seed)
-
+print "Producing graph of",traces,"traces with depth",depth,"and width",k
+        
 dot = Digraph(comment="Depth " + str(depth))
 
-d = 0
-s = 0
-state = "\<init\>"
-dot.node(state, state)
+for i in xrange(0,traces):
+    d = 0
+    s = 0
+    state = str(i) + "\<init\>"
+    dot.node(state, "\<init\>", penwidth="3.0")
 
-t = sut.sut()
-t.restart()
+    t = sut.sut()
+    t.restart()
 
-s = 0
+    s = 0
 
-states = []
+    states = []
 
-d = 1
+    d = 1
 
-last = state
+    last = state
 
-while d <= depth:
-    nexta = t.enabled()
-    act = random.choice(nexta)
-    aname = t.prettyName(act[0])
-    nexts = map(lambda a: t.prettyName(a[0]), nexta)
-    eqnexts = nexts
-    eqnexts = collapse(eqnexts)
-    eqnexts = filter(lambda x: x != aname, eqnexts)
-    random.shuffle(eqnexts)
-    print eqnexts
-    eqnexts = eqnexts[-(k-1):]
-    mid = len(eqnexts) / 2
-    eqnexts = eqnexts[:mid] + [aname] + eqnexts[mid:]
-    for name in eqnexts:
-        s += 1
-        state = "s" + str(s)
-        dot.node(state,name)
-        if name == aname:
-            newLast = state
-        dot.edge(last,state)
-    last = newLast
-    t.safely(act)
-    d += 1
+    while d <= depth:
+        nexta = t.enabled()
+        act = random.choice(nexta)
+        aname = t.prettyName(act[0])
+        nexts = map(lambda a: t.prettyName(a[0]), nexta)
+        eqnexts = nexts
+        eqnexts = collapse(eqnexts)
+        eqnexts = filter(lambda x: x != aname, eqnexts)
+        random.shuffle(eqnexts)
+        eqnexts = eqnexts[-(k-1):]
+        mid = len(eqnexts) / 2
+        eqnexts = eqnexts[:mid] + [aname] + eqnexts[mid:]
+        for name in eqnexts:
+            s += 1
+            state = str(i) + "s" + str(s)
+            if name == aname:
+                newLast = state
+                dot.node(state,name,penwidth="3.0")
+                dot.edge(last,state,penwidth="3.0")            
+            else:
+                dot.node(state,name)
+                dot.edge(last,state)
+        last = newLast
+        t.safely(act)
+        d += 1
 
 dot.render(outfile,view=True)
