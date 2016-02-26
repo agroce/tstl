@@ -126,6 +126,9 @@ def safely(self, act):
 def failure(self):
     return self.__failure
 
+def warning(self):
+    return self.__warning
+
 def replay(self, test, catchUncaught = False):
     self.restart()
     for (name, guard, act) in test:

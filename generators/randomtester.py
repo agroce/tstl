@@ -356,6 +356,8 @@ def main():
                 
             startOp = time.time()
             stepOk = t.safely(a)
+            if t.warning() != None:
+                print "SUT WARNING:",t.warning()
             opTime += (time.time()-startOp)
             if tryStutter:
                 print "DONE STUTTERING"

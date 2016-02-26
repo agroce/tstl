@@ -639,13 +639,18 @@ def main():
         changes = []
 
         okExcepts = ""
+        warnExcepts = ""
         if corig[0] == "{":
             c = corig[corig.find("}")+1:]
             while c[0] == " ":
                 c = c[1:]
             for e in corig[1:corig.find("}")].split(","):
-                okExcepts += e + ","
+                if e[0] != "!":
+                    okExcepts += e + ","
+                else:
+                    warnExcepts += e[1:] + ","
             okExcepts = okExcepts[:-1]
+            warnExcepts = warnExcepts[:-1]
         else:
             c = corig
 
@@ -770,6 +775,7 @@ def main():
             genCode.append(baseIndent + "except:\n")
             genCode.append(baseIndent + baseIndent + "pass\n")
 
+        genCode.append(baseIndent + "self.__warning = None\n")            
         genCode.append(baseIndent + "try:\n")
         if expectCode:
             genCode.append(baseIndent + baseIndent + "__before_res = " + beforeSig + "\n")
@@ -782,6 +788,10 @@ def main():
         if okExcepts != "":
             genCode.append(baseIndent + "except (" + okExcepts + "):\n")
             genCode.append(baseIndent + baseIndent + "pass\n")
+            
+        if warnExcepts != "":
+            genCode.append(baseIndent + "except (" + warnExcepts + ") as warnE:\n")
+            genCode.append(baseIndent + baseIndent + "self.__warning = warnE\n")            
 
         genCode.append(baseIndent + "finally:\n")
         genCode.append(baseIndent + baseIndent + "try:\n")
@@ -899,6 +909,7 @@ def main():
     genCode.append(baseIndent + "self.__propCode = {}\n")
     genCode.append(baseIndent + 'self.__orderings["<<RESTART>>"] = -1\n')
     genCode.append(baseIndent + "self.__failure = None\n")
+    genCode.append(baseIndent + "self.__warning = None\n")
     genCode.append(baseIndent + "self.__log = None\n")
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
