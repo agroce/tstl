@@ -138,6 +138,7 @@ def merge2(s1,s2):
     return news
 
 def merge3(s1,s2):
+    print "TRYING MERGE3",s1,s2
     alreadyDiverge = False
     b1 = breakByRanges(s1)
     b2 = breakByNumber(s2)
