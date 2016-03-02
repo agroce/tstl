@@ -225,52 +225,52 @@ without assistance from the cache.
 \begin{figure}
 {\scriptsize
 \begin{code}
- dim1 = 1 
- shape2 = (dim1, dim1, dim1) 
- array1 = np.ones(shape2) 
- array0 = array1 * array1 
- array1 = array1 + array1 
- array4 = array0 + array1 
- array0 = np.reshape(array4,shape2) 
- array3 = array1 * array4 
- array2 = np.ravel(array4) 
- array5 = array2 - array3 
- array4 = array5 * array2 
- array1 = np.unique(array0) 
- array5 = array5 * array3 
- array0 = array1 * array5 
- array5 = np.unique(array0) 
- array1 = array4 - array2 
- array2 = array0.flatten() 
- array0 = array5 + array5 
- array5 = array5 + array2 
- array2 = array0 * array2 
- np.copyto(array5,array2) 
- array2 = array2 * array5 
- array3 = array0 * array2 
- array0 = array3 - array1 
- array4 = array3 * array0 
- array1 = array5 + array4 
- array5 = array0 * array1 
- array0 = array5 - array1 
- array4 = array0 * array3 
- array3 = array4 * array0 
- array1 = array5 + array3 
- array0 = array2 + array1 
- array5 = array5 - array0 
- array5 = array3 * array5 
- array0 = array1 + array5 
- array2 = array3 - array0 
- array4 = array2 * array1 
- array3 = array4 * array2 
- array2 = array0 - array0 
- np.copyto(array1,array3) 
- array4 = array2.flatten() 
- array1 = array1 * array4
+ dim1 = 1                                       \# STEP 0
+ shape2 = (dim1, dim1, dim1)                    \# STEP 1
+ array1 = np.ones(shape2)                       \# STEP 2
+ array0 = array1 * array1                       \# STEP 3
+ array1 = array1 + array1                       \# STEP 4
+ array4 = array0 + array1                       \# STEP 5
+ array0 = np.reshape(array4,shape2)             \# STEP 6 
+ array3 = array1 * array4                       \# STEP 7
+ array2 = np.ravel(array4)                      \# STEP 8
+ array5 = array2 - array3                       \# STEP 9 
+ array4 = array5 * array2                       \# STEP 10
+ array1 = np.unique(array0)                     \# STEP 11
+ array5 = array5 * array3                       \# STEP 12
+ array0 = array1 * array5                       \# STEP 13
+ array5 = np.unique(array0)                     \# STEP 14
+ array1 = array4 - array2                       \# STEP 15
+ array2 = array0.flatten()                      \# STEP 16
+ array0 = array5 + array5                       \# STEP 17
+ array5 = array5 + array2                       \# STEP 18
+ array2 = array0 * array2                       \# STEP 19
+ np.copyto(array5,array2)                       \# STEP 20
+ array2 = array2 * array5                       \# STEP 21
+ array3 = array0 * array2                       \# STEP 22
+ array0 = array3 - array1                       \# STEP 23
+ array4 = array3 * array0                       \# STEP 24
+ array1 = array5 + array4                       \# STEP 25
+ array5 = array0 * array1                       \# STEP 26
+ array0 = array5 - array1                       \# STEP 27
+ array4 = array0 * array3                       \# STEP 28
+ array3 = array4 * array0                       \# STEP 29
+ array1 = array5 + array3                       \# STEP 30
+ array0 = array2 + array1                       \# STEP 31
+ array5 = array5 - array0                       \# STEP 32
+ array5 = array3 * array5                       \# STEP 33
+ array0 = array1 + array5                       \# STEP 34
+ array2 = array3 - array0                       \# STEP 35
+ array4 = array2 * array1                       \# STEP 36
+ array3 = array4 * array2                       \# STEP 37
+ array2 = array0 - array0                       \# STEP 38
+ np.copyto(array1,array3)                       \# STEP 39
+ array4 = array2.flatten()                      \# STEP 40
+ array1 = array1 * array4                       \# STEP 41
  assert (np.array\_equal(array1,array1))
 \end{code}
 }
-\caption{Original ``failing'' test case for numpy (42 steps).}
+\caption{Original ``failing'' test case for numpy.}
 \label{numpyorig}
 \end{figure}
 
@@ -299,7 +299,7 @@ array0 = array0 - array0            \textcolor{black!60}{\# STEP 14}
 assert (np.array\_equal(array0,array0))
 \end{code}
 }
-\caption{Normalized and generalized test case for numpy (15 steps).}
+\caption{Normalized and generalized numpy test.}
 \label{numpynormgen}
 \end{figure}
 
@@ -384,35 +384,35 @@ from Esri is usually limited to a small set of parameter combinations.
 \begin{figure}[t]
 {\scriptsize 
 \begin{code}
-shapefile2 = "C:\\arctmp\\new3.shp" 
-shapefile1 = "C:\\arctmp\\new3.shp" 
-featureclass2 = shapefile2 
-featureclass0 = shapefile1 
+shapefile2 = "C:\\arctmp\\new3.shp"                \# STEP 0 
+shapefile1 = "C:\\arctmp\\new3.shp"                \# STEP 1
+featureclass2 = shapefile2                       \# STEP 2
+featureclass0 = shapefile1                       \# STEP 3
 shapefilelist2 = 
-   glob.glob("C:\\Arctmp\\*.shp") 
-fieldname0 = "newf3" 
-shapefile1 = shapefilelist2 [0] 
-featureclass1 = shapefile1 
+   glob.glob("C:\\Arctmp\\*.shp")                  \# STEP 4
+fieldname0 = "newf3"                             \# STEP 5
+shapefile1 = shapefilelist2 [0]                  \# STEP 6
+featureclass1 = shapefile1                       \# STEP 7
 arcpy.CopyFeatures\_management
-   (featureclass1,featureclass2) 
-op1 = ">" 
-newlayer2 = "l2" 
-val1 = "100" 
-selectiontype2 = "SWITCH\_SELECTION" 
-fieldname1 = "newf1" 
+   (featureclass1,featureclass2)                 \# STEP 8
+op1 = ">"                                        \# STEP 9
+newlayer2 = "l2"                                 \# STEP 10
+val1 = "100"                                     \# STEP 11
+selectiontype2 = "SWITCH\_SELECTION"              \# STEP 12
+fieldname1 = "newf1"                             \# STEP 13
 arcpy.MakeFeatureLayer\_management
-   (featureclass0, newlayer2) 
+   (featureclass0, newlayer2)                    \# STEP 14
 arcpy.SelectLayerByAttribute\_management
    (newlayer2,selectiontype2,
-   ' "'+fieldname0+'" '+op1+val1) 
-op0 = ">" 
-arcpy.Delete\_management(featureclass2) 
+   ' "'+fieldname0+'" '+op1+val1)                \# STEP 15
+op0 = ">"                                        \# STEP 16
+arcpy.Delete\_management(featureclass2)           \# STEP 17
 arcpy.SelectLayerByAttribute\_management
    (newlayer2,selectiontype2,
-   ' "'+fieldname1+'" '+op0+val1) 
+   ' "'+fieldname1+'" '+op0+val1)                \# STEP 18
 \end{code}
 }
-\caption{Original test case for ArcPy (19 steps).}
+\caption{Original test case for ArcPy.}
 \label{esriorig}
 \end{figure}
 
@@ -461,7 +461,6 @@ arcpy.SelectLayerByAttribute\_management
    ' "'+ fieldname0+'" '+op0+val0)     \textcolor{black!60}{\# STEP 11}
 \end{code}
 }
-\caption{Normalized and generalized test case for ArcPy 
-  (12 steps).}
+\caption{Normalized and generalized ArcPy test.}
 \label{esrinormgen}
 \end{figure}

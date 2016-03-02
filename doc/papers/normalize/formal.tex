@@ -124,14 +124,24 @@ matters that there exists \emph{some ordering} to guide normalization
 and generalization.  Actions will only be replaced or swapped if,
 causally, the predicate (failure) is \emph{indifferent} to the choice.  The
 normal form's \emph{existence} matters much more than the precise contents, in
-the context of that semantic restriction.
+the context of that semantic restriction.  In cases where there is a
+clear notion of simplicity (e.g., more vs. fewer optional parameters
+to a call, fewer dimensions for an array), simplest-first is often
+natural in defining the TSTL harness.
 
 \subsection{Normalization}
 
 A test-case normalization algorithm has a simple goal:  we ideally aim to
 produce a function $f : t \rightarrow t$ (a function that takes a test
-case and returns a test case) such that:
+case and returns a test case) such that: (1) if $t$ fails, $f(t)$ fails\footnote{Normalization can
+    be generalized to apply to any predicate over tests, not just
+    failure \cite{icst2014}; a passing test can be normalized, though
+    without some more interesting predicate, such as preservation of
+    coverage, this is not clearly useful.}; (2) if $t_1$ and $t_2$ fail
+  due to the same fault, $f(t_1) = f(t_2)$; (3) if $t_1$ and $t_2$ fail due to different faults, $f(t_1) \not=
+  f(t_2)$.
 
+\begin{comment}
 \begin{enumerate}
 \item If $t$ fails, $f(t)$ fails\footnote{Normalization can
     be generalized to apply to any predicate over tests, not just
@@ -140,6 +150,7 @@ case and returns a test case) such that:
 \item If $t_1$ and $t_2$ fail due to different faults, $f(t_1) \not=
   f(t_2)$.
 \end{enumerate}
+\end{comment}
 
 Such a function would define a true \emph{canonical form} for test
 cases, where each underlying fault is uniquely represented by a single
