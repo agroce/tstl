@@ -544,11 +544,11 @@ TSTL harness for  TSTL itself\footnote{Since TSTL
   we have discovered several important TSTL bugs this way.}.  The
 problem involves an invalid cache, produced by normalizing a test with
 only one action.  Without fresh value generalization, it appears that
-the failure is due to normalizing this test again.
+the failure is due to normalizing {\tt test0} again.
 The annotation after step 6 lets us see that the failure
-will take place even for a new empty test.
-Without this generalization, the state of the {\tt test} may
-appear to be important, not the state of  TSTL itself.
+will take place even for a fresh test.
+Without this generalization, the state of {\tt test} may
+appear to be important, not the system state.
 
 \begin{figure}
 {\scriptsize

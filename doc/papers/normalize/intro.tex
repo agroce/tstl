@@ -11,25 +11,27 @@ without irrelevant operations\footnote{Bounded-exhaustive testing
 now standard practice in industrial testing tools such as Mozilla's
 {\tt jsfunfuzz} \cite{jsfunfuzz,jsfunfuzz2,lithium}.  However, simply reducing the length of a test case
 does not produce true semantic simplicity.  There may be many
-(often far more than a thousand, in practice) 1-minimal test cases
+(often far more than a thousand, in practice) 1-minimal\footnote{In a
+  1-minimal test case, no single component can be removed without
+  causing the test to pass; delta-debugging \cite{DD}
+  produces 1-minimal test cases.} test cases
 that present different variations of a single fault.  Far too often,
 reading more than one of these test cases provides no useful
 additional information on the cause of failure. 
 
-Consider the three test cases shown in Figure \ref{threetests}.  These
-test cases are obviously very similar, and all lead to a
-violation of the property that an AVL tree must always be nearly
-balanced (due to a missing call to {\tt rebalance} in {\tt delete}).  However, the test cases are
-syntactically different, and a testing system that collects
-failing test cases will present all three of these tests to a user.
-While there are methods for attempting to determine which test cases
-represent distinct faults \cite{PLDI13}, the ideal solution is
-to convert all three of these test cases into a single,
-\emph{canonical} form that preserves the structure of the failure while de-emphasizing
-such accidental aspects of each test case as the particular integer
-values and variables used, and the ordering of assignments and
-insertions.  Unlike delta-debugging, this concept applies to 
-test generation methods that produce short or even minimal tests.
+Consider the three 1-minimal test cases in Figure
+\ref{threetests}.  These test cases are very similar, and all result
+in an unbalanced AVL tree (due to a missing call to {\tt rebalance} in
+{\tt delete}).  However, the test cases are syntactically different,
+and a testing system that collects failing test cases will present all
+three of these tests to a user.  While there are methods for
+attempting to determine which test cases represent distinct faults
+\cite{PLDI13}, the ideal solution is to convert all three of these
+test cases into a single, \emph{canonical} form that preserves failure
+while deemphasizing accidental aspects of each test, such as
+particular integer values and variable names, and ordering of steps.
+Unlike delta-debugging, this concept applies to test generation
+methods that produce 1-minimal tests.
 
 Figure \ref{normalgen} shows the result of applying our \emph{test
   case normalization} algorithm to the three tests in Figure
