@@ -27,7 +27,10 @@ def __updateCov(self):
                 self.__newCurrStatements.add(statement)
             if statement not in self.__currStatements:
                 self.__currStatements.add(statement)
-                
+
+def silenceCoverage(self):
+    self.__cov._warn_no_data = False
+                                
 def internalReport(self):
     print "TSTL INTERNAL COVERAGE REPORT:"
     if self.__oldCovData == None:

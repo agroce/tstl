@@ -261,6 +261,9 @@ def main():
     if config.logging != None:
         t.setLog(config.logging)
 
+    if not config.nocover:
+        t.silenceCoverage()
+        
     tacts = t.actions()
     a = None
     sawNew = False
