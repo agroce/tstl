@@ -538,9 +538,8 @@ therefore present a more aggressive generalization than replacement or
 swap: replacing a pool use with a \emph{fresh value}.
 
 Consider the test case in Figure \ref{fig:mislead}, produced by a
-TSTL harness for  TSTL itself\footnote{Since TSTL
-  provides a Python API, that API can be used as the SUT in testing;
-  we have discovered several important TSTL bugs this way.}.  The
+TSTL harness for  TSTL itself\footnote{Since Python TSTL
+  provides a Python API, that API can be used as the SUT in testing.}.  The
 problem involves an invalid cache, produced by normalizing a test with
 only one action.  Without fresh value generalization, it appears that
 the failure is due to normalizing {\tt test0} again.
@@ -620,10 +619,9 @@ fresh value generalization could be considered.  For example, if a
 fresh value for some object requires use of a complex constructor,
 values required to call the constructor can also be produced, if
 needed, recursively.  In our experiments so
-far, simple fresh value generation sufficed, as needed inputs to
-constructors were usually available in pools.  It is not clear how
-important it is to know \emph{all} values that could result in a valid
-fresh value.
+far, simple fresh value generation sufficed, as inputs to
+constructors were usually available in pools.  Knowing all possible
+fresh values is likely unimportant.
 
 %\subsection{Discussion}
 
