@@ -1,0 +1,276 @@
+\section{Faults Discovered}
+
+\begin{figure}
+{\scriptsize 
+\begin{code}
+shapefilelist0 = glob.glob("C:\\Arctmp\\*.shp")                             \textcolor{black!60}{\# STEP 0}
+\textcolor{black!60}{\#[}
+shapefile0 = shapefilelist0 [0]                                           \textcolor{black!60}{\# STEP 1}
+newlayer0 = "l1"                                                          \textcolor{black!60}{\# STEP 2}
+\textcolor{black!60}{\#  or newlayer0 = "l2" }
+\textcolor{black!60}{\#  or newlayer0 = "l3" }
+\textcolor{black!60}{\#  swaps with steps 3 4 5 6 7}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+featureclass0 = shapefile0                                                \textcolor{black!60}{\# STEP 3}
+\textcolor{black!60}{\#  swaps with step 2}
+fieldname0 = "newf1"                                                      \textcolor{black!60}{\# STEP 4}
+\textcolor{black!60}{\#  or fieldname0 = "newf2" }
+\textcolor{black!60}{\#  or fieldname0 = "newf3" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+selectiontype0 = "SWITCH\_SELECTION"                                       \textcolor{black!60}{\# STEP 5}
+\textcolor{black!60}{\#  or selectiontype0 = "NEW\_SELECTION" }
+\textcolor{black!60}{\#  or selectiontype0 = "ADD\_TO\_SELECTION" }
+\textcolor{black!60}{\#  or selectiontype0 = "REMOVE\_FROM\_SELECTION"}
+\textcolor{black!60}{\#  or selectiontype0 = "SUBSET\_SELECTION"}
+\textcolor{black!60}{\#  or selectiontype0 = "CLEAR\_SELECTION"   }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+op0 = ">"                                                                 \textcolor{black!60}{\# STEP 6}
+\textcolor{black!60}{\#  or op0 = "<" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+val0 = "100"                                                              \textcolor{black!60}{\# STEP 7}
+\textcolor{black!60}{\#  or val0 = "1000" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+arcpy.MakeFeatureLayer\_management(featureclass0, newlayer0)               \textcolor{black!60}{\# STEP 8}
+\textcolor{black!60}{\#  swaps with steps 4 5 6 7}
+arcpy.SelectLayerByAttribute\_management(newlayer0,selectiontype0,
+   ' "'+fieldname0+'" '+op0+val0)                                         \textcolor{black!60}{\# STEP 9}
+arcpy.Delete\_management(featureclass0)                                    \textcolor{black!60}{\# STEP 10}
+arcpy.SelectLayerByAttribute\_management(newlayer0,selectiontype0,
+   ' "'+ fieldname0+'" '+op0+val0)                                        \textcolor{black!60}{\# STEP 11}
+\end{code}
+}
+\caption{Deleting a feature class does not invalidate or delete layers that depend on it.}
+\label{fault1}
+\end{figure}
+
+\begin{figure}
+{\scriptsize 
+\begin{code}
+shapefilelist0 = sorted(glob.glob(arcpy.env.workspace + "\\*.shp"))            \textcolor{black!60}{\# STEP 0}
+\textcolor{black!60}{\#[}
+shapefile0 = shapefilelist0 [0]                                               \textcolor{black!60}{\# STEP 1}
+newlayer0 = "l1"                                                              \textcolor{black!60}{\# STEP 2}
+\textcolor{black!60}{\#  or newlayer0 = "l2" }
+\textcolor{black!60}{\#  or newlayer0 = "l3" }
+\textcolor{black!60}{\#  swaps with step 3}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+featureclass0 = shapefile0                                                    \textcolor{black!60}{\# STEP 3}
+\textcolor{black!60}{\#  swaps with step 2}
+classorlayer0 = newlayer0                                                     \textcolor{black!60}{\# STEP 4}
+\textcolor{black!60}{\#  swaps with steps 10 11 12}
+fieldtype0 = "DATE"                                                           \textcolor{black!60}{\# STEP 5}
+\textcolor{black!60}{\#  or fieldtype0 = "TEXT" }
+\textcolor{black!60}{\#  or fieldtype0 = "FLOAT" }
+\textcolor{black!60}{\#  or fieldtype0 = "DOUBLE" }
+\textcolor{black!60}{\#  or fieldtype0 = "SHORT" }
+\textcolor{black!60}{\#  or fieldtype0 = "LONG" }
+\textcolor{black!60}{\#  swaps with steps 10 11 12}
+fieldname0 = "newf1"                                                          \textcolor{black!60}{\# STEP 6}
+\textcolor{black!60}{\#  swaps with steps 10 11 12}
+op0 = ">"                                                                     \textcolor{black!60}{\# STEP 7}
+\textcolor{black!60}{\#  or op0 = "<" }
+\textcolor{black!60}{\#  or op0 = "<=" }
+\textcolor{black!60}{\#  or op0 = ">=" }
+\textcolor{black!60}{\#  or op0 = "=" }
+\textcolor{black!60}{\#  swaps with steps 10 11 12 14}
+val0 = "100"                                                                  \textcolor{black!60}{\# STEP 8}
+\textcolor{black!60}{\#  or val0 = "1000" }
+\textcolor{black!60}{\#  swaps with steps 10 11 12 14}
+stattable0 = arcpy.env.workspace + "\\stats.dbf"                               \textcolor{black!60}{\# STEP 9}
+\textcolor{black!60}{\#  swaps with steps 10 11 12 14}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+fieldlist0 = arcpy.ListFields(featureclass0)                                  \textcolor{black!60}{\# STEP 10}
+\textcolor{black!60}{\#  swaps with steps 4 5 6 7 8 9 14}
+stattype0 = "FIRST"                                                           \textcolor{black!60}{\# STEP 11}
+\textcolor{black!60}{\#  or stattype0 = "LAST" }
+\textcolor{black!60}{\#  swaps with steps 4 5 6 7 8 9}
+statfields0 = []                                                              \textcolor{black!60}{\# STEP 12}
+\textcolor{black!60}{\#  swaps with steps 4 5 6 7 8 9}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+statfields0.append([fieldname0,stattype0])                                    \textcolor{black!60}{\# STEP 13}
+arcpy.AddField\_management(featureclass0,fieldname0,fieldtype0); report()      \textcolor{black!60}{\# STEP 14}
+\textcolor{black!60}{\#  swaps with steps 7 8 9 10}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+fieldname0 = fieldlist0 [0].name \textcolor{black!60}{\# STEP 15}
+arcpy.MakeFeatureLayer\_management(featureclass0,newlayer0,
+   where\_clause=' "' + fieldname0 + '" ' + op0 + val0); report()              \textcolor{black!60}{\# STEP 16}
+fieldname0 = "newf1"                                                          \textcolor{black!60}{\# STEP 17}
+arcpy.DeleteField\_management(featureclass0,fieldname0); report()              \textcolor{black!60}{\# STEP 18}
+arcpy.Statistics\_analysis(classorlayer0,stattable0,statfields0); report()     \textcolor{black!60}{\# STEP 19}
+\end{code}
+}
+\caption{Deleting a field then computing statistics on it causes a crash.}
+\label{fault2}
+\end{figure}
+
+\begin{figure}
+{\scriptsize 
+\begin{code}
+shapefilelist0 = sorted(glob.glob(arcpy.env.workspace + "\\*.shp"))         \textcolor{black!60}{\# STEP 0}
+shapefile0 = shapefilelist0 [0]                                            \textcolor{black!60}{\# STEP 1}
+featureclass0 = shapefile0                                                 \textcolor{black!60}{\# STEP 2}
+\textcolor{black!60}{\#[}
+classorlayer0 = featureclass0                                              \textcolor{black!60}{\# STEP 3}
+fieldtype0 = "DOUBLE"                                                      \textcolor{black!60}{\# STEP 4}
+\textcolor{black!60}{\#  or fieldtype0 = "TEXT"}
+\textcolor{black!60}{\#  or fieldtype0 = "FLOAT"}
+\textcolor{black!60}{\#  or fieldtype0 = "SHORT"}
+\textcolor{black!60}{\#  or fieldtype0 = "LONG"}
+\textcolor{black!60}{\#  or fieldtype0 = "DATE"}
+\textcolor{black!60}{\#  swaps with step 6}
+fieldname0 = "newf1"                                                       \textcolor{black!60}{\# STEP 5}
+\textcolor{black!60}{\#  or fieldname0 = "newf3"}
+\textcolor{black!60}{\#  swaps with steps 6 8}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+insertcursor0 = arcpy.InsertCursor(classorlayer0)                          \textcolor{black!60}{\# STEP 6}
+\textcolor{black!60}{\#  swaps with steps 4 5}
+arcpy.AddField\_management(featureclass0,fieldname0,fieldtype0); report()   \textcolor{black!60}{\# STEP 7}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+fieldname0 = "newf2"                                                       \textcolor{black!60}{\# STEP 8}
+\textcolor{black!60}{\#  or fieldname0 = "newf3"}
+\textcolor{black!60}{\#  swaps with step 5}
+arcpy.AddField\_management(featureclass0,fieldname0,fieldtype0); report()   \textcolor{black!60}{\# STEP 9}
+insertcursor0 = arcpy.InsertCursor(classorlayer0)                          \textcolor{black!60}{\# STEP 10}
+\end{code}
+}
+\caption{Creating two insert cursors on a layer, after adding two fields to the feature class underlying it, causes a crash.}
+\label{fault3}
+\end{figure}
+
+\begin{figure}
+{\scriptsize
+\begin{code}
+shapefilelist0 = sorted(glob.glob(arcpy.env.workspace + "\\*.shp"))         \textcolor{black!60}{\# STEP 0}
+\textcolor{black!60}{\#[}
+shapefile0 = shapefilelist0 [0]                                            \textcolor{black!60}{\# STEP 1}
+newlayer0 = "l1"                                                           \textcolor{black!60}{\# STEP 2}
+\textcolor{black!60}{\#  or newlayer0 = "l2" }
+\textcolor{black!60}{\#  swaps with step 3}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+featureclass0 = shapefile0                                                 \textcolor{black!60}{\# STEP 3}
+\textcolor{black!60}{\#  swaps with step 2}
+classorlayer0 = newlayer0                                                  \textcolor{black!60}{\# STEP 4}
+\textcolor{black!60}{\#  or classorlayer0 = featureclass0 }
+\textcolor{black!60}{\#  or (}
+\textcolor{black!60}{\#      newlayer0 = "l3"  ;}
+\textcolor{black!60}{\#      classorlayer0 = newlayer0 }
+\textcolor{black!60}{\#     )}
+fieldtype0 = "FLOAT"                                                       \textcolor{black!60}{\# STEP 5}
+\textcolor{black!60}{\#  or fieldtype0 = "TEXT" }
+\textcolor{black!60}{\#  or fieldtype0 = "DOUBLE" }
+\textcolor{black!60}{\#  or fieldtype0 = "SHORT" }
+\textcolor{black!60}{\#  or fieldtype0 = "LONG" }
+\textcolor{black!60}{\#  or fieldtype0 = "DATE" }
+fieldname0 = "newf1"                                                       \textcolor{black!60}{\# STEP 6}
+\textcolor{black!60}{\#  or fieldname0 = "newf3" }
+\textcolor{black!60}{\#  swaps with step 11}
+op0 = ">"                                                                  \textcolor{black!60}{\# STEP 7}
+\textcolor{black!60}{\#  or op0 = "<" }
+\textcolor{black!60}{\#  or op0 = "<=" }
+\textcolor{black!60}{\#  or op0 = ">=" }
+\textcolor{black!60}{\#  or op0 = "=" }
+val0 = "10"                                                                \textcolor{black!60}{\# STEP 8}
+\textcolor{black!60}{\#  or val0 = "20" }
+\textcolor{black!60}{\#  or val0 = "30" }
+\textcolor{black!60}{\#  or val0 = "100" }
+\textcolor{black!60}{\#  or val0 = "1000" }
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+whereclause0 = '"' + fieldname0 + '" ' + op0 + str(val0)                   \textcolor{black!60}{\# STEP 9}
+arcpy.AddField\_management(featureclass0,fieldname0,fieldtype0); report()   \textcolor{black!60}{\# STEP 10}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+fieldname0 = "newf2"                                                       \textcolor{black!60}{\# STEP 11}
+\textcolor{black!60}{\#  or fieldname0 = "newf3" }
+\textcolor{black!60}{\#  swaps with step 6}
+arcpy.MakeFeatureLayer\_management(featureclass0,newlayer0,where\_clause=whereclause0);
+   report()                                                                \textcolor{black!60}{\# STEP 12}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+searchcursor0 = arcpy.SearchCursor(classorlayer0,whereclause0)             \textcolor{black!60}{\# STEP 13}
+\textcolor{black!60}{\#  or searchcursor0 = arcpy.SearchCursor(classorlayer0) }
+arcpy.AddField\_management(featureclass0,fieldname0,fieldtype0); report()   \textcolor{black!60}{\# STEP 14}
+srow0 = searchcursor0.next()                                               \textcolor{black!60}{\# STEP 15}
+\textcolor{black!60}{\#  or srow1 = searchcursor0.next() }
+\textcolor{black!60}{\#  or srow2 = searchcursor0.next()}
+\end{code}
+}
+\caption{Advancing a search cursor on a layer, after adding a field to
+  the underlying feature class twice, causes a crash.}
+\label{fault4}
+\end{figure}
+
+Thus far, our fault-finding process has focused on crashes.  Because
+test cases that cause crashes stop the testing process, it is critical
+to identify and avoid behavior that causes crashes before proceeding
+to add further correctness properties.  Additionally, other than
+hard-to-detect data corruption, crashes may be the most frustrating
+faults for a developer to fix.  When ArcGIS or a standalone ArcPy
+script causes a system crash, there is no readable error message, or
+symptom in incorrect data to use in debugging the program.
+Understanding system core dumps or analyzing the XML logs produced by
+the ArcGIS engine is difficult for end users.  It would be ideal to
+fix all ArcPy crashes by (at least) changing the library behavior to
+issue an error message on invalid calls, but in the absence of bug
+fixes, it is helpful to identify the root causes of various crashes
+for users.  These test cases all involve calls that, as far as we
+can tell, are not forbidden by ArcPy documentation.
+
+Figures \ref{fault1}-\ref{fault4} show four test cases that result in
+an ArcPy crash (the Python interpreter stops functioning, terminating
+the test prematurely).  If executed in ArcGIS, these fragments will
+crash ArcGIS.  Because these test cases are 1-minimal \cite{DD},
+normalized, and generalized \cite{ICSTnorm}, we are able to describe in some detail
+the general sequence of actions that produces each crash.  We have
+discovered a few other crash faults; these are either not yet
+well understood, or (we believe) equivalent in underlying cause
+to these crashes.  The crashes discovered also serve as a basic proof
+of concept that ArcPy test generation works and discovers
+unanticipated interactions of API calls in the system.
+
+\subsection{First Crash Fault}
+
+ArcPy crashes when the feature class from which a layer is produced is
+deleted, and the layer is used in a {\tt SelectLayer} call (this
+version shows an attribute-based selection, but location selection
+will cause the same problem): (Figure \ref{fault1}).  The underlying issue seems to be that
+while operations on a deleted feature class properly notify a user the
+feature class does not exist, ArcPy or ArcGIS does not track that
+layers depending on that feature should also be deleted/invalidated
+when the feature class is deleted.  Layers are not copies
+of a feature class, but essentially new views of a feature class.
+This means that when the underlying feature class is modified or
+deleted, the view needs to be updated to reflect that change, and this
+is not always correctly implemented.
+
+
+\subsection{Second Crash Fault}
+
+ArcPy crashes when asked to compute statistics (wth the {\tt FIRST} or
+{\tt LAST} statistics types) over a field of a layer, when that field
+has been deleted from the underlying feature class:  Figure
+\ref{fault2}.  This is possibly related to the first crash fault:
+ArcGIS again does not seem to properly propagate changes to an underlying
+feature class to layers (which seem to be views) created on that feature class using a {\tt
+  MakeFeatureLayer} call.
+
+
+
+\subsection{Third and Fourth Crash Faults}
+
+Creating an insert cursor on a feature class, before or after adding
+one field to the feature class, then adding a second new field, then
+creating a second insert cursor, causes ArcPy to crash:  Figure
+\ref{fault3}.  A similar, but not obviously equivalent problem is
+shown in Figure \ref{fault4}, where the combination and cursor type
+are different, but the same issue of cursors interacting with feature
+class or layer changes appears.  It seems likely that ArcPy should
+simply add a requirement that feature classes or layers with active
+cursors should not be modified at all, except by the active cursor.
+

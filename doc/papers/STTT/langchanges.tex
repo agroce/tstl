@@ -1,0 +1,61 @@
+\section{Language Changes}
+
+The original syntax for TSTL \cite{NFM15} used the {\tt \%} sign to
+indicate TSTL constructs and pool variables.  For example, the
+assignment of range values to the integer pool in the AVL example
+would read:  {\tt \%INT\% := \%[1..20]\%}.  This syntax
+produced code that was difficult to read and (in our opinion) unattractive.  The first
+author suggested using a notation more similar to that used to
+describe the grammar of TSTL itself, enclosing pools in angle
+brackets.  On examination, this syntax better reflects the nature of
+TSTL pools, since it resembles a BNF (Backus-Naur Form) grammar, and
+pools in actions are
+conceptually more similar to a grammar non-terminals than simple variables.  Because
+C++ and a few other languages use angle brackets for other purposes,
+and in order to avoid breaking old harnesses, TSTL continues to allow
+the {\tt \%} notation, but future TSTL harnessess for Python will use
+the more readable syntax.
+
+Another language improvement inspited by development of the ArcPy harness was
+extending the range construct {\tt <[start..end]>} to also express a
+list of options, which can be constants or Python expressions.  An
+action containing {\tt <[item1, item2, ...]>} expands to multiple
+actions, each of which has the literal text of one item.  The
+construct {\tt <,[item1,, item2,, ...],>} works the same way, except
+that items are delimited by double-commas, allowing the items to even
+be partial Python expressions containing commas, for use in,
+e.g. constructing function arguments.  The second form is not used in
+the ArcPy harness at this time, because it is powerful but somewhat
+difficult to read.  In some cases, using multiple lines to define
+actions that, in theory, could be handled with a single line is best
+for readability reasons (see Section \ref{harness}).
+
+We are also considering, as a result of the experience of developing
+the ArcPy harness, moving to a more structured form for TSTL harness definitions.
+The current language allows pool definitions, actions, logging code,
+raw Python code, and all other TSTL elements to be freely mixed,
+without any requirements as to order.  Each line must indicate if it
+is not an action definition, with some prefix such as {\tt pool:},
+{\tt logging:}, {\tt reference:}, etc.; in practice, however, TSTL
+harnessess are always written in an ordered style, with raw code
+first, then pool definitions, properties, and logging information,
+followed by a long section of action definitions.  Enforcing this
+would allow all pool declarations to be prefaced by a single {\tt
+  pool:} line at the beginning of the pool definitions, raw Python
+code to be contained in a section marked{\tt raw:}, and all other
+non-action declarations to be handled in the same way. 
+
+There is also a need for richer structure to avoid repeated
+elements in action definitions.  For example, in the TSTL harness, 36
+actions allow the {\tt arcpy.ExecuteError} exception to be raised,
+which has to be stated for every individual action, and to avoid some
+faults a large number of actions may eventually be disallowed for
+feature classes or layers with active cursors\footnote{The reader
+  not familiar with GIS terminology is directed to the ArcPy
+  documentation \cite{ArcPy} and Esri's GIS dictionary \cite{GISDict}.}.  Introducing nested
+action groups, which can share guards, allowed exceptions, and
+post-conditions could make reading complex TSTL code easier.  We are
+currently working to define these language changes in a way that does
+not break existing TSTL code.  Discovering the need for this kind of
+feature without testing a system as complex as ArcPy would be
+difficult.

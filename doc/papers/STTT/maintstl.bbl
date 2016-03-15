@@ -1,0 +1,344 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI~\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{DOI~\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem{CodeSonar}
+{CodeSonar}: {GrammaTech} static analysis.
+\newblock \url{http://www.grammatech.com/products/ codesonar}
+
+\bibitem{Coverity}
+Software development testing and static analysis tools: {Coverity}.
+\newblock \url{http://www.coverity.com}
+
+\bibitem{Klocwork}
+Source code analysis tools for software security \& reliability: {Klockwork}.
+\newblock \url{http://klocwork.com}
+
+\bibitem{gisblog2}
+AbSharma: Functional testing of {GIS} applications (automated testing).
+\newblock
+  \url{http://osgeo-org.1560.x6.nabble.com/Functional-Testing-of-GIS-applications-Automated-Testing-td4493673.html}
+
+\bibitem{anand2013orchestrated}
+Anand, S., Burke, E.K., Chen, T.Y., Clark, J., Cohen, M.B., Grieskamp, W.,
+  Harman, M., Harrold, M.J., McMinn, P.: An orchestrated survey of
+  methodologies for automated software test case generation.
+\newblock Journal of Systems and Software \textbf{86}(8), 1978--2001 (2013)
+
+\bibitem{AndrewsTR}
+Andrews, J., Zhang, Y.R., Groce, A.: Comparing automated unit testing
+  strategies.
+\newblock Tech. Rep. 736, Department of Computer Science, University of Western
+  Ontario (2010)
+
+\bibitem{ASE08}
+Andrews, J.H., Groce, A., Weston, M., Xu, R.G.: Random test run length and
+  effectiveness.
+\newblock In: Automated Software Engineering, pp. 19--28 (2008)
+
+\bibitem{andrews-etal-rute-rt}
+Andrews, J.H., Haldar, S., Lei, Y., Li, C.H.F.: Tool support for randomized
+  unit testing.
+\newblock In: Proceedings of the First International Workshop on Randomized
+  Testing, pp. 36--45. Portland, Maine (2006)
+
+\bibitem{AMFL11}
+Andrews, J.H., Menzies, T., Li, F.C.: Genetic algorithms for randomized unit
+  testing.
+\newblock IEEE Transactions on Software Engineering (TSE) \textbf{37}(1),
+  80--94 (2011)
+
+\bibitem{ISSTAART}
+Arcuri, A., Briand, L.: Adaptive random testing: An illusion of effectiveness.
+\newblock In: International Symposium on Software Testing and Analysis, pp.
+  265--275 (2011)
+
+\bibitem{RandFormal}
+Arcuri, A., Iqbal, M.Z.Z., Briand, L.C.: Formal analysis of the effectiveness
+  and predictability of random testing.
+\newblock In: International Symposium on Software Testing and Analysis, pp.
+  219--230 (2010)
+
+\bibitem{burnettEUSE}
+Burnett, M., Cook, C., Rothermel, G.: End-user software engineering.
+\newblock Comm. ACM \textbf{47}(9), 53--58 (2004)
+
+\bibitem{Silos}
+Burnett, M.M., Myers, B.A.: Future of end-user software engineering: beyond the
+  silos.
+\newblock In: Future of Software Engineering, pp. 201--211 (2014)
+
+\bibitem{chentest}
+Chen, T., Tse, T., Quan~Zhou, Z.: {Fault-based testing without the need of
+  oracles}.
+\newblock Information and Software Technology \textbf{45}(1), 1--9 (2003)
+
+\bibitem{MetaTest}
+Chen, T.Y., Cheung, S.C., Yiu, S.: Metamorphic testing: a new approach for
+  generating next test cases.
+\newblock Tech. Rep. HKUST-CS98-01, Hong Kong Univ. Sci. Tech. (1998)
+
+\bibitem{MetamorphEndUser}
+Chen, T.Y., Kuo, F.C., Zhou, Z.Q.: An effective testing method for end-user
+  programmers.
+\newblock In: Proceedings of the First Workshop on End-user Software
+  Engineering, pp. 1--5 (2005)
+
+\bibitem{ARTChen}
+Chen, T.Y., Leung, H., Mak, I.K.: Adaptive random testing.
+\newblock In: Advances in Computer Science, pp. 320--329 (2004)
+
+\bibitem{CiupaLOM07}
+Ciupa, I., Leitner, A., Oriol, M., Meyer, B.: Experimental assessment of random
+  testing for object-oriented software.
+\newblock In: D.S. Rosenblum, S.G. Elbaum (eds.) International Symposium on
+  Software Testing and Analysis, pp. 84--94. ACM (2007)
+
+\bibitem{ClaessenH00}
+Claessen, K., Hughes, J.: {QuickCheck}: a lightweight tool for random testing
+  of haskell programs.
+\newblock In: ICFP, pp. 268--279 (2000)
+
+\bibitem{Guava}
+Daka, E., Campos, J., Dorn, J., Fraser, G., Weimer, W.: Generating readable
+  unit tests for {Guava}.
+\newblock In: Search-Based Software Engineering - 7th International Symposium,
+  {SSBSE} 2015, Bergamo, Italy, September 5-7, 2015, Proceedings, pp. 235--241
+  (2015)
+
+\bibitem{Readable}
+Daka, E., Campos, J., Fraser, G., Dorn, J., Weimer, W.: Modeling readability to
+  improve unit tests.
+\newblock In: Foundations of Software Engineering, {ESEC/FSE}, pp. 107--118
+  (2015)
+
+\bibitem{evalrand}
+Duran, J.W., Ntafos, S.C.: Evaluation of random testing.
+\newblock IEEE Transactions on Software Engineering \textbf{10}(4), 438--444
+  (1984)
+
+\bibitem{ArcPy}
+Esri: What is {ArcPy}?
+\newblock \url{http://resources.arcgis.com/EN/HELP/MAIN/10.1/
+  index.html000v000000v7000000}
+
+\bibitem{Fow10}
+Fowler, M.: {Domain-Specific Languages}.
+\newblock Addison-Wesley Professional (2010)
+
+\bibitem{FA11}
+Fraser, G., Arcuri, A.: {EvoSuite}: automatic test suite generation for
+  object-oriented software.
+\newblock In: Proceedings of the 19th ACM SIGSOFT Symposium and the 13th
+  European Conference on Foundations of Software Engineering, ESEC/FSE '11, pp.
+  416--419. ACM (2011)
+
+\bibitem{TameInputs}
+Giannakopoulou, D., Howar, F., Isberner, M., Lauderdale, T., Rakamari\'{c}, Z.,
+  Raman, V.: Taming test inputs for separation assurance.
+\newblock In: International Conference on Automated Software Engineering, pp.
+  373--384 (2014)
+
+\bibitem{UDITA}
+Gligoric, M., Gvero, T., Jagannath, V., Khurshid, S., Kuncak, V., Marinov, D.:
+  Test generation through programming in {UDITA}.
+\newblock In: International Conference on Software Engineering, pp. 225--234
+  (2010)
+
+\bibitem{GodefroidKS05}
+Godefroid, P., Klarlund, N., Sen, K.: {DART:} directed automated random
+  testing.
+\newblock In: Programming Language Design and Implementation, pp. 213--223
+  (2005)
+
+\bibitem{GRASSunit}
+{GRASS Development Team}: Testing {GRASS} {GIS} source code and modules.
+\newblock
+  \url{https://grass.osgeo.org/grass71/manuals/libpython/gunittest\_testing.html}
+
+\bibitem{woda12}
+Groce, A., Erwig, M.: Finding common ground: choose, assert, and assume.
+\newblock In: Workshop on Dynamic Analysis, pp. 12--17 (2012)
+
+\bibitem{ISSRE}
+Groce, A., Fern, A., Pinto, J., Bauer, T., Alipour, A., Erwig, M., Lopez, C.:
+  Lightweight automated testing with adaptation-based programming.
+\newblock In: IEEE International Symposium on Software Reliability Engineering,
+  pp. 161--170 (2012)
+
+\bibitem{AMAI}
+Groce, A., Havelund, K., Holzmann, G., Joshi, R., Xu, R.G.: Establishing flight
+  software reliability: Testing, model checking, constraint-solving, monitoring
+  and learning.
+\newblock Annals of Mathematics and Artificial Intelligence \textbf{70}(4),
+  315--349 (2014)
+
+\bibitem{scriptstospecs}
+Groce, A., Havelund, K., Smith, M.: From scripts to specifications: The
+  evolution of a flight software testing effort.
+\newblock In: International Conference on Software Engineering, pp. 129--138
+  (2010)
+
+\bibitem{ICSEDiff}
+Groce, A., Holzmann, G., Joshi, R.: Randomized differential testing as a
+  prelude to formal verification.
+\newblock In: International Conference on Software Engineering, pp. 621--631
+  (2007)
+
+\bibitem{CFV08}
+Groce, A., Holzmann, G., Joshi, R., Xu, R.G.: Putting flight software through
+  the paces with testing, model checking, and constraint-solving.
+\newblock In: Workshop on Constraints in Formal Verification, pp. 1--15 (2008)
+
+\bibitem{woda08}
+Groce, A., Joshi, R.: Random testing and model checking: Building a common
+  framework for nondeterministic exploration.
+\newblock In: Workshop on Dynamic Analysis, pp. 22--28 (2008)
+
+\bibitem{OnlyOracle}
+Groce, A., Kulesza, T., Zhang, C., Shamasunder, S., Burnett, M.M., Wong, W.,
+  Stumpf, S., Das, S., Shinsel, A., Bice, F., McIntosh, K.: You are the only
+  possible oracle: Effective test selection for end users of interactive
+  machine learning systems.
+\newblock {IEEE} Trans. Software Eng. \textbf{40}(3), 307--323 (2014)
+
+\bibitem{NFM15}
+Groce, A., Pinto, J.: A little language for testing.
+\newblock In: NASA Formal Methods Symposium, pp. 204--218 (2015)
+
+\bibitem{ISSTA15}
+Groce, A., Pinto, J., Azimi, P., Mittal, P.: {TSTL}: a language and tool for
+  testing (demo).
+\newblock In: ACM International Symposium on Software Testing and Analysis, pp.
+  414--417 (2015)
+
+\bibitem{tstl}
+Groce, A., Pinto, J., Azimi, P., Mittal, P., Holmes, J., Kellar, K.: {TSTL}:
+  the template scripting testing language.
+\newblock \url{https://github.com/agroce/tstl}
+
+\bibitem{Hamlet94}
+Hamlet, R.: Random testing.
+\newblock In: Encyclopedia of Software Engineering, pp. 970--978. Wiley (1994)
+
+\bibitem{HamletOnly}
+Hamlet, R.: When only random testing will do.
+\newblock In: International Workshop on Random Testing, pp. 1--9 (2006)
+
+\bibitem{ModelDriven}
+Holzmann, G., Joshi, R.: Model-driven software verification.
+\newblock In: SPIN Workshop on Model Checking of Software, pp. 76--91 (2004)
+
+\bibitem{SPIN}
+Holzmann, G.J.: The {SPIN} Model Checker: Primer and Reference Manual.
+\newblock Addison-Wesley Professional (2003)
+
+\bibitem{kulesza-eud11}
+Kulesza, T., Burnett, M., Stumpf, S., Wong, W.K., Das, S., Groce, A., Shinsel,
+  A., Bice, F., McIntosh, K.: Where are my intelligent assistant's mistakes? a
+  systematic testing approach.
+\newblock In: Intl. Symp. End-User Development, pp. 171--186 (2011)
+
+\bibitem{MinUnit}
+Lei, Y., Andrews, J.H.: Minimization of randomized unit test cases.
+\newblock In: International Symposium on Software Reliability Engineering, pp.
+  267--276 (2005)
+
+\bibitem{GISTest}
+Maogui, H., Jinfeng, W.: Application of automated testing tool in gis modeling.
+\newblock In: Proceedings of the 2009 WRI World Congress on Software
+  Engineering, pp. 184--188 (2009)
+
+\bibitem{Korat}
+Milicevic, A., Misailovic, S., Marinov, D., Khurshid, S.: Korat: A tool for
+  generating structurally complex test inputs.
+\newblock In: International Conference on Software Engineering, pp. 771--774
+  (2007)
+
+\bibitem{isstamorph}
+Murphy, C., Shen, K., Kaiser, G.: Automatic system testing of programs without
+  test oracles.
+\newblock In: Intl. Symp. Software Testing and Analysis, pp. 189--200 (2009)
+
+\bibitem{orsofuse}
+Orso, A., Rothermel, G.: Software testing: A research travelogue (2000--2014).
+\newblock In: Proceedings of the on Future of Software Engineering, FOSE 2014,
+  pp. 117--132 (2014)
+
+\bibitem{Pacheco}
+Pacheco, C., Lahiri, S.K., Ernst, M.D., Ball, T.: Feedback-directed random test
+  generation.
+\newblock In: International Conference on Software Engineering, pp. 75--84
+  (2007)
+
+\bibitem{Phalgune}
+Phalgune, A., Kissinger, C., Burnett, M., Cook, C., Beckwith, L., Ruthruff, J.:
+  Garbage in, garbage out? an empirical look at oracle mistakes by end-user
+  programmers.
+\newblock In: IEEE Symp. Visual Languages and Human-Centric Computing, pp.
+  45--52 (2005)
+
+\bibitem{rothermelTOSEM}
+Rothermel, G., Burnett, M., Li, L., DuPois, C., Sheretov, A.: A methodology for
+  testing spreadsheets.
+\newblock ACM Trans. Software Eng. and Methodology \textbf{10}(1), 110--147
+  (2001)
+
+\bibitem{rothermel2000wysiwyt}
+Rothermel, K., Cook, C., Burnett, M., Schonfeld, J., Green, T., Rothermel, G.:
+  {WYSIWYT testing in the spreadsheet paradigm: An empirical evaluation}.
+\newblock In: Intl. Conf. Software Eng., vol.~22, pp. 230--240 (2000)
+
+\bibitem{Segal07}
+Segal, J.: Some problems of professional end user developers.
+\newblock In: IEEE Symp. Visual Languages and Human-Centric Computing (2007)
+
+\bibitem{FASE}
+Sharma, R., Gligoric, M., Arcuri, A., Fraser, G., Marinov, D.: Testing
+  container classes: Random or systematic?
+\newblock In: Fundamental Approaches to Software Engineering, pp. 262--277
+  (2011)
+
+\bibitem{shinsel-vlhcc}
+Shinsel, A., Kulesza, T., Burnett, M.M., Curan, W., Groce, A., Stumpf, S.,
+  Wong, W.K.: Mini-crowdsourcing end-user assessment of intelligent assistants:
+  A cost-benefit study.
+\newblock In: IEEE Symposium on Visual Languages and Human-Centric Computing,
+  pp. 47--54 (2011)
+
+\bibitem{JPF2}
+Visser, W., Havelund, K., Brat, G., Park, S., Lerda, F.: Model checking
+  programs.
+\newblock Automated Software Engineering \textbf{10}(2), 203--232 (2003)
+
+\bibitem{gisblog1}
+{XBOSOFT}: {GIS} software testing - lessons learned.
+\newblock \url{http://xbosoft.com/gis-software-testing-lessons-learned/}
+
+\bibitem{metamorph}
+Xie, X., Ho, J., Murphy, C., Xu, B., Chen, T.Y.: Application of metamorphic
+  testing to supervised classifiers.
+\newblock In: Intl. Conf. Quality Software, pp. 135--144 (2009)
+
+\bibitem{csmith}
+Yang, X., Chen, Y., Eide, E., Regehr, J.: Finding and understanding bugs in {C}
+  compilers.
+\newblock In: ACM SIGPLAN Conference on Programming Language Design and
+  Implementation, pp. 283--294 (2011)
+
+\bibitem{DD}
+Zeller, A., Hildebrandt, R.: Simplifying and isolating failure-inducing input.
+\newblock Software Engineering, IEEE Transactions on \textbf{28}(2), 183--200
+  (2002)
+
+\bibitem{ISSTA14}
+Zhang, C., Groce, A., Alipour, M.A.: Using test case reduction and
+  prioritization to improve symbolic execution.
+\newblock In: International Symposium on Software Testing and Analysis, pp.
+  160--170 (2014)
+
+\end{thebibliography}

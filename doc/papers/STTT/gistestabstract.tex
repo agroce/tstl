@@ -1,0 +1,26 @@
+Geographic Information System (GIS) tools are widely used for a variety of
+analytical tasks, including conservation and environmental efforts,
+epidemiology, defense and security, demographic analysis, and urban
+planning.  Esri's ArcGIS platform has the largest market share in the
+field.  GIS analysis often requires performing complex analytical
+tasks, so users often write scripts to automate these tasks, or even
+to add new functionality to the Esri software's GUI.  Recent work
+has shown that even libraries as widely used as Apache and the Java
+language core can have significant faults that elude detection without
+automated test generation.  Unfortunately,  
+ArcGIS has numerous faults (and un-documented usage requirements for
+APIs).  Behavior of calls can change with new releases of the
+software, breaking user code in hard-to-detect ways.
+
+In this paper, we present an approach allowing GIS users, who are not
+traditional software developers (but experienced with programming in a
+GIS context), to find faults, produce regression suites for API
+behavior, and otherwise explore the functionality of ArcPy, Esri's
+Python scripting interface to ArcGIS.  The starting point for the
+effort is a declarative language for defining the valid tests of a
+system as a graph to be explored, TSTL (the Template Scripting Testing
+Language).  In order to handle the complexities of a large, commercial
+system like ArcPy, and make TSTL usable by GIS developers, numerous
+extensions, some novel, were required, including some core language
+changes.  We hope this case study paves the way for bringing automated
+testing to a wider audience of users.

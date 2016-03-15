@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2014)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: maintstl.aux
+The style file: spmpsci.bst
+Database file #1: bibliography.bib
+Warning--to sort, need author or key in Coverity
+Warning--to sort, need author or key in Klocwork
+Warning--to sort, need author or key in CodeSonar
+You've used 63 entries,
+            2946 wiz_defined-function locations,
+            975 strings with 15685 characters,
+and the built_in function-call counts, 56760 in all, are:
+= -- 6840
+> -- 1200
+< -- 43
++ -- 763
+- -- 430
+* -- 2352
+:= -- 5267
+add.period$ -- 67
+call.type$ -- 63
+change.case$ -- 483
+chr.to.int$ -- 0
+cite$ -- 66
+duplicate$ -- 6278
+empty$ -- 3529
+format.name$ -- 482
+if$ -- 12036
+int.to.chr$ -- 0
+int.to.str$ -- 63
+missing$ -- 645
+newline$ -- 260
+num.names$ -- 122
+pop$ -- 2363
+preamble$ -- 1
+purify$ -- 340
+quote$ -- 0
+skip$ -- 3717
+stack$ -- 0
+substring$ -- 2782
+swap$ -- 5281
+text.length$ -- 43
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 248
+warning$ -- 3
+while$ -- 307
+width$ -- 65
+write$ -- 621
+(There were 3 warnings)

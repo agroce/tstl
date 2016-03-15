@@ -1,0 +1,28 @@
+A test harness, in automated testing, defines the set of valid tests
+for a system, and usually also defines a set of correctness
+properties.  The difficulty of writing test harnesses is a major
+obstacle to the adoption of automated test generation and model
+checking.  Languages for writing test harnesses are usually tied to a
+particular tool, unfamilliar to programmers, and often limit
+expressiveness.  Writing test harnesses directly in the language of
+the Software Under Test (SUT) is a tedious, repetitive, and
+error-prone task, offers little or no support for test case
+manipulation and debugging, and produces repetitive, hard-to-read
+code.  Both approaches tend to tie a test harness to one method of
+test generation, with little ability to explore alternative methods.
+In this paper, we present TSTL, the Template Scripting Testing
+Language, a domain-specific language (DSL) for writing test harnesses
+that compiles harness definitions into an abstract graph-based
+interface that abstracts away the details of the SUT, making generic
+test generation and manipulation tools possible.  TSTL includes a
+compiler to Python, and a suite of tools for generating, manipulating,
+and analyzing test cases, including various explicit-state model
+checkers.  This paper showcases the features of TSTL by focusing on
+one large-scale testing effort, directed by an end-user, to find in
+faults the most widely used Geographic Information System (GIS) tool,
+Esri's ArcGIS, using its ArcPy scripting interface.  We also
+demonstrate how TSTL makes prototyping and evaluating new test
+generation algorithms easy for researchers, and briefly discuss other
+testing efforts using TSTL.
+
+

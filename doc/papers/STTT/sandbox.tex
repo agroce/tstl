@@ -1,0 +1,34 @@
+\subsection{Sandboxed Test Case Execution}
+
+Previous use of TSTL had been limited to testing systems where failure
+resulted in an uncaught exception or a bad return value from a call,
+at worst.  With ArcPy, however, it is very common for a failure to
+cause a crash, killing not only ArcPy but the Python environment
+running the test case.
+
+We added two features to TSTL's test generators to handle this
+problem.  First, we modified the random tester to record each action
+to a test case log \emph{before the action is performed}, in order to recover a crashing
+test after the test generator terminates abnormally.  After further experimentation,
+we discovered that recording just the current test case was not
+sufficient; some ArcPy failures required maintaining a history of all
+executed actions, since the corruption carried across reimports of the
+Python module.  This required us to add a new type of special action
+to the TSTL interface, the {\tt restart} action.  When a {\tt restart}
+appears in a test, it ``restarts'' the test.  The assumption until we
+began testing ArcPy was that all actions before such restarts could be
+removed from a test case.  
+
+The second new feature required for effective sandboxing was a
+function to enable running a TSTL case in its own Python subprocess,
+to allow test reduction, normalization, and generalization (see below)
+even for crashing test cases.  It was not neccessary to modify the
+TSTL interface's API, as the relevant functions already took an
+arbitrary function as reduction predicate, allowing us to simply
+produce a ``sandboxed'' version of replay and pass that to TSTL's {\tt
+  reduce}, {\tt normalize} etc. calls.  The sandboxing in this case is
+minimal: the only resource limitation is that the sandboxed execution
+has its own Python process and writes to a temporary copy of the
+ArcGIS workspace, but in principle the approach can be extended to
+allow more restrictive test case jails in TSTL, including execution in
+a virtual machine.
