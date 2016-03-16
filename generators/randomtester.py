@@ -327,6 +327,10 @@ def main():
                 if not tryStutter:
                     if len(acts) == 1:
                         p = 0
+                    elif len(acts) == 0:
+                        print "WARNING:  STATE WITH NO ENABLED ACTIONS REACHED"
+                        a = None
+                        break
                     else:    
                         p = R.randint(0,len(acts)-1)
                     a = acts[p]
@@ -340,7 +344,9 @@ def main():
             if elapsed > config.timeout:
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
                 break
-                
+            if a == None:
+                print "TERMINATING TEST DUE TO NO ENABLED ACTIONS"
+                break                
             if tryStutter:
                 print "STUTTERING WITH",a[0]
             test.append(a)
