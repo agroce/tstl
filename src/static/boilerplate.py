@@ -84,6 +84,27 @@ def enabled(self):
     """
     return filter(lambda (s, g, a): g(), self.__actions)
 
+def randomEnabled(self,rgen):
+    """
+    Return a random enabled action, or None if no such action can be produced, based on a provided random generator
+    """
+    acts = self.__actions
+    a = None
+    while a == None:
+        if len(acts) == 1:
+            p = 0
+        elif len(acts) == 0:
+            break
+        else:
+            p = rgen.randint(0,len(acts)-1)
+        a = acts[p]
+        if a[1]():
+            break
+        else:
+            a = None
+        acts = acts[:p] + acts[p+1:]
+    return a
+
 def features(self):
     return self.__features
 

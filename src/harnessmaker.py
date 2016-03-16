@@ -309,6 +309,7 @@ def main():
     global poolType
     global initSet
     global constSet
+    global absSet
     global firstInit
     global baseIndent
     global poolPrefix
@@ -453,6 +454,7 @@ def main():
     propSet = []
     refSet = []
     constSet = []
+    absSet = {}
     compareSet = []
     featureSet = []
     logSet = []
@@ -500,7 +502,7 @@ def main():
             propSet.append(c.replace("property: ",""))
         elif cs[0] == "pool:":
             poolSet[cs[1]] = int(cs[2])
-            if (len(cs)>3) and (cs[3] == "REF"):
+            if (len(cs)>3) and ("REF" in cs):
                 refSet.append(cs[1])
                 poolSet[cs[1]+"_REF"] = int(cs[2])
             if (len(cs)>3) and ("CONST" in cs):
@@ -508,6 +510,11 @@ def main():
             if (":" in cs):
                 tpos = cs.index(":")
                 poolType[cs[1]] = cs[tpos+1]
+            if "ABSTRACT" in cs:
+                absp = 0
+                while cs[absp] != "ABSTRACT":
+                    absp += 1
+                absSet[cs[1]] = cs[absp+1]
         elif cs[0] == "reference:":
             baseRefSplit = c.split("reference: ")[1]
             rs = baseRefSplit.split(" ==> ")
@@ -1003,6 +1010,20 @@ def main():
     st = st[:-1]
     genCode.append(st + "]\n")
 
+    genCode.append("def abstract(self,state):\n")
+    genCode.append(baseIndent + "if self.__replayBacktrack:\n")
+    genCode.append(baseIndent + baseIndent + "return state\n")        
+    st = baseIndent + "return ( "
+    i = 0
+    for p in poolSet:
+        if p not in absSet:
+            st += "state[" + str(i) + "],"
+        else:
+            st += absSet(p) + "(state[" + str(i) + "]),"
+        i += 1
+    st = st[:-1]
+    genCode.append(st + ")\n")
+    
     genCode.append("def backtrack(self,old):\n")
     genCode.append(baseIndent + "if self.__replayBacktrack:\n")
     genCode.append(baseIndent + baseIndent + "self.replay(self.replayable(old))\n")
