@@ -7,9 +7,9 @@ tests.  Both are critical for effective, efficient software testing,
 but only automatic generation offers the promise of discovering faults
 without human determination that a particular execution scenario has
 the potential to behave incorrectly.  Automated generation of tests
-relies on the construction of \emph{test harnesses}, which define the
+relies on the construction of \emph{test harnesses}.  A \emph{test harness} defines the
 set of valid tests (and, usually, a set of correctness properties for
-those tests).
+those tests) for the Software Under Test (SUT).
 This paper presents a language and tool that apply insights from the
 world of explict-state model checking to the problem of generating
 test harnesses for automated test generation.  
@@ -23,7 +23,7 @@ unfortunate, as even simple random testing can often uncover subtle
 faults.
 
 The ``natural'' way to write a test harness is as code in the language
-of the Software Under Test (SUT).  This is obviously how most unit
+of the SUT.  This is obviously how most unit
 tests are written, as witnessed by the proliferation of tools like
 JUnit \cite{JUnit} and its imitators (e.g., PyUnit, HUnit, etc.).  It
 is also how many industrial-strength random testing systems are
@@ -81,35 +81,56 @@ calls (e.g., {\tt insert} and {\tt delete} for container classes).
 The construction of a harness becomes even more complex in realistic
 cases, where the tested behaviors involve building up complex types as
 inputs to method calls, rather than simple integer choices. For
-example, consider the problem of testing or model checking a binomial
-heap that supports several operations, defined in Figure
-\ref{fig:binheap}.  Such a harness must manage the creation and
-storage of values of multiple types, including heaps and references.
-Moreover, because building up heaps and references is complicated,
-they cannot simply be produced on each iteration, but must be
-remembered.  As the interactions of multiple heaps (via {\tt union})
-and references into a heap are the source of all interesting behavior,
-the harness needs to decide how many heaps and references to store.
+example, consider the problem of testing a complex Python API.  Figure
+\ref{fig:MakeFeatureLayer} shows a portion of the Python documentation for one function in the ArcPy site
+package for GIS automation.  Rather than taking a single integer, this
+function takes call requires complex inputs --- a feature class or
+layer, a SQL expression, and other complex types that we can assume
+are also difficult to construct.  A harness testing a complex library
+of this type must manage the creation of values of multiple complex types.
+Moreover, because building up function inputs is itself complicated
+and requires complex method calls, they cannot simply be produced on each iteration, but must be
+remembered.  As the interactions of multiple instances of certain
+types are often a source of behavioral complexity,
+the harness needs to decide how many objects of each type to store.
 The code quickly becomes hard to read, hard to maintain, and hard to
 debug.  In some cases \cite{AMAI} the code for a sophisticated test
 harness approaches the SUT in complexity and even size!  The code's
-structure also tends to lock in many choices (such as how to handle
-storing heaps and references) that would ideally be configurable.
+structure also tends to lock in many choices that would ideally be configurable.
 
 \begin{figure}[t]
 {\scriptsize
 \begin{code}
-heap()                : returns a new heap
-heap.insert(key,val)  : inserts a key with value, returning ref
-heap.union(heap)      : merges two heaps
-heap.extractMin()     : extracts the minimum
-ref.delete()          : given a reference to a node, deletes it
-ref.decreaseKey(key)  : decreases the key of ref's node
+MakeFeatureLayer\_management(in\_features, out\_layer, {where\_clause}, {workspace}, {field\_info})
+   
+   Creates a feature layer from an input feature class or layer file. The layer
+   that is created by the tool is temporary and will not persist after the session
+   ends unless the layer is saved to disk or the map document is saved.
+    
+INPUTS:
+ in\_features (Feature Layer):
+     The input feature class or layer from which to make the new layer. Complex
+     feature classes, such as annotation and dimensions, are not
+     valid inputs to this
+     tool.
+ where\_clause \{SQL Expression\}:
+     An SQL expression used to select a subset of features. For more information on
+     SQL syntax see the help topic SQL reference for query expressions used in
+     ArcGIS.
+ workspace \{Workspace / Feature Dataset\}:
+     The input workspace used to validate the field names. If the input is a
+     geodatabase table and the output workspace is a dBASE table, the field names may
+     be truncated, since dBASE fields can only have names of ten characters or less.
+     The new names may be reviewed and altered using the field information control.
+ field\_info \{Field Info\}:
+     Can be used to review and alter the field names and hide a subset of fields in
+     the output layer. A split policy can be specified. See the usages for more
+     information.
 \end{code}
 }
 \vspace{-0.1in}
-\caption{A binomial heap to test}
-\label{fig:binheap}
+\caption{A function in Esri's ArcPy site package.}
+\label{fig:MakeFeatureLayer}
 \vspace{-0.20in}
 \end{figure}
 
@@ -126,8 +147,8 @@ without being re-written if it is in a language like Python without
 verification tool support.
 
 What the user really wants is to simply provide the information in
-Figure \ref{fig:binheap}, some configuration details (e.g., how many
-{\tt ref}s to keep around), and some information on which testing
+Figure \ref{fig:MakeFeatureLayer}, some configuration details (e.g., how many
+feature classes to work with), and some information on which testing
 method to use (e.g., model checking, random testing, machine-learning
 based approaches).  Some automated testing tools for Java \cite{FA11,Pacheco}
 take a variation on this approach, automatically extracting the
@@ -139,13 +160,13 @@ are not detectable by simple exception behavior.  Understanding
 problems with automatic extraction can be hard with large libraries,
 since the extraction will produce a huge, impenetrable mass of code
 that is hard to examine by hand.  The user wants a
-declarative harness, but often needs to program the details of a
-harness, and build understanding by performing harness development in
+declarative harness, but often needs to program some details of a
+harness, and build understanding of the system by performing harness development in
 small, incremental steps.
 
 \subsection{Domain Specific Languages for Testing}
 
-The properties of the problem at hand suggest the use of a
+The nature of test harness construction suggests the use of a
 \emph{domain-specific language} (DSL) \cite{ISOLA12}.  DSLs
 \cite{Fow10} provide abstractions and notations to support a
 particular programming domain. The use of DSLs is a formalization of
@@ -177,24 +198,199 @@ language inside a general-purpose one, here the domain-specific
 language hosts a general-purpose language.  A similar embedding is
 used in {\tt where} clauses of the LogScope language for testing Mars
 Science Laboratory software \cite{scriptstospecs}.  We adopt this
-approach in TSTL: embed a general-purpose language (for expressiveness) in a
+approach for our own language and embed the general-purpose language (for expressiveness) in a
 DSL (for concision and ease-of-use).
+
+\subsection{TSTL: The Template Scripting Testing Language}
+
+So far, a harness has been thought of as imperative
+code that tests a system, even when the underlying use is more
+declarative, as in CBMC, or as a purely declarative model stating the
+available test operations, in which case the harness is often hidden
+from the user and generated by a tool.  TSTL is based on understanding
+the test harness as a \emph{declaration of the possible actions
+the SUT can take}, where these actions are \emph{defined in the
+language of the SUT itself, with the full power of the programming
+language to define guards, perform pre-processing, and implement
+oracles}.  Our particular approach is based
+on what we call \emph{template scripting}.
+
+The \emph{template} aspect is based on the fact that our method
+proceeds by processing a harness definition file to output code in the
+SUT's language for a test harness, much like SPIN does with C code.  The harness
+description file consists of fragments of code in the SUT's language
+that are expanded, via the TSTL compiler, into executable source code.
+The tool that outputs code basically defines a \emph{template} for
+test harnesses in a programming language, and the harness definition
+tells the tool how to instantiate that template.  Rather
+than generating a testing tool (what SPIN does, essentially), our method outputs \emph{a class
+defining a search space}.  The \emph{scripting} aspect simply means
+that our language is designed to be very lightweight and as easy for
+users to pick up as popular scripting languages, like Python.  TSTL
+works best when the SUT language is very
+concise, like most scripting language, making ``one-liners'' of action definition possible.
+
+\begin{figure}
+\begin{code}
+@import avl as avl
+<@
+def items(s):
+    l = []
+    for i in s:
+       l.append(i)
+    return sorted(l)
+@>
+
+logs:
+	1 <avl>.inorder()
+	POST 1 <avl>.inorder()
+
+pools:
+	<int> 4 CONST
+	<avl> 3 REF
+
+properties:
+	<avl>.check\_balanced()
+
+actions:
+
+<int> := <[1..20]>
+
+<avl> := avl.AVLTree()
+
+
+~<avl>.insert(<int>) => \\
+   (len(<avl,1>.inorder()) == pre<(len(<avl,1>.inorder()))>+1) \\
+   or pre<(<avl,1>.find(<int,1>))>
+
+~<avl>.delete(<int>) => \\
+   (len(<avl,1>.inorder()) == pre<(len(<avl,1>.inorder()))>-1) \\
+   or not pre<((<avl,1>.find(<int,1>)))>
+
+~<avl>.find(<int>)
+
+<avl>.inorder()
+
+~<avl> == ~<avl>
+
+len(<avl,1>.inorder()) > 5 -> <avl>.display()
+
+references:
+	avl.AVLTree ==> set
+	insert ==> add
+	delete ==> discard
+	find ==> \_\_contains\_\_
+  	METHOD(inorder) ==> CALL(items)
+	METHOD(display) ==> CALL(print)
+
+compares:
+	find
+	inorder
+\end{code}
+\caption{Simple TSTL file to test an AVL tree class,
+  showing various features of TSTL.  {\tt AVLTree} defines methods
+  including {\tt insert}, {\tt delete}, {\tt find}, etc.}
+\label{fig:avl}
+\end{figure}
+
+\begin{figure}
+\begin{code}
+import sut
+import random
+
+sut = sut.sut()
+
+NUM\_TESTS = 1000
+TEST\_LENGTH = 200 
+
+for t in xrange(0,NUM\_TESTS):
+   sut.restart()
+   T = []
+   for s in xrange(0,TEST\_LENGTH): 
+       action = sut.randomEnabled()
+       T.append(action)
+       r = safely(action)
+       if sut.newBranches() != []
+          print 'NEW BRANCHES:'
+          print sut.newBranches()
+       if not r:
+          print 'EXCEPTION:', sut.error() 
+          R = sut.reduce(T, sut.fails) 
+          print 'FAILING TEST:', R
+       elif not sut.check():
+          print 'PROPERTY FAILED:'
+          print sut.error()  
+          R = sut.reduce(T, sut.failsCheck) 
+          print 'FAILING TEST:', R
+\end{code}
+\caption{A simple random tester using the interface provided by TSTL.}
+\label{fig:rt}
+\end{figure}
+
+Figure \ref{fig:binheapharness} shows a complete harness definition
+for the binomial heap class defined in Figure \ref{fig:binheap}.  The
+example is easily understood by splitting it into three sections.
+First, the single line proceeded by an ``@'' is raw Python, inserted
+into the output harness with no modification in most cases.  This
+section can be used not only to import the SUT's code, but to define
+functions to be used in the body of the harness, as we will see below.
+Second, the lines beginning with {\tt pool:} define the ``pool''
+\cite{Pacheco,UDITA,AndrewsTR} of values that will be used during testing.  In
+model checking terms, these store the state of the SUT.  There is no
+type information here, because the template approach simply assumes
+the type system of the host language, but in an informal sense each
+pool value typically represents its own type in the template language,
+as shown by its usage below (a pool value will correspond to inputs of
+a particular type to method calls, in the most trivial instance, but
+can also be used to encode more fine-grained type distinctions not
+present in the host language).  The numbers indicate how many values
+of a given pool ``type'' are needed.  Here, at least two {\tt INT}s
+are needed, unless both values provided to {\tt insert} should always
+be the same.  Similarly, there need to be at least two {\tt HEAP}s if
+{\tt union} is to be tested effectively.  Because the performance of
+random testing and some learning algorithms depends heavily on pool
+sizes, we want to make it easy to experiment with them.  
+%The use of
+%pools to build up test elements is inspired by Randoop \cite{Pacheco},
+%used in UDITA \cite{UDITA}, and aligned with the canonical form for
+%unit tests defined by Andrews et al. \cite{AndrewsTR}.
+
+Finally, the remainder of the harness definition simply gives possible
+actions, one on each line.  Each line is expanded into Python code for
+1) the actual test action represented and 2) a guard that determines
+if that action is enabled, as shown in Figure \ref{fig:pybinheap}.
+The functions for actions and guards are then added to a list that
+stores all possible SUT actions, with no remaining nondeterminism
+unless the SUT provides it.  Nondeterminism is controlled by choosing
+which actions (whose guards are currently satisfied) to execute.  Even in the absence of user-defined guards, some
+guards are automatically generated.  First, no \emph{uses} of a pool
+value are allowed until that value has been assigned (the generated
+harness initializes pool values as {\tt None}, a special Python
+value).  Second, no pool value can be assigned to unless it is either
+uninitialized or has been \emph{used} at least once.  This is critical
+to avoid the potential for some test strategies (such as random
+testing) to repeatedly perform useless assignments to values used in
+the actual testing (e.g., {\tt INT[1] = 1} followed immediately by {\tt
+  INT[1] = 2}.  Figure \ref{fig:validbinheaptest} shows an example of
+a test that can be generated by this harness.  Note that assigning
+anything to {\tt INT[3]}, {\tt REF[0]} or {\tt REF[1]} is not valid
+after the final action of the test, as these pool values have been
+assigned but not used.
 
 \subsection{Contributions}
 
-We showcase the TSTL
-approach and tools using an ongoing case study, applying TSTL and
-its tool suite to a large, real-world software system.
-The test effort has been driven and directed not by a software testing
-researcher (as is the usual case), but by a domain expert in the
-Geographic Information System (GIS)
-Software Under Test (SUT).  In the process, multiple faults and
-undocumented restrictions of the API under test have been discovered,
-and the language and tool suite have been improved.
+We showcase the TSTL approach and tools using an ongoing case study,
+applying TSTL and its tool suite to a large, real-world software
+system.  The test effort has been driven and directed not by a
+software testing researcher (as is the usual case), but by a domain
+expert in the Geographic Information System (GIS) SUT.  In the
+process, multiple faults and undocumented restrictions of the API
+under test have been discovered, and the language and tool suite have
+been improved.
 
 This paper presents the first complete presentation of the TSTL
 langauge and tools, with enough information on the language and the
-API for two purposes:
+testing API TSTL provides for two critical purposes:
 
 \begin{itemize}
 \item First, would-be users wanting to take advantage of automated
@@ -213,7 +409,7 @@ API for two purposes:
   software systems.
 \end{itemize}
 
-\subsection{Testing Esri ArcPy}
+\section{Esri ArcPy}
 
 
 Esri is the single largest GIS software vendor, with about 40\% of
