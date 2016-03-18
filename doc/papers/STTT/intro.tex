@@ -1,18 +1,18 @@
 \section{Introduction}
 
-Software test automation can be divided into two aspects:  automated execution
-and determination of results for existing, human-created tests, and
-the automatic generation of tests, based on some definition of valid
-tests.  Both are critical for effective, efficient software testing,
-but only automatic generation offers the promise of discovering faults
-without human determination that a particular execution scenario has
-the potential to behave incorrectly.  Automated generation of tests
-relies on the construction of \emph{test harnesses}.  A \emph{test harness} defines the
-set of valid tests (and, usually, a set of correctness properties for
-those tests) for the Software Under Test (SUT).
-This paper presents a language and tool that apply insights from the
-world of explict-state model checking to the problem of generating
-test harnesses for automated test generation.  
+Software test automation can be divided into two types: (1) automated
+execution and determination of results for human-created tests, and
+(2) automatic generation of tests.  Both are critical for effective,
+efficient software testing, but only automatic generation offers the
+promise of discovering faults without human determination that a
+particular execution scenario has the potential to behave incorrectly.
+Automated generation of tests relies on the construction of \emph{test
+  harnesses}.  A \emph{test harness} defines the set of valid tests
+(and, usually, a set of correctness properties for those tests) for
+the Software Under Test (SUT).  This paper presents a language and
+tools applying insights from the world of explict-state model
+checking to the problem of producing test harnesses for automated
+test generation.
 
 Building a test harness is a task that even expert users of model
 checkers or automated testing often find painful
@@ -40,30 +40,25 @@ perform ``apples to apples'' comparisons of various testing/model
 checking strategies \cite{JPFRandTest}.
 
 
-\begin{figure}[t]
+\begin{figure}[b]
 {\scriptsize
 \begin{code}
 op = choice(operations);
 val1 = choice(values);
 val2 = choice(values);
-switch (op) \{
-case op1:  if (guard1)
-              call1(val1);
-           break;
-case op2:  if (guard2)
-              call2(val1,val2);
-           break;
-case op3:  if (guard3)
-              call3(val1,val3);
-           break;
+if (op == op1 \&\& guard1) \{
+    call1(val1);
+\} else if (op == op2 \&\& guard2) \{
+    call2(val1,val2);
+\} else if (op == op3 \&\& guard3) \{
+    call3(val1,val2);
+...
 \end{code}
 }
 \vspace{-0.15in}
 \caption {A test harness in the SUT language}
 \label{fig:badharness}
 \end{figure}
-
-
 
 Unfortunately, writing test harnesses this way is a highly repetitive
 and error-prone programming task, with many conceptual ``code clones''
@@ -81,13 +76,13 @@ calls (e.g., {\tt insert} and {\tt delete} for container classes).
 The construction of a harness becomes even more complex in realistic
 cases, where the tested behaviors involve building up complex types as
 inputs to method calls, rather than simple integer choices. For
-example, consider the problem of testing a complex Python API.  Figure
+example, consider the problem of testing a complex Python library.  Figure
 \ref{fig:MakeFeatureLayer} shows a portion of the Python documentation for one function in the ArcPy site
-package for GIS automation.  Rather than taking a single integer, this
-function takes call requires complex inputs --- a feature class or
-layer, a SQL expression, and other complex types that we can assume
-are also difficult to construct.  A harness testing a complex library
-of this type must manage the creation of values of multiple complex types.
+package for Geographic Information System (GIS) automation.  Rather than taking a single integer, this
+function call requires complex inputs --- a feature class or
+layer, an SQL expression, and other complex types that we can assume
+are also difficult to construct.  A harness testing a typical
+real-world library must manage the creation of values of multiple complex types.
 Moreover, because building up function inputs is itself complicated
 and requires complex method calls, they cannot simply be produced on each iteration, but must be
 remembered.  As the interactions of multiple instances of certain
@@ -109,44 +104,31 @@ MakeFeatureLayer\_management(in\_features, out\_layer, {where\_clause}, {workspa
     
 INPUTS:
  in\_features (Feature Layer):
-     The input feature class or layer from which to make the new layer. Complex
-     feature classes, such as annotation and dimensions, are not
-     valid inputs to this
-     tool.
+   The input feature class or layer from which to make the new layer. Complex
+   feature classes, such as annotation and dimensions, are not valid inputs to this tool.
  where\_clause \{SQL Expression\}:
-     An SQL expression used to select a subset of features. For more information on
-     SQL syntax see the help topic SQL reference for query expressions used in
-     ArcGIS.
- workspace \{Workspace / Feature Dataset\}:
-     The input workspace used to validate the field names. If the input is a
-     geodatabase table and the output workspace is a dBASE table, the field names may
-     be truncated, since dBASE fields can only have names of ten characters or less.
-     The new names may be reviewed and altered using the field information control.
- field\_info \{Field Info\}:
-     Can be used to review and alter the field names and hide a subset of fields in
-     the output layer. A split policy can be specified. See the usages for more
-     information.
+   An SQL expression used to select a subset of features. For more information on
+   SQL syntax see the help topic SQL reference for query expressions used in ArcGIS.
+...
 \end{code}
 }
-\vspace{-0.1in}
-\caption{A function in Esri's ArcPy site package.}
+\caption{Documentation for a function in Esri's ArcPy site package.}
 \label{fig:MakeFeatureLayer}
-\vspace{-0.20in}
 \end{figure}
 
-The definition of a harness also tends to be intimately tied to a
-single tool, with the only testing strategies available being those
-provided by that tool.  Writing novel testing strategies in even such
+One of the most important of these is the choice of test generation
+method.  Writing a harness by hand usually makes it hard to try out
+new strategies.   Writing novel testing strategies in even such
 an extensible platform as Java Pathfinder is hardly a task for the
 non-expert.
 The harness in Figure \ref{fig:badharness} may support random testing and
 some form of model checking, if it is written in Java and can use JPF
 or a library for adaptation-based testing \cite{ISSRE12}. Such a
-harness cannot support model checking or any sophisticated strategy
+harness cannot support model checking or any other sophisticated strategy
 without being re-written if it is in a language like Python without
 verification tool support.
 
-What the user really wants is to simply provide the information in
+What the user really wants is to simply provide a concise version of the information in
 Figure \ref{fig:MakeFeatureLayer}, some configuration details (e.g., how many
 feature classes to work with), and some information on which testing
 method to use (e.g., model checking, random testing, machine-learning
@@ -158,16 +140,16 @@ the subtle details of harness construction, such as defining guards
 for some operations, or temporal constraints between API calls that
 are not detectable by simple exception behavior.  Understanding
 problems with automatic extraction can be hard with large libraries,
-since the extraction will produce a huge, impenetrable mass of code
-that is hard to examine by hand.  The user wants a
-declarative harness, but often needs to program some details of a
+since the extraction tends to either produce internal data structures
+only or produces a huge, impenetrable mass of code. The user \emph{wants} a
+declarative harness, but often \emph{needs} to program critical details of a
 harness, and build understanding of the system by performing harness development in
 small, incremental steps.
 
 \subsection{Domain Specific Languages for Testing}
 
 The nature of test harness construction suggests the use of a
-\emph{domain-specific language} (DSL) \cite{ISOLA12}.  DSLs
+\emph{domain-specific language} (DSL) for testing \cite{ISOLA12}.  DSLs
 \cite{Fow10} provide abstractions and notations to support a
 particular programming domain. The use of DSLs is a formalization of
 the long-standing approach of using ``little languages'' in computer
@@ -180,10 +162,10 @@ embedded language (DSEL), is hosted in a full-featured programming
 language, restricting it to the syntax (and semantics) of that
 language.  Many attempts to define harnesses can be seen as internal
 DSLs \cite{UDITA,ISSRE12,JPF2,CBMCp,KLEE}.  Neither of these choices
-is quite right for harness definition.  Simply adding operations for
-nondeterministic choice, as is done in most cases, still leaves most of
+is quite right for test harnesses.  Simply adding operations for
+nondeterministic choice still leaves most of
 the tedious work of harness definition to the user, and makes changing
-testing approaches difficult at best.  With an external DSL, the user
+testing approaches difficult.  With an external DSL, the user
 must learn a new language, and the easier it is to learn, the less
 likely it is to support the full range of features needed.
 
@@ -203,207 +185,140 @@ DSL (for concision and ease-of-use).
 
 \subsection{TSTL: The Template Scripting Testing Language}
 
-So far, a harness has been thought of as imperative
-code that tests a system, even when the underlying use is more
-declarative, as in CBMC, or as a purely declarative model stating the
-available test operations, in which case the harness is often hidden
-from the user and generated by a tool.  TSTL is based on understanding
-the test harness as a \emph{declaration of the possible actions
-the SUT can take}, where these actions are \emph{defined in the
-language of the SUT itself, with the full power of the programming
-language to define guards, perform pre-processing, and implement
-oracles}.  Our particular approach is based
-on what we call \emph{template scripting}.
+TSTL is based on understanding the test harness as a \emph{declaration
+  of the possible actions the SUT can take}, where these actions are
+\emph{defined in the language of the SUT itself, with the full power
+  of the programming language to define guards, perform
+  pre-processing, and implement oracles}.  Our particular approach is
+based on what we call \emph{template scripting}.
 
 The \emph{template} aspect is based on the fact that our method
-proceeds by processing a harness definition file to output code in the
-SUT's language for a test harness, much like SPIN does with C code.  The harness
+proceeds by processing a harness definition file to output code that
+enables testing, much like SPIN does with C code.  The harness
 description file consists of fragments of code in the SUT's language
 that are expanded, via the TSTL compiler, into executable source code.
 The tool that outputs code basically defines a \emph{template} for
 test harnesses in a programming language, and the harness definition
 tells the tool how to instantiate that template.  Rather
 than generating a testing tool (what SPIN does, essentially), our method outputs \emph{a class
-defining a search space}.  The \emph{scripting} aspect simply means
-that our language is designed to be very lightweight and as easy for
+defining a search space}, which can then be interfaced to any testing
+strategy to generate and manipulate tests.  The \emph{scripting} aspect simply means
+TSTL is designed to be very lightweight and as easy for
 users to pick up as popular scripting languages, like Python.  TSTL
 works best when the SUT language is very
 concise, like most scripting language, making ``one-liners'' of action definition possible.
 
 \begin{figure}
+{\scriptsize
 \begin{code}
-@import avl as avl
-<@
-def items(s):
-    l = []
-    for i in s:
-       l.append(i)
-    return sorted(l)
-@>
-
-logs:
-	1 <avl>.inorder()
-	POST 1 <avl>.inorder()
-
+@import arcpy
+@from arcpy import ExecuteError
+\vspace{0.1in}
 pools:
-	<int> 4 CONST
-	<avl> 3 REF
-
-properties:
-	<avl>.check\_balanced()
-
+  <featureclass> 2 CONST
+  <newlayer> 2 CONST
+  <op> 2 CONST 
+  <val> 2 CONST
+  <whereclause> 2 CONST
+\vspace{0.1in}
 actions:
 
-<int> := <[1..20]>
+<featureclass> := <["file1.shp", "file2.shp", "file3.shp"]>
+<newlayer> := <["newl1", "newl2", "newl3"]>
 
-<avl> := avl.AVLTree()
+<op> := <[">", "<", "<=", ">=", "=", "!="]>
+<val> := <1..10>
+<val> = <val> * 10
+<val> = <val> + 1
 
+<whereclause> := '"' + <fieldname> + '" ' + <op> + str(<val>)
+<whereclause> := '"' + <fieldname> + '" IS NULL'
+<whereclause> := '"' + <fieldname> + '" IS NOT NULL'
+<whereclause> = <whereclause> + ' AND ' + <whereclause>
+<whereclause> = <whereclause> + ' OR ' +  <whereclause>
+<whereclause> = 'NOT' + <whereclause>
 
-~<avl>.insert(<int>) => \\
-   (len(<avl,1>.inorder()) == pre<(len(<avl,1>.inorder()))>+1) \\
-   or pre<(<avl,1>.find(<int,1>))>
+\{ExecuteError\} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>)
 
-~<avl>.delete(<int>) => \\
-   (len(<avl,1>.inorder()) == pre<(len(<avl,1>.inorder()))>-1) \\
-   or not pre<((<avl,1>.find(<int,1>)))>
-
-~<avl>.find(<int>)
-
-<avl>.inorder()
-
-~<avl> == ~<avl>
-
-len(<avl,1>.inorder()) > 5 -> <avl>.display()
-
-references:
-	avl.AVLTree ==> set
-	insert ==> add
-	delete ==> discard
-	find ==> \_\_contains\_\_
-  	METHOD(inorder) ==> CALL(items)
-	METHOD(display) ==> CALL(print)
-
-compares:
-	find
-	inorder
+\{ExecuteError\} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>,
+  where\_clause=<whereclause>)
 \end{code}
-\caption{Simple TSTL file to test an AVL tree class,
-  showing various features of TSTL.  {\tt AVLTree} defines methods
-  including {\tt insert}, {\tt delete}, {\tt find}, etc.}
-\label{fig:avl}
+}
+\caption{A small TSTL file to test one ArcPy function.}
+\label{fig:makefeaturelayer}
 \end{figure}
 
 \begin{figure}
+{\scriptsize
 \begin{code}
-import sut
-import random
-
+import sut random, time
 sut = sut.sut()
-
 NUM\_TESTS = 1000
 TEST\_LENGTH = 200 
-
 for t in xrange(0,NUM\_TESTS):
    sut.restart()
    T = []
    for s in xrange(0,TEST\_LENGTH): 
        action = sut.randomEnabled()
        T.append(action)
-       r = safely(action)
+       r = sut.safely(action)
        if sut.newBranches() != []
-          print 'NEW BRANCHES:'
-          print sut.newBranches()
-       if not r:
-          print 'EXCEPTION:', sut.error() 
-          R = sut.reduce(T, sut.fails) 
-          print 'FAILING TEST:', R
-       elif not sut.check():
-          print 'PROPERTY FAILED:'
-          print sut.error()  
-          R = sut.reduce(T, sut.failsCheck) 
-          print 'FAILING TEST:', R
+          print time.time(),'NEW BRANCHES:', sut.newBranches()
+       if (not r) or (not sut.check()):
+          pred = sut.failsCheck if r else sut.fails
+          print 'TEST FAILED:', sut.error() 
+          R = sut.reduce(T, pred)
+          N = sut.normalize(R, pred) 
+          sut.generalize(N,pred)
 \end{code}
+}
 \caption{A simple random tester using the interface provided by TSTL.}
 \label{fig:rt}
 \end{figure}
 
-Figure \ref{fig:binheapharness} shows a complete harness definition
-for the binomial heap class defined in Figure \ref{fig:binheap}.  The
-example is easily understood by splitting it into three sections.
-First, the single line proceeded by an ``@'' is raw Python, inserted
-into the output harness with no modification in most cases.  This
-section can be used not only to import the SUT's code, but to define
-functions to be used in the body of the harness, as we will see below.
-Second, the lines beginning with {\tt pool:} define the ``pool''
-\cite{Pacheco,UDITA,AndrewsTR} of values that will be used during testing.  In
-model checking terms, these store the state of the SUT.  There is no
-type information here, because the template approach simply assumes
-the type system of the host language, but in an informal sense each
-pool value typically represents its own type in the template language,
-as shown by its usage below (a pool value will correspond to inputs of
-a particular type to method calls, in the most trivial instance, but
-can also be used to encode more fine-grained type distinctions not
-present in the host language).  The numbers indicate how many values
-of a given pool ``type'' are needed.  Here, at least two {\tt INT}s
-are needed, unless both values provided to {\tt insert} should always
-be the same.  Similarly, there need to be at least two {\tt HEAP}s if
-{\tt union} is to be tested effectively.  Because the performance of
-random testing and some learning algorithms depends heavily on pool
-sizes, we want to make it easy to experiment with them.  
-%The use of
-%pools to build up test elements is inspired by Randoop \cite{Pacheco},
-%used in UDITA \cite{UDITA}, and aligned with the canonical form for
-%unit tests defined by Andrews et al. \cite{AndrewsTR}.
-
-Finally, the remainder of the harness definition simply gives possible
-actions, one on each line.  Each line is expanded into Python code for
-1) the actual test action represented and 2) a guard that determines
-if that action is enabled, as shown in Figure \ref{fig:pybinheap}.
-The functions for actions and guards are then added to a list that
-stores all possible SUT actions, with no remaining nondeterminism
-unless the SUT provides it.  Nondeterminism is controlled by choosing
-which actions (whose guards are currently satisfied) to execute.  Even in the absence of user-defined guards, some
-guards are automatically generated.  First, no \emph{uses} of a pool
-value are allowed until that value has been assigned (the generated
-harness initializes pool values as {\tt None}, a special Python
-value).  Second, no pool value can be assigned to unless it is either
-uninitialized or has been \emph{used} at least once.  This is critical
-to avoid the potential for some test strategies (such as random
-testing) to repeatedly perform useless assignments to values used in
-the actual testing (e.g., {\tt INT[1] = 1} followed immediately by {\tt
-  INT[1] = 2}.  Figure \ref{fig:validbinheaptest} shows an example of
-a test that can be generated by this harness.  Note that assigning
-anything to {\tt INT[3]}, {\tt REF[0]} or {\tt REF[1]} is not valid
-after the final action of the test, as these pool values have been
-assigned but not used.
+Figure \ref{fig:makefeaturelayer} shows a simple TSTL harness for the
+function documented in Figure \ref{fig:MakeFeatureLayer}.  This
+code can generate calls that include a choice between three files that
+contain GIS data, three names for new layers generated, and even
+construct SQL where clauses of arbitrary length.  Figure \ref{fig:rt}
+shows a simple pure random test generator that can test \emph{any} SUT
+with a TSTL-defined harness.  This harness, in 20 lines of code, not
+only provides automated test generation, but continuous reporting of
+incremental branch coverage, delta-debugging \cite{DD}
+based reduction of failing tests, and additional TSTL-specific
+post-processing that further reduces the size and complexity of test
+cases for debugging.  The brevity of the test generator, no matter how complex the
+SUT, is made possible by the functionality of all TSTL-generated
+testing interfaces.
 
 \subsection{Contributions}
 
 We showcase the TSTL approach and tools using an ongoing case study,
 applying TSTL and its tool suite to a large, real-world software
-system.  The test effort has been driven and directed not by a
+library used in critical applications.  The test effort has been driven and directed not by a
 software testing researcher (as is the usual case), but by a domain
 expert in the Geographic Information System (GIS) SUT.  In the
-process, multiple faults and undocumented restrictions of the API
-under test have been discovered, and the language and tool suite have
+process, multiple faults and undocumented restrictions of the library
+under test have been discovered, and the TSTL language and tool suite have
 been improved.
 
 This paper presents the first complete presentation of the TSTL
 langauge and tools, with enough information on the language and the
-testing API TSTL provides for two critical purposes:
+testing API TSTL provided for two critical purposes:
 
 \begin{itemize}
 \item First, would-be users wanting to take advantage of automated
   test generation should be able to base their own testing
-  efforts using TSTL on the small and large examples in this paper.
-  This paper serves as a basic ``TSTL cookbook.''
+  efforts using TSTL on the example code in this paper.
+  This paper thus serves as a basic ``TSTL cookbook.''
 
 \item Second, researchers should be able to use the information in this paper to
   extend existing TSTL tools or build their own tools to explore novel
   test generation strategies, automated debugging methods, and other
-  software testing research projects.  TSTL enables easy comparison of
-  implementations in a framework reducing the burden of implementation
-  and irrelevant differences in performance.  The growing set of SUTs
+  research prototypes.  TSTL enables easy comparison of
+  methods in a framework reducing the burden of implementation
+  and avoiding irrelevant differences in performance due to underlying
+  infrastructure.  The growing set of SUTs
   included in the TSTL distribution can serve as bases for
   experimental efforts, and include large and widely used Python
   software systems.
@@ -422,7 +337,8 @@ introduced in ArcGIS 10.0, is a Python site-package, ArcPy
 \cite{ArcPy}.  ArcPy is a complex library, with dozens of classes and
 hundreds of functions distributed over a variety of of toolboxes.
 Most of the code executed in carrying out ArcPy functions is the code
-for the ArcGIS engine itself.  This source code, written in C++, is
+for the ArcGIS engine itself.  This source code, written in C++
+(amounting to millions of lines), is
 not available.  The source code for the latest version (10.3) of the
 Python site-package alone, however, which interfaces with the ArcGIS
 engine, is over 50,000 lines of code.  This is a very large system
@@ -433,10 +349,7 @@ generation, such as core Java and Apache libraries
 
 In order to improve the reliability of ArcPy, we are developing a
 framework for automated testing of ArcPy itself, as well as libraries
-based on ArcPy.  The source code for defining the structure of ArcPy
-tests, written in the TSTL\footnote{TSTL stands for Template Scripting
-  Testing Language.}\cite{NFM15,ISSTA14,tstl} domain-specific
-language \cite{Fow10} for testing, is already more than six times as
+based on ArcPy.  The TSTL harness for ArcPy is already more than six times as
 large as the next-largest such definition previously implemented in
 TSTL, even though the harness so far only includes a small portion of ArcPy
 API (Application Program Interface) calls. The first stage of testing has resulted in discovery of
@@ -444,15 +357,15 @@ multiple faults in ArcPy/ArcGIS, and has required modifications to the
 TSTL language and, especially, to the toolchain supporting test replay,
 debugging, and test case understanding.
 
-One of the contributions of this paper is a more in-depth discussion
-of the problems, challenges, and tool utility aspects of testing
-software than is typical in most research papers in the field.  Such
-papers are (understandably) typically focused on novel algorithms or
-empirical evaluations of known methods, rather than the practical aspects of finding
-and understanding faults in a real-world software system.
+%One of the contributions of this paper is a more in-depth discussion
+%of the problems, challenges, and tool utility aspects of testing
+%software than is typical in most research papers in the field.  Such
+%papers are (understandably) typically focused on novel algorithms or
+%empirical evaluations of known methods, rather than the practical aspects of finding
+%and understanding faults in a real-world software system.
 
 
-\subsection{Automated Testing for the Rest of the World}
+%\subsection{Automated Testing for the Rest of the World}
 
 Previous work on automated testing for APIs has been largely carried
 out by software testing researchers only, or (at most) by software
@@ -464,42 +377,46 @@ profession or education, but a GIS analyst.
 The problem of end-user testing
 \cite{burnettEUSE,Silos,rothermelTOSEM} is known to be difficult.
 Previous work has focused on end-users of systems that are not
-traditional programming languages: e.g. spreadsheets \cite{rothermelTOSEM}, visual
-languages, or machine-learning systems \cite{OnlyOracle}.  This paper aims to describe a
-case study in how a user who is familiar with a software library but
-not expert in software testing techniques can use (and adapt) existing
-tools to test a traditional software API library.  In one sense, this
-is a less difficult end-user testing scenario than testing
-spreadsheets or visual forms, in that the testing is directed by an
-individual used to writing and thinking about software source code.
-The concepts in modern automated software testing are most easily
-understood by those who are also familiar with the structure and semantics of
-conventional programming languages.  On the other hand, the system to
-be tested is large, not a small user-developed program: ArcPy is
-a modern, complex, library, comparable in complexity and size to
-core language libraries.   ArcPy was also not written by the end-user,
-or by any of the authors of this paper, nor have the authors received
-any  assistance in the effort from Esri.
+traditional programming languages: e.g. spreadsheets
+\cite{rothermelTOSEM}, visual languages, or machine-learning systems
+\cite{OnlyOracle}.  TSTL is partly designed to allow a user who is
+familiar with a software library but not expert in software testing
+techniques to test a traditional software API library.  In one sense,
+this is a less difficult end-user testing scenario than spreadsheets
+or visual forms, in that the testing is directed by an individual used
+to writing and thinking about source code.  The concepts in
+modern automated software testing are most easily understood by those
+who are also familiar with the structure and semantics of conventional
+programming languages.  On the other hand, the system to be tested is
+large, not a small user-developed program but a very large, complex, system.
+ArcPy was also not written by the end-user, or by any of the authors
+of this paper, nor have the authors received any assistance in the
+effort from Esri.
 
 Automated testing systems more advanced than a simple hand-written loop generating 
 a few random inputs to a handful of functions, or more complicated to 
 use than a fully push-button system are often considered too difficult 
-for practical use even by software developers or software QA staff \cite{ISSRE}.
+for practical use even by software developers or software QA staff \cite{ISSRE12}.
 In fact, in the experience of the second author of this paper (an
 academic software testing researcher), even ``push-button'' tools for
 automated testing are often difficult for expert users to install, apply, and
-configure \cite{AMAI,CFV08,ISSRE}.  Such tools typically do not approach the ease-of-use seen
-in commercial static analysis tools \cite{Coverity,Klocwork,CodeSonar}.  One goal of this work
-has been to mature the TSTL language and toolchain so Python
-programmers from all backgrounds can easily apply it to their
-automated testing problems.
+configure \cite{AMAI,CFV08,ISSRE12}.  TSTL aims to be relatively easy to
+use for anyone familliar with basic Python development.  By avoiding
+the use of a toy problem and presenting TSTL in the context of a more
+typical real-world system than a simple container class, we hope to
+make it easier to apply to other real-world systems.
+%One goal of this work
+%has been to mature the TSTL language and toolchain so Python
+%programmers from all backgrounds can easily apply it to their
+%automated testing problems, with tools approximately as easy to use as
+%other Python developer tools.
 
-The second major contribution of this paper is therefore a presentation of an
-approach to automated testing that has been chosen by a GIS analyst, not a
-software developer or testing researcher.  Moreover, we present this
-paper as a proof-of-concept that modern automated testing, even in a
-highly interactive, non-push-button form, can be used by a motivated
-domain expert, with the support of  a domain-specific language
-\cite{Fow10} and a set of tools for generating, analyzing, and replaying tests.
+%The second major contribution of this paper is therefore a presentation of an
+%approach to automated testing that has been chosen by a GIS analyst, not a
+%software developer or testing researcher.  Moreover, we present this
+%paper as a proof-of-concept that modern automated testing, even in a
+%highly interactive, non-push-button form, can be used by a motivated
+%domain expert, with the support of  a domain-specific language
+%\cite{Fow10} and a set of tools for generating, analyzing, and replaying tests.
 
 

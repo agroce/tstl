@@ -49,7 +49,7 @@ must be hosted inside a complex (and sometimes non-trivial to
 install/use) tool, JPF \cite{JPF2}, rather than generating a
 stand-alone simple interface to a test space, as with TSTL.  Building
 ``UDITA'' for a new language is far more challenging than porting
-TSTL.  UDITA also supports far fewer constructs to assist test harness
+TSTL.  UDITA supports many fewer constructs to assist harness
 development.
 
 The design of the SPIN model checker \cite{SPIN} and its model-driven
@@ -62,19 +62,14 @@ Python-based declarative language for testing purposes.  The pool
 approach to test case construction is derived from work on canonical
 forms and enumeration of unit tests \cite{AndrewsTR}.
 
-There is relatively little written about software testing in the
-academic literature that focuses on the pitfalls, best practices, and
-engineering challenges of testing real-world systems.  The series of
-papers by the NASA Jet Propulsion Laboratory on testing the file
-systems for the Curiosity Mars Rover is notable, though even there the
-focus is more on general technique than details of approach
-\cite{ICSEDiff,CFV08,AMAI}.  Literature that at least touches on more
-practical aspects, however, is plentiful: e.g., Lei and Andrews
-\cite{MinUnit} demonstrated that random test generation essentially
-requires test-case minimization \cite{DD} in order to be useful.
-Recent work, in particular, has given more attention to issues of test case usability
+Recent work on automated test generation has given more attention to
+practical, rather than primarily algorithmic, issues
 than in the past; we suspect this shows a growing technological
-maturity for automated test case generation.  For example, we found
+maturity for automated test case generation.  E.g., the papers by the
+NASA/JPL group on testing the Curiosity rover's file system
+\cite{ICSEDiff,CFV08,AMAI} have a largely practical focus, and the
+work of Lei and Andrews \cite{MinUnit} emphasizes the need for
+delta-debugging in realistic random testing.  We found
 that test case readability was important in our efforts, and recent
 academic work \cite{Readable,Guava} has introduced systematic,
 principled methods for improving the readability of test cases for
@@ -113,20 +108,15 @@ errors end-users make in specifying systems \cite{Phalgune}, and how
 end-users of machine learning systems (who may be machine learning
 experts, or individuals with no programming knowledge at all) can test
 such systems \cite{OnlyOracle,kulesza-eud11,shinsel-vlhcc}.  To our
-knowledge, no previous work considers API-sequence testing for
-end-users.  Previous work on API testing has largely not even included
-traditional software developers, but been performed by software
-testing researchers only.
+knowledge, no previous work considers function call sequence testing for
+end-users.  Previous work on such testing has often been performed
+only by software testing researchers, not even including traditional developers.
 
-Chen et al. propose metamorphic testing
-\cite{MetaTest,isstamorph,metamorph,chentest} as a possible solution
-to the oracle problem (defining correct behavior of a software system)
-for end-user programmers \cite{MetamorphEndUser}.  In metamorphic
-testing, while the correct output of a program is not known, the
-effect of certain modifications to an input is known (e.g., increasing
-a certain input should increase a certain output), allowing faults to
-be detected even without a definition of the correct result.  In this
-paper, we largely focus on building a basic framework that works for
-crash bugs and uncaught exceptions, and is capable of
-extension to more complex correctness properties.  In the long run, however, more
-sophisticated oracles are critical to finding deep faults.
+%Chen et al. propose metamorphic testing
+%\cite{MetaTest,isstamorph,metamorph,chentest} as a possible solution
+%to the oracle problem (defining correct behavior of a software system)
+%for end-user programmers \cite{MetamorphEndUser}.  In metamorphic
+%testing, while the correct output of a program is not known, the
+%effect of certain modifications to an input is known (e.g., increasing
+%a certain input should increase a certain output), allowing faults to
+%be detected even without a definition of the correct result.  
