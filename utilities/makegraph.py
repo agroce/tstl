@@ -134,8 +134,12 @@ if len(sys.argv) > 5:
     traces = int(sys.argv[5])
 else:
     traces = 1
+if len(sys.argv) > 6:
+    skiplen = int(sys.argv[6])
+else:
+    skiplen = -1
 
-print "Producing graph of",traces,"traces with depth",depth,"and width",k
+print "Producing graph of",traces,"traces with depth",depth,"and width",k,"starting from",skiplen
         
 dot = Digraph(comment="Depth " + str(depth))
 
@@ -157,6 +161,13 @@ for i in xrange(0,traces):
     last = state
 
     midFlip = True
+
+    sd = 0
+    while sd <= skiplen:
+        nexta = t.enabled()
+        act = random.choice(nexta)
+        t.safely(act)
+        sd += 1
     
     while d <= depth:
         nexta = t.enabled()
