@@ -48,7 +48,9 @@ actions:
 \end{code}
 }
 
-There is only one pool, named {\tt val}.  The pool has room to store
+There is only one pool, named {\tt val} (labeled as {\tt CONST} to
+indicate that its value does not change unless it appears on the left
+hand side of an assignment).  The pool has room to store
 two values.  The state of the SUT is defined by the state of all
 pools.  Initially, all pools are set to a special value ({\tt None}) indicating the
 pool has not been initialized.  Pools can be thought of as 
@@ -104,4 +106,74 @@ sequences like  {\tt val0 = 3; val0 = val0 + 1; val1 = 4; val1 = val0
   15}.  However, {\tt val0 = val0 + 1; val0 = 2} and
 {\tt val0 = 1; val1 = 1; val1 = 4} are not valid tests, because they
 either use an uninitialized pool value, or re-initialize an unused
-pool (a clearly useless action).
+pool (a clearly useless action sequence).
+
+\subsection{Other Core Language Features}
+
+The example TSTL harness in Figure \ref{fig:MakeFeatureLayer} shows a
+few other important core elements of TSTL.  First, choice templates
+are not limited to integer ranges, but can include arbitrary items in
+a list, e.g, {\tt <fc> := <["d1.shp", "d2.shp", "d3.shp"]>}.
+Normally, when an action raises an uncaught exception, this is
+considered a test failure.  Prefixing an action with a set of
+exception names in curly braces (e.g., {\tt \{IOError\}}) indicates
+that some exceptions are expected, and do not indicate a failure.
+More critically, actions can be prefixed by arbitrary guards, using
+the syntax {\tt guard -> action}.  The simple ArcPy harness chooses
+field names for SQL by first extracting a list of all fields in some
+feature class.  It then allows a field name to be chosen by taking the
+name of the first field in the list.  However, since the harness also
+allows the list of fields to be stepped through by discarding the
+initial element, the name extraction has to be guarded to ensure that
+tests won't try to extract names from an empty field list:  {\tt
+  len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name}.
+The {\tt <fieldlist,1>} construct, which can also be used outside of a
+guard, indicates that this pool value should not be produced using
+normal template expansion (instantiated as both {\tt fieldname0} and
+{\tt fieldname1}) but rather than it should copy the comma indexed
+appearance of that pool in each expansion (indexing starts from 1).  This makes sure the guard
+is over the same pool value that is used in the action.
+
+TSTL also supports post-conditions on actions, in the form {\tt action
+  => post-condition}, where an assertion is
+checked after certain actions are performed.  For example, because
+some known ArcPy bugs involve addition of incorrect characters to
+field names in a database, we could add code to check that all field
+names in feature classes are correct.  TSTL supports {\tt init:} code
+in the preamble, which is called before each test starts.  We can then
+make sure that a library call to add a field to a feature class adds
+it to a database of all field names collected at the start of testing,
+and check the set of values returned by 
+at the beginning of each test, and store these in a dictionary.  We
+can update the data if, for example, we add a field, and then check
+that all field names are correct every time we access a feature
+classes' fields.  Ending a line in {\tt \\} indicates the action
+continues on the next line of the file.
+
+{\scriptsize
+\begin{code}
+init: <fieldnames> = getAllFieldNames(getFeatureClasses())
+
+\{ExecuteError\} not (<fc,1> in <hascursor>) -> \\
+   AddField\_management(<fc>,<fieldname>,<fieldtype>); \\
+   <fieldnames> [<fc,1>].add([<fieldname,1>])
+
+\{IOError\} <fieldlist> := ListFields(<fc>) \\
+  => sorted(<fieldlist,1>) == sorted(list(<fieldnames> [<fc,1>]))
+\end{code}
+}
+
+Note the additional guard on adding fields --- we have discovered that
+adding a field to a feature class that has any database cursors active
+tends to crash ArcPy.  In post-conditions, the construct {\tt
+  pre<(expr)>} allows access to values of expressions from before the
+action is executed, as a further convenience.
+
+When a correctness property is more general than a post-condition on a
+single action, it can also be included in the preamble, to be checked
+after every action.  Our field name property could therefore also be
+stated as {\tt property: sorted(ListFields(<fc>)) ==
+  sorted(list(<fieldnames> [<fc,1>]}.  The advantage is that this will
+catch problems even if we never construct a {\tt fieldlist}; the
+disadvantage is that testing slows to check all field names for all
+feature classes, after every action.
