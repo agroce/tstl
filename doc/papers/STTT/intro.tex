@@ -220,11 +220,21 @@ pools:
   <op> 2 CONST 
   <val> 2 CONST
   <whereclause> 2 CONST
+  <fieldname> 2 CONST
+  <fieldlist> 2
+  <classorlayer> 2
 \vspace{0.1in}
 actions:
-
+\vspace{0.1in}
 <featureclass> := <["file1.shp", "file2.shp", "file3.shp"]>
 <newlayer> := <["newl1", "newl2", "newl3"]>
+
+<classorlayer> := <newlayer>
+<classorlayer> := <featureclass>
+
+{IOError} <fieldlist> := arcpy.ListFields(<classorlayer>)
+len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name 
+<fieldlist> = <fieldlist> [1:]
 
 <op> := <[">", "<", "<=", ">=", "=", "!="]>
 <val> := <1..10>
