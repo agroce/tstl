@@ -1,10 +1,10 @@
 \section{Introduction}
 
-Software test automation can be divided into two types: (1) automated
+Software test automation describes two challenges: (1) automated
 execution and determination of results for human-created tests, and
-(2) automatic generation of tests.  Both are critical for effective,
-efficient software testing, but only automatic generation offers the
-promise of discovering faults without human determination that a
+(2) truly automatic generation of tests.  Both are critical for effective,
+efficient software testing, but only test generation offers the
+potential to discover faults without human determination that a
 particular execution scenario has the potential to behave incorrectly.
 Automated generation of tests relies on the construction of \emph{test
   harnesses}.  A \emph{test harness} defines the set of valid tests
@@ -17,8 +17,8 @@ test generation.
 Building a test harness is a task that even expert users of model
 checkers or automated testing often find painful
 \cite{woda08,woda12}.  The difficulty of harness generation is one
-reason for the limited adoption of sophisticated testing and model
-checking by the typical developer who writes unit tests.  This is
+reason for the limited adoption of automated testing and model
+checking methods by the typical developer who writes unit tests.  This is
 unfortunate, as even simple random testing can often uncover subtle
 faults.
 
@@ -63,13 +63,10 @@ if (op == op1 \&\& guard1) \{
 Unfortunately, writing test harnesses this way is a highly repetitive
 and error-prone programming task, with many conceptual ``code clones''
 (e.g. Figure \ref{fig:badharness}). A user faces difficult choices in
-constructing such a harness. For example, the way guards and choices
-are interleaved means that the state-space will be pointlessly
-expanded to include many action and value choices that don't produce
-any useful behavior.  This harness also always assigns {\tt val2} even
+constructing such a harness. For example, the example harness always assigns {\tt val2} even
 though {\tt call1} only uses {\tt val1}, to avoid having to repeat the
-choice code for calls 2 and 3.  Moreover, this harness is possibly
-sub-optimal for a method such as random testing, where the lack of any
+choice code for calls 2 and 3.  The harness is almost certainly
+sub-optimal for  random testing, where the lack of any
 memory for previously chosen values can make it hard to exercise code
 behaviors that rely on providing the same arguments to multiple method
 calls (e.g., {\tt insert} and {\tt delete} for container classes).
@@ -85,9 +82,7 @@ are also difficult to construct.  A harness testing a typical
 real-world library must manage the creation of values of multiple complex types.
 Moreover, because building up function inputs is itself complicated
 and requires complex method calls, they cannot simply be produced on each iteration, but must be
-remembered.  As the interactions of multiple instances of certain
-types are often a source of behavioral complexity,
-the harness needs to decide how many objects of each type to store.
+stored and selected for use in future calls.
 The code quickly becomes hard to read, hard to maintain, and hard to
 debug.  In some cases \cite{AMAI} the code for a sophisticated test
 harness approaches the SUT in complexity and even size!  The code's
@@ -116,7 +111,7 @@ INPUTS:
 \label{fig:MakeFeatureLayer}
 \end{figure}
 
-One of the most important of these is the choice of test generation
+One of the most important of these locked-in choices is the  test generation
 method.  Writing a harness by hand usually makes it hard to try out
 new strategies.   Writing novel testing strategies in even such
 an extensible platform as Java Pathfinder is hardly a task for the
@@ -124,18 +119,17 @@ non-expert.
 The harness in Figure \ref{fig:badharness} may support random testing and
 some form of model checking, if it is written in Java and can use JPF
 or a library for adaptation-based testing \cite{ISSRE12}. Such a
-harness cannot support model checking or any other sophisticated strategy
-without being re-written if it is in a language like Python without
-verification tool support.
+harness will likely be completely inflexible as to generation method if written in Python, C,
+or another language without that level of tool support.
 
 What the user really wants is to simply provide a concise version of the information in
 Figure \ref{fig:MakeFeatureLayer}, some configuration details (e.g., how many
-feature classes to work with), and some information on which testing
-method to use (e.g., model checking, random testing, machine-learning
-based approaches).  Some automated testing tools for Java \cite{FA11,Pacheco}
-take a variation on this approach, automatically extracting the
-signatures of methods from source code and testing them.
-Unfortunately, completely automatic extraction often fails to handle
+feature classes to keep track of at once), and then try different test
+generation methods.  While some automated testing tools for Java \cite{FA11,Pacheco}
+can automatically extract
+method signatures from source code and produces tests,  
+using such a tool locks a user into one test generation method.
+Completely automatic extraction also often fails to handle
 the subtle details of harness construction, such as defining guards
 for some operations, or temporal constraints between API calls that
 are not detectable by simple exception behavior.  Understanding
@@ -152,9 +146,8 @@ The nature of test harness construction suggests the use of a
 \emph{domain-specific language} (DSL) for testing \cite{ISOLA12}.  DSLs
 \cite{Fow10} provide abstractions and notations to support a
 particular programming domain. The use of DSLs is a formalization of
-the long-standing approach of using ``little languages'' in computer
-science, as memorably advocated by Jon Bentley in one of his famous
-Programming Pearls columns \cite{LitLang} and exemplified in such system
+the long-standing approach of using ``little languages,'' as advocated by Jon Bentley in a
+Programming Pearls column \cite{LitLang} and exemplified in such system
 designs as UNIX.  DSLs typically come in two forms: \emph{external}
 and \emph{internal}.  An external DSL is a stand-alone language, with
 its own syntax.  An internal DSL, also known as a domain-specific
@@ -185,7 +178,7 @@ DSL (for concision and ease-of-use).
 
 \subsection{TSTL: The Template Scripting Testing Language}
 
-TSTL is based on understanding the test harness as a \emph{declaration
+TSTL is based on understanding a test harness as a \emph{declaration
   of the possible actions the SUT can take}, where these actions are
 \emph{defined in the language of the SUT itself, with the full power
   of the programming language to define guards, perform
@@ -194,48 +187,46 @@ based on what we call \emph{template scripting}.
 
 The \emph{template} aspect is based on the fact that our method
 proceeds by processing a harness definition file to output code that
-enables testing, much like SPIN does with C code.  The harness
+enables testing, much  as SPIN processes PROMELA/C.  The harness
 description file consists of fragments of code in the SUT's language
-that are expanded, via the TSTL compiler, into executable source code.
-The tool that outputs code basically defines a \emph{template} for
-test harnesses in a programming language, and the harness definition
-tells the tool how to instantiate that template.  Rather
-than generating a testing tool (what SPIN does, essentially), our method outputs \emph{a class
-defining a search space}, which can then be interfaced to any testing
-strategy to generate and manipulate tests.  The \emph{scripting} aspect simply means
+that are expanded, via the TSTL compiler, into a class that allows
+an independently written test generation or manipulation tool to
+generate, execute, or replay tests, without knowing
+any details of the SUT.
+A TSTL harness defines a \emph{template} for action definition, and
+the compiler 
+instantiates the template exhaustively.  The \emph{scripting} aspect simply means
 TSTL is designed to be very lightweight and as easy for
-users to pick up as popular scripting languages, like Python.  TSTL
+users to pick up as a popular scripting language.  TSTL
 works best when the SUT language is very
-concise, like most scripting language, making ``one-liners'' of action definition possible.
+concise, like most scripting language, making ``one-liners'' of action
+definition possible; our initial implementation is therefore for
+Python\footnote{We also have a beta version of Java TSTL, to show that
+  the concept is not limited to testing scripting language code.}.
 
 \begin{figure}
 {\scriptsize
 \begin{code}
-@import arcpy
-@from arcpy import ExecuteError
+@from arcpy import *
 \vspace{0.1in}
 pools:
-  <featureclass> 2 CONST
+  <fc> 2 CONST             \# A feature class contains only lines, points, or polygons
   <newlayer> 2 CONST
   <op> 2 CONST 
   <val> 2 CONST
-  <whereclause> 2 CONST
-  <fieldname> 2 CONST
+  <whereclause> 2 CONST    \# SQL clause to limit objects in new layers
+  <fieldname> 2 CONST      \# Extracted from the shape files
   <fieldlist> 2
-  <classorlayer> 2
 \vspace{0.1in}
 actions:
 \vspace{0.1in}
-<featureclass> := <["file1.shp", "file2.shp", "file3.shp"]>
+<fc> := <["d1.shp", "d2.shp", "d3.shp"]>  \# Just shapefiles for this example
 <newlayer> := <["newl1", "newl2", "newl3"]>
-
-<classorlayer> := <newlayer>
-<classorlayer> := <featureclass>
-
-{IOError} <fieldlist> := arcpy.ListFields(<classorlayer>)
+\vspace{0.05in}
+\{IOError\} <fieldlist> := ListFields(<fc>) \# Extract fields from a feature class
 len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name 
-<fieldlist> = <fieldlist> [1:]
-
+<fieldlist> = <fieldlist> [1:] \# Skip to next field
+\vspace{0.05in}
 <op> := <[">", "<", "<=", ">=", "=", "!="]>
 <val> := <1..10>
 <val> = <val> * 10
@@ -248,10 +239,9 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 <whereclause> = <whereclause> + ' OR ' +  <whereclause>
 <whereclause> = 'NOT' + <whereclause>
 
-\{ExecuteError\} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>)
+\{ExecuteError\} MakeFeatureLayer\_management(<fc>,<newlayer>)
 
-\{ExecuteError\} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>,
-  where\_clause=<whereclause>)
+\{ExecuteError\} MakeFeatureLayer\_management(<fc>,<newlayer>,where\_clause=<whereclause>)
 \end{code}
 }
 \caption{A small TSTL file to test one ArcPy function.}
@@ -262,22 +252,21 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 {\scriptsize
 \begin{code}
 import sut random, time
+rgen = random.Random()
 sut = sut.sut()
 NUM\_TESTS = 1000
 TEST\_LENGTH = 200 
 for t in xrange(0,NUM\_TESTS):
    sut.restart()
-   T = []
    for s in xrange(0,TEST\_LENGTH): 
-       action = sut.randomEnabled()
-       T.append(action)
+       action = sut.randomEnabled(rgen)
        r = sut.safely(action)
        if sut.newBranches() != []
           print time.time(),'NEW BRANCHES:', sut.newBranches()
        if (not r) or (not sut.check()):
           pred = sut.failsCheck if r else sut.fails
           print 'TEST FAILED:', sut.error() 
-          R = sut.reduce(T, pred)
+          R = sut.reduce(sut.test(), pred)
           N = sut.normalize(R, pred) 
           sut.generalize(N,pred)
 \end{code}
@@ -287,19 +276,18 @@ for t in xrange(0,NUM\_TESTS):
 \end{figure}
 
 Figure \ref{fig:makefeaturelayer} shows a simple TSTL harness for the
-function documented in Figure \ref{fig:MakeFeatureLayer}.  This
-code can generate calls that include a choice between three files that
-contain GIS data, three names for new layers generated, and even
-construct SQL where clauses of arbitrary length.  Figure \ref{fig:rt}
-shows a simple pure random test generator that can test \emph{any} SUT
-with a TSTL-defined harness.  This harness, in 20 lines of code, not
-only provides automated test generation, but continuous reporting of
-incremental branch coverage, delta-debugging \cite{DD}
-based reduction of failing tests, and additional TSTL-specific
-post-processing that further reduces the size and complexity of test
-cases for debugging.  The brevity of the test generator, no matter how complex the
-SUT, is made possible by the functionality of all TSTL-generated
-testing interfaces.
+function documented in Figure \ref{fig:MakeFeatureLayer}.  Even this short
+harness supports constructing SQL where clauses of arbitrary
+length and selecting field names based on data files.  Figure \ref{fig:rt} shows a simple pure random test generator
+that can test \emph{any} SUT (including this one) with a TSTL-defined
+harness.  This harness, in 20 lines of code, not only provides
+automated test generation, but continuous reporting of incremental
+branch coverage, delta-debugging \cite{DD} for reduction of failing
+tests, and additional TSTL-specific post-processing that further
+reduces the size and complexity of test cases for debugging.  The
+brevity of the test generator, no matter how complex the SUT, is made
+possible by the common functionality of all TSTL-generated testing
+interfaces.
 
 \subsection{Contributions}
 
@@ -308,13 +296,13 @@ applying TSTL and its tool suite to a large, real-world software
 library used in critical applications.  The test effort has been driven and directed not by a
 software testing researcher (as is the usual case), but by a domain
 expert in the Geographic Information System (GIS) SUT.  In the
-process, multiple faults and undocumented restrictions of the library
+course of this effort, multiple faults and undocumented restrictions of the library
 under test have been discovered, and the TSTL language and tool suite have
 been improved.
 
 This paper presents the first complete presentation of the TSTL
 langauge and tools, with enough information on the language and the
-testing API TSTL provided for two critical purposes:
+testing API TSTL provides for two critical purposes:
 
 \begin{itemize}
 \item First, would-be users wanting to take advantage of automated
@@ -333,6 +321,7 @@ testing API TSTL provided for two critical purposes:
   experimental efforts, and include large and widely used Python
   software systems.
 \end{itemize}
+
 
 \section{Esri ArcPy}
 
@@ -377,44 +366,43 @@ debugging, and test case understanding.
 
 %\subsection{Automated Testing for the Rest of the World}
 
-Previous work on automated testing for APIs has been largely carried
+Previous work on automated test generation for APIs has been largely carried
 out by software testing researchers only, or (at most) by software
 testing researchers working with individuals who are primarily
-software developers.  This paper presents work largely directed by
-the first author, who is not a software developer by
-profession or education, but a GIS analyst.  
-
+software developers.  This paper describes TSTL in the context of a
+testing effort largely directed (and coded) by the first author, who is not a
+software developer by profession or education, but a GIS analyst.
 The problem of end-user testing
-\cite{burnettEUSE,Silos,rothermelTOSEM} is known to be difficult.
-Previous work has focused on end-users of systems that are not
-traditional programming languages: e.g. spreadsheets
+\cite{burnettEUSE,Silos,rothermelTOSEM} is long-standing.  Previous
+work in the field has often focused on
+non-traditional programming: e.g. spreadsheets
 \cite{rothermelTOSEM}, visual languages, or machine-learning systems
 \cite{OnlyOracle}.  TSTL is partly designed to allow a user who is
 familiar with a software library but not expert in software testing
 techniques to test a traditional software API library.  In one sense,
-this is a less difficult end-user testing scenario than spreadsheets
+this is a less difficult scenario than spreadsheets
 or visual forms, in that the testing is directed by an individual used
-to writing and thinking about source code.  The concepts in
-modern automated software testing are most easily understood by those
-who are also familiar with the structure and semantics of conventional
-programming languages.  On the other hand, the system to be tested is
-large, not a small user-developed program but a very large, complex, system.
+to writing and thinking about code.  The concepts in
+automated software testing are most easily understood by those
+who are also familiar a conventional
+programming language.  On the other hand, ArcPy is
+not a small user-developed program but a large, complex system.
 ArcPy was also not written by the end-user, or by any of the authors
 of this paper, nor have the authors received any assistance in the
 effort from Esri.
 
-Automated testing systems more advanced than a simple hand-written loop generating 
-a few random inputs to a handful of functions, or more complicated to 
-use than a fully push-button system are often considered too difficult 
-for practical use even by software developers or software QA staff \cite{ISSRE12}.
-In fact, in the experience of the second author of this paper (an
-academic software testing researcher), even ``push-button'' tools for
-automated testing are often difficult for expert users to install, apply, and
-configure \cite{AMAI,CFV08,ISSRE12}.  TSTL aims to be relatively easy to
-use for anyone familliar with basic Python development.  By avoiding
-the use of a toy problem and presenting TSTL in the context of a more
-typical real-world system than a simple container class, we hope to
-make it easier to apply to other real-world systems.
+Automated testing systems more advanced than a simple hand-written
+loop generating a few random inputs to a handful of functions, or more
+complicated to use than a fully push-button system are often
+considered too difficult for practical use even by software developers
+or software QA staff \cite{ISSRE12}. Even ``push-button'' tools for
+automated testing are sometimes difficult for expert users to install,
+apply, and configure \cite{AMAI,CFV08,ISSRE12}.  TSTL aims to be
+relatively easy to use for anyone familliar with basic Python
+development.  By avoiding the use of a toy problem and presenting TSTL
+in the context of a more typical real-world system (vs. e.g., a simple
+container class), we hope to make it easier to apply to other
+real-world systems.
 %One goal of this work
 %has been to mature the TSTL language and toolchain so Python
 %programmers from all backgrounds can easily apply it to their

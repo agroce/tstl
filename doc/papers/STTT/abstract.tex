@@ -1,4 +1,4 @@
-A test harness, in automated testing, defines the set of valid tests
+A test harness, in automated test generation, defines the set of valid tests
 for a system, and usually also defines a set of correctness
 properties.  The difficulty of writing test harnesses is a major
 obstacle to the adoption of automated test generation and model
@@ -7,13 +7,13 @@ particular tool, unfamilliar to programmers, and often limit
 expressiveness.  Writing test harnesses directly in the language of
 the Software Under Test (SUT) is a tedious, repetitive, and
 error-prone task, offers little or no support for test case
-manipulation and debugging, and produces repetitive, hard-to-read
+manipulation and debugging, and produces hard-to-read, hard-to-maintain
 code.  Both approaches tend to tie a test harness to one method of
 test generation, with little ability to explore alternative methods.
 In this paper, we present TSTL, the Template Scripting Testing
 Language, a domain-specific language (DSL) for writing test harnesses
 that compiles harness definitions into an abstract graph-based
-interface that abstracts away the details of the SUT, making generic
+interface that makes generic
 test generation and manipulation tools possible.  TSTL includes a
 compiler to Python as well as a suite of tools for generating, manipulating,
 and analyzing test cases, including simple but easily extensible explicit-state model

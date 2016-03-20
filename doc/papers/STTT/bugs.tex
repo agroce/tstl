@@ -1,1 +1,62 @@
 \section{Faults Discovered Using TSTL}
+
+\subsection{ArcPy Faults}
+
+\begin{figure}
+{\scriptsize 
+\begin{code}
+shapefilelist0 = glob.glob("C:\\Arctmp\\*.shp")                             \textcolor{black!60}{\# STEP 0}
+\textcolor{black!60}{\#[}
+shapefile0 = shapefilelist0 [0]                                           \textcolor{black!60}{\# STEP 1}
+newlayer0 = "l1"                                                          \textcolor{black!60}{\# STEP 2}
+\textcolor{black!60}{\#  or newlayer0 = "l2" }
+\textcolor{black!60}{\#  or newlayer0 = "l3" }
+\textcolor{black!60}{\#  swaps with steps 3 4 5 6 7}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+featureclass0 = shapefile0                                                \textcolor{black!60}{\# STEP 3}
+\textcolor{black!60}{\#  swaps with step 2}
+fieldname0 = "newf1"                                                      \textcolor{black!60}{\# STEP 4}
+\textcolor{black!60}{\#  or fieldname0 = "newf2" }
+\textcolor{black!60}{\#  or fieldname0 = "newf3" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+selectiontype0 = "SWITCH\_SELECTION"                                       \textcolor{black!60}{\# STEP 5}
+\textcolor{black!60}{\#  or selectiontype0 = "NEW\_SELECTION" }
+\textcolor{black!60}{\#  or selectiontype0 = "ADD\_TO\_SELECTION" }
+\textcolor{black!60}{\#  or selectiontype0 = "REMOVE\_FROM\_SELECTION"}
+\textcolor{black!60}{\#  or selectiontype0 = "SUBSET\_SELECTION"}
+\textcolor{black!60}{\#  or selectiontype0 = "CLEAR\_SELECTION"   }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+op0 = ">"                                                                 \textcolor{black!60}{\# STEP 6}
+\textcolor{black!60}{\#  or op0 = "<" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+val0 = "100"                                                              \textcolor{black!60}{\# STEP 7}
+\textcolor{black!60}{\#  or val0 = "1000" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+arcpy.MakeFeatureLayer\_management(featureclass0, newlayer0)               \textcolor{black!60}{\# STEP 8}
+\textcolor{black!60}{\#  swaps with steps 4 5 6 7}
+arcpy.SelectLayerByAttribute\_management(newlayer0,selectiontype0,
+   ' "'+fieldname0+'" '+op0+val0)                                         \textcolor{black!60}{\# STEP 9}
+arcpy.Delete\_management(featureclass0)                                    \textcolor{black!60}{\# STEP 10}
+arcpy.SelectLayerByAttribute\_management(newlayer0,selectiontype0,
+   ' "'+ fieldname0+'" '+op0+val0)                                        \textcolor{black!60}{\# STEP 11}
+\end{code}
+}
+\caption{Deleting a feature class does not invalidate or delete layers that depend on it.}
+\label{fault1}
+\end{figure}
+
+
+ArcPy crashes when the feature class from which a layer is produced is
+deleted, and the layer is used in a {\tt SelectLayer} call (this
+version shows an attribute-based selection, but location selection
+will cause the same problem): (Figure \ref{fault1}).  The underlying issue seems to be that
+while operations on a deleted feature class properly notify a user the
+feature class does not exist, ArcPy or ArcGIS does not track that
+layers produced from a feature class should also be deleted/invalidated
+when the feature class is deleted.  Layers are not copies
+of a feature class, but essentially new views of a feature class.
+This means that when the underlying feature class is modified or
+deleted, the view needs to be updated to reflect that change, and this
+is not correctly implemented.
