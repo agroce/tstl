@@ -147,7 +147,7 @@ and check the set of values returned by
 at the beginning of each test, and store these in a dictionary.  We
 can update the data if, for example, we add a field, and then check
 that all field names are correct every time we access a feature
-classes' fields.  Ending a line in {\tt \\} indicates the action
+classes' fields.  Ending a line in a backslash indicates the action
 continues on the next line of the file.
 
 {\scriptsize
@@ -177,3 +177,44 @@ stated as {\tt property: sorted(ListFields(<fc>)) ==
 catch problems even if we never construct a {\tt fieldlist}; the
 disadvantage is that testing slows to check all field names for all
 feature classes, after every action.
+
+Another useful feature of TSTL is the ability to create
+\emph{reference} pools, where every action on pool values is mirrored
+by an action on a reference version of that pool.  For example, in
+ArcPy we may want to ensure that operations are deterministic:  no GIS
+operations produce different results, given the same underlying starting
+feature class data.  Assuming in raw Python in the preamble we have
+defined {\tt identityFunction} as an identity function and {\tt
+  copyFCName} as a function that takes a feature class name and
+transforms it into a generated name for a reference copy of the
+feature class, the following mirrors all actions on feature
+classes on a reference copy, and checks that the feature class and its
+reference always have the same fields. 
+
+{\scriptsize
+\begin{code}
+pools:
+  <basefc> 2 CONST
+  <fc> 2 CONST REF
+
+<basefc> := <[``d1.shp'', ``d2.shp'', ``d3.shp'']>; \\
+  CopyFeatures\_management(<basefc,1>,copyFCName(<basefc,1>)
+<fc> := identityFunction(<basefc>)
+\{IOError\} <fieldlist> := ListFields(<fc>)
+
+references:
+  identityFunction ==> copyFCName
+
+compares:
+  ListFields
+\end{code}
+}
+
+When instantiating the action templates, TSTL always produces a copy
+of every action containing any reference pool values.  First, the pool
+values are replaced with their reference copies; second, all the
+syntactic transformations (which can include arbitrary Python regular
+expressions) in the {\tt references} declaration are applied.
+Finally, if any string matches a regular expression in a {\tt
+  compares} declaration, the return values or assigned values in the
+action are compared with those for the reference version.
