@@ -75,7 +75,7 @@ cases, where the tested behaviors involve building up complex types as
 inputs to method calls, rather than simple integer choices. For
 example, consider the problem of testing a complex Python library.  Figure
 \ref{fig:MakeFeatureLayer} shows a portion of the Python documentation for one function in the ArcPy site
-package for Geographic Information System (GIS) automation.  Rather than taking a single integer, this
+package for Geographic Information Systems (GIS) automation.  Rather than taking a single integer, this
 function call requires complex inputs --- a feature class or
 layer, an SQL expression, and other complex types that we can assume
 are also difficult to construct.  A harness testing a typical
@@ -140,6 +140,8 @@ declarative harness, but often \emph{needs} to program critical details of a
 harness, and build understanding of the system by performing harness development in
 small, incremental steps.
 
+\vspace{-0.2in}
+
 \subsection{Domain Specific Languages for Testing}
 
 The nature of test harness construction suggests the use of a
@@ -163,8 +165,8 @@ must learn a new language, and the easier it is to learn, the less
 likely it is to support the full range of features needed.
 
 A novel approach is taken in recent versions of the SPIN model checker
-\cite{SPIN}.  Version 4.0 of SPIN \cite{ModelDriven} made use of
-SPIN's nature as a tool that \emph{outputs a C program} to allow users
+\cite{SPIN}.  Version 4.0 of SPIN \cite{ModelDriven} exploited the
+fact that SPIN works by producing a C program from a PROMELA model
 to include calls to the C language in their PROMELA models.  The
 ability to directly call C code makes it much easier to model check
 large, complex C programs \cite{AMAI,ModelCode}.  C serves as a
@@ -178,11 +180,11 @@ DSL (for concision and ease-of-use).
 
 \subsection{TSTL: The Template Scripting Testing Language}
 
-TSTL is based on understanding a test harness as a \emph{declaration
-  of the possible actions the SUT can take}, where these actions are
-\emph{defined in the language of the SUT itself, with the full power
-  of the programming language to define guards, perform
-  pre-processing, and implement oracles}.  Our particular approach is
+TSTL is based on understanding a test harness as a declaration
+  of the possible actions the SUT can take, where these actions are
+defined in the language of the SUT itself, with the full power
+of the programming language to define guards, perform
+pre-processing, and implement oracles.  Our particular approach is
 based on what we call \emph{template scripting}.
 
 The \emph{template} aspect is based on the fact that our method
@@ -233,8 +235,6 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 <val> = <val> + 1
 
 <whereclause> := '"' + <fieldname> + '" ' + <op> + str(<val>)
-<whereclause> := '"' + <fieldname> + '" IS NULL'
-<whereclause> := '"' + <fieldname> + '" IS NOT NULL'
 <whereclause> = <whereclause> + ' AND ' + <whereclause>
 <whereclause> = <whereclause> + ' OR ' +  <whereclause>
 <whereclause> = 'NOT' + <whereclause>
@@ -279,7 +279,7 @@ Figure \ref{fig:makefeaturelayer} shows a simple TSTL harness for the
 function documented in Figure \ref{fig:MakeFeatureLayer}.  Even this short
 harness supports constructing SQL where clauses of arbitrary
 length and selecting field names based on data files.  Figure \ref{fig:rt} shows a simple pure random test generator
-that can test \emph{any} SUT (including this one) with a TSTL-defined
+that can test any SUT (including this one) with a TSTL-defined
 harness.  This harness, in 20 lines of code, not only provides
 automated test generation, but continuous reporting of incremental
 branch coverage, delta-debugging \cite{DD} for reduction of failing
@@ -295,7 +295,7 @@ We showcase the TSTL approach and tools using an ongoing case study,
 applying TSTL and its tool suite to a large, real-world software
 library used in critical applications.  The test effort has been driven and directed not by a
 software testing researcher (as is the usual case), but by a domain
-expert in the Geographic Information System (GIS) SUT.  In the
+expert in the Geographic Information Systems (GIS) SUT.  In the
 course of this effort, multiple faults and undocumented restrictions of the library
 under test have been discovered, and the TSTL language and tool suite have
 been improved.

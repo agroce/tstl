@@ -47,6 +47,13 @@ arcpy.SelectLayerByAttribute\_management(newlayer0,selectiontype0,
 \label{fault1}
 \end{figure}
 
+In the process of testing ArcPy with TSTL, we discovered six faults
+(thus far) that can cause an ArcPy script to crash.  While we have (as
+discussed in the language section) some properties that also check for
+data corruption and determinism of GIS analysis, we are not focusing
+on these until we have a reliable way to avoid system crashes.   In
+order to give an idea of what TSTL test cases look like, we discuss
+briefly one of these ArcPy crashes.
 
 ArcPy crashes when the feature class from which a layer is produced is
 deleted, and the layer is used in a {\tt SelectLayer} call (this
@@ -56,7 +63,33 @@ while operations on a deleted feature class properly notify a user the
 feature class does not exist, ArcPy or ArcGIS does not track that
 layers produced from a feature class should also be deleted/invalidated
 when the feature class is deleted.  Layers are not copies
-of a feature class, but essentially new views of a feature class.
+of a feature class, but essentially new \emph{views} of a feature class.
 This means that when the underlying feature class is modified or
 deleted, the view needs to be updated to reflect that change, and this
-is not correctly implemented.
+is not correctly implemented.  Figure \ref{fault1} shows part of an
+annotated, reduced, normalized, and generalized test stand-alone test
+case (with the boilerplater, function definitions, and imports
+removed) for this fault.  The final line of code crashes ArcPy and the
+Python interpreter.  Comments indicate alternative similar tests that
+also fail.  In this case, TSTL's additional reduction steps (based on
+term rewriting in the action language) remove almost half the steps in
+the original, delta-debugged test case.
+
+\subsection{Faults in Other Systems}
+
+TSTL has is only slightly over a year old.  However, students using
+TSTL in graduate classes on software testing have already, with
+minimal assistance, discovered faults in some real-world systems.  Not
+all of these are confirmed and reported yet.
+
+First, TSTL testing revealed a fault in either the widely-used {\tt
+  PyOpenCL} library, the even more widely-used {\tt OpenCL}
+infrastructure, or (possibly) the NVIDIA hardware being used.  We are
+still investigating this problem, but it appears to be a genuine
+fault, though debugging and assigning blame is complex due to the
+layers of software involved.  Second, TSTL testing found cases where distance metrics that were supposed to
+be symmetric in the popular fuzzy-string-matching library FuzzyWuzzy.
+Third, TSTL testing revealed numerous problems with the {\tt
+  astropy.table} module of the AstroPy
+library, used by many professional astronomers and astrophysicists.
+Finally, TSTL has been used to discover faults in the TSTL API itself.

@@ -83,12 +83,17 @@ val1 = 10
 }
 
 From the initial state of the system, only these 20 actions are
-\emph{enabled}.  The first concept that is essential to understanding
+\emph{enabled}.  \emph{Enabled} actions are those that can be executed in the
+current state; the complete set of actions defined by a TSTL harness is always
+finite, and the enabled set is always a subset of that finite set.  The first concept that is essential to understanding
 TSTL semantics is that at any state of the
 system, the only actions that are enabled are those that do not
 \emph{use} any non-initialized pool values.  Any appearance of a pool
-value is a use, with the single exception of the left-hand-side of a
-{\tt :=} initialization.  The second concept is that a value
+value is considered a \emph{use}, with the single exception of the left-hand-side of a
+{\tt :=} initialization (not normal assignment)\footnote{The definition of
+use is the only distinction between {\tt :=} and normal Python
+assignment, and {\tt :=} is implemented as Python assignment, and appears
+as such when test cases are printed.}.  The second concept is that a value
 cannot be initialized (appear on the lhs of {\tt :]}) until after at
 least one action
 that uses it has been executed.  Figure \ref{fig:poolacts} shows the
@@ -180,16 +185,19 @@ feature classes, after every action.
 
 Another useful feature of TSTL is the ability to create
 \emph{reference} pools, where every action on pool values is mirrored
-by an action on a reference version of that pool.  For example, in
-ArcPy we may want to ensure that operations are deterministic:  no GIS
-operations produce different results, given the same underlying starting
-feature class data.  Assuming in raw Python in the preamble we have
-defined {\tt identityFunction} as an identity function and {\tt
-  copyFCName} as a function that takes a feature class name and
-transforms it into a generated name for a reference copy of the
-feature class, the following mirrors all actions on feature
-classes on a reference copy, and checks that the feature class and its
-reference always have the same fields. 
+by an action on a reference version of that pool.  This makes it
+possible to perform differential testing \cite{Differential} on a
+per-pool basis, rather than at the whole-system level, allowing
+complex partial specifications.  For example, in ArcPy we may want to
+ensure that operations are deterministic: no GIS operations produce
+different results, given the same underlying starting feature class
+data.  Assuming in raw Python in the preamble we have defined {\tt
+  identityFunction} as an identity function and {\tt copyFCName} as a
+function that takes a feature class name and transforms it into a
+generated name for a reference copy of the feature class, the
+following mirrors all actions on feature classes on a reference copy,
+and checks that the feature class and its reference always have the
+same fields.
 
 {\scriptsize
 \begin{code}
@@ -218,3 +226,40 @@ expressions) in the {\tt references} declaration are applied.
 Finally, if any string matches a regular expression in a {\tt
   compares} declaration, the return values or assigned values in the
 action are compared with those for the reference version.
+
+\subsection{How to Build a TSTL Harness}
+
+In the introduction, we noted that one problem with automatic
+extraction of harnesses by tools is that in order to effectively test
+complex systems, it is important to incrementally build testing
+capability, understanding the effort as it increases in scope.  TSTL
+naturally supports this methodology.  The ArcPy harness, though
+complex, was developed by starting with a small number of ArcPy
+functions, and determining their parameters.  These functions were
+chosen because they were likely to expose faults easily.  Once
+functions have been chosen, and their parameters are known,
+developing a harness can often be a clean, iterative process:
+
+\begin{enumerate}
+\item Choose a new function (or set of related functions) to include
+  in the harness.
+\item Determine all parameters types.
+\item If there is no pool that can produce these types, determine how
+  to produce these types, and add pools and pool initialization actions for
+  those pools.  This may require adding some additional
+  functions (in which case, go to step 1 and start with those
+  functions).
+\item Add an action to call the function(s) being added.  If relevant,
+  allow any expected exceptions, guards, and post-conditions to check.
+\item Run testing, examine code coverage and failures to evaluate the
+  added code, and repeat from step 1.
+\end{enumerate}
+
+These steps, combined with occasional refactoring or generalization of
+parts of the harness, can effectively test even a large library, while
+maintaining tester understanding and control.   In the ArcPy test
+harness development, most of the effort was spent in this cycle, with
+major exceptions being the implementation of a method allowing users
+to provide their own GIS data on which testing is based, and effort to
+improve the TSTL tool infrastructure to support testing a complex
+application in a Windows environment.

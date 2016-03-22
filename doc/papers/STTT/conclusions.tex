@@ -5,4 +5,12 @@ This paper presents the latest version of the TSTL
 \cite{NFM15,ISSTA15,tstl} domain-specific language for testing, which
 enables a declarative style of test harness development, where the
 focus is on defining the actions in valid tests, not determining
-exactly how tests are generated.
+exactly how tests are generated.  Because TSTL, inspired by the SPIN
+model checker, produces a software-under-test-independent interface
+for testing, TSTL makes it possible for users to easily apply
+different test generation methods to the same system without undue
+effort, and for researchers to rapidly prototype novel test generation
+methods.  TSTL has, in the year since its initial introduction,
+already been used to discover (to our knowledge) previously unknown
+faults in multiple Python libraries, including the very widely-used
+ArcPy site package for GIS scripting. 

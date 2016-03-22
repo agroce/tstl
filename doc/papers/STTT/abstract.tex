@@ -11,15 +11,15 @@ manipulation and debugging, and produces hard-to-read, hard-to-maintain
 code.  Both approaches tend to tie a test harness to one method of
 test generation, with little ability to explore alternative methods.
 In this paper, we present TSTL, the Template Scripting Testing
-Language, a domain-specific language (DSL) for writing test harnesses
-that compiles harness definitions into an abstract graph-based
-interface that makes generic
-test generation and manipulation tools possible.  TSTL includes a
+Language, a domain-specific language (DSL) for writing test harnesses.
+TSTL compiles harness definitions into an abstract 
+interface for testing, making generic
+test generation and manipulation tools that apply to any SUT possible.  TSTL includes a
 compiler to Python as well as a suite of tools for generating, manipulating,
 and analyzing test cases, including simple but easily extensible explicit-state model
 checkers.  This paper showcases the features of TSTL by focusing on
 one large-scale testing effort, directed by an end-user, to find
-faults in the most widely used Geographic Information System (GIS) tool,
+faults in the most widely used Geographic Information Systems (GIS) tool,
 Esri's ArcGIS, using its ArcPy scripting interface.  We also
 demonstrate how TSTL makes prototyping and evaluating new test
 generation algorithms easy for researchers.
