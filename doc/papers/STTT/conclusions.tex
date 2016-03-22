@@ -9,8 +9,17 @@ exactly how tests are generated.  Because TSTL, inspired by the SPIN
 model checker, produces a software-under-test-independent interface
 for testing, TSTL makes it possible for users to easily apply
 different test generation methods to the same system without undue
-effort, and for researchers to rapidly prototype novel test generation
-methods.  TSTL has, in the year since its initial introduction,
+effort.  The same approach makes it possible for researchers to rapidly prototype novel test generation
+methods, and evaluate them in a context where differences in test
+infrastructure not relevant to the algorithms at hand can be minimized.
+
+TSTL has, in the year since its initial introduction,
 already been used to discover (to our knowledge) previously unknown
 faults in multiple Python libraries, including the very widely-used
 ArcPy site package for GIS scripting. 
+As future work, we plan to continue to use TSTL to explore novel
+testing algorithms, investigate the relative strengths of systematic,
+stochastic, and directed test generation methods, and apply TSTL to
+look for faults in widely used libraries.  Additionally, we plan to
+port TSTL (which is only loosely coupled with underlying language) to additional
+programming languages beyond Python and Java.

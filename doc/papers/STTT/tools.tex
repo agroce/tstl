@@ -81,16 +81,17 @@ goodTests = []
 minBranches = 0
 startTime = time.time()
 while (time.time() - startTime <= TIMEOUT):
-   sut.restart()
    if (len(goodTests) > 0) and (rgen.random() < PEXTEND)):
-     sut.replay(rgen.choose(goodTests)[1])
+     sut.backtrack(rgen.choose(goodTests)[1])
+   else:
+     sut.restart()
    for s in xrange(0,TEST\_LENGTH): 
       action = sut.randomEnabled(rgen)
       r = sut.safely(action)
       if sut.newBranches() != []
          print time.time(),len(sut.allBranches())'NEW BRANCHES:', sut.newBranches()
    if MEMORY > 0:
-      goodTests.append((sut.test(), sut.currBranches()))
+      goodTests.append((sut.state(), sut.currBranches()))
       goodTests = sorted(goodTests, reverse=True)[:MEMORY]
 \end{code}
 }
@@ -98,4 +99,4 @@ while (time.time() - startTime <= TIMEOUT):
 \label{fig:keepgood}
 \end{figure}
 
-The implementation is trivial, relying only on the TSTL API and some very simple Python tools (sorting with automatic lexical ordering, time library, etc.).  We omit handling of failed tests, assuming the goal of this algorithm is simply to improve code coverage in fault-free systems for experimental evaluation.  This simple tool can be applied to any TSTL harness and will produce output showing when, in time, new branches were covered by the system.  This data can be used to produce Average-Percent-Branches-Detected (APBD) values and discovery curves \cite{issta14}. Comparison with simple random testing is easy, since setting {\tt MEMORY} to 0 gives pure memoryless random testing (alternatively, to avoid the overhead of the comparisons with 0, a dedicated version for random testing can be written).  Evaluating the algorithm can be as simple as finding a large number of suitable programs without failures (or where failures don't make coverage values invalid) and performing enough trials to establish statistical validity in comparisons of APBD values.  Evaluation in terms of discovered faults or time-until-discovery of a fault is approximately equally simple.
+The implementation is trivial, relying only on the TSTL API and some very simple Python tools (sorting with automatic lexical ordering, time library, etc.).  We omit handling of failed tests, assuming the goal of this algorithm is simply to improve code coverage in fault-free systems for experimental evaluation.  This simple tool can be applied to any TSTL harness and will produce output showing when, in time, new branches were covered by the system.  This data can be used to produce Average-Percent-Branches-Detected (APBD) values and discovery curves \cite{issta14}. Comparison with simple random testing is easy, since setting {\tt MEMORY} to 0 gives pure memoryless random testing (alternatively, to avoid the overhead of the comparisons with 0, a dedicated version for random testing can be written).  A major threat in most comparisons of testing algorithms is that different underlying infrastructure for different methods may end up outweighing even moderately sized effects due to the underlying algorithms.  With TSTL, fair comparisons are much easier, since the TSTL interface does most of the computational work that is common to multiple algorithms, with the same overhead.  Evaluating an algorithm can be as simple as finding a large number of suitable programs without failures (or where failures don't make coverage values invalid) and performing enough trials to establish statistical validity for comparisons with APBD values for known algorithms.  Evaluation in terms of discovered faults or time-until-discovery of a fault is nearly as simple.  This algorithm is of some interest, in that while it requires backtracking, the frequency of backtracking is low enough to be potentially applicable even to systems like ArcPy with where backtracking is only possible via expensive test replay.
