@@ -47,9 +47,10 @@ arcpy.SelectLayerByAttribute\_management(newlayer0,selectiontype0,
 \label{fault1}
 \end{figure}
 
-In the process of testing ArcPy with TSTL, we discovered six faults
+In the process of testing ArcPy with TSTL, we discovered at least five
+distinct faults
 (thus far) that can cause an ArcPy script to crash.  While we have (as
-discussed in the language section) some properties that also check for
+discussed in Section \ref{sec:lang}) some properties that check for
 data corruption and determinism of GIS analysis, we are not focusing
 on these until we have a reliable way to avoid system crashes.   In
 order to give an idea of what TSTL test cases look like, we discuss
@@ -74,6 +75,13 @@ Python interpreter.  Comments indicate alternative similar tests that
 also fail.  In this case, TSTL's additional reduction steps (based on
 term rewriting in the action language) remove almost half the steps in
 the original, delta-debugged test case.
+
+Other faults (or documentation lapses) in ArcPy we have discovered include crashes when computing
+statisics over database fields of a layer using a deleted field and
+crashes due to seemingly reasonable modifications of feature classes
+while a database cursor is active.  In order to deal with the latter,
+which seems more in the line of an undocumented behavioral restriction
+than a ``bug,'' we now limit database modification when a cursor is active.
 
 \subsection{Faults in Other Systems}
 

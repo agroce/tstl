@@ -55,9 +55,9 @@ Describing the full interface provided by TSTL for use in testing tools is beyon
 \begin{itemize}
 \item {\bf restart():}  resets the system state and aborts the current test. 
 \item {\bf enabled():} returns a list of all currently enabled actions.
-\item {\bf randomEnabled(random):}  given a Python random number generator object, returns a random enabled action, efficiently.
+\item {\bf randomEnabled(random):}  given a Python random number generator object, returns a random enabled action, efficiently (avoiding unneccessary guard evaluations).
 \item {\bf safely(action):} performs action (usually changing SUT state)  and returns a Boolean indicating whether the action performed raised any uncaught exceptions. 
-\item {\bf check():} returns a Boolean indicating whether the action performed raised any uncaught exceptions.
+\item {\bf check():} returns a Boolean indicating whether any properties fail for the current state.
 \item {\bf error():} returns either {\tt None} (no error for the last action or {\tt check}), or a Python object representing an uncaught exception or failed property's backtrace.
 \item {\bf state():} returns the current SUT state, as a set of values for all pools; for systems where state cannot be restored by pool values, or {\tt deepcopy} does not work, returns the current test to replay (can be controlled at runtime, or set as default for an SUT).
 \item {\bf backtrack(state):} takes a state produced by {\tt state} and restores the system to that state; replays a test, if state-based backtracking is turned off.
@@ -78,20 +78,19 @@ The idea is to perform random testing, but keep the final state of tests with un
 {\scriptsize
 \begin{code}
 goodTests = []
-minBranches = 0
 startTime = time.time()
 while (time.time() - startTime <= TIMEOUT):
-   if (len(goodTests) > 0) and (rgen.random() < PEXTEND)):
-     sut.backtrack(rgen.choose(goodTests)[1])
+   if (len(goodTests) > 0) and (rgen.random() < PEXTEND):
+     sut.backtrack(rgen.choice(goodTests)[1])
    else:
      sut.restart()
    for s in xrange(0,TEST\_LENGTH): 
       action = sut.randomEnabled(rgen)
       r = sut.safely(action)
-      if sut.newBranches() != []
-         print time.time(),len(sut.allBranches())'NEW BRANCHES:', sut.newBranches()
+      if len(sut.newBranches()) > 0:
+         print time.time(),len(sut.allBranches()),'NEW BRANCHES:', sut.newBranches()
    if MEMORY > 0:
-      goodTests.append((sut.state(), sut.currBranches()))
+      goodTests.append((sut.currBranches(), sut.state()))
       goodTests = sorted(goodTests, reverse=True)[:MEMORY]
 \end{code}
 }

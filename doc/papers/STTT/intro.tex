@@ -56,7 +56,7 @@ if (op == op1 \&\& guard1) \{
 \end{code}
 }
 \vspace{-0.15in}
-\caption {A test harness in the SUT language}
+\caption {A test harness in the SUT's language.}
 \label{fig:badharness}
 \end{figure}
 
@@ -140,7 +140,7 @@ declarative harness, but often \emph{needs} to program critical details of a
 harness, and build understanding of the system by performing harness development in
 small, incremental steps.
 
-\vspace{-0.2in}
+%\vspace{-0.2in}
 
 \subsection{Domain Specific Languages for Testing}
 
@@ -203,8 +203,8 @@ users to pick up as a popular scripting language.  TSTL
 works best when the SUT language is very
 concise, like most scripting language, making ``one-liners'' of action
 definition possible; our initial implementation is therefore for
-Python\footnote{We also have a beta version of Java TSTL, to show that
-  the concept is not limited to testing scripting language code.}.
+Python\footnote{We also have developed a beta version of TSTL for Java, to show
+ that testing code in non-scripting languages is also possible.}.
 
 \begin{figure}
 {\scriptsize
@@ -251,7 +251,7 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 \begin{figure}
 {\scriptsize
 \begin{code}
-import sut random, time
+import sut, random, time
 rgen = random.Random()
 sut = sut.sut()
 NUM\_TESTS = 1000
@@ -261,7 +261,7 @@ for t in xrange(0,NUM\_TESTS):
    for s in xrange(0,TEST\_LENGTH): 
        action = sut.randomEnabled(rgen)
        r = sut.safely(action)
-       if sut.newBranches() != []
+       if len(sut.newBranches()) > 0:
           print time.time(),'NEW BRANCHES:', sut.newBranches()
        if (not r) or (not sut.check()):
           pred = sut.failsCheck if r else sut.fails
@@ -276,18 +276,26 @@ for t in xrange(0,NUM\_TESTS):
 \end{figure}
 
 Figure \ref{fig:makefeaturelayer} shows a simple TSTL harness for the
-function documented in Figure \ref{fig:MakeFeatureLayer}.  Even this short
-harness supports constructing SQL where clauses of arbitrary
-length and selecting field names based on data files.  Figure \ref{fig:rt} shows a simple pure random test generator
-that can test any SUT (including this one) with a TSTL-defined
-harness.  This harness, in 20 lines of code, not only provides
-automated test generation, but continuous reporting of incremental
-branch coverage, delta-debugging \cite{DD} for reduction of failing
-tests, and additional TSTL-specific post-processing that further
-reduces the size and complexity of test cases for debugging.  The
-brevity of the test generator, no matter how complex the SUT, is made
-possible by the common functionality of all TSTL-generated testing
-interfaces.
+function documented in Figure \ref{fig:MakeFeatureLayer}.  Even this
+short harness supports constructing SQL where clauses of arbitrary
+length and selecting field names based on data files.  Figure
+\ref{fig:rt} shows a simple pure random test generator that can test
+any SUT (including this one) with a TSTL-defined harness.  This
+harness, in 20 lines of code, not only provides automated test
+generation, but continuous reporting of incremental branch coverage,
+delta-debugging \cite{DD} for reduction of failing tests, and
+additional TSTL-specific post-processing that further reduces the size
+and complexity of test cases for debugging.  The brevity of the test
+generator, no matter how complex the SUT, is made possible by the
+common functionality of all TSTL-generated testing interfaces.  The
+TSTL compiler produces a Python (or other target language, in future
+implementations) class that allows a test generation or manipulation
+tool to view a testing problem as exploration of a (possibly infinite)
+graph of states.  Transitions in the graph are the available testing
+actions, executed in the underlying language, and are guarded by both TSTL
+restrictions on the semantics of valid tests and user-defined guards
+on system behavior.  States include both the (possibly unknown) state
+of the SUT and the TSTL state, including pools of values to be used in actions.
 
 \subsection{Contributions}
 
@@ -300,14 +308,15 @@ course of this effort, multiple faults and undocumented restrictions of the libr
 under test have been discovered, and the TSTL language and tool suite have
 been improved.
 
-This paper presents the first complete presentation of the TSTL
+This paper presents the most complete presentation of the TSTL
 language and tools, with enough information on the language and the
-testing API TSTL provides for two critical purposes:
+testing API that TSTL provides for two critical purposes:
 
 \begin{itemize}
 \item First, would-be users wanting to take advantage of automated
   test generation should be able to base their own testing
-  efforts using TSTL on the example code in this paper.
+  efforts using TSTL on the example code in this paper (and available
+  in the TSTL github repository \cite{tstl}.
   This paper thus serves as a basic ``TSTL cookbook.''
 
 \item Second, researchers should be able to use the information in this paper to
@@ -317,8 +326,8 @@ testing API TSTL provides for two critical purposes:
   methods in a framework reducing the burden of implementation
   and avoiding irrelevant differences in performance due to underlying
   infrastructure.  The growing set of SUTs
-  included in the TSTL distribution can serve as bases for
-  experimental efforts, and include large and widely used Python
+  included in the TSTL distribution can provide benchmarks for
+  experimental efforts.  These examples include large and widely used Python
   software systems.
 \end{itemize}
 

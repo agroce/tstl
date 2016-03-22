@@ -1,4 +1,5 @@
 \section{The TSTL Harness Language}
+\label{sec:lang}
 
 The TSTL compiler takes as input a harness template file, and produces
 as output a Python class file that implements an interface other tools
@@ -48,7 +49,7 @@ actions:
 \end{code}
 }
 
-There is only one pool, named {\tt val} (labeled as {\tt CONST} to
+There is only one pool, named {\tt val} (optionally labeled as {\tt CONST} to
 indicate that its value does not change unless it appears on the left
 hand side of an assignment).  The pool has room to store
 two values.  The state of the SUT is defined by the state of all
@@ -92,9 +93,10 @@ system, the only actions that are enabled are those that do not
 value is considered a \emph{use}, with the single exception of the left-hand-side of a
 {\tt :=} initialization (not normal assignment)\footnote{The definition of
 use is the only distinction between {\tt :=} and normal Python
-assignment, and {\tt :=} is implemented as Python assignment, and appears
-as such when test cases are printed.}.  The second concept is that a value
-cannot be initialized (appear on the lhs of {\tt :]}) until after at
+assignment; {\tt :=} is implemented as Python assignment, and appears
+as such when test cases are printed.}.  The second concept is that a
+value that has been initialized
+cannot be initialized (appear on the lhs of {\tt :=}) until after at
 least one action
 that uses it has been executed.  Figure \ref{fig:poolacts} shows the
 consequences of these rules for the simple value assignment harness
@@ -140,20 +142,18 @@ appearance of that pool in each expansion (indexing starts from 1).  This makes 
 is over the same pool value that is used in the action.
 
 TSTL also supports post-conditions on actions, in the form {\tt action
-  => post-condition}, where an assertion is
-checked after certain actions are performed.  For example, because
-some known ArcPy bugs involve addition of incorrect characters to
-field names in a database, we could add code to check that all field
-names in feature classes are correct.  TSTL supports {\tt init:} code
-in the preamble, which is called before each test starts.  We can then
-make sure that a library call to add a field to a feature class adds
-it to a database of all field names collected at the start of testing,
-and check the set of values returned by 
-at the beginning of each test, and store these in a dictionary.  We
-can update the data if, for example, we add a field, and then check
-that all field names are correct every time we access a feature
-classes' fields.  Ending a line in a backslash indicates the action
-continues on the next line of the file.
+  => post-condition}, where an assertion is checked after certain
+actions are performed.  For example, because some known ArcPy bugs
+involve addition of incorrect characters to field names in a database,
+we could add code to check that field names in feature classes never
+change from their initial values.  We can make sure that a library
+call to add a field to a feature class adds it to a database of all
+field names collected at the start of testing, and check the set of
+values returned for each feature class at the beginning of each test,
+and store these in a dictionary.  This example code shows two more
+features of TSTL: TSTL supports {\tt init:} code in the preamble,
+which is called before each test starts.  Ending a line in a backslash
+indicates the action continues on the next line of the file.
 
 {\scriptsize
 \begin{code}
@@ -170,15 +170,17 @@ init: <fieldnames> = getAllFieldNames(getFeatureClasses())
 
 Note the additional guard on adding fields --- we have discovered that
 adding a field to a feature class that has any database cursors active
-tends to crash ArcPy.  In post-conditions, the construct {\tt
+tends to crash ArcPy.  For more complicated post-conditions, the construct {\tt
   pre<(expr)>} allows access to values of expressions from before the
-action is executed, as a further convenience.
+action was executed, as a further convenience for expressing properties.
 
 When a correctness property is more general than a post-condition on a
 single action, it can also be included in the preamble, to be checked
 after every action.  Our field name property could therefore also be
 stated as {\tt property: sorted(ListFields(<fc>)) ==
-  sorted(list(<fieldnames> [<fc,1>]}.  The advantage is that this will
+  sorted(list(<fieldnames> [<fc,1>]}.  Rather than checking only the
+feature class whose fields have been extracted, this will expand to a
+check for all feature classes.  The advantage is that the property will
 catch problems even if we never construct a {\tt fieldlist}; the
 disadvantage is that testing slows to check all field names for all
 feature classes, after every action.
@@ -225,7 +227,10 @@ syntactic transformations (which can include arbitrary Python regular
 expressions) in the {\tt references} declaration are applied.
 Finally, if any string matches a regular expression in a {\tt
   compares} declaration, the return values or assigned values in the
-action are compared with those for the reference version.
+action are compared with those for the reference version.  In the
+ArcPy case, if our {\tt copyFCName} is correctly defined, we can even
+check that behavior is equivalent for different underlying data file
+format for feature classes.
 
 \subsection{How to Build a TSTL Harness}
 
@@ -236,7 +241,8 @@ capability, understanding the effort as it increases in scope.  TSTL
 naturally supports this methodology.  The ArcPy harness, though
 complex, was developed by starting with a small number of ArcPy
 functions, and determining their parameters.  These functions were
-chosen because they were likely to expose faults easily.  Once
+chosen because they were involved in unusual or problematic behavior
+experienced by the authors of the paper.  Once
 functions have been chosen, and their parameters are known,
 developing a harness can often be a clean, iterative process:
 
@@ -260,6 +266,6 @@ parts of the harness, can effectively test even a large library, while
 maintaining tester understanding and control.   In the ArcPy test
 harness development, most of the effort was spent in this cycle, with
 major exceptions being the implementation of a method allowing users
-to provide their own GIS data on which testing is based, and effort to
+to provide their own GIS data as a basis for testing, and efforts to
 improve the TSTL tool infrastructure to support testing a complex
 application in a Windows environment.
