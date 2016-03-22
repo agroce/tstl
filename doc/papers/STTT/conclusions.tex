@@ -14,12 +14,14 @@ methods, and evaluate them in a context where differences in test
 infrastructure not relevant to the algorithms at hand can be minimized.
 
 TSTL has, in the year since its initial introduction,
-already been used to discover (to our knowledge) previously unknown
+already been used to discover previously unknown (to our knowledge)
 faults in multiple Python libraries, including the very widely-used
 ArcPy site package for GIS scripting. 
 As future work, we plan to continue to use TSTL to explore novel
 testing algorithms, investigate the relative strengths of systematic,
 stochastic, and directed test generation methods, and apply TSTL to
-look for faults in widely used libraries.  Additionally, we plan to
+look for faults in widely used libraries.  Finally, we plan to
 port TSTL to additional
-programming languages beyond Python and Java.
+programming languages beyond Python and Java, and add automatic
+support for new properties, including
+information-flow based security checks.
