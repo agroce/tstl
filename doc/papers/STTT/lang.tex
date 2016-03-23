@@ -30,12 +30,12 @@ the usual reasons of abstraction and readability.
 
 \subsection{The Essentials of Pools and Actions}
 
-In TSTL, tests usually consist of assignments to value pools and uses of the
-values in those pools.  In order to make the core ideas clear,
-consider part of Figure \ref{fig:MakeFeatureLayer}, defining how to
+In TSTL, tests basically consist of assignments to value pools and
+function calls making use of those values.  In order to make the core ideas clear,
+consider part of the harness shown in Figure \ref{fig:MakeFeatureLayer}, defining how to
 generate values used in SQL where clauses.  The following, by itself,
 is a valid TSTL harness (albeit one that cannot discover any
-interesting faults):
+faults, since it performs no actions beyond simple integer addition):
 
 {\scriptsize
 \begin{code}
@@ -54,13 +54,15 @@ indicate that its value does not change unless it appears on the left
 hand side of an assignment).  The pool has room to store
 two values.  The state of the SUT is defined by the state of all
 pools.  Initially, all pools are set to a special value ({\tt None}) indicating the
-pool has not been initialized.  Pools can be thought of as 
-normal Python variables, for the most part, so we can think of the
-{\tt val} pools as variables {\tt val0} and {\tt val1}.
+pool has not been initialized.  For the most part, we can think of the
+{\tt val} pool as two Python variables {\tt val0} and {\tt val1}.  Another
+way to think about a pool is as a kind of informal ``named type,''
+with a limited set of variables that can contain the ``type'' and all
+possible action sequences that assign to its pool values serving as its specification.
 
 Actions that include the {\tt :=} form of assignment (a TSTL, not
 Python, operation) initialize pool values.  When {\tt <val>} appears
-in an action, that represents all possible pool locations with that
+in an action, that represents all possible pool values with that
 name:  for our simple example, either {\tt val0} or {\tt val1}.  An
 integer range is represented by {\tt <i..j>}, and TSTL expands such
 ranges to produce an action with each possible choice. The
@@ -100,8 +102,8 @@ cannot be initialized (appear on the lhs of {\tt :=}) until after at
 least one action
 that uses it has been executed.  Figure \ref{fig:poolacts} shows the
 consequences of these rules for the simple value assignment harness
-above.  The nodes in the graph are labeled with {\tt state(val0),
-  state(val1)}, where state is
+above.  The nodes in the graph are labeled with {(\tt state(val0),
+  state(val1))}, where state is
 either {\tt None} (uninitialized), {\tt Unused} (initialized
 but never used) or {\tt Used} (initialized and used at least once).
 Starting from the initial state {\tt (None, None)}, a valid test is any path
@@ -121,11 +123,12 @@ The example TSTL harness in Figure \ref{fig:MakeFeatureLayer} shows a
 few other important core elements of TSTL.  First, choice templates
 are not limited to integer ranges, but can include arbitrary items in
 a list, e.g, {\tt <fc> := <["d1.shp", "d2.shp", "d3.shp"]>}.
-Normally, when an action raises an uncaught exception, this is
+Second, when an action raises an uncaught exception, this is normally
 considered a test failure.  Prefixing an action with a set of
 exception names in curly braces (e.g., {\tt \{IOError\}}) indicates
 that some exceptions are expected, and do not indicate a failure.
-More critically, actions can be prefixed by arbitrary guards, using
+
+More critically, actions can also be prefixed by arbitrary guards, using
 the syntax {\tt guard -> action}.  The simple ArcPy harness chooses
 field names for SQL by first extracting a list of all fields in some
 feature class.  It then allows a field name to be chosen by taking the
@@ -142,15 +145,15 @@ appearance of that pool in each expansion (indexing starts from 1).  This makes 
 is over the same pool value that is used in the action.
 
 TSTL also supports post-conditions on actions, in the form {\tt action
-  => post-condition}, where an assertion is checked after certain
-actions are performed.  For example, because some known ArcPy bugs
+  => post-condition}, where the post-condition is checked after the
+action is performed.  For example, because some known ArcPy bugs
 involve addition of incorrect characters to field names in a database,
 we could add code to check that field names in feature classes never
 change from their initial values.  We can make sure that a library
 call to add a field to a feature class adds it to a database of all
-field names collected at the start of testing, and check the set of
-values returned for each feature class at the beginning of each test,
-and store these in a dictionary.  This example code shows two more
+field names collected at the start of testing, and collect the set of
+fields in each feature class file at the beginning of each test,
+storing these in a dictionary.  This example code shows two more
 features of TSTL: TSTL supports {\tt init:} code in the preamble,
 which is called before each test starts.  Ending a line in a backslash
 indicates the action continues on the next line of the file.
@@ -174,13 +177,13 @@ tends to crash ArcPy.  For more complicated post-conditions, the construct {\tt
   pre<(expr)>} allows access to values of expressions from before the
 action was executed, as a further convenience for expressing properties.
 
-When a correctness property is more general than a post-condition on a
-single action, it can also be included in the preamble, to be checked
-after every action.  Our field name property could therefore also be
-stated as {\tt property: sorted(ListFields(<fc>)) ==
-  sorted(list(<fieldnames> [<fc,1>]}.  Rather than checking only the
-feature class whose fields have been extracted, this will expand to a
-check for all feature classes.  The advantage is that the property will
+When an assertion is an invariant on all post-action states, it can be
+included in the preamble.  To check field names we would write {\tt
+  property: sorted(ListFields(<fc>))==sorted(list(<fieldnames>
+  [<fc,1>]}.
+
+This property checks all feature classes, not just those whose
+whose fields are extracted.  The advantage is that the property will
 catch problems even if we never construct a {\tt fieldlist}; the
 disadvantage is that testing slows to check all field names for all
 feature classes, after every action.
@@ -235,9 +238,10 @@ format for feature classes.
 \subsection{How to Build a TSTL Harness}
 
 In the introduction, we noted that one problem with automatic
-extraction of harnesses by tools is that in order to effectively test
+extraction of harnesses by testing tools is that in order to effectively test
 complex systems, it is important to incrementally build testing
-capability, understanding the effort as it increases in scope.  TSTL
+capability.  Often, as with software development, understanding the
+effort as it slowly increases in scope is essential.  TSTL
 naturally supports this methodology.  The ArcPy harness, though
 complex, was developed by starting with a small number of ArcPy
 functions, and determining their parameters.  These functions were
@@ -249,16 +253,16 @@ developing a harness can often be a clean, iterative process:
 \begin{enumerate}
 \item Choose a new function (or set of related functions) to include
   in the harness.
-\item Determine all parameters types.
+\item Determine all parameter types for these functions.
 \item If there is no pool that can produce these types, determine how
   to produce these types, and add pools and pool initialization actions for
   those pools.  This may require adding some additional
   functions (in which case, go to step 1 and start with those
-  functions).
+  functions, recursively).
 \item Add an action to call the function(s) being added.  If relevant,
   allow any expected exceptions, guards, and post-conditions to check.
 \item Run testing, examine code coverage and failures to evaluate the
-  added code, and repeat from step 1.
+  added harness features, and repeat from step 1.
 \end{enumerate}
 
 These steps, combined with occasional refactoring or generalization of

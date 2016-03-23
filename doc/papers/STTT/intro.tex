@@ -1,6 +1,6 @@
 \section{Introduction}
 
-Software test automation describes two challenges: (1) automated
+Software test automation encompasses two challenges: (1) automated
 execution and determination of results for human-created tests, and
 (2) truly automatic generation of tests.  Both are critical for effective,
 efficient software testing, but only test generation offers the
@@ -12,10 +12,12 @@ Automated generation of tests relies on the construction of \emph{test
 the Software Under Test (SUT).  This paper presents a language and
 tools applying insights from the world of explicit-state model
 checking to the problem of producing test harnesses for automated
-test generation.
+test generation, whether tests are produced by a exhaustive
+state-space exploration as in model checking, or via less
+systematic methods.
 
-Building a test harness is a task that even expert users of model
-checkers or automated testing often find painful
+Building a test harness is a task that even experts in
+model checking and automated testing often find painful
 \cite{woda08,woda12}.  The difficulty of harness generation is one
 reason for the limited adoption of automated testing and model
 checking methods by the typical developer who writes unit tests.  This is
@@ -79,9 +81,9 @@ package for Geographic Information Systems (GIS) automation.  Rather than taking
 function call requires complex inputs --- a feature class or
 layer, an SQL expression, and other complex types that we can assume
 are also difficult to construct.  A harness testing a typical
-real-world library must manage the creation of values of multiple complex types.
+real-world library must manage the creation of values of many such complex types.
 Moreover, because building up function inputs is itself complicated
-and requires complex method calls, they cannot simply be produced on each iteration, but must be
+and requires complex method calls, these values cannot simply be produced on each iteration, but must be
 stored and selected for use in future calls.
 The code quickly becomes hard to read, hard to maintain, and hard to
 debug.  In some cases \cite{AMAI} the code for a sophisticated test
@@ -167,7 +169,7 @@ likely it is to support the full range of features needed.
 A novel approach is taken in recent versions of the SPIN model checker
 \cite{SPIN}.  Version 4.0 of SPIN \cite{ModelDriven} exploited the
 fact that SPIN works by producing a C program from a PROMELA model
-to include calls to the C language in their PROMELA models.  The
+to allow users to include calls to the C language in their PROMELA models.  The
 ability to directly call C code makes it much easier to model check
 large, complex C programs \cite{AMAI,ModelCode}.  C serves as a
 ``DSEL'' for SPIN, except that, rather than having a domain-specific
@@ -197,12 +199,12 @@ generate, execute, or replay tests, without knowing
 any details of the SUT.
 A TSTL harness defines a \emph{template} for action definition, and
 the compiler 
-instantiates the template exhaustively.  The \emph{scripting} aspect simply means
+instantiates the template exhaustively.  The \emph{scripting} aspect indicates
 TSTL is designed to be very lightweight and as easy for
 users to pick up as a popular scripting language.  TSTL
 works best when the SUT language is very
-concise, like most scripting language, making ``one-liners'' of action
-definition possible; our initial implementation is therefore for
+concise, like most scripting languages, making ``one-liners'' of action
+definition possible; our initial implementation \cite{tstl} is therefore for
 Python\footnote{We also have developed a beta version of TSTL for Java, to show
  that testing code in non-scripting languages is also possible.}.
 
@@ -212,8 +214,8 @@ Python\footnote{We also have developed a beta version of TSTL for Java, to show
 @from arcpy import *
 \vspace{0.1in}
 pools:
-  <fc> 2 CONST             \# A feature class contains only lines, points, or polygons
-  <newlayer> 2 CONST
+  <fc> 3 CONST             \# A feature class contains only lines, points, or polygons
+  <newlayer> 3 CONST
   <op> 2 CONST 
   <val> 2 CONST
   <whereclause> 2 CONST    \# SQL clause to limit objects in new layers
@@ -291,8 +293,7 @@ common functionality of all TSTL-generated testing interfaces.  The
 TSTL compiler produces a Python (or other target language, in future
 implementations) class that allows a test generation or manipulation
 tool to view a testing problem as exploration of a (possibly infinite)
-graph of states.  Transitions in the graph are the available testing
-actions, executed in the underlying language, and are guarded by both TSTL
+graph of states.  Transitions in the graph are the available test actions, executed in the underlying language, and are guarded by both TSTL
 restrictions on the semantics of valid tests and user-defined guards
 on system behavior.  States include both the (possibly unknown) state
 of the SUT and the TSTL state, including pools of values to be used in actions.
@@ -309,14 +310,13 @@ under test have been discovered, and the TSTL language and tool suite have
 been improved.
 
 This paper presents the most complete presentation of the TSTL
-language and tools, with enough information on the language and the
-testing API that TSTL provides for two critical purposes:
+language and tools, and we hope that it satisfies two critical goals:
 
 \begin{itemize}
 \item First, would-be users wanting to take advantage of automated
   test generation should be able to base their own testing
-  efforts using TSTL on the example code in this paper (and available
-  in the TSTL github repository \cite{tstl}.
+  efforts using TSTL on the example code in this paper (and that available
+  in the TSTL github repository \cite{tstl}).
   This paper thus serves as a basic ``TSTL cookbook.''
 
 \item Second, researchers should be able to use the information in this paper to
@@ -326,13 +326,13 @@ testing API that TSTL provides for two critical purposes:
   methods in a framework reducing the burden of implementation
   and avoiding irrelevant differences in performance due to underlying
   infrastructure.  The growing set of SUTs
-  included in the TSTL distribution can provide benchmarks for
-  experimental efforts.  These examples include large and widely used Python
-  software systems.
+  included in the TSTL distribution, which includes large and widely
+  used Python libraries, can provide benchmarks for
+  experimental efforts.  
 \end{itemize}
 
 
-\section{Esri ArcPy}
+\section{Motivating Case Study: Esri ArcPy}
 
 
 Esri is the single largest GIS software vendor, with about 40\% of

@@ -96,7 +96,9 @@ infrastructure, or (possibly) the NVIDIA hardware being used.  We are
 still investigating this problem, but it appears to be a genuine
 fault, though debugging and assigning blame is complex due to the
 layers of software involved.  Second, TSTL testing found cases where distance metrics that were supposed to
-be symmetric in the popular fuzzy-string-matching library FuzzyWuzzy.
+be symmetric in the popular fuzzy-string-matching library FuzzyWuzzy
+were asymmetric, if the default Python string match library was used
+instead of a Levenshtein-distance library.
 Third, TSTL testing revealed numerous problems with the {\tt
   astropy.table} module of the AstroPy
 library, used by many professional astronomers and astrophysicists.
