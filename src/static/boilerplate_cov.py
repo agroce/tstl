@@ -61,16 +61,18 @@ def internalReport(self):
     print "TSTL STATEMENT COUNT:",len(self.__allStatements)
                 
 def cleanCov(self):
-    if self.__oldCovData == None:
-        self.__oldCovData = coverage.CoverageData()
-    self.__oldCovData.update(self.__cov.get_data())
-    self.__cov.erase()
     self.__newBranches = set()
     self.__newStatements = set()
     self.__currBranches = set()
     self.__currStatements = set()
     self.__newCurrBranches = set()
     self.__newCurrStatements = set()    
+    if self.__oldCovData == None:
+        self.__oldCovData = coverage.CoverageData()
+    if self.__cov.get_data() == None:
+        return
+    self.__oldCovData.update(self.__cov.get_data())
+    self.__cov.erase()
                     
 def resetCov(self):
     self.__cov.erase()
