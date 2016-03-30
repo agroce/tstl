@@ -133,9 +133,9 @@ def enableAll(self):
 def serializable(self, step):
     return step[0]
 
-def saveTest(self, filename):
+def saveTest(self, test, filename):
     outf = open(filename,'w')
-    for s in self.test():
+    for s in test:
         outf.write(self.serializable(s) + "\n")
     outf.close()
 
