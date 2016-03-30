@@ -133,6 +133,18 @@ def enableAll(self):
 def serializable(self, step):
     return step[0]
 
+def saveTest(self, filename):
+    outf = open(filename,'w')
+    for s in self.test():
+        outf.write(self.serializable(s) + "\n")
+    outf.close()
+
+def loadTest(self, filename):
+    test = []
+    for l in open(filename):
+        test.append(playable(l[:-1]))
+    return test
+
 def playable(self, name):
     return self.__names[name]
 
