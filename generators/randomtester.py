@@ -55,6 +55,8 @@ def parse_args():
                         help="Set failed test case logging level")    
     parser.add_argument('-r', '--running', action='store_true',
                         help="Produce running branch coverage report.")
+    parser.add_argument('-C', '--compareFails', action='store_true',
+                        help="Compare all failing tests.")
     parser.add_argument('-S', '--stutter', type=float, default=None,
                         help="Repeat last action if still enabled with P = <stutter>.")
     parser.add_argument('-g', '--greedyStutter', action='store_true',
@@ -97,21 +99,21 @@ def handle_failure(test, msg, checkFail, newCov = False):
     if not newCov:
         failCount += 1
         print msg
-        f = t.failure()
+        f = sut.failure()
         print "ERROR:",f
         print "TRACEBACK:"
         traceback.print_tb(f[2])
     else:
         print "Handling new coverage for quick testing"
-        snew = t.newCurrStatements()
+        snew = sut.newCurrStatements()
         for s in snew:
             print "NEW STATEMENT",s
-        bnew = t.newCurrBranches()
+        bnew = sut.newCurrBranches()
         for b in bnew:
             print "NEW BRANCH",b
-        trep = t.replay(test)
+        trep = sut.replay(test)
         sremove = []
-        scov = t.currStatements()
+        scov = sut.currStatements()
         for s in snew:
             if s not in scov:
                 print "REMOVING",s
@@ -119,60 +121,60 @@ def handle_failure(test, msg, checkFail, newCov = False):
         for s in sremove:
             snew.remove(s)
         bremove = []
-        bcov = t.currBranches()
+        bcov = sut.currBranches()
         for b in bnew:
             if b not in bcov:
                 print "REMOVING",b
                 bremove.append(b)
         for b in bremove:
             bnew.remove(b)
-        beforeReduceS = set(t.allStatements())
-        beforeReduceB = set(t.allBranches())
-    print "Original test has",len(test),"steps"
+        beforeReduceS = set(sut.allStatements())
+        beforeReduceB = set(sut.allBranches())
+    print "Original test has",len(sut.test()),"steps"
     cloudMatch = False
     if not config.full:
         if not checkFail:
-            failProp = t.fails
+            failProp = sut.fails
         else:
-            failProp = t.failsCheck
+            failProp = sut.failsCheck
         if newCov:
-            failProp = t.coversAll(snew,bnew)
+            failProp = sut.coversAll(snew,bnew)
         print "REDUCING..."
         startReduce = time.time()
         original = test
-        test = t.reduce(test, failProp, True, config.keep)
+        test = sut.reduce(test, failProp, True, config.keep)
         print "Reduced test has",len(test),"steps"
         print "REDUCED IN",time.time()-startReduce,"SECONDS"
-        t.prettyPrintTest(test)
+        sut.prettyPrintTest(test)
         if config.essentials:
             print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
-            (canRemove, cannotRemove) = t.reduceEssentials(test, original, failProp, True, config.keep)
+            (canRemove, cannotRemove) = sut.reduceEssentials(test, original, failProp, True, config.keep)
             print len(canRemove),len(cannotRemove)
             for (c,reducec) in canRemove:
                 print "CAN BE REMOVED:",map(lambda x:x[0], c)
                 i = 0
-                t.prettyPrintTest(reducec)
+                sut.prettyPrintTest(reducec)
         sys.stdout.flush()
         if config.normalize:
             startSimplify = time.time()
             print "NORMALIZING..."
-            test = t.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noreassign)
+            test = sut.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noreassign)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
         if (config.gendepth != None) and (test not in map(lambda x:x[0],failures)) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print "GENERATING GENERALIZATION CLOUD"
-            (cloudFound,matchTest,thisCloud) = t.generalize(test, failProp, silent=True, returnCollect=True, depth=config.gendepth, targets = allClouds)
+            (cloudFound,matchTest,thisCloud) = sut.generalize(test, failProp, silent=True, returnCollect=True, depth=config.gendepth, targets = allClouds)
             print "CLOUD GENERATED IN",time.time()-startCheckCloud,"SECONDS"
             print "CLOUD LENGTH =",len(thisCloud)
             if cloudFound:
                 print "CLOUD MATCH",
                 faili = 0
                 for (cfailbase,err) in failures:
-                    cfail = t.captureReplay(cfailbase)
+                    cfail = sut.captureReplay(cfailbase)
                     if matchTest in failCloud[cfail]:
                         print "THIS TEST CAN BE CONVERTED TO:"
-                        t.prettyPrintTest(matchTest)
+                        sut.prettyPrintTest(matchTest)
                         print "MATCHING FAILURE",faili
                         break
                     faili += 1
@@ -181,7 +183,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if config.generalize and (test not in map(lambda x:x[0],failures)):
             startGeneralize = time.time()
             print "GENERALIZING..."
-            t.generalize(test, failProp, verbose = True)
+            sut.generalize(test, failProp, verbose = True)
             print "GENERALIZED IN",time.time()-startGeneralize,"SECONDS"            
         reduceTime += time.time()-startReduce
 
@@ -192,10 +194,10 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if (outname != None) and config.multiple and not newCov:
             outname += ("." + str(failCount))
         if config.quickTests and newCov:
-            for s in t.allStatements():
+            for s in sut.allStatements():
                 if s not in beforeReduceS:
                     print "NEW STATEMENT FROM REDUCTION",s
-            for b in t.allBranches():
+            for b in sut.allBranches():
                 if b not in beforeReduceB:
                     print "NEW BRANCH FROM REDUCTION",b
             outname = "quicktest." + str(quickCount)
@@ -203,19 +205,19 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if outname != None:
             outf = open(outname,'w')
     if config.failedLogging != None:
-        t.setLog(config.failedLogging)
+        sut.setLog(config.failedLogging)
     print
     print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
     i = 0
     for s in test:
         steps = "# STEP " + str(i)
-        print t.prettyName(s[0]).ljust(80-len(steps),' '),steps
-        t.safely(s)
+        print sut.prettyName(s[0]).ljust(80-len(steps),' '),steps
+        sut.safely(s)
         i += 1
         if outf != None:
-            outf.write(t.serializable(s)+"\n")
+            outf.write(sut.serializable(s)+"\n")
     if not newCov:
-        f = t.failure()
+        f = sut.failure()
         print "ERROR:",f
         print "TRACEBACK:"
         traceback.print_tb(f[2])
@@ -227,9 +229,9 @@ def handle_failure(test, msg, checkFail, newCov = False):
             print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
             repeatCount += 1
         else:
-            failures.append((test,t.failure()))
+            failures.append((test,sut.failure()))
             if config.gendepth != None:
-                failCloud[t.captureReplay(test)] = thisCloud
+                failCloud[sut.captureReplay(test)] = thisCloud
                 for c in thisCloud:
                     allClouds[c] = True
             print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
@@ -257,14 +259,14 @@ def main():
         failCloud = {}
         allClouds = {}
 
-    t = SUT.sut()
+    sut = SUT.sut()
     if config.logging != None:
-        t.setLog(config.logging)
+        sut.setLog(config.logging)
 
     if not config.nocover:
-        t.silenceCoverage()
+        sut.silenceCoverage()
         
-    tacts = t.actions()
+    tacts = sut.actions()
     a = None
     sawNew = False
 
@@ -292,9 +294,8 @@ def main():
         ntests += 1
 
         startRestart = time.time()
-        t.restart()
+        sut.restart()
         restartTime += time.time() - startRestart
-        test = []
 
         if config.total:
             fulltest.write("<<RESTART>>\n")
@@ -305,51 +306,32 @@ def main():
         for s in xrange(0,config.depth):
             if config.verbose:
                 print "GENERATING STEP",s
-            
-            startGuard = time.time()
-            acts = tacts
-            while True:
-                elapsed = time.time() - start
 
-                if elapsed > config.timeout:
-                    break
-                
-                tryStutter = (a != None)
-                if tryStutter:
-                    if (config.stutter == None) and (not config.greedyStutter):
-                        tryStutter = False
-                if tryStutter:
-                    if (config.stutter == None) or (R.random() > config.stutter):
-                        tryStutter = False
-                    if (config.greedyStutter) and sawNew:
+            startGuard = time.time()
+            tryStutter = (a != None) and (a[1]()) and ((config.stutter != None) or config.greedyStutter)
+
+            if tryStutter:
+                if (config.stutter == None) or (R.random() > config.stutter):
+                    tryStutter = False
+                if (config.greedyStutter) and sawNew:
                         print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
                         tryStutter = True
-                if not tryStutter:
-                    if len(acts) == 1:
-                        p = 0
-                    elif len(acts) == 0:
-                        print "WARNING:  STATE WITH NO ENABLED ACTIONS REACHED"
-                        a = None
-                        break
-                    else:    
-                        p = R.randint(0,len(acts)-1)
-                    a = acts[p]
-                if a[1]():
-                    break
-                else:
-                    a = None
-                acts = acts[:p] + acts[p+1:]
+            else:
+                 a = sut.randomEnabled(R)   
+
+            if a == None:
+                print "WARNING: DEADLOCK (NO ENABLED ACTIONS)"
+                
             guardTime += time.time()-startGuard
             elapsed = time.time() - start
             if elapsed > config.timeout:
-                print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+                print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
             if a == None:
                 print "TERMINATING TEST DUE TO NO ENABLED ACTIONS"
                 break                
             if tryStutter:
                 print "STUTTERING WITH",a[0]
-            test.append(a)
             nops += 1
 
             if config.replayable:
@@ -361,57 +343,57 @@ def main():
                 fulltest.flush()            
 
             if config.verbose:
-                print "ACTION:",t.prettyName(a[0])
+                print "ACTION:",sut.prettyName(a[0])
                 
             startOp = time.time()
-            stepOk = t.safely(a)
-            if t.warning() != None:
-                print "SUT WARNING:",t.warning()
+            stepOk = sut.safely(a)
+            if sut.warning() != None:
+                print "SUT WARNING:",sut.warning()
             opTime += (time.time()-startOp)
             if tryStutter:
                 print "DONE STUTTERING"
             if (not config.uncaught) and (not stepOk):
-                handle_failure(test, "UNCAUGHT EXCEPTION", False)
+                handle_failure(sut.test(), "UNCAUGHT EXCEPTION", False)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
                 break
 
             startCheck = time.time()
             if not config.ignoreprops:
-                checkResult = t.check()
+                checkResult = sut.check()
                 checkTime += time.time()-startCheck
             if not checkResult:
-                handle_failure(test, "PROPERLY VIOLATION", True)
+                handle_failure(sut.test(), "PROPERLY VIOLATION", True)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
                 break
                 
             elapsed = time.time() - start
             if config.running:
-                if t.newBranches() != set([]):
+                if sut.newBranches() != set([]):
                     print "ACTION:",a[0],tryStutter
-                    for b in t.newBranches():
-                        print elapsed,len(t.allBranches()),"New branch",b
+                    for b in sut.newBranches():
+                        print elapsed,len(sut.allBranches()),"New branch",b
                     sawNew = True
                 else:
                     sawNew = False
-                if t.newStatements() != set([]):
+                if sut.newStatements() != set([]):
                     print "ACTION:",a[0],tryStutter
-                    for s in t.newStatements():
-                        print elapsed,len(t.allStatements()),"New statement",s
+                    for s in sut.newStatements():
+                        print elapsed,len(sut.allStatements()),"New statement",s
                     sawNew = True
                 else:
                     sawNew = False                
 
             if elapsed > config.timeout:
-                print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(test)
+                print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
             
         if config.replayable:
             currtest.close()
         if config.quickTests:
-            if (t.newCurrBranches() != set([])) or (t.newCurrStatements() != set([])):
-                handle_failure(test, "NEW COVERAGE", False, newCov=True)
+            if (sut.newCurrBranches() != set([])) or (sut.newCurrStatements() != set([])):
+                handle_failure(sut.test(), "NEW COVERAGE", False, newCov=True)
         if (not config.multiple) and (failCount > 0):
             break
         if elapsed > config.timeout:
@@ -422,14 +404,14 @@ def main():
         fulltest.close()
         
     if not config.nocover:
-        t.restart()
-        print t.report(config.coverfile),"PERCENT COVERED"
+        sut.restart()
+        print sut.report(config.coverfile),"PERCENT COVERED"
 
         if config.internal:
-            t.internalReport()
+            sut.internalReport()
         
         if config.html:
-            t.htmlReport(config.html)
+            sut.htmlReport(config.html)
 
     print time.time()-start, "TOTAL RUNTIME"
     print ntests, "EXECUTED"
@@ -449,14 +431,14 @@ def main():
         n = 0
         for (test, err) in failures:
             print "FAILURE",n
-            t.prettyPrintTest(test)
+            sut.prettyPrintTest(test)
             n += 1
             if err != None:
                 print "ERROR:", err
                 print "TRACEBACK:"
                 traceback.print_tb(err[2])
         i = -1
-        if False: # Comparison feature normally not useful, just for researching normalization
+        if config.compareFails: # Comparison feature normally not useful, just for researching normalization
             for test1 in failures:
                 i += 1
                 j = -1
@@ -473,8 +455,8 @@ def main():
                                 print "STEP",k,test1[k][0],"-->",test2[k][0]
             
     if not config.nocover:
-        print len(t.allBranches()),"BRANCHES COVERED"
-        print len(t.allStatements()),"STATEMENTS COVERED"
+        print len(sut.allBranches()),"BRANCHES COVERED"
+        print len(sut.allStatements()),"STATEMENTS COVERED"
 
 if __name__ == '__main__':
     main()
