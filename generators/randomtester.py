@@ -238,7 +238,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
 
 
 def main():
-    global failCount,t,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
+    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
