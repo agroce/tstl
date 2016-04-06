@@ -894,6 +894,7 @@ def main():
         if len(sourceSet) > 0:
             covc = covc[:-1]
         genCode.append(covc + "])\n")
+        genCode.append(baseIndent + "self.__cov._warn_no_data = False\n")
         genCode.append(baseIndent + "self.__collectCov = True\n")
         genCode.append(baseIndent + "self.__allBranches = set()\n")
         genCode.append(baseIndent + "self.__allStatements = set()\n")
@@ -1018,9 +1019,11 @@ def main():
     for p in poolSet:
         if p not in absSet:
             st += "state[" + str(i) + "],"
+            st += "state[" + str(i+1) + "],"            
         else:
-            st += absSet(p) + "(state[" + str(i) + "]),"
-        i += 1
+            st += "{k: (" + absSet[p] + "(v) if v != None else None) for k, v in " + "(state[" + str(i) + "]).iteritems()},"
+            st += "state[" + str(i+1) + "],"            
+        i += 2
     st = st[:-1]
     genCode.append(st + ")\n")
     

@@ -262,9 +262,6 @@ def main():
     sut = SUT.sut()
     if config.logging != None:
         sut.setLog(config.logging)
-
-    if not config.nocover:
-        sut.silenceCoverage()
         
     tacts = sut.actions()
     a = None
