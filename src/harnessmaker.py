@@ -1009,7 +1009,7 @@ def main():
         st += "copy.deepcopy(" + poolPrefix + p.replace("%","") + "),"
         st += "copy.deepcopy(" + poolPrefix + p.replace("%","") + "_used),"
     st = st[:-1]
-    genCode.append(st + "]\n")
+    genCode.append(st + ",copy.copy(self.__test)]\n")
 
     genCode.append("def abstract(self,state):\n")
     genCode.append(baseIndent + "if self.__replayBacktrack:\n")
@@ -1037,8 +1037,7 @@ def main():
         n += 1
         genCode.append(baseIndent + poolPrefix + p.replace("%","") + "_used = copy.deepcopy(old[" + str(n) + "])\n")
         n += 1
-    if len(poolSet) == 0:
-        genCode.append(baseIndent + "pass\n")
+    genCode.append(baseIndent + "self.__test = copy.copy(old[-1])\n")
 
     genCode.append("def check(self):\n")
     if (propSet != []) or (len(poolType) > 0):
