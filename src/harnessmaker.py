@@ -39,7 +39,7 @@ def parse_args():
     parser.add_argument('-c', '--classname', type=str, default='sut',
                         help='Name of the class representing the SUT (default = sut)')
     parser.add_argument('-n', '--nocover', action='store_true',
-                        help='Disable generating coverage collection support.')
+                        help='Disable generating coverage collection support.  Faster testing, but no coverage info!')
     parser.add_argument('-r', '--coverreload', action='store_true',
                         help='Generate coverage for module reload behavior.')
     parser.add_argument('-i', '--coverinit', action='store_true',
@@ -47,7 +47,9 @@ def parse_args():
     parser.add_argument('-R', '--defaultreplay', action='store_true',
                         help='Backtracking defaults to replay method.')
     parser.add_argument('-a', '--ignoreangles', action='store_true',
-                        help='Do not use angle brackets as TSTL markers, for use with some languages.')    
+                        help='Do not use angle brackets as TSTL markers, for use with some languages.')
+    parser.add_argument('-s', '--stats', action='store_true',
+                        help='Enable statistics on each action.  Slows exection considerably.')        
 
     # Useful to print internal variables iteratively
     parser.add_argument('--debug', dest='debug', action='store_true', help='Toggle debug mode on')
