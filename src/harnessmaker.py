@@ -1013,6 +1013,14 @@ def main():
     st = st[:-1]
     genCode.append(st + ",copy.copy(self.__test)]\n")
 
+    genCode.append("def shallowState(self):\n")
+    st = baseIndent + "return [ "
+    for p in poolSet:
+        st += '("' + poolPrefix + p.replace("%","") + '",'
+        st += poolPrefix + p.replace("%","") + "),"
+    st = st[:-1]
+    genCode.append(st + "]\n")
+
     genCode.append("def abstract(self,state):\n")
     genCode.append(baseIndent + "if self.__replayBacktrack:\n")
     genCode.append(baseIndent + baseIndent + "return state\n")        
