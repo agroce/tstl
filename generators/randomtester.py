@@ -49,6 +49,8 @@ def parse_args():
                         help="Keep a file with ALL TESTING ACTIONS in case of crash.")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
+    parser.add_argument('-w', '--swarm', action='store_true',
+                        help="Turn on standard swarm testing.")    
     parser.add_argument('-l', '--logging', type=int, default=None,
                         help="Set logging level")
     parser.add_argument('-F', '--failedLogging', type=int, default=None,
@@ -290,6 +292,10 @@ def main():
             sys.stdout.flush()
         ntests += 1
 
+        if config.swarm:
+            sut.standardSwarm(R)
+            #print sut.swarmConfig()
+        
         startRestart = time.time()
         sut.restart()
         restartTime += time.time() - startRestart
@@ -457,3 +463,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+    

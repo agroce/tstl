@@ -168,6 +168,9 @@ def actions(self):
     """
     return self.__actions
 
+def actionClasses(self):
+    return self.__actionClasses
+
 def disable(self,f):
     """
     Disable an action by name.
@@ -182,8 +185,67 @@ def enableAll(self):
     """
     Enable all actions.
     """
+    self.__swarmConfig = None
     self.__actions = self.__actions_backup
 
+def standardSwarm(self, rgen, P = 0.5):
+    """
+    Enables all actions, then sets a swarm configuration based on rgen, P = probability of enabling an action class)
+    """
+    self.enableAll()
+    newEnabled = []
+    for c in self.__actionClasses:
+        if rgen.random() < P:
+            newEnabled.append(c)
+    if newEnabled == []:
+        newEnabled.append(rgen.choice(self.__actionClasses))
+    changed = True
+    while changed:
+        changed = False
+        
+        forcedAdd = []
+        for c in newEnabled:
+            for d in self.dependencies(c):
+                df = filter(lambda x:x in d, newEnabled) + filter(lambda x:x in d, forcedAdd)
+                if df == []:
+                    forcedAdd.append(rgen.choice(d))
+                    changed = True
+        newEnabled.extend(forcedAdd)
+
+        forcedAdd = []
+        for c in newEnabled:
+            if self.dependencies(c) == []:
+                anyDepend = False
+                for c2 in (newEnabled + forcedAdd):
+                    for d in self.dependencies(c2):
+                        if c in d:
+                                anyDepend = True
+                                break
+                    if anyDepend:
+                        break
+                if not anyDepend:
+                    needsThis = []
+                    for c2 in self.__actionClasses:
+                        for d in self.dependencies(c2):
+                            if c in d:
+                                needsThis.append(c2)
+                                break
+                    if needsThis != []:
+                        forcedAdd.append(rgen.choice(needsThis))
+                        changed = True
+        newEnabled.extend(forcedAdd)
+                            
+    #print "SWARMING WITH CONFIGURATION:",newEnabled
+    self.__swarmConfig = newEnabled
+    enabledActions = []
+    for a in self.__actions:
+        if self.actionClass(a) in newEnabled:
+            enabledActions.append(a)
+    self.__actions = enabledActions
+
+def swarmConfig(self):
+    return self.__swarmConfig
+    
 def serializable(self, step):
     return step[0]
 
@@ -205,6 +267,8 @@ def playable(self, name):
 def safely(self, act):
     try:
         act[2]()
+    except KeyboardInterrupt as e:
+        raise e
     except:
         self.__failure = sys.exc_info()
         return False

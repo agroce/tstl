@@ -978,6 +978,10 @@ def main():
     genCode.append(baseIndent + 'self.__poolPrefix = "' + poolPrefix + '"\n')
     genCode.append(baseIndent + 'self.__names["<<RESTART>>"] = ("<<RESTART>>", lambda x: True, lambda x: self.restart())\n')
     genCode.append(baseIndent + "self.__actionClass = {}\n")
+    genCode.append(baseIndent + "self.__swarmConfig = None\n")    
+    genCode.append(baseIndent + "self.__actionClasses = []\n")
+    for c in codeClasses:
+        genCode.append(baseIndent + "self.__actionClasses.append('''" + c + "''')\n")
     genCode.append(baseIndent + "self.__dependencies = {}\n")
     for c in codeClasses:
         genCode.append(baseIndent + "self.__dependencies['''"+c+"'''] = []\n")
@@ -1148,6 +1152,8 @@ def main():
             else:
                 genCode.append (baseIndent + baseIndent + "assert " + p + "\n")
         genCode.append(baseIndent + baseIndent + "# END CHECK CODE\n")
+        genCode.append(baseIndent + "except KeyboardInterrupt as e:\n")
+        genCode.append(baseIndent + baseIndent + "raise e\n")
         genCode.append(baseIndent + "except:\n")
         genCode.append(baseIndent + baseIndent + "self.__failure = sys.exc_info()\n")
         genCode.append(baseIndent + baseIndent + "return False\n")
