@@ -40,7 +40,12 @@ def getPropCode(self,name):
     except:
         return None        
 
+def actionClass(self,name):
+    return self.__actionClass[name]
 
+def dependencies(self,actClass):
+    return self.__dependencies[actClass]
+    
 def prettyName(self, name):
     newName = name
     for p in self.__pools:

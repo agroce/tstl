@@ -25,6 +25,7 @@ firstInit = True
 baseIndent = ""
 poolPrefix = None
 genCode = None
+originalCode = {}
 #############################################
 
 def parse_args():
@@ -157,23 +158,27 @@ def parse_import_line(line):
     assert len(mod_names) > 0
     return mod_names
 
-def expandPool(original):
+def expandPool(original,trackOriginal=False):
     """
     Expand pool references
     """
     newVersion = []
     for c in original:
+        if trackOriginal:
+            oldCode = originalCode[c]
         for p in poolSet:
             if poolSet[p] == 1:
                 pexpr = p + " [0]"
             else:
                 pexpr = p + " [%[0.." + str(poolSet[p]-1) + "]%]"
             c = c.replace(p, pexpr)
+        if trackOriginal:
+            originalCode[c] = oldCode
         newVersion.append(c)
     return newVersion
 
 
-def expandRange(original):
+def expandRange(original,trackOriginal=False):
     """
     Expand all range expressions
     """
@@ -183,6 +188,8 @@ def expandRange(original):
         anyChanged = False
         newVersion = []
         for c in current:
+            if trackOriginal:
+                oldCode = originalCode[c]
             if "%,[" in c:
                 anyChanged = True
                 lpos = c.find("%,[")
@@ -190,6 +197,8 @@ def expandRange(original):
                 rexp = c[lpos:endpos+3]
                 ilist = c[lpos+3:endpos].split(",,")
                 for i in ilist:
+                    if trackOriginal:
+                        originalCode[c.replace(rexp, i, 1)] = oldCode
                     newVersion.append(c.replace(rexp, i, 1))                
             elif "%[" in c:
                 anyChanged = True
@@ -203,15 +212,21 @@ def expandRange(original):
                         lowc = c[lpos+3:dotpos-1]
                         highc = c[dotpos+3:endpos-1]
                         for x in xrange(ord(lowc),ord(highc)+1):
+                            if trackOriginal:
+                                originalCode[c.replace(rexp, "'" + chr(x) + "'", 1)] = oldCode
                             newVersion.append(c.replace(rexp, "'" + chr(x) + "'", 1))
                     else:
                         low = int(c[lpos+2:dotpos])
                         high = int(c[dotpos+2:endpos])
                         for x in xrange(low,high+1):
+                            if trackOriginal:
+                                originalCode[c.replace(rexp, str(x), 1)] = oldCode
                             newVersion.append(c.replace(rexp, str(x), 1))
                 elif (commapos != -1) and (commapos < endpos):
                     ilist = c[lpos+2:endpos].split(",")
                     for i in ilist:
+                        if trackOriginal:
+                            originalCode[c.replace(rexp, i, 1)] = oldCode
                         newVersion.append(c.replace(rexp, i, 1))
             else:
                 newVersion.append(c)
@@ -233,6 +248,8 @@ def expandRange(original):
             # replace   ~%LIST,2%    with    self.p_LIST[3]
             
             line = re.sub("~?%("+poolName+")\s*,\s*("+refIndex+")%", poolPrefix+"\\1["+actualPoolUsed+"]", line)
+            if trackOriginal:
+                originalCode[line] = originalCode[newVersion[index]]
             newVersion[index] = line
 
     return newVersion
@@ -316,6 +333,7 @@ def main():
     global baseIndent
     global poolPrefix
     global genCode
+    global originalCode
 
     baseIndent = "    "
     
@@ -350,9 +368,11 @@ def main():
     anyPre = False
     continuedLine = False
     contLine = ""
-    
+    origContLine = ""
+
     with open(config.tstl, 'r') as fp:
         for l in fp:
+            fileLine = str(l)
             l = preprocess_angle_brackets(l)
             if l[-1] != "\n":
                 l += "\n"
@@ -361,11 +381,14 @@ def main():
                     l = l[:-1] + ' ' + "\n"
                 if l[-2] == "\\":
                     continuedLine = True
+                    origContLine += fileLine[:-2]
                     contLine += l[:-2]
                     continue
                 elif continuedLine:
                     l = contLine + l
+                    fileLine = origContLine + fileLine
                     contLine = ""
+                    origContLine = ""
                     continuedLine = False
             if l[0] == "#":
                 continue # COMMENT
@@ -430,10 +453,12 @@ def main():
                     outf.write(l)
             elif l[0] == "*":       # include action multiple times
                 spos = l.find(" ")
-                times = int(l[1:spos])
+                times = int(l[1:spos]) 
+                originalCode[l[lspos:]] = fileLine 
                 for n in xrange(0,times):
                     code.append(l[spos:])
             else:
+                originalCode[l] = fileLine[:-1]
                 code.append(l)
     if function_code != []:
         if anyPRE:
@@ -468,6 +493,7 @@ def main():
     noAutoPrefix = ["pools:","actions:","properties:","logs:","inits:","references:","compares:","features:","sources:"]
     
     for c in code:
+        fileCode = originalCode[c]
         if config.debug:
             print "CODE:",c
         cs = c.split()
@@ -549,16 +575,50 @@ def main():
             if cs[0] == "expect:":
                 baseExpectSplit = c.split("expect: ")[1]
                 c = baseExpectSplit
+            originalCode[c] = fileCode
             newCode.append(c)
     code = newCode
 
+    dependencies = {}
+    classDefs = {}
+
+    codeClasses = []
+    for c in code:
+        if originalCode[c] not in codeClasses:
+            codeClasses.append(originalCode[c])
+    
+    # get definitions
+    for c in codeClasses:
+        if ":=" in c:
+            lhs = c.split(":=")[0]
+            for p in poolSet:
+                pSub = p.replace("%","")
+                if pSub in lhs:
+                    if pSub not in classDefs:
+                        classDefs[pSub] = []
+                    classDefs[pSub].append(c)
+
+    
+    for c in codeClasses:
+        dependencies[c] = []
+        if ":=" in c:
+            rhs = c.split(":=")[1]
+        else:
+            rhs = c
+        for p in poolSet:
+            pSub = p.replace("%","")
+            pAngle = "<" + pSub + ">"
+            pComma = "<" + pSub + ","
+            if (pAngle in rhs) or (pComma in rhs):
+                dependencies[c].append(classDefs[pSub])
+                
     if config.debug:
         print("-------- :code: --------")
         pprint(code)
         print("------------------------")
 
     # ------------------------------------------ #
-    code = expandPool(code)
+    code = expandPool(code,trackOriginal=True)
     propSet = expandPool(propSet)
     initSet = expandPool(initSet)
     logSet = expandPool(logSet)
@@ -568,7 +628,7 @@ def main():
         pprint(code)
         print("------------------------")
 
-    code = expandRange(code)
+    code = expandRange(code,trackOriginal=True)
     propSet = expandRange(propSet)
     initSet = expandRange(initSet)
     logSet = expandRange(logSet)
@@ -844,7 +904,9 @@ def main():
         d += "'''" + newC[:-1] + " ''',"
         d += "self." + guard + ","
         d += "self." + act + ")\n"
-        actDefs.append(d)                
+        actDefs.append(d)
+        d = "self.__actionClass[" + "'''" + newC[:-1] + " '''] = '''" + originalCode[corig] + "'''\n"
+        actDefs.append(d)        
         nind += 1
         d = "self.__orderings[" + "'''" + newC[:-1] + " '''] = " + str(nind) + "\n"
         actDefs.append(d)
@@ -912,6 +974,12 @@ def main():
     genCode.append(baseIndent + "self.__names = {}\n")
     genCode.append(baseIndent + 'self.__poolPrefix = "' + poolPrefix + '"\n')
     genCode.append(baseIndent + 'self.__names["<<RESTART>>"] = ("<<RESTART>>", lambda x: True, lambda x: self.restart())\n')
+    genCode.append(baseIndent + "self.__actionClass = {}\n")
+    genCode.append(baseIndent + "self.__dependencies = {}\n")
+    for c in codeClasses:
+        genCode.append(baseIndent + "self.__dependencies['''"+c+"'''] = []\n")
+        for d in dependencies[c]:
+            genCode.append(baseIndent + "self.__dependencies['''"+c+"'''].append(" + str(d) + ")\n")
     genCode.append(baseIndent + "self.__orderings = {}\n")
     genCode.append(baseIndent + "self.__okExcepts = {}\n")
     genCode.append(baseIndent + "self.__preCode = {}\n")
