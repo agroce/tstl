@@ -593,7 +593,8 @@ def main():
             lhs = c.split(":=")[0]
             for p in poolSet:
                 pSub = p.replace("%","")
-                if pSub in lhs:
+                pAngle = "<" + pSub + ">"
+                if (p in lhs) or (pAngle in lhs):
                     if pSub not in classDefs:
                         classDefs[pSub] = []
                     classDefs[pSub].append(c)
@@ -609,7 +610,9 @@ def main():
             pSub = p.replace("%","")
             pAngle = "<" + pSub + ">"
             pComma = "<" + pSub + ","
-            if (pAngle in rhs) or (pComma in rhs):
+            pPerc = "%" + pSub + "%"
+            pPercComma = "%" + pSub + ","            
+            if (pAngle in rhs) or (pComma in rhs) or (pPerc in rhs) or (pPercComma in rhs):
                 dependencies[c].append(classDefs[pSub])
                 
     if config.debug:

@@ -40,8 +40,8 @@ def getPropCode(self,name):
     except:
         return None        
 
-def actionClass(self,name):
-    return self.__actionClass[name]
+def actionClass(self,action):
+    return self.__actionClass[action[0]]
 
 def dependencies(self,actClass):
     return self.__dependencies[actClass]
