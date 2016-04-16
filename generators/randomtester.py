@@ -50,7 +50,9 @@ def parse_args():
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
     parser.add_argument('-w', '--swarm', action='store_true',
-                        help="Turn on standard swarm testing.")    
+                        help="Turn on standard swarm testing.")
+    parser.add_argument('-W', '--swarmSwitch', type=int, default=None,
+                        help="How many times to switch swarm config during each test.")        
     parser.add_argument('-l', '--logging', type=int, default=None,
                         help="Set logging level")
     parser.add_argument('-F', '--failedLogging', type=int, default=None,
@@ -295,7 +297,15 @@ def main():
         if config.swarm:
             sut.standardSwarm(R)
             #print sut.swarmConfig()
-        
+
+        if config.swarmSwitch != None:
+            lastSwitch = 0
+            switches = []
+            for i in xrange(0,config.swarmSwitch):
+                switch = R.randrange(lastSwitch+1,config.depth-((config.swarmSwitch-i)))
+                switches.append(switch)
+                lastSwitch = switch
+            
         startRestart = time.time()
         sut.restart()
         restartTime += time.time() - startRestart
@@ -310,6 +320,9 @@ def main():
             if config.verbose:
                 print "GENERATING STEP",s
 
+            if (config.swarmSwitch != None) and (s in switches):
+                sut.standardSwarm(R)
+                
             startGuard = time.time()
             tryStutter = (a != None) and (a[1]()) and ((config.stutter != None) or config.greedyStutter)
 
