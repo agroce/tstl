@@ -1,0 +1,59 @@
+@from z3 import *
+
+pools:
+  <solver> 3
+  <model> 3
+  <intvar> 3
+  <boolvar> 3
+  <constraint> 8
+  <intconst> 3
+  <intexpr> 8
+  <boolexpr> 8
+
+actions:
+
+<intconst> := IntVal(<[-20..20]>)
+
+<intvar> := Int(<['A'..'H']>)
+<boolvar> := Bool(<['P'..'T']>)
+
+<intexpr> := <intvar>
+<intexpr> := -(<intvar>)
+<intexpr> := <intconst>
+<intexpr> := <intexpr> + <intexpr>
+<intexpr> := <intexpr> - <intexpr>
+<intexpr> := <intexpr> * <intexpr>
+{ZeroDivisionError} <intexpr> := <intexpr> * <intexpr>
+{Z3Exception} int -> <intexpr> := simplify(<intexpr>,max_steps=1000)
+
+<boolexpr> := <intexpr> == <intexpr>
+<boolexpr> := <intexpr> < <intexpr>
+<boolexpr> := <intexpr> > <intexpr>
+<boolexpr> := <intexpr> != <intexpr>
+<boolexpr> := <intexpr> <= <intexpr>
+<boolexpr> := <intexpr> >= <intexpr>
+{Z3Exception} <boolexpr> := simplify(<boolexpr>,max_steps=1000)
+
+<constraint> := <boolexpr>
+<constraint> := <boolvar>
+<constraint> := <boolvar> == <boolexpr>
+<constraint> := ForAll(<intvar>,~<constraint>)
+<constraint> := Exists(<intvar>,~<constraint>)
+<constraint> := ~<constraint> == ~<constraint>
+<constraint> := And(~<constraint>,~<constraint>)
+<constraint> := Or(~<constraint>,~<constraint>)
+<constraint> := Not(~<constraint>)
+<constraint> := Implies(~<constraint>,~<constraint>)
+{Z3Exception} <constraint> := simplify(~<constraint>,max_steps=1000)
+
+
+<solver> := Solver(); <solver,1>.set("timeout",120000)
+
+<solver>.check()
+~<solver>.push()
+{Z3Exception} ~<solver>.pop()
+~<solver>.add(<constraint>)
+
+str(<solver,1>.check()) == "sat" -> <model> := <solver>.model()
+
+print "<model,1> = ",<model>
