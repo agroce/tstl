@@ -258,7 +258,7 @@ def saveTest(self, test, filename):
 def loadTest(self, filename):
     test = []
     for l in open(filename):
-        test.append(playable(l[:-1]))
+        test.append(self.playable(l[:-1]))
     return test
 
 def playable(self, name):
