@@ -51,6 +51,8 @@ def parse_args():
                         help="Allow multiple failures.")
     parser.add_argument('-w', '--swarm', action='store_true',
                         help="Turn on standard swarm testing.")
+    parser.add_argument('-L', '--relax', action='store_true',
+                        help="Use relaxed semantics.")
     parser.add_argument('-W', '--swarmSwitch', type=int, default=None,
                         help="How many times to switch swarm config during each test.")        
     parser.add_argument('-l', '--logging', type=int, default=None,
@@ -264,6 +266,8 @@ def main():
         allClouds = {}
 
     sut = SUT.sut()
+    if config.relax:
+        sut.relax()
     if config.logging != None:
         sut.setLog(config.logging)
         
