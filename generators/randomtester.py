@@ -99,9 +99,9 @@ def make_config(pargs, parser):
 
 def handle_failure(test, msg, checkFail, newCov = False):
     global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds
-
+    test = list(test)
     sys.stdout.flush()
-
+    assert (len(test) <= config.depth)
     if not newCov:
         failCount += 1
         print msg
@@ -136,7 +136,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             bnew.remove(b)
         beforeReduceS = set(sut.allStatements())
         beforeReduceB = set(sut.allBranches())
-    print "Original test has",len(sut.test()),"steps"
+    print "Original test has",len(test),"steps"
     cloudMatch = False
     if not config.full:
         if not checkFail:
