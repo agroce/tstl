@@ -834,10 +834,6 @@ def main():
         genCode.append(baseIndent + d)
         if logSet != []:
             genCode.append(baseIndent + "self.log('''" + newC[:-1] + "''')\n")
-        if preSet != []:
-            for p in preSet:
-                genCode.append(baseIndent + p)
-                
         if not config.nocover:
             genCode.append(baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + "self.__cov.start()\n")
@@ -846,12 +842,16 @@ def main():
             genCode.append(baseIndent + baseIndent + "test_before_each(self)\n")
             genCode.append(baseIndent + "except:\n")
             genCode.append(baseIndent + baseIndent + "pass\n")
-
         genCode.append(baseIndent + "self.__warning = None\n")            
         genCode.append(baseIndent + "try:\n")
+        if preSet != []:
+            for p in preSet:
+                genCode.append(baseIndent + baseIndent + p)
         if expectCode:
             genCode.append(baseIndent + baseIndent + "__before_res = " + beforeSig + "\n")
         genCode.append(baseIndent + baseIndent + newC + "\n")
+        if postCode:
+            genCode.append(baseIndent + baseIndent + "assert " + postCode + "\n")
         if expectCode:
             genCode.append(baseIndent + baseIndent + "__after_res = " + afterSig + "\n")
             genCode.append(baseIndent + baseIndent + "__check_res = " + checkSig + "\n")
@@ -880,8 +880,6 @@ def main():
             genCode.append(baseIndent + refC + "\n")
             if comparing:
                 genCode.append(baseIndent + "assert __result == __result_REF, \" (%s) == (%s) \" % (__result, __result_REF)\n")
-        if postCode:
-            genCode.append(baseIndent + "assert " + postCode + "\n")
         if logSet != []:
             genCode.append(baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
         for ch in changes:

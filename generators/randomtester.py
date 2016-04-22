@@ -51,6 +51,8 @@ def parse_args():
                         help="Allow multiple failures.")
     parser.add_argument('-w', '--swarm', action='store_true',
                         help="Turn on standard swarm testing.")
+    parser.add_argument('-P', '--swarmProbs', type=str, default=None,
+                        help="File with probabilities for swarm.")    
     parser.add_argument('-L', '--relax', action='store_true',
                         help="Use relaxed semantics.")
     parser.add_argument('-W', '--swarmSwitch', type=int, default=None,
@@ -299,8 +301,7 @@ def main():
         ntests += 1
 
         if config.swarm:
-            sut.standardSwarm(R)
-            #print sut.swarmConfig()
+            sut.standardSwarm(R,file=config.swarmProbs)
 
         if config.swarmSwitch != None:
             lastSwitch = 0
@@ -325,7 +326,7 @@ def main():
                 print "GENERATING STEP",s
 
             if (config.swarmSwitch != None) and (s in switches):
-                sut.standardSwarm(R)
+                sut.standardSwarm(R,file=config.swarmProbs)
                 
             startGuard = time.time()
             tryStutter = (a != None) and (a[1]()) and ((config.stutter != None) or config.greedyStutter)

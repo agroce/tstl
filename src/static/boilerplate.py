@@ -182,21 +182,36 @@ def disable(self,f):
     self.__actions = newActions
 
 def enableAll(self):
+    
     """
     Enable all actions.
     """
     self.__swarmConfig = None
     self.__actions = self.__actions_backup
 
-def standardSwarm(self, rgen, P = 0.5):
+def standardSwarm(self, rgen, P = 0.5, file = None):
     """
-    Enables all actions, then sets a swarm configuration based on rgen, P = probability of enabling an action class)
+    Enables all actions, then sets a swarm configuration based on rgen, P = probability of enabling an action class,
+    file is a file (format action %%%% probability) giving probabilities for inclusion)
     """
     self.enableAll()
     newEnabled = []
+
+    if file != None:
+        classProb = {}
+        for l in open(file):
+            ls = l.split("%%%%")
+            c = ls[0][:-1]
+            prob = float(ls[1])
+            classProb[c] = prob
+            
     for c in self.__actionClasses:
-        if rgen.random() < P:
-            newEnabled.append(c)
+        if file == None:
+            if rgen.random() < P:
+                newEnabled.append(c)
+        else:
+            if rgen.random() < classProb[c]:
+                newEnabled.append(c)
     if newEnabled == []:
         newEnabled.append(rgen.choice(self.__actionClasses))
     changed = True
