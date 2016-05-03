@@ -4,29 +4,33 @@ R1:
 
 Q: sold as working for hand written test suites.
 
-Only due to our imprecise writing!  Normalization is meant for large automatically generated suites, as in model checking or such, not manual tests, where this particular issue is generally not a problem.  We do not think this is very useful for manually written tests (generalization might be, but we aren't claiming so).
+Only due to our imprecise writing!  Normalization is meant for large automatically generated tests only, not manual tests, where this particular issue is generally not a problem.   Generalization might be useful for manual tests, but we don't claim that here.
+
+Q: AVL... StackOverflow... XML...?
+
+Container classes a good normalization test: few method calls == hard to normalize.  AVL/XML represent early-stage code with many potential bugs.
 
 R2:
 
 Q: ...TSTL ...mostly an implementation issue...?
 
-Yes.  Any system with total order over finite set of actions works; e.g., transitions in the SPIN model-checker.  Just lexicographic order on arbitrary code would enable rules 2, 3, 5, and 6, but limit normalization and generalization power.
+Yes!  Any system with total order over finite action set works; e.g., transitions in the SPIN model-checker.  Just lexicographic order on arbitrary code would enable rules 2, 3, 5, and 6, but limit normalization and generalization.
 
 Q: ...why ...likely... preserve... reason for the failure.  ...transitively across... steps. ...preserve faults as well as delta-debugging does...
 
 Tried various rules, e.g. disallowing pool reassignment: all performed worse.  Not exhaustive search, though.  Each step has low probability of change, based on our experience with API-call test cases.  A series of low probabilities can add up to a large probability, but this may take many steps, and there are usually only 10-15 rewrites.  Experience with random testing of real systems convinces us delta-debugging is very useful despite slippage, and thus normalization as well.  "Tricks" people use in delta-debugging to avoid slippage (require same exception, etc.) work for normalization, but we evaluated without any user assistance.
 
-Q: ...specific rewrite rules? Do... subsume...?
+Q: ...rewrite rules? ...subsume...?
 
-Rules 1, 2, 4, 6, and 7 are pretty basic to the idea.  There is an alternative approach, where re-assignments are avoided (rejects rules 2 and 3 for example): gives more normalization, but doubles slippage.  We'll give more examples and better motivate choices.
+Rules 1, 2, 4, 6, and 7 are basic.  There is an alternative approach, where re-assignments are avoided (so rejects rules 2 and 3): gives more normalization, but doubles slippage.  We'll give more examples, better motivate choices.
 
 Q: ...“<“ compares sets ...In which rule...?
 
-Rule 5: delta produces a set, ordered using <.
+#5: delta produces set, ordered using <.
 
-Q: ...Church-Rosser like confluent... order just happens to work well... explore all orders of rewrites...?
+Q: ...Church-Rosser... confluent... order just happens to work well... explore all orders of rewrites...?
 
-No confluence guarantee, partly because we rely on the actual code execution to control which rewrites are allowed.  The order given here resulted from experimentation with speed and degree of normalization, but may be suboptimal.  Our implementation provides different orders, trading off speed and normalization.  The default moves a rule to the end of the set once it fails to fire.  Exploring all orders for each test seems extremely expensive.  While no guarantee of confluence, in practice orderings produced the same results about 90% of the time.
+No confluence guarantee, partly because we rely on the test execution to control which rewrites are allowed.  The order given here resulted from experimentation with speed and degree of normalization, but may be suboptimal.  Our implementation provides different orders, trading off speed and normalization.  The default moves a rule to the end of the set once it fails to fire.  Exploring all orders for each test seems extremely expensive.  While no guarantee of confluence, in practice orderings produced the same results about 90% of the time.
 
 Q: ...accomplish... higher-order mutants?
 
