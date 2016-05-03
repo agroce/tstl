@@ -4,9 +4,9 @@ R1:
 
 Q: sold as working for hand written test suites.
 
-Only due to our imprecise writing!  Normalization is meant for large automatically generated tests only, not manual tests, where this particular issue is generally not a problem.   Generalization might be useful for manual tests, but we don't claim that here.
+Only due to imprecise writing!  Normalization is for automatically generated tests, not manual tests (where its motivation is weaker).   Generalization might be useful for manual tests, but we don't claim that here.
 
-Q: AVL... StackOverflow... XML...?
+Q: AVL... XML...?
 
 Container classes a good normalization test: few method calls == hard to normalize.  AVL/XML represent early-stage code with many potential bugs.
 
@@ -34,7 +34,7 @@ No confluence guarantee, partly because we rely on the test execution to control
 
 Q: ...accomplish... higher-order mutants?
 
-Likely novel to this paper (slippage is sadly understudied).  With two mutants (faults), when we can produce tests t1, t2, such that t1 still fails if you remove fault 1, but leave fault 2, and t2 vice versa, we have no slippage.
+Likely novel method (slippage is sadly understudied):  with two mutants (faults), when we can produce tests t1, t2, such that t1 still fails if you remove fault 1, but leave fault 2, and t2 vice versa, there is no slippage.
 
 Q: ...would it actually be more distracting...?
 
@@ -52,7 +52,7 @@ It can, hence slippage, but note that we reduce based on structure, not "same fa
 
 Q: ...summarized test... one fault...?
 
-We can't, "one test" is a sometimes impossible ideal.
+We can't, it is a sometimes impossible ideal.
 
 Q: ..reduction in heap coverage...
 
