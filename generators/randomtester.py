@@ -77,6 +77,8 @@ def parse_args():
                         help="File to write coverage report to ('coverage.out' default).")
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage.")
+    parser.add_argument('-Q', '--quickAnalysis', action='store_true',
+                        help="Reduce tests by branch coverage, collect action frequencies in reductions.")
     parser.add_argument('-a', '--noreassign', action='store_true',
                         help="Add noReassign rule to normalization steps.")
     parser.add_argument('-v', '--verbose', action='store_true',
@@ -290,6 +292,22 @@ def main():
     if config.total:
         fulltest = open("fulltest.txt",'w')
 
+    if config.quickAnalysis:
+        quickAnalysisTotal = 0
+        quickAnalysisBCounts = {}
+        quickAnalysisSCounts = {}            
+        quickAnalysisCounts = {}
+        quickClassCounts = {}
+        quickAnalysisRawCounts = {}
+        for c in set(map(sut.actionClass,sut.actions())):
+            quickAnalysisCounts[c] = 0
+            quickClassCounts[c] = 0
+            quickAnalysisRawCounts[c] = 0
+        quickAnalysisBaselineB = {}
+        quickAnalysisBaselineS = {}
+        quickAnalysisReducedB = {}
+        quickAnalysisReducedS = {}
+        
     if config.verbose:
         print "ABOUT TO START TESTING"
         sys.stdout.flush()
@@ -367,6 +385,8 @@ def main():
                 print "ACTION:",sut.prettyName(a[0])
                 
             startOp = time.time()
+            if config.quickAnalysis:
+                quickClassCounts[sut.actionClass(a)] += 1
             stepOk = sut.safely(a)
             if sut.warning() != None:
                 print "SUT WARNING:",sut.warning()
@@ -406,9 +426,68 @@ def main():
                 else:
                     sawNew = False                
 
+
+                    
             if elapsed > config.timeout:
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
+
+        if config.quickAnalysis:
+            currTest = list(sut.test())
+            currB = sut.currBranches()
+            currS = sut.currStatements()            
+            print "GATHERING QUICK ANALYSIS DATA FOR",len(currB),"BRANCHES"
+            for b in currB:
+                #print "ANALYZING BRANCH",b
+                if b not in quickAnalysisBaselineB:
+                    quickAnalysisBaselineB[b] = 0
+                    quickAnalysisReducedB[b] = 0                    
+                quickAnalysisBaselineB[b] += 1
+                r = sut.reduce(currTest,sut.coversBranches([b]),keepLast=False)
+                sut.replay(r)
+                for b2 in sut.currBranches():
+                    if b2 not in quickAnalysisReducedB:
+                        quickAnalysisReducedB[b2] = 0
+                    quickAnalysisReducedB[b2] += 1
+                for s2 in sut.currStatements():
+                    if s2 not in quickAnalysisReducedS:
+                        quickAnalysisReducedS[s2] = 0
+                    quickAnalysisReducedS[s2] += 1
+                if b not in quickAnalysisBCounts:
+                    quickAnalysisBCounts[b] = {}
+                quickAnalysisTotal += 1
+                for c in map(sut.actionClass,r):
+                    quickAnalysisRawCounts[c] += 1
+                for c in set(map(sut.actionClass,r)):
+                    quickAnalysisCounts[c] += 1
+                    if c not in quickAnalysisBCounts[b]:
+                        quickAnalysisBCounts[b][c] = 0
+                    quickAnalysisBCounts[b][c] += 1
+            print "GATHERING QUICK ANALYSIS DATA FOR",len(currS),"STATEMENTS"                    
+            for s in currS:
+                if s not in quickAnalysisBaselineS:
+                    quickAnalysisBaselineS[s] = 0
+                    quickAnalysisReducedS[s] = 0
+                quickAnalysisBaselineS[s] += 1                
+                #print "ANALYZING STATEMENT",s
+                r = sut.reduce(currTest,sut.coversStatements([s]),keepLast=False)
+                sut.replay(r)
+                for b2 in sut.currBranches():
+                    if b2 not in quickAnalysisReducedB:
+                        quickAnalysisReducedB[b2] = 0
+                    quickAnalysisReducedB[b2] += 1
+                for s2 in sut.currStatements():
+                    quickAnalysisReducedS[s2] += 1                
+                if s not in quickAnalysisSCounts:
+                    quickAnalysisSCounts[s] = {}
+                quickAnalysisTotal += 1
+                for c in map(sut.actionClass,r):
+                    quickAnalysisRawCounts[c] += 1                
+                for c in set(map(sut.actionClass,r)):
+                    quickAnalysisCounts[c] += 1
+                    if c not in quickAnalysisSCounts[s]:
+                        quickAnalysisSCounts[s][c] = 0
+                    quickAnalysisSCounts[s][c] += 1                    
             
         if config.replayable:
             currtest.close()
@@ -434,6 +513,57 @@ def main():
         if config.html:
             sut.htmlReport(config.html)
 
+    if config.quickAnalysis:
+        print "*" * 70        
+        print "QUICK ANALYSIS RESULTS:"
+        print "*" * 70                
+        print "OVERALL ACTION ANALYSIS:"
+        totalTaken = sum(quickClassCounts.values())
+        for a in quickAnalysisCounts:
+            print "="*50
+            print "ACTION CLASS:"
+            print a
+            print "APPEARS",quickClassCounts[a],"TIMES IN TESTS"
+            print "APPEARS",quickAnalysisRawCounts[a],"TIMES IN REDUCED TESTS"
+            print "APPEARS IN",quickAnalysisCounts[a],"REDUCED TESTS ("+str(round((quickAnalysisCounts[a]/(quickAnalysisTotal*1.0))*100,2)) + "%)"
+            #baselineRate = quickClassCounts[a]/(totalTaken*1.0)
+            #reducedRate = quickAnalysisRawCounts[a]/(quickAnalysisTotal*1.0)
+            #if reducedRate > 0.0:
+            #    print "RATIO:",(baselineRate/reducedRate)
+            #else:
+            #    print "RATIO: INFINITE"            
+
+        print "*" * 70            
+        print "DETAILED BRANCH ANALYSIS"
+        for b in quickAnalysisBaselineB:
+            print "="*50
+            print "BRANCH:",b
+            baselineRate = quickAnalysisBaselineB[b]/(ntests*1.0)
+            print "IN",str(round(baselineRate*100,2))+"% OF TESTS ("+str(quickAnalysisBaselineB[b])+" TESTS)"
+            reducedRate = quickAnalysisReducedB[b]/(quickAnalysisTotal*1.0)
+            print "IN",str(round(reducedRate*100,2))+"% OF REDUCED TESTS"
+            print "RATIO:",(baselineRate/reducedRate)
+            print "REDUCED TEST ACTION ANALYSIS:"
+            sortAs = sorted(quickAnalysisBCounts[b].keys(),key=lambda x: quickAnalysisBCounts[b][x],reverse=True)            
+            print quickAnalysisBaselineB[b],"TESTS"
+            for a in sortAs:
+                print a,str(round(quickAnalysisBCounts[b][a]/(quickAnalysisBaselineB[b]*1.0)*100,2))+"%"                                           
+        print "*" * 70
+        print "DETAILED STATEMENT ANALYSIS"
+        for s in quickAnalysisBaselineS:
+            print "="*50            
+            print "STATEMENT:",s
+            baselineRate = quickAnalysisBaselineS[s]/(ntests*1.0)
+            print "IN",str(round(baselineRate*100,2))+"% OF TESTS"
+            reducedRate = quickAnalysisReducedS[s]/(quickAnalysisTotal*1.0)
+            print "IN",str(round(reducedRate*100,2))+"% OF REDUCED TESTS"
+            print "RATIO:",(baselineRate/reducedRate)
+            print "REDUCED TEST ACTION ANALYSIS:"
+            print quickAnalysisBaselineS[s],"TESTS"            
+            sortAs = sorted(quickAnalysisSCounts[s].keys(),key=lambda x: quickAnalysisSCounts[s][x],reverse=True)
+            for a in sortAs:
+                print a,str(round(quickAnalysisSCounts[s][a]/(quickAnalysisBaselineS[s]*1.0)*100,2))+"%"                           
+            
     print time.time()-start, "TOTAL RUNTIME"
     print ntests, "EXECUTED"
     print nops, "TOTAL TEST OPERATIONS"
