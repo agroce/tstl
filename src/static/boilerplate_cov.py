@@ -1,6 +1,7 @@
-def __updateCov(self):
-    self.__newBranches = set()
-    self.__newStatements = set()
+def __updateCov(self,extendCov=False):
+    if not extendCov:
+        self.__newBranches = set()
+        self.__newStatements = set()
     newCov = self.__cov.get_data()
     if self.__oldCovData == None:
         self.__oldCovData = coverage.CoverageData()

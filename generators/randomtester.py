@@ -77,6 +77,12 @@ def parse_args():
                         help="File to write coverage report to ('coverage.out' default).")
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage.")
+    parser.add_argument('-x', '--exploit', type=float, default=None,
+                        help="Probability to exploit stored coverage tests.")
+    parser.add_argument('-X', '--startExploit', type=int, default=0,
+                        help="Time at which exploitation starts.")
+    parser.add_argument('-%', '--exploitCeiling', type=float, default=0.1,
+                        help="Max ratio to mean coverage count for exploitation.")            
     parser.add_argument('-Q', '--quickAnalysis', action='store_true',
                         help="Reduce tests by branch coverage, collect action frequencies in reductions.")
     parser.add_argument('-a', '--noreassign', action='store_true',
@@ -105,7 +111,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
     global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds
     test = list(test)
     sys.stdout.flush()
-    assert (len(test) <= config.depth)
     if not newCov:
         failCount += 1
         print msg
@@ -246,9 +251,54 @@ def handle_failure(test, msg, checkFail, newCov = False):
                     allClouds[c] = True
             print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
 
+def buildActivePool():
+    global activePool
+    #print "FULL POOL:",len(fullPool)
+    meanBranch = sum(branchCoverageCount.values()) / (len(branchCoverageCount) * 1.0)
+    meanStatement = sum(statementCoverageCount.values()) / (len(statementCoverageCount) * 1.0)
+    #print "MEAN BRANCH",meanBranch,"MEAN STATEMENT",meanStatement
+    bThreshold = meanBranch * config.exploitCeiling
+    sThreshold = meanStatement * config.exploitCeiling
+    activePool = []
+    for (t,bs,ss) in fullPool:
+        added = False
+        for b in bs:
+            if branchCoverageCount[b] <= bThreshold:
+                activePool.append(t)
+                added = True
+                break
+        if not added:
+            for s in ss:
+                if statementCoverageCount[s] <= sThreshold:
+                    activePool.append(t)
+                    added = True
+                    break
+    #print "ACTIVE POOL:",len(activePool)
+            
+def tryExploit():
+    if R.random() < config.exploit:
+        buildActivePool()
+        if len(activePool) == 0:
+            return
+        sut.replay(R.choice(activePool))
+        if config.total:
+            for a in sut.test():
+                fulltest.write(a[0] + "\n")
+                fulltest.flush()
+        if config.replayable:
+            for a in sut.test():
+                currtest.write(a[0] + "\n")
+                currtest.flush()
+            
+def collectExploitable():
+    if (len(sut.newBranches()) != 0) or (len(sut.newStatements()) != 0):
+        if config.verbose:
+            print "COLLECTING DUE TO NEW",len(sut.newBranches()),len(sut.newStatements())
+        fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
 
 def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
+    global fullPool,activePool,branchCoverageCount,statementCoverageCount
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -269,6 +319,14 @@ def main():
         failCloud = {}
         allClouds = {}
 
+    if config.exploit != None:
+        fullPool = []
+        activePool = []
+
+    if config.quickAnalysis or (config.exploit != None):
+        branchCoverageCount = {}
+        statementCoverageCount = {}
+                
     sut = SUT.sut()
     if config.relax:
         sut.relax()
@@ -303,8 +361,6 @@ def main():
             quickAnalysisCounts[c] = 0
             quickClassCounts[c] = 0
             quickAnalysisRawCounts[c] = 0
-        quickAnalysisBaselineB = {}
-        quickAnalysisBaselineS = {}
         quickAnalysisReducedB = {}
         quickAnalysisReducedS = {}
         
@@ -320,6 +376,7 @@ def main():
 
         if config.swarm:
             sut.standardSwarm(R,file=config.swarmProbs)
+            #print "CONFIG:",(sut.swarmConfig())
 
         if config.swarmSwitch != None:
             lastSwitch = 0
@@ -339,6 +396,9 @@ def main():
         if config.replayable:
             currtest = open("currtest.txt",'w')
 
+        if (config.exploit != None) and ((time.time() - start) > config.startExploit):
+            tryExploit()
+            
         for s in xrange(0,config.depth):
             if config.verbose:
                 print "GENERATING STEP",s
@@ -393,33 +453,38 @@ def main():
             opTime += (time.time()-startOp)
             if tryStutter:
                 print "DONE STUTTERING"
+            if (stepOk or config.uncaught) and config.ignoreprops and (config.exploit != None):
+                collectExploitable()                
             if (not config.uncaught) and (not stepOk):
                 handle_failure(sut.test(), "UNCAUGHT EXCEPTION", False)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
                 break
-
+            
             startCheck = time.time()
             if not config.ignoreprops:
                 checkResult = sut.check()
                 checkTime += time.time()-startCheck
+                if checkResult and (stepOk or config.uncaught) and (config.exploit != None):
+                    collectExploitable()
+                    
             if not checkResult:
                 handle_failure(sut.test(), "PROPERLY VIOLATION", True)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
                 break
-                
+            
             elapsed = time.time() - start
             if config.running:
                 if sut.newBranches() != set([]):
-                    print "ACTION:",a[0],tryStutter
+                    print "ACTION:",a[0]
                     for b in sut.newBranches():
                         print elapsed,len(sut.allBranches()),"New branch",b
                     sawNew = True
                 else:
                     sawNew = False
                 if sut.newStatements() != set([]):
-                    print "ACTION:",a[0],tryStutter
+                    print "ACTION:",a[0]
                     for s in sut.newStatements():
                         print elapsed,len(sut.allStatements()),"New statement",s
                     sawNew = True
@@ -432,17 +497,29 @@ def main():
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
 
+        if (config.exploit != None) and (not config.quickAnalysis):
+            for b in sut.currBranches():
+                if b not in branchCoverageCount:
+                    branchCoverageCount[b] = 1
+                else:
+                    branchCoverageCount[b] += 1
+            for s in sut.currStatements():
+                if s not in statementCoverageCount:
+                    statementCoverageCount[s] = 1
+                else:
+                    statementCoverageCount[s] += 1                    
+            
         if config.quickAnalysis:
             currTest = list(sut.test())
             currB = sut.currBranches()
             currS = sut.currStatements()            
             print "GATHERING QUICK ANALYSIS DATA FOR",len(currB),"BRANCHES"
             for b in currB:
-                #print "ANALYZING BRANCH",b
-                if b not in quickAnalysisBaselineB:
-                    quickAnalysisBaselineB[b] = 0
+                print "ANALYZING BRANCH",b
+                if b not in branchCoverageCount:
+                    branchCoverageCount[b] = 0
                     quickAnalysisReducedB[b] = 0                    
-                quickAnalysisBaselineB[b] += 1
+                branchCoverageCount[b] += 1
                 r = sut.reduce(currTest,sut.coversBranches([b]),keepLast=False)
                 sut.replay(r)
                 for b2 in sut.currBranches():
@@ -465,11 +542,11 @@ def main():
                     quickAnalysisBCounts[b][c] += 1
             print "GATHERING QUICK ANALYSIS DATA FOR",len(currS),"STATEMENTS"                    
             for s in currS:
-                if s not in quickAnalysisBaselineS:
-                    quickAnalysisBaselineS[s] = 0
+                if s not in statementCoverageCount:
+                    statementCoverageCount[s] = 0
                     quickAnalysisReducedS[s] = 0
-                quickAnalysisBaselineS[s] += 1                
-                #print "ANALYZING STATEMENT",s
+                statementCoverageCount[s] += 1                
+                print "ANALYZING STATEMENT",s
                 r = sut.reduce(currTest,sut.coversStatements([s]),keepLast=False)
                 sut.replay(r)
                 for b2 in sut.currBranches():
@@ -519,7 +596,8 @@ def main():
         print "*" * 70                
         print "OVERALL ACTION ANALYSIS:"
         totalTaken = sum(quickClassCounts.values())
-        for a in quickAnalysisCounts:
+        actSort = sorted(quickAnalysisRawCounts.keys(),key=lambda x: quickAnalysisCounts.get(x,0), reverse=True)
+        for a in actSort:
             print "="*50
             print "ACTION CLASS:"
             print a
@@ -535,34 +613,38 @@ def main():
 
         print "*" * 70            
         print "DETAILED BRANCH ANALYSIS"
-        for b in quickAnalysisBaselineB:
+        branchCoverageCountSort = sorted(branchCoverageCount.keys(), key = lambda x: branchCoverageCount[x])
+        for b in branchCoverageCountSort:
             print "="*50
             print "BRANCH:",b
-            baselineRate = quickAnalysisBaselineB[b]/(ntests*1.0)
-            print "IN",str(round(baselineRate*100,2))+"% OF TESTS ("+str(quickAnalysisBaselineB[b])+" TESTS)"
+            baselineRate = branchCoverageCount[b]/(ntests*1.0)
+            print "IN",str(round(baselineRate*100,2))+"% OF TESTS ("+str(branchCoverageCount[b])+" TESTS)"
             reducedRate = quickAnalysisReducedB[b]/(quickAnalysisTotal*1.0)
             print "IN",str(round(reducedRate*100,2))+"% OF REDUCED TESTS"
-            print "RATIO:",(baselineRate/reducedRate)
+            if reducedRate > 0.0:
+                print "RATIO:",(baselineRate/reducedRate)
             print "REDUCED TEST ACTION ANALYSIS:"
             sortAs = sorted(quickAnalysisBCounts[b].keys(),key=lambda x: quickAnalysisBCounts[b][x],reverse=True)            
-            print quickAnalysisBaselineB[b],"TESTS"
+            print branchCoverageCount[b],"TESTS"
             for a in sortAs:
-                print a,str(round(quickAnalysisBCounts[b][a]/(quickAnalysisBaselineB[b]*1.0)*100,2))+"%"                                           
+                print a,str(round(quickAnalysisBCounts[b][a]/(branchCoverageCount[b]*1.0)*100,2))+"%"                                           
         print "*" * 70
         print "DETAILED STATEMENT ANALYSIS"
-        for s in quickAnalysisBaselineS:
+        statementCoverageCountSort = sorted(statementCoverageCount.keys(), key = lambda x: statementCoverageCount[x])        
+        for s in statementCoverageCountSort:
             print "="*50            
             print "STATEMENT:",s
-            baselineRate = quickAnalysisBaselineS[s]/(ntests*1.0)
+            baselineRate = statementCoverageCount[s]/(ntests*1.0)
             print "IN",str(round(baselineRate*100,2))+"% OF TESTS"
             reducedRate = quickAnalysisReducedS[s]/(quickAnalysisTotal*1.0)
             print "IN",str(round(reducedRate*100,2))+"% OF REDUCED TESTS"
-            print "RATIO:",(baselineRate/reducedRate)
+            if reducedRate > 0.0:
+                print "RATIO:",(baselineRate/reducedRate)
             print "REDUCED TEST ACTION ANALYSIS:"
-            print quickAnalysisBaselineS[s],"TESTS"            
+            print statementCoverageCount[s],"TESTS"            
             sortAs = sorted(quickAnalysisSCounts[s].keys(),key=lambda x: quickAnalysisSCounts[s][x],reverse=True)
             for a in sortAs:
-                print a,str(round(quickAnalysisSCounts[s][a]/(quickAnalysisBaselineS[s]*1.0)*100,2))+"%"                           
+                print a,str(round(quickAnalysisSCounts[s][a]/(statementCoverageCount[s]*1.0)*100,2))+"%"                           
             
     print time.time()-start, "TOTAL RUNTIME"
     print ntests, "EXECUTED"

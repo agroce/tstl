@@ -877,7 +877,10 @@ def main():
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__updateCov()\n")
 
         if refC != newC:
-            genCode.append(baseIndent + refC + "\n")
+            genCode.append(baseIndent + "try:\n")
+            genCode.append(baseIndent + baseIndent + refC + "\n")
+            genCode.append(baseIndent + "except:\n")
+            genCode.append(baseIndent + baseIndent + "pass\n")            
             if comparing:
                 genCode.append(baseIndent + "assert __result == __result_REF, \" (%s) == (%s) \" % (__result, __result_REF)\n")
         if logSet != []:
@@ -1159,7 +1162,7 @@ def main():
             genCode.append(baseIndent + "finally:\n")
             genCode.append(baseIndent + baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__cov.stop()\n")
-            genCode.append(baseIndent + baseIndent + baseIndent + "self.__updateCov()\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + "self.__updateCov(extendCov=True)\n")
     genCode.append(baseIndent + "return True\n")
 
     for c in genCode:
