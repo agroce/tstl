@@ -791,6 +791,9 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
                         return (True, testC)
     return (False, test)
 
+def clearNormalizationCache(self):
+    self.__simplifyCache = {}
+    
 def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
               noReassigns = False):
     """
