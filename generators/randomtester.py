@@ -254,8 +254,14 @@ def handle_failure(test, msg, checkFail, newCov = False):
 def buildActivePool():
     global activePool
     #print "FULL POOL:",len(fullPool)
-    meanBranch = sum(branchCoverageCount.values()) / (len(branchCoverageCount) * 1.0)
-    meanStatement = sum(statementCoverageCount.values()) / (len(statementCoverageCount) * 1.0)
+    if len(branchCoverageCount) >= 1:
+        meanBranch = sum(branchCoverageCount.values()) / (len(branchCoverageCount) * 1.0)
+    else:
+        meanBranch = 0.0
+    if len(statementCoverageCount) >= 1:
+        meanStatement = sum(statementCoverageCount.values()) / (len(statementCoverageCount) * 1.0)
+    else:
+        meanStatement = 0.0
     #print "MEAN BRANCH",meanBranch,"MEAN STATEMENT",meanStatement
     bThreshold = meanBranch * config.exploitCeiling
     sThreshold = meanStatement * config.exploitCeiling
