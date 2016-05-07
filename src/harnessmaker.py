@@ -999,6 +999,7 @@ def main():
     genCode.append(baseIndent + "self.__log = None\n")
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
+    genCode.append(baseIndent + "self.__safeSafelyMode = False\n")    
     genCode.append(baseIndent + "self.__simplifyCache = {}\n")
     for d in actDefs:
         genCode.append(baseIndent + d + "\n")

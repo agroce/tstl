@@ -279,7 +279,14 @@ def loadTest(self, filename):
 def playable(self, name):
     return self.__names[name]
 
+def setDebugSafelyMode(self, mode):
+    self.__safeSafelyMode = mode
+
 def safely(self, act):
+    if self.__safeSafelyMode:
+        if not act[1]():
+            print "WARNING:  ATTEMPED TO EXECUTE NON-ENABLED ACTION"
+            return False
     try:
         act[2]()
     except KeyboardInterrupt as e:

@@ -41,6 +41,8 @@ def parse_args():
                         help='Normalization/simplification speed (default = FAST).')    
     parser.add_argument('-k', '--keep', action='store_true',
                         help="Keep last action the same when reducing.")
+    parser.add_argument('-K', '--markov', type=str, default=None,
+                        help="Guide testing by a Markov model.")    
     parser.add_argument('-o', '--output', type=str, default=None,
                         help="Filename to save failing test(s).")
     parser.add_argument('-R', '--replayable', action='store_true',
@@ -332,12 +334,39 @@ def main():
     if config.quickAnalysis or (config.exploit != None):
         branchCoverageCount = {}
         statementCoverageCount = {}
-                
+        
     sut = SUT.sut()
     if config.relax:
         sut.relax()
     if config.logging != None:
         sut.setLog(config.logging)
+
+    if config.markov != None:
+        nactions = len(sut.actions())
+        mprobs = {}
+        prefix = []
+        probs = []
+        inProbs = False
+        readSize = False
+        for l in open(config.markov):
+            if not readSize:
+                markovN = int(l)
+                readSize = True
+            elif "START CLASS" in l:
+                if (prefix != []):
+                    mprobs[tuple(prefix)] = probs
+                prefix = []
+                probs = []
+                inProbs = False
+            elif inProbs:
+                ls = l.split("%%%%")
+                prob = float(ls[0])
+                ac = ls[1][1:-1]
+                probs.append((prob,ac))
+            elif "END CLASS" in l:
+                inProbs = True
+            else:
+                prefix.append(l[:-1])        
         
     tacts = sut.actions()
     a = None
@@ -357,6 +386,8 @@ def main():
         fulltest = open("fulltest.txt",'w')
 
     if config.quickAnalysis:
+        quickcf = open("quick.corpus",'w')
+        quickCorpus = []
         quickAnalysisTotal = 0
         quickAnalysisBCounts = {}
         quickAnalysisSCounts = {}            
@@ -422,8 +453,25 @@ def main():
                         print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
                         tryStutter = True
             else:
-                 a = sut.randomEnabled(R)   
-
+                if config.markov == None:
+                    a = sut.randomEnabled(R)
+                else:
+                    prefix = tuple(map(sut.actionClass,sut.test()[-markovN:]))
+                    if prefix not in mprobs:
+                        a = sut.randomEnabled(R)
+                    else:
+                        pset = mprobs[prefix]
+                        r = R.random()
+                        p = 0.0
+                        ac = None
+                        for (pac,tac) in pset:
+                            p += pac
+                            if p > r:
+                                ac = tac
+                                break
+                        assert(ac != None)
+                        a = sut.randomEnabledPred(R,nactions,lambda act:sut.actionClass(act) == ac)
+                                
             if a == None:
                 print "WARNING: DEADLOCK (NO ENABLED ACTIONS)"
                 
@@ -496,8 +544,6 @@ def main():
                     sawNew = True
                 else:
                     sawNew = False                
-
-
                     
             if elapsed > config.timeout:
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
@@ -527,6 +573,13 @@ def main():
                     quickAnalysisReducedB[b] = 0                    
                 branchCoverageCount[b] += 1
                 r = sut.reduce(currTest,sut.coversBranches([b]),keepLast=False)
+                rc = map(sut.actionClass,r)
+                if rc not in quickCorpus:
+                    quickCorpus.append(rc)
+                    for s in rc:
+                        quickcf.write(s+"\n")
+                    quickcf.write(("="*50)+"\n")
+                    quickcf.flush()
                 sut.replay(r)
                 for b2 in sut.currBranches():
                     if b2 not in quickAnalysisReducedB:
@@ -554,6 +607,9 @@ def main():
                 statementCoverageCount[s] += 1                
                 print "ANALYZING STATEMENT",s
                 r = sut.reduce(currTest,sut.coversStatements([s]),keepLast=False)
+                rc = map(sut.actionClass,r)
+                if rc not in quickCorpus:
+                    quickCorpus.append(rc)                
                 sut.replay(r)
                 for b2 in sut.currBranches():
                     if b2 not in quickAnalysisReducedB:
@@ -597,9 +653,15 @@ def main():
             sut.htmlReport(config.html)
 
     if config.quickAnalysis:
+        quickcf.close()
         print "*" * 70        
         print "QUICK ANALYSIS RESULTS:"
-        print "*" * 70                
+        print "*" * 70
+        print "TEST PATTERNS:"
+        for rc in quickCorpus:
+            print "="*50
+            for s in rc:
+                print s
         print "OVERALL ACTION ANALYSIS:"
         totalTaken = sum(quickClassCounts.values())
         actSort = sorted(quickAnalysisRawCounts.keys(),key=lambda x: quickAnalysisCounts.get(x,0), reverse=True)
