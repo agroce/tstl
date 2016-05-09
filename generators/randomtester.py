@@ -87,6 +87,8 @@ def parse_args():
                         help="Max ratio to mean coverage count for exploitation.")            
     parser.add_argument('-Q', '--quickAnalysis', action='store_true',
                         help="Reduce tests by branch coverage, collect action frequencies in reductions.")
+    parser.add_argument('-!', '--fastQuickAnalysis', action='store_true',
+                        help="Quick analysis skips analyzing branch/statement if previously analyzed already covers.")
     parser.add_argument('-a', '--noreassign', action='store_true',
                         help="Add noReassign rule to normalization steps.")
     parser.add_argument('-v', '--verbose', action='store_true',
@@ -388,6 +390,8 @@ def main():
     if config.quickAnalysis:
         quickcf = open("quick.corpus",'w')
         quickCorpus = []
+        quickDoneB = {}
+        quickDoneS = {}        
         quickAnalysisTotal = 0
         quickAnalysisBCounts = {}
         quickAnalysisSCounts = {}            
@@ -563,16 +567,27 @@ def main():
             
         if config.quickAnalysis:
             currTest = list(sut.test())
+            sut.replay(currTest)
             currB = sut.currBranches()
-            currS = sut.currStatements()            
+            currS = sut.currStatements()
+            clen = len(currTest)
             print "GATHERING QUICK ANALYSIS DATA FOR",len(currB),"BRANCHES"
             for b in currB:
+                if config.fastQuickAnalysis and (b in quickDoneB):
+                    continue
                 print "ANALYZING BRANCH",b
                 if b not in branchCoverageCount:
                     branchCoverageCount[b] = 0
                     quickAnalysisReducedB[b] = 0                    
                 branchCoverageCount[b] += 1
                 r = sut.reduce(currTest,sut.coversBranches([b]),keepLast=False)
+                print "REDUCED FROM",clen,"TO",len(r)
+                sys.stdout.flush()
+                sut.replay(r)
+                for br in sut.currBranches():
+                    quickDoneB[br] = True
+                for sr in sut.currStatements():
+                    quickDoneS[sr] = True                    
                 rc = map(sut.actionClass,r)
                 if rc not in quickCorpus:
                     quickCorpus.append(rc)
@@ -601,12 +616,21 @@ def main():
                     quickAnalysisBCounts[b][c] += 1
             print "GATHERING QUICK ANALYSIS DATA FOR",len(currS),"STATEMENTS"                    
             for s in currS:
+                if config.fastQuickAnalysis and (s in quickDoneS):
+                    continue
                 if s not in statementCoverageCount:
                     statementCoverageCount[s] = 0
                     quickAnalysisReducedS[s] = 0
                 statementCoverageCount[s] += 1                
                 print "ANALYZING STATEMENT",s
                 r = sut.reduce(currTest,sut.coversStatements([s]),keepLast=False)
+                print "REDUCED FROM",clen,"TO",len(r)
+                sys.stdout.flush()
+                sut.replay(r)
+                for br in sut.currBranches():
+                    quickDoneB[br] = True
+                for sr in sut.currStatements():
+                    quickDoneS[sr] = True                                
                 rc = map(sut.actionClass,r)
                 if rc not in quickCorpus:
                     quickCorpus.append(rc)                
