@@ -723,6 +723,20 @@ def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose
                                 return (True, testC)
     return (False, test)
 
+def opaque(self):
+    return self.__opaque
+
+def uniqueVals(self):
+    ss = self.shallowState()
+    uvals = []
+    for (pool, vals) in ss:
+        if pool not in self.__opaque:
+            for v in vals.values():
+                if v != None:
+                    if (pool, str(v)) not in uvals:
+                        uvals.append((pool,str(v)))
+    return uvals
+
 def noReassignStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if not self.__noReassigns:
         return (False, test)

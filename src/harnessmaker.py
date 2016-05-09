@@ -280,6 +280,7 @@ def genInitialization():
     genCode.append(baseIndent + "self.__pools = []\n")
     genCode.append(baseIndent + "self.__psize = {}\n")    
     genCode.append(baseIndent + "self.__consts = []\n")
+    genCode.append(baseIndent + "self.__opaque = []\n")    
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%","") + " = {}"
@@ -297,7 +298,11 @@ def genInitialization():
         if p in constSet:
             s = baseIndent
             s += 'self.__consts.append("' + poolPrefix + p.replace("%","") + '")'
-            genCode.append(s + "\n")            
+            genCode.append(s + "\n")
+        if p in opaqueSet:
+            s = baseIndent
+            s += 'self.__opaque.append("' + poolPrefix + p.replace("%","") + '")'
+            genCode.append(s + "\n")                        
         for x in xrange(0,poolSet[p]+1):
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "[" + str(x) + "] = None"
@@ -328,6 +333,7 @@ def main():
     global poolType
     global initSet
     global constSet
+    global opaqueSet
     global absSet
     global firstInit
     global baseIndent
@@ -481,6 +487,7 @@ def main():
     propSet = []
     refSet = []
     constSet = []
+    opaqueSet = []
     absSet = {}
     compareSet = []
     featureSet = []
@@ -535,6 +542,8 @@ def main():
                 poolSet[cs[1]+"_REF"] = int(cs[2])
             if (len(cs)>3) and ("CONST" in cs):
                 constSet.append(cs[1])
+            if (len(cs)>3) and ("OPAQUE" in cs):
+                opaqueSet.append(cs[1])                
             if (":" in cs):
                 tpos = cs.index(":")
                 poolType[cs[1]] = cs[tpos+1]
