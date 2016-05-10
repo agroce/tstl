@@ -66,7 +66,7 @@ class Stack(object):
         n.next = self._head
         self._head = n
         self._size += 1
-        if self._size > 15:
+        if self._size > 15: # We introduced a simple overflow bug
                 return 1/0
 
     def pop(self):
