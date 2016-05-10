@@ -737,6 +737,16 @@ def uniqueVals(self):
                         uvals.append((pool,str(v)))
     return uvals
 
+def coversUnique(self, val, catchUncaught=False):
+    def coverPred(test):
+        try:
+            self.replay(test, catchUncaught)
+        except:
+            pass
+        uv = self.uniqueVals()
+        return val in uv
+    return coverPred
+
 def noReassignStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
     if not self.__noReassigns:
         return (False, test)

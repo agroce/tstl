@@ -87,6 +87,8 @@ def parse_args():
                         help="Max ratio to mean coverage count for exploitation.")            
     parser.add_argument('-Q', '--quickAnalysis', action='store_true',
                         help="Reduce tests by branch coverage, collect action frequencies in reductions.")
+    parser.add_argument('-U', '--uniqueValuesAnalysis', action='store_true',
+                        help="Quick analysis based on unique values, not coverage.")    
     parser.add_argument('-!', '--fastQuickAnalysis', action='store_true',
                         help="Quick analysis skips analyzing branch/statement if previously analyzed already covers.")
     parser.add_argument('-a', '--noreassign', action='store_true',
@@ -336,6 +338,11 @@ def main():
     if config.quickAnalysis or (config.exploit != None):
         branchCoverageCount = {}
         statementCoverageCount = {}
+
+    if config.uniqueValuesAnalysis:
+        handledValues = {}
+        uniquef = open("unique.corpus",'w')
+        allUniquePaths = []
         
     sut = SUT.sut()
     if config.relax:
@@ -532,6 +539,29 @@ def main():
                     print "STOPPING TESTING DUE TO FAILED TEST"
                 break
             
+            if config.uniqueValuesAnalysis:
+                uvals = sut.uniqueVals()
+                olds = sut.state()
+                currTest = list(sut.test())
+                for u in uvals:
+                    if u not in handledValues:
+                        print "ANALYZING NEW UNIQUE VALUE:",u
+                    else:
+                        continue
+                    r = sut.reduce(currTest, sut.coversUnique(u), keepLast=False)
+                    rc = map(sut.actionClass, r)
+                    sut.replay(r)
+                    for ru in sut.uniqueVals():
+                        handledValues[ru] = True
+                    if rc not in allUniquePaths:
+                        print "NEW PATH DISCOVERED"
+                        allUniquePaths.append(rc)
+                        for s in rc:
+                            uniquef.write(s+"\n")
+                        uniquef.write(("="*50)+"\n")
+                        uniquef.flush()
+                sut.backtrack(olds)
+                
             elapsed = time.time() - start
             if config.running:
                 if sut.newBranches() != set([]):
@@ -564,7 +594,7 @@ def main():
                     statementCoverageCount[s] = 1
                 else:
                     statementCoverageCount[s] += 1                    
-            
+
         if config.quickAnalysis:
             currTest = list(sut.test())
             sut.replay(currTest)
@@ -676,6 +706,9 @@ def main():
         if config.html:
             sut.htmlReport(config.html)
 
+    if config.uniqueValuesAnalysis:
+        uniquef.close()
+            
     if config.quickAnalysis:
         quickcf.close()
         print "*" * 70        
