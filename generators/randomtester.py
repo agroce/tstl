@@ -588,14 +588,14 @@ def main():
             elapsed = time.time() - start
             if config.running:
                 if sut.newBranches() != set([]):
-                    print "ACTION:",a[0]
+                    print "ACTION:",sut.prettyName(a[0])
                     for b in sut.newBranches():
                         print elapsed,len(sut.allBranches()),"New branch",b
                     sawNew = True
                 else:
                     sawNew = False
                 if sut.newStatements() != set([]):
-                    print "ACTION:",a[0]
+                    print "ACTION:",sut.prettyName(a[0])
                     for s in sut.newStatements():
                         print elapsed,len(sut.allStatements()),"New statement",s
                     sawNew = True
