@@ -543,7 +543,9 @@ def main():
             if (len(cs)>3) and ("CONST" in cs):
                 constSet.append(cs[1])
             if (len(cs)>3) and ("OPAQUE" in cs):
-                opaqueSet.append(cs[1])                
+                opaqueSet.append(cs[1])
+            if (len(cs)>3) and ("OPAQUEREF" in cs):
+                opaqueSet.append(cs[1]+"_REF")                                
             if (":" in cs):
                 tpos = cs.index(":")
                 poolType[cs[1]] = cs[tpos+1]
@@ -824,9 +826,13 @@ def main():
         comparing = False
         for comp in compareSet:
             if re.match(".*" + comp + ".*", newC):
-                if refC != newC:
-                    newC = "__result = " + newC
-                    refC = "__result_REF = " + refC
+                if (refC != newC):
+                    if (" = ") not in newC:
+                        newC = "__result = " + newC
+                        refC = "__result_REF = " + refC
+                    else:
+                        newC = newC[:-1] + " ; " + "__result = " + newC.split(" = ")[0] + "\n"
+                        refC = refC[:-1] + " ; " + "__result_REF = " + refC.split(" = ")[0] + "\n"
                     comparing = True
 
         beforeSig = afterSig = checkSig = ""
