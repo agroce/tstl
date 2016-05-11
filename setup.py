@@ -5,7 +5,7 @@ import sys, os
 
 setup(
     name='tstl',
-    version='0.2',
+    version='0.3',
     description='Template scripting testing language (TSTL)',
     long_description=open('README.md').read(),
     packages=['src',],
@@ -25,7 +25,7 @@ setup(
       "Programming Language :: Python :: 2",
       ],
     install_requires=[
-      'coverage',
+      'coverage', 'graphviz',
     ],
     url='https://github.com/agroce/tstl',
 )
