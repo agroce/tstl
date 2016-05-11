@@ -943,7 +943,7 @@ def main():
             
         
         if postCode:
-            d = "self.__propCode[" + "'''" + newC[:-1] + " '''] = r\"" + postCode + "\"\n"
+            d = "self.__propCode[" + "'''" + newC[:-1] + " '''] = \"\"\"" + postCode + " \"\"\"\n"
             actDefs.append(d)
         
         if preSet != []:

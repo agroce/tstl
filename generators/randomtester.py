@@ -1,17 +1,18 @@
 import os
 import sys
-
-# Appending current working directory to sys.path
-# So that user running randomtester from the directory where sut.py is located
-current_working_dir = os.getcwd()
-sys.path.append(current_working_dir)
-
-import sut as SUT
+import math
 import random
 import time
 import traceback
 import argparse
 from collections import namedtuple
+
+# Appending current working directory to sys.path
+# So that user can run randomtester from the directory where sut.py is located
+current_working_dir = os.getcwd()
+sys.path.append(current_working_dir)
+
+import sut as SUT
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -51,6 +52,8 @@ def parse_args():
                         help="Keep a file with ALL TESTING ACTIONS in case of crash.")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
+    parser.add_argument('-O', '--localize', action='store_true',
+                        help="Produce fault localization (Ochai formula) if there are any failing tests.")
     parser.add_argument('-w', '--swarm', action='store_true',
                         help="Turn on standard swarm testing.")
     parser.add_argument('-P', '--swarmProbs', type=str, default=None,
@@ -114,7 +117,7 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail, newCov = False):
-    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds
+    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail
     test = list(test)
     sys.stdout.flush()
     if not newCov:
@@ -238,6 +241,15 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if outf != None:
             outf.write(sut.serializable(s)+"\n")
     if not newCov:
+        if config.localize:
+            for s in sut.currStatements():
+                if s not in localizeSFail:
+                    localizeSFail[s] = 0
+                localizeSFail[s] += 1
+            for b in sut.currBranches():
+                if b not in localizeBFail:
+                    localizeBFail[b] = 0
+                localizeBFail[b] += 1                
         f = sut.failure()
         print "ERROR:",f
         print "TRACEBACK:"
@@ -310,7 +322,7 @@ def collectExploitable():
 
 def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
-    global fullPool,activePool,branchCoverageCount,statementCoverageCount
+    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -394,6 +406,13 @@ def main():
     if config.total:
         fulltest = open("fulltest.txt",'w')
 
+    if config.localize:
+        localizeSFail = {}
+        localizeSPass = {}        
+        localizeBFail = {}
+        localizeBPass = {}
+        testsPassed = 0
+        
     if config.quickAnalysis:
         quickcf = open("quick.corpus",'w')
         quickCorpus = []
@@ -446,6 +465,8 @@ def main():
 
         if (config.exploit != None) and ((time.time() - start) > config.startExploit):
             tryExploit()
+
+        testFailed = False
             
         for s in xrange(0,config.depth):
             if config.verbose:
@@ -521,6 +542,7 @@ def main():
             if (stepOk or config.uncaught) and config.ignoreprops and (config.exploit != None):
                 collectExploitable()                
             if (not config.uncaught) and (not stepOk):
+                testFailed = True
                 handle_failure(sut.test(), "UNCAUGHT EXCEPTION", False)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
@@ -534,6 +556,7 @@ def main():
                     collectExploitable()
                     
             if not checkResult:
+                testFailed = True
                 handle_failure(sut.test(), "PROPERLY VIOLATION", True)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
@@ -595,6 +618,17 @@ def main():
                 else:
                     statementCoverageCount[s] += 1                    
 
+        if config.localize and not testFailed:
+            testsPassed += 1
+            for s in sut.currStatements():
+                if s not in localizeSPass:
+                    localizeSPass[s] = 0
+                localizeSPass[s] += 1
+            for b in sut.currBranches():
+                if b not in localizeBPass:
+                    localizeBPass[b] = 0
+                localizeBPass[b] += 1                            
+                    
         if config.quickAnalysis:
             currTest = list(sut.test())
             sut.replay(currTest)
@@ -811,6 +845,37 @@ def main():
                                 print "STEP",k,test1[k][0],"-->"                        
                             elif test1[k] != test2[k]:
                                 print "STEP",k,test1[k][0],"-->",test2[k][0]
+
+    if config.localize and failCount > 0:
+        scoresS = {}
+        scoresB = {}
+        for s in sut.allStatements():
+            if s not in localizeSPass:
+                localizeSPass[s] = 0
+            if s not in localizeSFail:
+                localizeSFail[s] = 0
+            denom = math.sqrt(failCount*(localizeSFail[s]+localizeSPass[s]))
+            if denom == 0.0:
+                continue
+            scoresS[s] = localizeSFail[s]/denom
+        for b in sut.allBranches():
+            if b not in localizeBPass:
+                localizeBPass[b] = 0
+            if b not in localizeBFail:
+                localizeBFail[b] = 0
+            denom = math.sqrt(failCount*(localizeBFail[b]+localizeBPass[b]))
+            if denom == 0.0:
+                continue            
+            scoresB[b] = localizeBFail[b]/denom
+        sortedS = sorted(scoresS.keys(),key = lambda x:scoresS[x])
+        sortedB = sorted(scoresB.keys(),key = lambda x:scoresB[x])
+        print "FAULT LOCALIZATION RESULTS:"
+        for s in sortedS:
+            if scoresS[s] > 0.0:
+                print s, scoresS[s]
+        for b in sortedB:
+            if scoresB[b] > 0.0:
+                print b, scoresB[b]            
             
     if not config.nocover:
         print len(sut.allBranches()),"BRANCHES COVERED"
