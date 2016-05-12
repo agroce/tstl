@@ -56,6 +56,8 @@ def parse_args():
                         help="Produce fault localization (Ochai formula) if there are any failing tests.")
     parser.add_argument('-w', '--swarm', action='store_true',
                         help="Turn on standard swarm testing.")
+    parser.add_argument('-p', '--profile', action='store_true',
+                        help="Profile actions.")
     parser.add_argument('-P', '--swarmProbs', type=str, default=None,
                         help="File with probabilities for swarm.")    
     parser.add_argument('-L', '--relax', action='store_true',
@@ -355,13 +357,21 @@ def main():
         handledValues = {}
         uniquef = open("unique.corpus",'w')
         allUniquePaths = []
-        
+
     sut = SUT.sut()
     if config.relax:
         sut.relax()
+
     if config.logging != None:
         sut.setLog(config.logging)
 
+    if config.profile:
+        profileTime = {}
+        profileCount = {}
+        for a in set(map(sut.actionClass, sut.actions())):
+            profileTime[a] = 0.0
+            profileCount[a] = 0
+        
     if config.markov != None:
         nactions = len(sut.actions())
         mprobs = {}
@@ -534,9 +544,13 @@ def main():
             if config.quickAnalysis:
                 quickClassCounts[sut.actionClass(a)] += 1
             stepOk = sut.safely(a)
+            thisOpTime = time.time()-startOp
+            if config.profile:
+                profileTime[sut.actionClass(a)] += thisOpTime
+                profileCount[sut.actionClass(a)] += 1
+            opTime += thisOpTime
             if sut.warning() != None:
-                print "SUT WARNING:",sut.warning()
-            opTime += (time.time()-startOp)
+                print "SUT WARNING:",sut.warning()            
             if tryStutter:
                 print "DONE STUTTERING"
             if (stepOk or config.uncaught) and config.ignoreprops and (config.exploit != None):
@@ -562,6 +576,25 @@ def main():
                     print "STOPPING TESTING DUE TO FAILED TEST"
                 break
             
+            elapsed = time.time() - start
+            if config.running:
+                if sut.newBranches() != set([]):
+                    print "ACTION:",sut.prettyName(a[0])
+                    for b in sut.newBranches():
+                        print elapsed,len(sut.allBranches()),"New branch",b
+                        sys.stdout.flush()
+                    sawNew = True
+                else:
+                    sawNew = False
+                if sut.newStatements() != set([]):
+                    print "ACTION:",sut.prettyName(a[0])
+                    for s in sut.newStatements():
+                        print elapsed,len(sut.allStatements()),"New statement",s
+                        sys.stdout.flush()
+                    sawNew = True
+                else:
+                    sawNew = False                
+
             if config.uniqueValuesAnalysis:
                 uvals = sut.uniqueVals()
                 olds = sut.state()
@@ -585,23 +618,8 @@ def main():
                         uniquef.flush()
                 sut.backtrack(olds)
                 
-            elapsed = time.time() - start
-            if config.running:
-                if sut.newBranches() != set([]):
-                    print "ACTION:",sut.prettyName(a[0])
-                    for b in sut.newBranches():
-                        print elapsed,len(sut.allBranches()),"New branch",b
-                    sawNew = True
-                else:
-                    sawNew = False
-                if sut.newStatements() != set([]):
-                    print "ACTION:",sut.prettyName(a[0])
-                    for s in sut.newStatements():
-                        print elapsed,len(sut.allStatements()),"New statement",s
-                    sawNew = True
-                else:
-                    sawNew = False                
-                    
+
+                                        
             if elapsed > config.timeout:
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
@@ -846,6 +864,19 @@ def main():
                             elif test1[k] != test2[k]:
                                 print "STEP",k,test1[k][0],"-->",test2[k][0]
 
+    if config.profile:
+        print "ACTION PROFILE:"
+        averages = []
+        for a in profileTime:
+            if profileCount[a] != 0:
+                averages.append((a,profileTime[a]/profileCount[a]))
+        averages = sorted(averages, key = lambda x: x[1])
+        maxAvg = averages[-1][1]
+        minAvg = averages[0][1]
+        sumAvg = sum(map(lambda x: x[1], averages))
+        for (a,t) in averages:
+            print a,profileCount[a],t,round(t/maxAvg,2),round(t/minAvg,2),round(t/sumAvg,2)
+                                
     if config.localize and failCount > 0:
         scoresS = {}
         scoresB = {}
