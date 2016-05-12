@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument('-k', '--keep', action='store_true',
                         help="Keep last action the same when reducing.")
     parser.add_argument('-K', '--markov', type=str, default=None,
-                        help="Guide testing by a Markov model.")    
+                        help="Guide testing by a Markov model.")
     parser.add_argument('-o', '--output', type=str, default=None,
                         help="Filename to save failing test(s).")
     parser.add_argument('-R', '--replayable', action='store_true',
@@ -54,12 +54,14 @@ def parse_args():
                         help="Allow multiple failures.")
     parser.add_argument('-O', '--localize', action='store_true',
                         help="Produce fault localization (Ochai formula) if there are any failing tests.")
+    parser.add_argument('-p', '--profile', action='store_true',
+                        help="Profile actions.")    
     parser.add_argument('-w', '--swarm', action='store_true',
                         help="Turn on standard swarm testing.")
-    parser.add_argument('-p', '--profile', action='store_true',
-                        help="Profile actions.")
+    parser.add_argument('--highLowSwarm', type=float, default=None,
+                        help="Apply high/low probability swarm testing with high portion of action being P.")
     parser.add_argument('-P', '--swarmProbs', type=str, default=None,
-                        help="File with probabilities for swarm.")    
+                        help="File with probabilities for any kind of swarm.")    
     parser.add_argument('-L', '--relax', action='store_true',
                         help="Use relaxed semantics.")
     parser.add_argument('-W', '--swarmSwitch', type=int, default=None,
@@ -455,6 +457,9 @@ def main():
             sut.standardSwarm(R,file=config.swarmProbs)
             #print "CONFIG:",(sut.swarmConfig())
 
+        if config.highLowSwarm != None:
+            classP = sut.highLowClassProbs(R,file=config.swarmProbs,highProb=config.highLowSwarm)
+
         if config.swarmSwitch != None:
             lastSwitch = 0
             switches = []
@@ -496,24 +501,17 @@ def main():
                         tryStutter = True
             else:
                 if config.markov == None:
-                    a = sut.randomEnabled(R)
+                    if config.highLowSwarm == None:
+                        a = sut.randomEnabled(R)
+                    else:
+                        a = sut.randomEnabledClassProbs(R,classP)
                 else:
                     prefix = tuple(map(sut.actionClass,sut.test()[-markovN:]))
                     if prefix not in mprobs:
                         a = sut.randomEnabled(R)
                     else:
-                        pset = mprobs[prefix]
-                        r = R.random()
-                        p = 0.0
-                        ac = None
-                        for (pac,tac) in pset:
-                            p += pac
-                            if p > r:
-                                ac = tac
-                                break
-                        assert(ac != None)
-                        a = sut.randomEnabledPred(R,nactions,lambda act:sut.actionClass(act) == ac)
-                                
+                        a = sut.randomEnabledClassProbs(rgen,mprobs[prefix])
+                        
             if a == None:
                 print "WARNING: DEADLOCK (NO ENABLED ACTIONS)"
                 

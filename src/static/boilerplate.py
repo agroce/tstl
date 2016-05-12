@@ -92,11 +92,74 @@ def enabled(self):
     """
     return filter(lambda (s, g, a): g(), self.__actions)
 
-def randomEnabled(self,rgen):
+def highLowClassProbs(self,rgen, P = 0.5, file = None, highProb = 0.9):
+    high = []
+    low = []
+    if file != None:
+        classProb = {}
+        for l in open(file):
+            ls = l.split("%%%%")
+            c = ls[0][:-1]
+            prob = float(ls[1])
+            classProb[c] = prob
+             
+    for c in self.__actionClasses:
+        if file == None:
+            if rgen.random() < P:
+                high.append(c)
+            else:
+                low.append(c)
+        else:
+            if rgen.random() < classProb[c]:
+                high.append(c)
+            else:
+                low.append(c)
+    probs = []
+    if low == []:
+        return map(lambda x:(1.0/len(high),x), high)
+    if high == []:
+        return map(lambda x:(1.0/len(low),x), low)    
+    highP = highProb / len(high)
+    lowP = (1.0-highProb) / len(low)    
+    for c in high:
+        probs.append((highP,c))
+    for c in low:
+        probs.append((lowP,c))
+    return probs
+
+def randomEnabledClassProbs(self,rgen,probs):
+    acts = self.__actions
+    a = None
+    while a == None:
+        r = rgen.random()
+        p = 0.0
+        ac = None
+        for (pac,tac) in probs:
+            p += pac
+            if p > r:
+                ac = tac
+                break
+        a = self.randomEnabled(rgen,actFilter = lambda act:self.actionClass(act) == ac)
+        if a == None:
+            padd = pac / (len(probs)-1)
+            newprobs = []
+            for (pac,tac2) in probs:
+                #print pac,tac2
+                if tac2 == tac:
+                    continue
+                newprobs.append((pac+padd,tac2))
+            probs = newprobs
+            if probs == []:
+                break
+    return a
+
+def randomEnabled(self,rgen,actFilter=None):
     """
     Return a random enabled action, or None if no such action can be produced, based on a provided random generator
     """
     acts = self.__actions
+    if filter != None:
+        acts = filter(actFilter,acts)
     a = None
     while a == None:
         if len(acts) == 1:
@@ -302,8 +365,9 @@ def failure(self):
 def warning(self):
     return self.__warning
 
-def replay(self, test, catchUncaught = False):
-    self.restart()
+def replay(self, test, catchUncaught = False, extend=False):
+    if not extend:
+        self.restart()
     for (name, guard, act) in test:
         if guard():
             if catchUncaught:
