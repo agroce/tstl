@@ -458,7 +458,7 @@ def main():
             #print "CONFIG:",(sut.swarmConfig())
 
         if config.highLowSwarm != None:
-            classP = sut.highLowClassProbs(R,file=config.swarmProbs,highProb=config.highLowSwarm)
+            classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)
 
         if config.swarmSwitch != None:
             lastSwitch = 0

@@ -92,6 +92,75 @@ def enabled(self):
     """
     return filter(lambda (s, g, a): g(), self.__actions)
 
+def highLowSwarm(self, rgen, P = 0.5, file = None, highProb = 0.9):
+    high = []
+
+    if file != None:
+        classProb = {}
+        for l in open(file):
+            ls = l.split("%%%%")
+            c = ls[0][:-1]
+            prob = float(ls[1])
+            classProb[c] = prob
+            
+    for c in self.__actionClasses:
+        if file == None:
+            if rgen.random() < P:
+                high.append(c)
+        else:
+            if rgen.random() < classProb[c]:
+                high.append(c)
+    if high == []:
+        high.append(rgen.choice(self.__actionClasses))
+    changed = True
+    while changed:
+        changed = False
+        
+        forcedAdd = []
+        for c in high:
+            for d in self.dependencies(c):
+                df = filter(lambda x:x in d, high) + filter(lambda x:x in d, forcedAdd)
+                if df == []:
+                    forcedAdd.append(rgen.choice(d))
+                    changed = True
+        high.extend(forcedAdd)
+
+        forcedAdd = []
+        for c in high:
+            if self.dependencies(c) == []:
+                anyDepend = False
+                for c2 in (high + forcedAdd):
+                    for d in self.dependencies(c2):
+                        if c in d:
+                                anyDepend = True
+                                break
+                    if anyDepend:
+                        break
+                if not anyDepend:
+                    needsThis = []
+                    for c2 in self.__actionClasses:
+                        for d in self.dependencies(c2):
+                            if c in d:
+                                needsThis.append(c2)
+                                break
+                    if needsThis != []:
+                        forcedAdd.append(rgen.choice(needsThis))
+                        changed = True
+        high.extend(forcedAdd)
+    low = filter(lambda x:x not in high, self.__actionClasses)
+    probs = []
+    if low == []:
+        return map(lambda x:(1.0/len(high),x), high)
+    if high == []:
+        return map(lambda x:(1.0/len(low),x), low)    
+    highP = highProb / len(high)
+    lowP = (1.0-highProb) / len(low)    
+    for c in high:
+        probs.append((highP,c))
+    for c in low:
+        probs.append((lowP,c))
+    return probs
+
 def highLowClassProbs(self,rgen, P = 0.5, file = None, highProb = 0.9):
     high = []
     low = []
