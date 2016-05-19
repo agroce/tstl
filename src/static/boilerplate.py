@@ -625,7 +625,13 @@ def reduceEssentials(self, test, original, pred, pruneGuards = False, keepLast =
         else:
             failedRemovals.append(rset)
     return (workingRemovals, failedRemovals)
-            
+
+def actionReplace(self,action,old,new):
+    if action[0] == old:
+        return self.__names[new]
+    else:
+        return action
+
 def actionModify(self,action,old,new):
     name = action[0]
     newName = name.replace(old,new)
@@ -723,7 +729,7 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
                     continue
                 donePairs.append((name1,name2))
-                testC = map(lambda x: self.actionModify(x,name1,name2), test)
+                testC = map(lambda x: self.actionReplace(x,name1,name2), test)
                 if (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     if verbose:
                         print "NORMALIZER: RULE SimplifyAll:",name1,"-->",name2
@@ -982,7 +988,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     history = [stest]
         
     # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
-    self.relax()
+    #self.relax()
              
     # Default speed is fast, if speed not recognized
     simplifiers = [self.noReassignStep, self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep, self.reduceLengthStep]
@@ -1036,7 +1042,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
                     result = self.__simplifyCache[stest]
                     for t in history:
                         self.__simplifyCache[t] = result
-                    self.stopRelax()
+                    #self.stopRelax()
                     return result                
                 history.append(stest)
                 if reorder:
@@ -1052,7 +1058,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     except:
         pass
 
-    self.stopRelax()
+    #self.stopRelax()
     # restore normal TSTL semantics!
 
     # Update the simplification cache and return
@@ -1122,7 +1128,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
     newCollected = {}
         
     # Change so double assignments are allowed
-    self.relax()
+    #self.relax()
 
     enableChange = self.getEnabled(test,checkEnabled)
     
@@ -1148,7 +1154,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                             collected[stestC] = True
                             newCollected[stestC] = True                            
                         if stestC in targets:
-                            self.stopRelax()
+                            #self.stopRelax()
                             return (True, stestC, dict(collected))                                                    
                     canReplace[i].append(a)
         for j in xrange(i+1,len(test)):
@@ -1162,7 +1168,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                         collected[stestC] = True
                         newCollected[stestC] = True                        
                         if stestC in targets:
-                            self.stopRelax()
+                            #self.stopRelax()
                             return (True, stestC, dict(collected))                        
                 canSwap[i].append(j)
                 canSwap[j].append(i)
@@ -1242,7 +1248,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 if i == end:
                     print "#] (steps in [] can be in any order)"
     # Restore semantics
-    self.stopRelax()
+    #self.stopRelax()
     if returnCollect:
         if depth == 0:
             return (False, None, dict(collected))
