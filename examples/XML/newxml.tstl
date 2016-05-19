@@ -1,0 +1,30 @@
+@import my_xml_bug as my_xml
+source: my_xml_bug.py
+
+pool: <XML> 3
+pool: <string> 3
+pool: <tag> 3
+pool: <char> 3 CONST
+pool: <schar> 3 CONST
+pool: <schars> 3
+pool: <node> 3
+
+<char> := '<'
+<char> := '>'
+<char> := '/'
+<char> := ~<schar>
+<schar> := 'a'
+<schar> := 'b'
+<schar> := 'c'
+<schars> := ''
+~<schars> += <schar>
+<tag> := '<' + <schars> + '>'
+<string> := ''
+~<string> += <char>
+~<string> = ~<string> + ~<string>
+~<string> = <tag> + ~<string> + <tag>.replace('<','</')
+{my_xml.MyXmlError} <XML> := my_xml.parse(~<string>)
+{KeyError} <XML>[~<string>]
+(<string,1> != '') -> <node> := my_xml.MyNode(~<string>,~<string>)
+{AttributeError} ~<XML>.add(<node>)
+#print ~<string>

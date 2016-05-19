@@ -596,7 +596,7 @@ def main():
     codeClasses = []
     for c in code:
         if originalCode[c] not in codeClasses:
-            codeClasses.append(originalCode[c])
+            codeClasses.append(originalCode[c] + ' ')
     
     # get definitions
     for c in codeClasses:
@@ -924,7 +924,7 @@ def main():
         d += "self." + guard + ","
         d += "self." + act + ")\n"
         actDefs.append(d)
-        d = "self.__actionClass[" + "'''" + newC[:-1] + " '''] = '''" + originalCode[corig] + "'''\n"
+        d = "self.__actionClass[" + "'''" + newC[:-1] + " '''] = '''" + originalCode[corig] + " '''\n"
         actDefs.append(d)        
         nind += 1
         d = "self.__orderings[" + "'''" + newC[:-1] + " '''] = " + str(nind) + "\n"

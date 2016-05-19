@@ -58,6 +58,8 @@ def parse_args():
                         help="Profile actions.")    
     parser.add_argument('-w', '--swarm', action='store_true',
                         help="Turn on standard swarm testing.")
+    parser.add_argument('--swarmP', type=float, default=0.5,
+                        help="Swarm inclusion probability.")    
     parser.add_argument('--highLowSwarm', type=float, default=None,
                         help="Apply high/low probability swarm testing with high portion of action being P.")
     parser.add_argument('-P', '--swarmProbs', type=str, default=None,
@@ -454,7 +456,7 @@ def main():
         ntests += 1
 
         if config.swarm:
-            sut.standardSwarm(R,file=config.swarmProbs)
+            sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
             #print "CONFIG:",(sut.swarmConfig())
 
         if config.highLowSwarm != None:
@@ -488,7 +490,7 @@ def main():
                 print "GENERATING STEP",s
 
             if (config.swarmSwitch != None) and (s in switches):
-                sut.standardSwarm(R,file=config.swarmProbs)
+                sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
                 
             startGuard = time.time()
             tryStutter = (a != None) and (a[1]()) and ((config.stutter != None) or config.greedyStutter)
@@ -651,7 +653,7 @@ def main():
             currB = sut.currBranches()
             currS = sut.currStatements()
             clen = len(currTest)
-            print "GATHERING QUICK ANALYSIS DATA FOR",len(currB),"BRANCHES"
+            #print "GATHERING QUICK ANALYSIS DATA FOR",len(currB),"BRANCHES"
             for b in currB:
                 if config.fastQuickAnalysis and (b in quickDoneB):
                     continue
@@ -694,7 +696,7 @@ def main():
                     if c not in quickAnalysisBCounts[b]:
                         quickAnalysisBCounts[b][c] = 0
                     quickAnalysisBCounts[b][c] += 1
-            print "GATHERING QUICK ANALYSIS DATA FOR",len(currS),"STATEMENTS"                    
+                #print "GATHERING QUICK ANALYSIS DATA FOR",len(currS),"STATEMENTS"                    
             for s in currS:
                 if config.fastQuickAnalysis and (s in quickDoneS):
                     continue
@@ -769,6 +771,7 @@ def main():
             print "="*50
             for s in rc:
                 print s
+        print "*" * 70
         print "OVERALL ACTION ANALYSIS:"
         totalTaken = sum(quickClassCounts.values())
         actSort = sorted(quickAnalysisRawCounts.keys(),key=lambda x: quickAnalysisCounts.get(x,0), reverse=True)
