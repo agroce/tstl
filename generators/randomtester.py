@@ -26,6 +26,8 @@ def parse_args():
                         help='Maximum #tests to run (-1 = infinite default).')
     parser.add_argument('-u', '--uncaught', action='store_true',
                         help='Allow uncaught exceptions in actions.')
+    parser.add_argument('--throughput', action='store_true',
+                        help='Measure action throughput.')
     parser.add_argument('-i', '--ignoreprops', action='store_true',
                         help='Ignore properties.')
     parser.add_argument('-f', '--full', action='store_true',
@@ -527,8 +529,6 @@ def main():
                 break                
             if tryStutter:
                 print "STUTTERING WITH",a[0]
-            nops += 1
-
             if config.replayable:
                 currtest.write(a[0] + "\n")
                 currtest.flush()
@@ -545,6 +545,7 @@ def main():
                 quickClassCounts[sut.actionClass(a)] += 1
             stepOk = sut.safely(a)
             thisOpTime = time.time()-startOp
+            nops += 1
             if config.profile:
                 profileTime[sut.actionClass(a)] += thisOpTime
                 profileCount[sut.actionClass(a)] += 1
@@ -733,7 +734,9 @@ def main():
                     if c not in quickAnalysisSCounts[s]:
                         quickAnalysisSCounts[s][c] = 0
                     quickAnalysisSCounts[s][c] += 1                    
-            
+
+        if config.throughput:
+            print "ACTION THROUGHPUT:",nops/(time.time()-start)
         if config.replayable:
             currtest.close()
         if config.quickTests:
