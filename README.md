@@ -173,6 +173,22 @@ automatically reduced:
     192 BRANCHES COVERED
     146 STATEMENTS COVERED
 
+Using `--output`, the failing test can be saved to a file, and with the `standalone.py`
+utility, converted into a completely standalone test case that does
+not require TSTL itself.
+
+    ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30 --output failure.test
+    Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
+    ...
+    ~/tstl/examples/AVL$ python ~/tstl/utilities/standalone.py failure.test sut.py failure.py --check --refs
+	~/tstl/examples/AVL$ python failure.py
+    Traceback (most recent call last):
+      File "failure.py", line 98, in <module>
+        check()
+      File "failure.py", line 45, in check
+        assert avl2.check_balanced()
+    AssertionError
+
 
 Developer Info
 --------------
