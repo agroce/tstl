@@ -99,6 +99,81 @@ If we test for 30 seconds, something like this will appear:
     224 BRANCHES COVERED
     166 STATEMENTS COVERED
 
+For many (but not all!) programs, a more powerful alternative to
+simple random testing is to use swarm testing, which restricts the
+actions in each individual test (e.g., insert but no delete, or find
+but no inorder traversals) (see
+http://www.cs.cmu.edu/~agroce/issta12.pdf).
+
+    ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30 --swarm
+    Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=True, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
+      11 [2:0]
+    -- < 7 [1:0]
+    ...
+    STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH 94
+    224 BRANCHES COVERED
+    166 STATEMENTS COVERED
+
+Here, the method is not very important; simple random testing does a
+decent job covering the AVL tree code in just 60 seconds.  If we
+introduce a bug by removing the `self.rebalance()` call on line 205 of
+avl.py, either method will quickly report a failing test case,
+automatically reduced:
+        
+    ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30
+    Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
+    PROPERLY VIOLATION
+    ERROR: (<type 'exceptions.AssertionError'>, AssertionError(), <traceback object at 0x10ca2ce60>)
+    TRACEBACK:
+      File "/Users/alexgroce/tstl/examples/avl/sut.py", line 5998, in check
+        assert self.p_avl[2].check_balanced()
+    Original test has 32 steps
+    REDUCING...
+    Reduced test has 11 steps
+    REDUCED IN 1.51964116096 SECONDS
+    int0 = 7                                                                 # STEP 0
+    int3 = 16                                                                # STEP 1
+    int2 = 2                                                                 # STEP 2
+    avl2 = avl.AVLTree()                                                     # STEP 3
+    avl2.insert(int0)                                                        # STEP 4
+    avl2.insert(int3)                                                        # STEP 5
+    int3 = 2                                                                 # STEP 6
+    avl2.insert(int3)                                                        # STEP 7
+    int3 = 14                                                                # STEP 8
+    avl2.insert(int3)                                                        # STEP 9
+    avl2.delete(int2)                                                       # STEP 10
+
+    FINAL VERSION OF TEST, WITH LOGGED REPLAY:
+    int0 = 7                                                                 # STEP 0
+    int3 = 16                                                                # STEP 1
+    int2 = 2                                                                 # STEP 2
+    avl2 = avl.AVLTree()                                                     # STEP 3
+    avl2.insert(int0)                                                        # STEP 4
+    avl2.insert(int3)                                                        # STEP 5
+    int3 = 2                                                                 # STEP 6
+    avl2.insert(int3)                                                        # STEP 7
+    int3 = 14                                                                # STEP 8
+    avl2.insert(int3)                                                        # STEP 9
+    avl2.delete(int2)                                                       # STEP 10
+    ERROR: (<type 'exceptions.AssertionError'>, AssertionError(), <traceback object at 0x10cc28290>)
+    TRACEBACK:
+      File "/Users/alexgroce/tstl/examples/avl/sut.py", line 5998, in check
+        assert self.p_avl[2].check_balanced()
+    STOPPING TESTING DUE TO FAILED TEST
+    70.1923076923 PERCENT COVERED
+    1.69284701347 TOTAL RUNTIME
+    2 EXECUTED
+    132 TOTAL TEST OPERATIONS
+    0.0442249774933 TIME SPENT EXECUTING TEST OPERATIONS
+    0.00354051589966 TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS
+    0.0838589668274 TIME SPENT CHECKING PROPERTIES
+    0.128083944321 TOTAL TIME SPENT RUNNING SUT
+    0.00327777862549 TIME SPENT RESTARTING
+    1.51979422569 TIME SPENT REDUCING TEST CASES
+    192 BRANCHES COVERED
+    146 STATEMENTS COVERED
+
+
 Developer Info
 --------------
 
