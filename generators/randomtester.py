@@ -69,7 +69,9 @@ def parse_args():
     parser.add_argument('-L', '--relax', action='store_true',
                         help="Use relaxed semantics.")
     parser.add_argument('-W', '--swarmSwitch', type=int, default=None,
-                        help="How many times to switch swarm config during each test.")        
+                        help="How many times to switch swarm config during each test.")
+    parser.add_argument('--swarmLength', type=int, default=None,
+                        help="How long a swarm config persists.")
     parser.add_argument('-l', '--logging', type=int, default=None,
                         help="Set logging level")
     parser.add_argument('-F', '--failedLogging', type=int, default=None,
@@ -492,6 +494,9 @@ def main():
                 print "GENERATING STEP",s
 
             if (config.swarmSwitch != None) and (s in switches):
+                sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+
+            if (config.swarmLength != None) and (((s + 1) % config.swarmLength) == 0):
                 sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
                 
             startGuard = time.time()
