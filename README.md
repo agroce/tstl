@@ -57,13 +57,47 @@ random tester will automatically import and test.  Both tstl and the
 random tester take a variety of command line options, which --help
 will show.
 
-
 Example
 -----
 
 The easiest way to understand TSTL may be to examine
 examples/AVL/avlnew.tstl (https://github.com/agroce/tstl/blob/master/examples/AVL/avlnew.tstl), which is a simple example file in the latest
-language format (easier to read).
+language format (easier to read) (the file avlblocks.tstl has this
+same harness in a different format).
+
+If we test for 30 seconds, something like this will appear:
+
+   ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30
+   Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
+     12 [2:0]
+   -- < 2 [1:0]
+   ---- < 1 [0:0] L
+   ---- > 5 [0:0] L
+   -- > 13 [1:-1]
+   ---- > 14 [0:0] L
+   set([1, 2, 5, 12, 13, 14])
+   ...
+     11 [2:0]
+   -- < 5 [1:0]
+   ---- < 1 [0:0] L
+   ---- > 9 [0:0] L
+   -- > 14 [1:-1]
+   ---- > 18 [0:0] L
+   set([1, 5, 9, 11, 14, 18])
+   STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH 17
+   STOPPING TESTING DUE TO TIMEOUT
+   80.8306709265 PERCENT COVERED
+   30.0417540073 TOTAL RUNTIME
+   236 EXECUTED
+   23517 TOTAL TEST OPERATIONS
+   10.3524413109 TIME SPENT EXECUTING TEST OPERATIONS
+   0.751145362854 TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS
+   18.4323685169 TIME SPENT CHECKING PROPERTIES
+   28.7848098278 TOTAL TIME SPENT RUNNING SUT
+   0.179262161255 TIME SPENT RESTARTING
+   0.0 TIME SPENT REDUCING TEST CASES
+   224 BRANCHES COVERED
+   166 STATEMENTS COVERED`
 
 Developer Info
 --------------
