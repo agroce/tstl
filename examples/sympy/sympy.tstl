@@ -1,0 +1,37 @@
+@from sympy import *
+
+pool: <c> 8
+pool: <v> 8
+pool: <expr> 8
+
+log: 0 <expr>
+
+<c> := Integer(<[0..10]>)
+<v> := Symbol(<['a'..'d']>)
+<v> := Symbol(<['x'..'z']>)
+<v> := Symbol(<['e'..'l']>,positive=True)
+<expr> := Rational(<c>,<c>)
+<expr> := <v>
+<expr> := <c>
+<expr> := <expr> + <expr>
+<expr> := <expr> - <expr>
+<expr> := <expr> * <expr>
+<expr> := sqrt(<expr>)
+<expr> := <v> ** <c>
+<expr> := <expr> / <expr>
+<expr> := simplify(<expr>)
+<expr> := expand(<expr>)
+<expr> := expand(<expr>,force=True)
+<expr> := factor(<expr>)
+<expr> := sin(<expr>)
+<expr> := cos(<expr>)
+<expr> := <expr>.subs(<expr>,<expr>)
+<expr> := expand_trig(<expr>)
+<expr> := trigsimp(<expr>)
+<expr> := pi
+<expr> := E
+<expr> := Sum(<expr>,(<v>,<c>,<c>))
+<expr> := <expr>.doit()
+
+#property: (simplify(<expr>-<expr>) == 0) == <expr,1>.equals(<expr,2>)
+property: (not((simplify(<expr>-<expr>) == 0) and (not <expr,1>.equals(<expr,2>))))
