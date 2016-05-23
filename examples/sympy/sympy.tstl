@@ -3,6 +3,8 @@
 pool: <c> 8
 pool: <v> 8
 pool: <expr> 8
+pool: <term> 8
+pool: <poly> 8
 
 log: 0 <expr>
 
@@ -10,28 +12,69 @@ log: 0 <expr>
 <v> := Symbol(<['a'..'d']>)
 <v> := Symbol(<['x'..'z']>)
 <v> := Symbol(<['e'..'l']>,positive=True)
+
 <expr> := Rational(<c>,<c>)
 <expr> := <v>
 <expr> := <c>
+
+<term> := <c> * <v> ** <c>
+<poly> := <term>
+<poly> := <term> + <term>
+
+<expr> := <poly>
 <expr> := <expr> + <expr>
 <expr> := <expr> - <expr>
 <expr> := <expr> * <expr>
-<expr> := sqrt(<expr>)
-<expr> := <v> ** <c>
+<expr> := <expr> ** <expr>
 <expr> := <expr> / <expr>
+
+{ZeroDivisionError} <expr> := <expr> % <expr>
+
+<expr> := sin(<expr>)
+<expr> := cos(<expr>)
+<expr> := tan(<expr>)
+<expr> := asin(<expr>)
+<expr> := acos(<expr>)
+<expr> := atan(<expr>)
+
+<expr> := sqrt(<expr>)
+
+<expr> := factorial(<expr>)
+
+<expr> := <expr>.subs(<expr>,<expr>)
+
+<expr> := pi
+<expr> := E
+<expr> := I
+<expr> := inf
+
+<expr> := Sum(<expr>,(<v>,<c>,<c>))
+<expr> := Product(<expr>,(<v>,<c>,<c>))
+
+<expr> := <expr>.doit()
+
 <expr> := simplify(<expr>)
 <expr> := expand(<expr>)
 <expr> := expand(<expr>,force=True)
 <expr> := factor(<expr>)
-<expr> := sin(<expr>)
-<expr> := cos(<expr>)
-<expr> := <expr>.subs(<expr>,<expr>)
-<expr> := expand_trig(<expr>)
-<expr> := trigsimp(<expr>)
-<expr> := pi
-<expr> := E
-<expr> := Sum(<expr>,(<v>,<c>,<c>))
-<expr> := <expr>.doit()
+<expr> := collect(<expr>,<expr>)
+<expr> := cancel(<expr>)
+<expr> := apart(<expr>)
 
-#property: (simplify(<expr>-<expr>) == 0) == <expr,1>.equals(<expr,2>)
-property: (not((simplify(<expr>-<expr>) == 0) and (not <expr,1>.equals(<expr,2>))))
+<expr> := trigsimp(<expr>)
+<expr> := expand_trig(<expr>)
+
+<expr> := powsimp(<expr>)
+<expr> := expand_power_exp(<expr>)
+<expr> := expand_power_base(<expr>)
+<expr> := powdenest(<expr>)
+
+<expr> := expand_log(<expr>)
+<expr> := logcombine(<expr>)
+
+<expr> := expand_func(<expr>)
+<expr> := combsimp(<expr>)
+
+<expr>.evalf()
+
+property: (simplify(<expr>-<expr>) != 0) or (<expr,1>.equals(<expr,2>))

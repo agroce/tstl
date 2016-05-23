@@ -662,6 +662,8 @@ def getEnabled(self, test, checkEnabled):
             self.safely(test[i])
         else:
             enableChange[i] = map(lambda x:x[0], self.actions())
+    for i in xrange(0,len(test)):
+        enableChange[i] = sorted(enableChange[i],key=lambda x:self.__orderings[x])
     return enableChange
 
 def numReassigns(self, test):
@@ -1035,6 +1037,8 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
             if changed:
                 if reduceOnChange:
                     test = self.reduce(test, pred, pruneGuards, keepLast)
+                if verbose:
+                    self.prettyPrintTest(test)
                 stest = self.captureReplay(test)
                 if stest in self.__simplifyCache:
                     if verbose:
