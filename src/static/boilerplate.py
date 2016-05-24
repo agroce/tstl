@@ -434,11 +434,15 @@ def failure(self):
 def warning(self):
     return self.__warning
 
-def replay(self, test, catchUncaught = False, extend=False):
+def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False):
     if not extend:
         self.restart()
     for (name, guard, act) in test:
+        if verbose:
+            print name
         if guard():
+            if verbose:
+                print "EXECUTING"
             if catchUncaught:
                 try:
                     act()
@@ -446,12 +450,13 @@ def replay(self, test, catchUncaught = False, extend=False):
                     pass
             else:
                 act()
-                
-        if not self.check():
-            return False
+
+        if checkProp:
+            if not self.check():
+                return False
     return True
 
-def replayUntil(self, test, pred, catchUncaught = False):
+def replayUntil(self, test, pred, catchUncaught = False, checkProp=False):
     self.restart()
     newt = []
     if pred():
@@ -470,23 +475,31 @@ def replayUntil(self, test, pred, catchUncaught = False):
                 act()
         if pred():
             return newt
-        if not self.check():
-            return False
+        if checkProp:
+            if not self.check():
+                return False
     return None
 
 def failsCheck(self, test):
     try:
-        return not self.replay(test, catchUncaught = True)
+        return not self.replay(test, catchUncaught = True, checkProp=True)
     except:
         return True
     return False
 
-def fails(self, test):
+def fails(self, test, verbose=False):
     try:
         return not self.replay(test)
     except:
         return True
     return False
+
+def failsAny(self,test):
+    try:
+        return not self.replay(test, checkProp=True)
+    except:
+        return True
+    return False    
 
 def logOff(self):
     self.__log = None

@@ -13,11 +13,21 @@ t = SUT.sut()
 def globalCheck(str):
     if " # CHECK POOL INIT" not in str:
         return str
+
+    newStr = str.replace("(", '("')
+    newStr = newStr.replace(" != None", '" in globals()')    
+    return newStr.replace("# CHECK POOL INIT","")
+    
+    print "STR=",str
     condBegin = str.find("(")
     theCheck = str[condBegin+1:str.find(" != None):")]
+    print theCheck
     strNew = str[:condBegin+1] + '"' + theCheck + '"' + str[str.find(" != None):"):]
+    print strNew
     strNew = strNew.replace(" != None"," in globals()")
+    print strNew    
     strNew = strNew.replace("# CHECK POOL INIT","")
+    print strNew
     return strNew
     
 outf = open(outFile,'w')

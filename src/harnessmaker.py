@@ -131,7 +131,14 @@ def parse_import_line(line):
     :    "from math import sqrt" --> ['sqrt']
     :
     """
+    global import_froms
+    
+    #print "IMPORT:",line
     raw = line.split('import ')
+    if "from " in line:
+        import_froms.append(line)
+        return []
+        #return [line.split()[1]]
     assert len(raw) == 2, 'import statement error in line --> {}'.format(line)
     # import X
     # from X import Y
@@ -280,7 +287,9 @@ def genInitialization():
     genCode.append(baseIndent + "self.__pools = []\n")
     genCode.append(baseIndent + "self.__psize = {}\n")    
     genCode.append(baseIndent + "self.__consts = []\n")
-    genCode.append(baseIndent + "self.__opaque = []\n")    
+    genCode.append(baseIndent + "self.__opaque = []\n")
+    genCode.append(baseIndent + "self.__failure = None\n")
+    genCode.append(baseIndent + "self.__warning = None\n")        
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%","") + " = {}"
@@ -329,6 +338,8 @@ def genInitialization():
 def main():
 
     global config
+    global import_froms
+    global ignoredExcepts
     global poolSet
     global poolType
     global initSet
@@ -367,6 +378,7 @@ def main():
         
     code = []
     import_modules = []             # We will call reload on these during restart
+    import_froms = []
     inside_literal_block = False    # To check whether we are inside raw python code
     
     inside_function = False         # Are we inside a function def, so need to consider PRE?
@@ -413,7 +425,7 @@ def main():
             if inside_literal_block or l[0] == "@":
                 if l[0] == "@":
                     l = l[1:]
-                if re.match("import ", l):
+                if "import" in l: #re.match("import ", l):
                     #outf.write(l[:])
                     # import, so set up reloading
                     module_names = parse_import_line(l)
@@ -485,6 +497,7 @@ def main():
     initSet = []
     firstInit = True
     propSet = []
+    ignoredExcepts = []
     refSet = []
     constSet = []
     opaqueSet = []
@@ -526,7 +539,9 @@ def main():
         elif cs[0] == "features:":
             autoPrefix = "feature: "
         elif cs[0] == "sources:":
-            autoPrefix = "source: "                        
+            autoPrefix = "source: "
+        elif cs[0] == "exceptions:":
+            autoPrefix = "exception: "
         elif cs[0] == "actions:":
             autoPrefix = ""                        
         elif cs[0] == "init:":
@@ -535,6 +550,8 @@ def main():
             logSet.append(c.replace("log: ",""))
         elif cs[0] == "property:":
             propSet.append(c.replace("property: ",""))
+        elif cs[0] == "exception:":
+            ignoredExcepts.append(c.replace("exception: ",""))            
         elif cs[0] == "pool:":
             poolSet[cs[1]] = int(cs[2])
             if (len(cs)>3) and ("REF" in cs):
@@ -724,6 +741,8 @@ def main():
         changes = []
 
         okExcepts = ""
+        for e in ignoredExcepts:
+            okExcepts += e[:-1] + ","
         warnExcepts = ""
         if corig[0] == "{":
             c = corig[corig.find("}")+1:]
@@ -738,6 +757,8 @@ def main():
             warnExcepts = warnExcepts[:-1]
         else:
             c = corig
+            if len(ignoredExcepts) > 0:
+                okExcepts = okExcepts[:-1]
 
         newC = c
         eqPos = c.find(":=")
@@ -1011,8 +1032,6 @@ def main():
     genCode.append(baseIndent + "self.__refCode = {}\n")
     genCode.append(baseIndent + "self.__propCode = {}\n")
     genCode.append(baseIndent + 'self.__orderings["<<RESTART>>"] = -1\n')
-    genCode.append(baseIndent + "self.__failure = None\n")
-    genCode.append(baseIndent + "self.__warning = None\n")
     genCode.append(baseIndent + "self.__log = None\n")
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
@@ -1038,6 +1057,9 @@ def main():
     genCode.append("# BEGIN RELOAD CODE\n")
     for l in import_modules:
         s = baseIndent + 'reload({})\n'.format(l)
+        genCode.append(s)
+    for l in import_froms:
+        s = baseIndent + l
         genCode.append(s)
     genCode.append("# END RELOAD CODE\n")        
     if (not config.nocover) and config.coverreload:

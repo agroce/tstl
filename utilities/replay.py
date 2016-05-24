@@ -4,6 +4,7 @@ import sys
 rout = open("replay.out",'w')
 
 file = sys.argv[1]
+nocheck = "--nocheck" in sys.argv
 
 t = SUT.sut()
 t.restart()
@@ -23,9 +24,10 @@ for l in open(file):
             if not stepOk:
                 pass
                 #print "FAILED STEP"
-        checkResult = t.check()
-        if not checkResult:
-            pass
+        if not nocheck:
+            checkResult = t.check()
+            if not checkResult:
+                pass
             #print "FAILED PROPERTY"
     i += 1
 

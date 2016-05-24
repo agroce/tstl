@@ -46,7 +46,7 @@ def parse_args():
                         help="Keep last action the same when reducing.")
     parser.add_argument('-K', '--markov', type=str, default=None,
                         help="Guide testing by a Markov model.")
-    parser.add_argument('-o', '--output', type=str, default=None,
+    parser.add_argument('-o', '--output', type=str, default="failure."+str(os.getpid())+".test",
                         help="Filename to save failing test(s).")
     parser.add_argument('-R', '--replayable', action='store_true',
                         help="Keep replayable file of current test, in case of crash.")
@@ -137,6 +137,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         print "ERROR:",f
         print "TRACEBACK:"
         traceback.print_tb(f[2])
+        sut.saveTest(test,config.output+".full")
     else:
         print "Handling new coverage for quick testing"
         snew = sut.newCurrStatements()
@@ -251,6 +252,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if outf != None:
             outf.write(sut.serializable(s)+"\n")
     if not newCov:
+        if checkFail:
+            sut.check()
         if config.localize:
             for s in sut.currStatements():
                 if s not in localizeSFail:
@@ -259,7 +262,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             for b in sut.currBranches():
                 if b not in localizeBFail:
                     localizeBFail[b] = 0
-                localizeBFail[b] += 1                
+                localizeBFail[b] += 1
         f = sut.failure()
         print "ERROR:",f
         print "TRACEBACK:"
@@ -494,10 +497,16 @@ def main():
                 print "GENERATING STEP",s
 
             if (config.swarmSwitch != None) and (s in switches):
-                sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+                if config.highLowSwarm == None:
+                    sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+                else:
+                    classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)
 
             if (config.swarmLength != None) and (((s + 1) % config.swarmLength) == 0):
-                sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+                if config.highLowSwarm == None:
+                    sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+                else:
+                    classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)                
                 
             startGuard = time.time()
             tryStutter = (a != None) and (a[1]()) and ((config.stutter != None) or config.greedyStutter)
