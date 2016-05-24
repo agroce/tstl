@@ -1,10 +1,16 @@
+@import sympy
 @from sympy import *
+@from sympy.core.cache import *
+
+init: clear_cache()
 
 pool: <c> 8
 pool: <v> 8
 pool: <expr> 8
 pool: <term> 8
 pool: <poly> 8
+
+exception: OverflowError
 
 log: 0 <expr>
 
@@ -46,7 +52,6 @@ log: 0 <expr>
 <expr> := pi
 <expr> := E
 <expr> := I
-<expr> := inf
 
 <expr> := Sum(<expr>,(<v>,<c>,<c>))
 <expr> := Product(<expr>,(<v>,<c>,<c>))
@@ -56,10 +61,10 @@ log: 0 <expr>
 <expr> := simplify(<expr>)
 <expr> := expand(<expr>)
 <expr> := expand(<expr>,force=True)
-<expr> := factor(<expr>)
+{ValueError} <expr> := factor(<expr>)
 <expr> := collect(<expr>,<expr>)
 <expr> := cancel(<expr>)
-<expr> := apart(<expr>)
+{PolynomialError} <expr> := apart(<expr>)
 
 <expr> := trigsimp(<expr>)
 <expr> := expand_trig(<expr>)
@@ -77,4 +82,4 @@ log: 0 <expr>
 
 <expr>.evalf()
 
-property: (simplify(<expr>-<expr>) != 0) or (<expr,1>.equals(<expr,2>))
+property: ("<expr>" == "<expr>") or (simplify(<expr,1>-<expr,2>) != 0) or (<expr,1>.equals(<expr,2>))
