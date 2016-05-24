@@ -486,13 +486,13 @@ def failsCheck(self, test, verbose=False, failure=None):
     try:
         r = self.replay(test, catchUncaught=True, checkProp=True, verbose=verbose)
     except:
-        if (failure == None) or (self.__failure()[0] == failure[0]):
+        if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True
         else:
             return False
     if r == True:
         return False
-    if (failure == None) or (self.__failure[0] == failure[0]):
+    if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
         return True
     else:
         return False
@@ -502,7 +502,7 @@ def fails(self, test, verbose=False, failure=None):
         return not self.replay(test, verbose=verbose)
     except:
         self.__failure = sys.exc_info()
-        if (failure == None) or (self.__failure[0] == failure[0]):
+        if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True        
         return False
     return False
@@ -512,7 +512,7 @@ def failsAny(self, test, verbose=False, failure=None):
         r = self.replay(test, checkProp=True, verbose=verbose)
     except:
         self.__failure = sys.exc_info()
-        if (failure == None) or (self.__failure[0] == failure[0]):
+        if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True                
         return True
     return False    
