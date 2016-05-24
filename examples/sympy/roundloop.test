@@ -1,0 +1,6 @@
+self.p_v[3] = Symbol('k',positive=True) 
+self.p_expr[0] = pi 
+self.p_c[1] = Integer(8) 
+self.p_expr[6] = expand_log(self.p_expr[0]) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[7] = self.p_expr[6] % self.p_expr[2] 
