@@ -80,6 +80,8 @@ def parse_args():
                         help="Produce running branch coverage report.")
     parser.add_argument('-C', '--compareFails', action='store_true',
                         help="Compare all failing tests.")
+    parser.add_argument('--noExceptionMatch', action='store_true',
+                        help="Do not force exceptions in reduced / normalized failures to match.")    
     parser.add_argument('-S', '--stutter', type=float, default=None,
                         help="Repeat last action if still enabled with P = <stutter>.")
     parser.add_argument('-g', '--greedyStutter', action='store_true',
@@ -169,9 +171,15 @@ def handle_failure(test, msg, checkFail, newCov = False):
     cloudMatch = False
     if not config.full:
         if not checkFail:
-            failProp = sut.fails
+            if config.noExceptionMatch:
+                failProp = sut.fails
+            else:
+                failProp = lambda x: sut.fails(x,failure=f)                
         else:
-            failProp = sut.failsCheck
+            if config.noExceptionMatch:
+                failProp = sut.failsCheck
+            else:
+                failProp = lambda x: sut.failsCheck(x,failure=f)
         if newCov:
             failProp = sut.coversAll(snew,bnew)
         print "REDUCING..."

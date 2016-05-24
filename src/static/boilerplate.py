@@ -447,6 +447,7 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
                 try:
                     act()
                 except:
+                    self.__failure = sys.exc_info()
                     pass
             else:
                 act()
@@ -470,6 +471,7 @@ def replayUntil(self, test, pred, catchUncaught = False, checkProp=False):
                 try:
                     act()
                 except:
+                    self.__failure = sys.exc_info()
                     pass
             else:
                 act()
@@ -480,24 +482,38 @@ def replayUntil(self, test, pred, catchUncaught = False, checkProp=False):
                 return False
     return None
 
-def failsCheck(self, test):
+def failsCheck(self, test, verbose=False, failure=None):
     try:
-        return not self.replay(test, catchUncaught = True, checkProp=True)
+        r = self.replay(test, catchUncaught=True, checkProp=True, verbose=verbose)
     except:
+        if (failure == None) or (self.__failure()[0] == failure[0]):
+            return True
+        else:
+            return False
+    if r == True:
+        return False
+    if (failure == None) or (self.__failure[0] == failure[0]):
         return True
+    else:
+        return False
+
+def fails(self, test, verbose=False, failure=None):
+    try:
+        return not self.replay(test, verbose=verbose)
+    except:
+        self.__failure = sys.exc_info()
+        if (failure == None) or (self.__failure[0] == failure[0]):
+            return True        
+        return False
     return False
 
-def fails(self, test, verbose=False):
+def failsAny(self, test, verbose=False, failure=None):
     try:
-        return not self.replay(test)
+        r = self.replay(test, checkProp=True, verbose=verbose)
     except:
-        return True
-    return False
-
-def failsAny(self,test):
-    try:
-        return not self.replay(test, checkProp=True)
-    except:
+        self.__failure = sys.exc_info()
+        if (failure == None) or (self.__failure[0] == failure[0]):
+            return True                
         return True
     return False    
 
