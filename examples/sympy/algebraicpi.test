@@ -1,0 +1,45 @@
+self.p_c[5] = Integer(4) 
+self.p_c[6] = Integer(3) 
+self.p_c[1] = Integer(5) 
+self.p_expr[2] = self.p_c[5] 
+self.p_expr[6] = pi 
+self.p_expr[5] = pi 
+self.p_expr[3] = expand(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[1] = logcombine(self.p_expr[3]) 
+self.p_expr[2] = expand_power_base(self.p_expr[6]) 
+self.p_expr[3] = self.p_expr[3] + self.p_expr[5] 
+self.p_expr[4] = self.p_expr[1] - self.p_expr[2] 
+self.p_expr[3] = self.p_expr[3] + self.p_expr[6] 
+self.p_expr[7] = self.p_expr[4] + self.p_expr[4] 
+self.p_expr[1] = self.p_expr[4] - self.p_expr[1] 
+self.p_expr[6] = self.p_expr[2] ** self.p_expr[5] 
+self.p_c[0] = Integer(3) 
+self.p_expr[3] = self.p_expr[3] / self.p_expr[4] 
+self.p_expr[3] = expand(self.p_expr[4],force=True) 
+self.p_expr[1] = self.p_expr[7] / self.p_expr[1] 
+self.p_expr[4] = expand_log(self.p_expr[7]) 
+self.p_expr[0] = simplify(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[2] / self.p_expr[4] 
+self.p_expr[5] = expand(self.p_expr[5]) 
+self.p_expr[2] = self.p_expr[1] + self.p_expr[3] 
+self.p_expr[5] = expand_log(self.p_expr[0]) 
+self.p_c[7] = Integer(3) 
+self.p_expr[3] = self.p_expr[7] / self.p_expr[1] 
+self.p_expr[4] = factor(self.p_expr[4]) 
+self.p_expr[7] = self.p_expr[6] ** self.p_expr[6] 
+self.p_expr[0] = self.p_expr[4] + self.p_expr[1] 
+self.p_expr[6] = tan(self.p_expr[6]) 
+self.p_expr[6] = self.p_expr[5] / self.p_expr[3] 
+self.p_expr[5] = self.p_expr[3] ** self.p_expr[5] 
+self.p_expr[3] = self.p_expr[3] / self.p_expr[7] 
+self.p_expr[1] = expand(self.p_expr[1],force=True) 
+self.p_expr[7] = self.p_expr[4] - self.p_expr[4] 
+self.p_expr[4] = self.p_expr[5] / self.p_expr[0] 
+self.p_expr[3] = self.p_expr[5] + self.p_expr[4] 
+self.p_expr[1] = self.p_expr[4] - self.p_expr[6] 
+self.p_c[2] = Integer(6) 
+self.p_expr[4] = self.p_expr[1] / self.p_expr[2] 
+self.p_expr[1] = self.p_expr[3] - self.p_expr[2] 
+self.p_expr[2] = expand(self.p_expr[1],force=True) 
+self.p_expr[1] = apart(self.p_expr[6]) 
