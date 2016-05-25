@@ -1,0 +1,26 @@
+self.p_v[6] = Symbol('j',positive=True) 
+self.p_expr[1] = self.p_v[6] 
+self.p_expr[5] = factorial(self.p_expr[1]) 
+self.p_expr[7] = collect(self.p_expr[5],self.p_expr[1]) 
+self.p_expr[3] = collect(self.p_expr[5],self.p_expr[5]) 
+self.p_expr[1] = self.p_expr[7] / self.p_expr[7] 
+self.p_c[7] = Integer(6) 
+self.p_expr[5] = factor(self.p_expr[5]) 
+self.p_expr[0] = acos(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[0] 
+self.p_expr[3] = self.p_expr[5] % self.p_expr[5] 
+self.p_expr[5] = acos(self.p_expr[0]) 
+self.p_expr[1] = collect(self.p_expr[5],self.p_expr[5]) 
+self.p_expr[0] = self.p_expr[7] / self.p_expr[3] 
+self.p_expr[4] = factorial(self.p_expr[7]) 
+self.p_expr[7] = collect(self.p_expr[4],self.p_expr[1]) 
+self.p_expr[6] = self.p_expr[7] % self.p_expr[4] 
+self.p_expr[7] = self.p_expr[3] ** self.p_expr[5] 
+self.p_c[5] = Integer(9) 
+self.p_expr[4] = self.p_expr[5] ** self.p_expr[7] 
+self.p_v[6] = Symbol('e',positive=True) 
+self.p_expr[3] = collect(self.p_expr[3],self.p_expr[2]) 
+self.p_v[3] = Symbol('j',positive=True) 
+self.p_expr[3] = acos(self.p_expr[4]) 
+self.p_expr[5] = self.p_expr[1] / self.p_expr[3] 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[0] 
