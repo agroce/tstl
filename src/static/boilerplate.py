@@ -544,7 +544,7 @@ def __candidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = True):
+def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose=True):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -575,6 +575,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
         c = self.__candidates(tb, n)
         reduced = False
         for tc in c:
+            if verbose == "VERY":
+                print "Trying candidate of length",len(tc+addLast)
             if pred(tc + addLast):
                 tb = tc
                 n = 2
@@ -590,6 +592,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
                                 pass
                     tb = newtb
                 reduced = True
+                if verbose:
+                    print "Reduced test length to",len(tb+addLast)
                 break
         if not reduced:
             if n == len(tb):
@@ -599,6 +603,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True):
                     pass
                 return tb + addLast
             n = min(n*2, len(tb))
+            if verbose:
+                print "Failed to reduce, increasing granularity to",n
         elif len(tb) == 1:
             try:
                 test_after_reduce(self)
@@ -994,6 +1000,24 @@ def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, 
 
 def clearNormalizationCache(self):
     self.__simplifyCache = {}
+
+def swapPools(self,test,p1,p2,after=0):
+    poolsByLength = sorted(self.__pools, key = len, reverse=True)
+    tPrefix = test[:after]
+    test = test[after:]
+    p1new = self.__poolPrefix + p1
+    p2new = self.__poolPrefix + p2
+    for p in poolsByLength:
+        if p in p1new:
+            p1new = p + "[" + p1new.split(p)[1] + "]"
+    for p in poolsByLength:
+        if p in p2new:
+            p2new = p + "[" + p2new.split(p)[1] + "]"
+    newTest = map(lambda x: x[0].replace(p1new,"!!P1NEW!!"), test)
+    newTest = map(lambda x: x.replace(p2new,p1new), newTest)
+    newTest = map(lambda x: x.replace("!!P1NEW!!",p2new), newTest)
+    newTest = map(lambda x: self.__names[x], newTest)
+    return tPrefix+newTest
     
 def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
               noReassigns = False):
