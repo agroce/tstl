@@ -186,6 +186,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
         startReduce = time.time()
         original = test
         test = sut.reduce(test, failProp, True, config.keep)
+        if not newCov:
+            sut.saveTest(test,config.output+".reduced")        
         print "Reduced test has",len(test),"steps"
         print "REDUCED IN",time.time()-startReduce,"SECONDS"
         sut.prettyPrintTest(test)
@@ -252,16 +254,17 @@ def handle_failure(test, msg, checkFail, newCov = False):
     print
     print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
     i = 0
+    sut.restart()
     for s in test:
         steps = "# STEP " + str(i)
         print sut.prettyName(s[0]).ljust(80-len(steps),' '),steps
         sut.safely(s)
+        if checkFail:
+            sut.check()
         i += 1
         if outf != None:
             outf.write(sut.serializable(s)+"\n")
     if not newCov:
-        if checkFail:
-            sut.check()
         if config.localize:
             for s in sut.currStatements():
                 if s not in localizeSFail:
@@ -272,9 +275,12 @@ def handle_failure(test, msg, checkFail, newCov = False):
                     localizeBFail[b] = 0
                 localizeBFail[b] += 1
         f = sut.failure()
-        print "ERROR:",f
-        print "TRACEBACK:"
-        traceback.print_tb(f[2])
+        if f != None:
+            print "ERROR:",f
+            print "TRACEBACK:"
+            traceback.print_tb(f[2])
+        else:
+            print "NO FAILURE!"
     sys.stdout.flush()
     if outf != None:
         outf.close()

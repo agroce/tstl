@@ -615,6 +615,26 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose=True)
             else:
                 return (tb + addLast)
 
+def reductions(self, test, pred, pruneGuards = False, keepLast = True, verbose=True, useClasses=True):
+    r = self.reduce(test, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose)
+    combs = set()
+    reductions = [r]
+    for i in xrange(1,len(r)):
+        for c in combinations(r,i):
+            combs.add(c)
+    for c in sorted(combs,key=len,reverse=True):
+        if useClasses:
+            ac = map(self.actionClass,c)
+            tfilter = filter(lambda x:self.actionClass(x) not in ac, test)
+        else:
+            tfilter = filter(lambda x:x not in c, test)
+        if pred(tfilter):
+            rfilter = self.reduce(tfilter, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose)
+            if rfilter not in reductions:
+                reductions.append(rfilter)
+    return reductions
+        
+
 def poolUses(self,str):
     uses = []
     for p in self.__pools:
