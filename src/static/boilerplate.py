@@ -446,6 +446,8 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
             if catchUncaught:
                 try:
                     act()
+                except KeyboardInterrupt as e:
+                    raise e                    
                 except:
                     self.__failure = sys.exc_info()
                     pass
@@ -470,6 +472,8 @@ def replayUntil(self, test, pred, catchUncaught = False, checkProp=False):
             if catchUncaught:
                 try:
                     act()
+                except KeyboardInterrupt as e:
+                    raise e                    
                 except:
                     self.__failure = sys.exc_info()
                     pass
@@ -485,6 +489,8 @@ def replayUntil(self, test, pred, catchUncaught = False, checkProp=False):
 def failsCheck(self, test, verbose=False, failure=None):
     try:
         r = self.replay(test, catchUncaught=True, checkProp=True, verbose=verbose)
+    except KeyboardInterrupt as e:
+        raise e        
     except:
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True
@@ -500,6 +506,8 @@ def failsCheck(self, test, verbose=False, failure=None):
 def fails(self, test, verbose=False, failure=None):
     try:
         return not self.replay(test, verbose=verbose)
+    except KeyboardInterrupt as e:
+        raise e    
     except:
         self.__failure = sys.exc_info()
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
@@ -510,6 +518,8 @@ def fails(self, test, verbose=False, failure=None):
 def failsAny(self, test, verbose=False, failure=None):
     try:
         r = self.replay(test, checkProp=True, verbose=verbose)
+    except KeyboardInterrupt as e:
+        raise e        
     except:
         self.__failure = sys.exc_info()
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
@@ -544,7 +554,7 @@ def __candidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose=True):
+def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -573,6 +583,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose=True)
         stests[(stest,n)] = True
         count += 1
         c = self.__candidates(tb, n)
+        if rgen:
+            rgen.shuffle(c)
         reduced = False
         for tc in c:
             if verbose == "VERY":
@@ -588,6 +600,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose=True)
                             newtb.append(a)
                             try:
                                 a[2]()
+                            except KeyboardInterrupt as e:
+                                raise e                                
                             except:
                                 pass
                     tb = newtb
@@ -615,25 +629,95 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose=True)
             else:
                 return (tb + addLast)
 
-def reductions(self, test, pred, pruneGuards = False, keepLast = True, verbose=True, useClasses=True):
+def reductions(self, test, pred, pruneGuards = False, keepLast = True, verbose=True, recursive=1, useClasses=True, limit = None):
+    # use recursive = -1 for infinite recursion (all tests)
     r = self.reduce(test, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose)
-    combs = set()
     reductions = [r]
-    for i in xrange(1,len(r)):
-        for c in combinations(r,i):
-            combs.add(c)
-    for c in sorted(combs,key=len,reverse=True):
-        if useClasses:
-            ac = map(self.actionClass,c)
-            tfilter = filter(lambda x:self.actionClass(x) not in ac, test)
-        else:
-            tfilter = filter(lambda x:x not in c, test)
-        if pred(tfilter):
-            rfilter = self.reduce(tfilter, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose)
-            if rfilter not in reductions:
-                reductions.append(rfilter)
+    anyNew = True
+    filterActs = set()
+    impossibleSets = []
+    analyzedCount = 0
+    analyzed = []
+    while anyNew:
+        recursive = recursive - 1
+        filterActs = set([])
+        for r in reductions:
+            for s in r:
+                if not set([s]) in impossibleSets:
+                    filterActs.add(s)
+                
+        anyNew = False
+        sys.stdout.flush()
+        for i in xrange(1,len(filterActs)):
+            ncombos = 0
+            #print "SIZE",i
+            if verbose:
+                print "ANALYZING SIZE",i,"COMBINATIONS"
+            combs = combinations(filterActs,i)
+            for c in combs:
+                analyzedCount += 1
+                if (analyzedCount % 10) == 0:
+                    print "ANALYZED:",analyzedCount
+                if (limit != None) and (analyzedCount > limit):
+                    print "REDUCTION LIMIT EXCEEDED"
+                    return reductions                
+                cs = set(c)
+                if cs in analyzed:
+                    continue
+                analyzed.append(cs)
+                #print "COMBO:",map(lambda x:self.prettyName(x[0]), cs)
+                skipCombo = False
+                for iset in impossibleSets:
+                    if filter(lambda x:x not in cs, iset) == []:
+                        #print "SKIPPING, IMPOSSIBLE"
+                        skipCombo = True
+                        break
+                if skipCombo:
+                    continue
+                skipCombo = False
+                for r in reductions:
+                    if filter(lambda x:x in cs, r) == []:
+                        skipCombo = True
+                        break
+                if skipCombo:
+                    continue
+                ncombos += 1
+                ac = map(self.actionClass,cs)
+                if useClasses:
+                    tfilter1 = filter(lambda x:self.actionClass(x) not in ac, test)
+                    pfilter1 = pred(tfilter1)
+                else:
+                    pfilter1 = False
+                tfilter2 = filter(lambda x:x not in cs, test)
+                pfilter2 = pred(tfilter2)
+                if pfilter1:
+                    rfilter1 = self.reduce(tfilter1, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose)
+                    if rfilter1 not in reductions:
+                        if recursive != 0:
+                            anyNew = True
+                        if verbose:
+                            print "ADDING NEW TEST OF LENGTH",len(rfilter1)
+                        #print "ADDING NEW TEST OF LENGTH",len(rfilter1)                            
+                        reductions.append(rfilter1)
+                if pfilter2:
+                    rfilter2 = self.reduce(tfilter2, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose)
+                    if rfilter2 not in reductions:
+                        if recursive != 0:
+                            anyNew = True
+                        if verbose:
+                            print "ADDING NEW TEST OF LENGTH",len(rfilter2)
+                        #print "ADDING NEW TEST OF LENGTH",len(rfilter2)                            
+                        reductions.append(rfilter2)
+                if (not pfilter1) and (not pfilter2):
+                    if cs not in impossibleSets:
+                        if verbose:
+                            print "FOUND IMPOSSIBLE RESTRICTION:",map(lambda x:self.prettyName(x[0]),cs)
+                        impossibleSets.append(cs)
+            if verbose:
+                print "ANALYZED",ncombos,"COMBINATIONS"
+            #print "ANALYZED",ncombos,"COMBINATIONS"                
+                    
     return reductions
-        
 
 def poolUses(self,str):
     uses = []
@@ -937,6 +1021,8 @@ def coversUnique(self, val, catchUncaught=False):
     def coverPred(test):
         try:
             self.replay(test, catchUncaught)
+        except KeyboardInterrupt as e:
+            raise e            
         except:
             pass
         uv = self.uniqueVals()

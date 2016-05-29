@@ -1058,9 +1058,9 @@ def main():
     for l in import_modules:
         s = baseIndent + 'reload({})\n'.format(l)
         genCode.append(s)
-    for l in import_froms:
-        s = baseIndent + l
-        genCode.append(s)
+    #for l in import_froms:
+    #    s = baseIndent + l
+    #    genCode.append(s)
     genCode.append("# END RELOAD CODE\n")        
     if (not config.nocover) and config.coverreload:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
