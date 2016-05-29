@@ -656,8 +656,8 @@ def reductions(self, test, pred, pruneGuards = False, keepLast = True, verbose=T
             combs = combinations(filterActs,i)
             for c in combs:
                 analyzedCount += 1
-                if (analyzedCount % 10) == 0:
-                    print "ANALYZED:",analyzedCount
+                #if (analyzedCount % 10) == 0:
+                #    print "ANALYZED:",analyzedCount
                 if (limit != None) and (analyzedCount > limit):
                     print "REDUCTION LIMIT EXCEEDED"
                     return reductions                
