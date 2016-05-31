@@ -525,6 +525,11 @@ def failsAny(self, test, verbose=False, failure=None):
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True                
         return True
+    if r == False:
+        self.__failure = sys.exc_info()
+        if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
+            return True                
+        return False        
     return False    
 
 def logOff(self):
