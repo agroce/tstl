@@ -82,7 +82,23 @@ examples/AVL/avlnew.tstl (https://github.com/agroce/tstl/blob/master/examples/AV
 language format (easier to read) (the file avlblocks.tstl has this
 same harness in a different format).
 
-If we test for 30 seconds, something like this will appear:
+These are pretty full-featured testers for an AVL tree class.  You can
+write something very quick and fairly effective with just a few lines
+of code, however:
+
+    @import avl
+    pool: <int> 3
+	pool: <avl> 2
+	
+	property: <avl>.check_balanced()
+	
+    <avl> = avl.AVLTree()
+	<avl>.insert(<int>)
+	<avl>.delete(<int>)
+	<avl>.find(<int>)
+    <avl>.display()	
+
+If we test this (or avlnew.tstl) for 30 seconds, something like this will appear:
 
     ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
