@@ -9,6 +9,23 @@ TSTL produces a simple, universal interface for test generators to use
 -- it essentially turns a definition of valid tests into a graph with
 transitions, backtrack, replay, automatic reduction, and code coverage support.
 
+Some of you may be asking: "How does TSTL differ from Hypothesis?"
+There are a few answers.  First, TSTL is probably much less polished
+than Hypothesis, right now!  More importantly, however, Hypothesis and
+TSTL both generate tests, but they are primarily intended to generate
+different kinds of tests.  Hypothesis is in what we consider the
+QuickCheck family:  if you have a function `f` that takes as input a
+list, a string, or something more complex, Hypothesis is very likely
+what you want to use.  If you have a set of functions, `f`, `g`, and
+`h`, and they don't just return things, but modify invisible system
+state, you may want TSTL.  You can do state-based
+sequence-of-method-calls testing with Hypothesis, but it may be easier
+with TSTL, and it's what TSTL is built for.  So, if you're testing a
+sorting implementation, Hypothesis is almost certainly much better.
+If you're testing something like a file system, you might want to look
+into TSTL.  If you're testing a parser that takes a string as input,
+both tools might be useful, depending on your situation.
+
 For more details on TSTL, see the NASA Formal Methods (NFM) and
 International Symposium on Software Testing and Analsysis (ISSTA) 2015
 papers at http://www.cs.cmu.edu/~agroce/nfm15.pdf and
