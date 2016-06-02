@@ -112,7 +112,7 @@ of code, however:
     <avl>.display()	
 
 This says that there are two kinds of "things" involved in our
-AVL tree implementation testing:  `int`s and `avl`s.   We define (in
+AVL tree implementation testing:  `int` and `avl`.   We define (in
 Python, almost) how to create these things, and what we can do with
 these things, and then TSTL produces sequences that match our
 definition.  It also checks that all AVL trees, at all times, are
