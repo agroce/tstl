@@ -18,7 +18,7 @@ QuickCheck family:  if you have a function `f` that takes as input a
 list, a string, or something more complex, Hypothesis is very likely
 what you want to use.  If you have a set of functions, `f`, `g`, and
 `h`, and they don't just return things, but modify invisible system
-state, you may want TSTL.  You can do state-based
+state (but also return things that may be inputs to other functions), you may want TSTL.  You can do state-based
 sequence-of-method-calls testing with Hypothesis, but it may be easier
 with TSTL, and it's what TSTL is built for.  So, if you're testing a
 sorting implementation, Hypothesis is almost certainly much better.
@@ -26,10 +26,21 @@ If you're testing something like a file system, you might want to look
 into TSTL.  If you're testing a parser that takes a string as input,
 both tools might be useful, depending on your situation.
 
+The similarity is that both TSTL and Hypothesis don't look like
+traditional unit testing.  They instead let you define the idea of a
+valid input (either some data values, or in TSTL a sequence of method
+calls and assignments that more resembles a traditional
+do-some-stuff-and-then-check-it unit test) and assert general
+properties about the behavior of a system under valid input.
+
 For more details on TSTL, see the NASA Formal Methods (NFM) and
 International Symposium on Software Testing and Analsysis (ISSTA) 2015
 papers at http://www.cs.cmu.edu/~agroce/nfm15.pdf and
-http://www.cs.cmu.edu/~agroce/issta15.pdf.
+http://www.cs.cmu.edu/~agroce/issta15.pdf.  There is also a draft
+journal paper,
+https://github.com/agroce/tstl/blob/master/doc/papers/STTT/maintstl.pdf,
+that has a more up-to-date semantics and usage for TSTL, and may be
+the ideal place to start.
 
 The published papers use an early version of TSTL syntax, which marks
 pools and TSTL constructs with % signs.  "Modern" TSTL uses <> by
@@ -91,12 +102,24 @@ of code, however:
 	pool: <avl> 2
 	
 	property: <avl>.check_balanced()
+
+	<int> := <[1..20]>
+    <avl> := avl.AVLTree()
 	
-    <avl> = avl.AVLTree()
 	<avl>.insert(<int>)
 	<avl>.delete(<int>)
 	<avl>.find(<int>)
     <avl>.display()	
+
+This says that there are two kinds of "things" involved in our
+AVL tree implementation testing:  `int`s and `avl`s.   We define (in
+Python, almost) how to create these things, and what we can do with
+these things, and then TSTL produces sequences that match our
+definition.  It also checks that all AVL trees, at all times, are
+properly balanced.  If we wanted, as in avlnew.tstl, we could also
+make sure that our AVL tree "acts like" a set --- when we insert
+something, we can find that thing, and when we delete something, we
+can no longer find it.
 
 If we test this (or avlnew.tstl) for 30 seconds, something like this will appear:
 
