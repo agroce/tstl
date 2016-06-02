@@ -559,11 +559,13 @@ def __candidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None):
+def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None, amplify=False):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
     (this is useful for keeping the fault detected from changing).
+
+    amplify changes behavior from "preserve (or find) pred(test) = True" to "increase the value of pred(test)"
     """
     try:
         test_before_reduce(self)
@@ -572,6 +574,9 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = Tru
 
     if len(test) < 2:
         return test
+
+    if amplify:
+        currBest = pred(test)
     
     if keepLast:
         tb = test[:-1]
@@ -594,7 +599,12 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = Tru
         for tc in c:
             if verbose == "VERY":
                 print "Trying candidate of length",len(tc+addLast)
-            if pred(tc + addLast):
+            v = pred(tc + addLast)
+            if amplify:
+                if v > currBest:
+                    currBest = v
+                    v = True
+            if v:
                 tb = tc
                 n = 2
                 if pruneGuards:
@@ -629,7 +639,11 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = Tru
                 test_after_reduce(self)
             except:
                 pass
-            if pred([] + addLast):
+            v = pred([] + addLast)
+            if amplify:
+                if v > currBest:
+                    v = True
+            if v:
                 return ([] + addLast)
             else:
                 return (tb + addLast)
