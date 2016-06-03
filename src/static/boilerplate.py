@@ -434,7 +434,7 @@ def failure(self):
 def warning(self):
     return self.__warning
 
-def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False):
+def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False, stopFail = True):
     if not extend:
         self.restart()
     for (name, guard, act) in test:
@@ -450,6 +450,8 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
                     raise e                    
                 except:
                     self.__failure = sys.exc_info()
+                    if stopFail:
+                        return False
                     pass
             else:
                 act()
