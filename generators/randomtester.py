@@ -5,6 +5,7 @@ import random
 import time
 import traceback
 import argparse
+import glob
 from collections import namedtuple
 
 # Appending current working directory to sys.path
@@ -94,6 +95,8 @@ def parse_args():
                         help="File to write coverage report to ('coverage.out' default).")
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage.")
+    parser.add_argument('--readQuick', action='store_true',
+                        help="Read existing quick tests (and add to them if producing quick tests).")    
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
     parser.add_argument('-X', '--startExploit', type=int, default=0,
@@ -148,7 +151,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         bnew = sut.newCurrBranches()
         for b in bnew:
             print "NEW BRANCH",b
-        trep = sut.replay(test)
+        trep = sut.replay(test,catchUncaught=True,checkProp=(not config.ignoreprops))
         sremove = []
         scov = sut.currStatements()
         for s in snew:
@@ -387,6 +390,19 @@ def main():
     if config.relax:
         sut.relax()
 
+    if config.readQuick:
+        print "REPLAYING QUICK TESTS"
+        sqrtime = time.time()
+        for f in glob.glob("quicktest.*"):
+            fn = int(f.split("quicktest.")[1])
+            if fn >= quickCount:
+                quickCount = fn + 1
+            t = sut.loadTest(f)
+            sut.replay(t,catchUncaught=True,checkProp=(not config.ignoreprops))
+        print "EXECUTION TIME:",time.time()-sqrtime
+        print "BRANCH COVERAGE:",len(sut.allBranches())
+        print "STATEMENT COVERAGE:",len(sut.allStatements())        
+                            
     if config.logging != None:
         sut.setLog(config.logging)
 
