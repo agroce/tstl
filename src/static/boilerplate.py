@@ -457,9 +457,9 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
                 act()
 
         if checkProp:
-            if not self.check():
+            if (not self.check()) and stopFail:
                 return False
-    return True
+    return (self.__failure == None)
 
 def replayUntil(self, test, pred, catchUncaught = False, checkProp=False):
     self.restart()
@@ -561,7 +561,7 @@ def __candidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None, amplify = False):
+def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None, amplify = False, stopFound = False):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -609,6 +609,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = Tru
                 else:
                     v = False
             if v:
+                if stopFound:
+                    return (tc + addLast)
                 tb = tc
                 n = 2
                 if pruneGuards:
