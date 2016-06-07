@@ -4,13 +4,14 @@
 
 init: clear_cache()
 
-pool: <c> 8
-pool: <v> 8
-pool: <expr> 8
-pool: <term> 8
-pool: <poly> 8
+pool: <c> 4
+pool: <v> 4
+pool: <expr> 4
+pool: <term> 4
+pool: <poly> 4
 
 exception: OverflowError
+exception: NotImplementedError
 
 log: 0 <expr>
 
