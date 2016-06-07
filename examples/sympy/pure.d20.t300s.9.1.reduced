@@ -1,0 +1,7 @@
+self.p_c[0] = Integer(5) 
+self.p_c[2] = Integer(0) 
+self.p_v[1] = Symbol('k',positive=True) 
+self.p_expr[1] = Rational(self.p_c[0],self.p_c[2]) 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[2])) 
+self.p_expr[1] = factorial(self.p_expr[0]) 
+self.p_expr[0] = Product(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[2])) 

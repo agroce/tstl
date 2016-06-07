@@ -1,0 +1,3 @@
+self.p_expr[0] = I 
+self.p_expr[1] = atan(self.p_expr[0]) 
+self.p_expr[0] = atan(self.p_expr[1]) 

@@ -1,0 +1,3 @@
+self.p_expr[0] = I 
+self.p_expr[1] = cos(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1] ** self.p_expr[0] 

@@ -1,0 +1,8 @@
+self.p_expr[2] = I 
+self.p_expr[3] = simplify(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[2] = expand_log(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[0] ** self.p_expr[2] 
+self.p_expr[2] = trigsimp(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[3] 

@@ -1,0 +1,9 @@
+self.p_expr[2] = I 
+self.p_expr[0] = expand_func(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[2] * self.p_expr[2] 
+self.p_expr[1] = expand_power_base(self.p_expr[2]) 
+self.p_expr[2] = expand_func(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[3] = tan(self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[3] ** self.p_expr[0] 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[2],self.p_expr[3]) 
