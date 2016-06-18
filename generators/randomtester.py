@@ -558,7 +558,7 @@ def main():
                     if prefix not in mprobs:
                         a = sut.randomEnabled(R)
                     else:
-                        a = sut.randomEnabledClassProbs(rgen,mprobs[prefix])
+                        a = sut.randomEnabledClassProbs(R,mprobs[prefix])
                         
             if a == None:
                 print "WARNING: DEADLOCK (NO ENABLED ACTIONS)"

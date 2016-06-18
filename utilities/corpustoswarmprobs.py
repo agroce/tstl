@@ -12,9 +12,8 @@ for a in sut.actions():
 
 #print len(classes)        
 
-n = int(sys.argv[1])
-corpfile = sys.argv[2]
-outfile = sys.argv[3]
+corpfile = sys.argv[1]
+outfile = sys.argv[2]
 
 tests = []
 test = []
@@ -41,34 +40,19 @@ else:
 #print len(tests)
 #print tests[0]
 
-chains = {}
+totals = {}
+for c in classes:
+    totals[c] = 0
 
 for t in tests:
-    for pos in xrange(n+1,len(t)):
-        prefix = tuple(t[pos-n:pos])
-        #print prefix,"==>",t[pos]
-        if prefix not in chains:
-            chains[prefix] = []
-        chains[prefix].append(t[pos])
+    for c in classes:
+        if c in t:
+            totals[c] += 1
 
 mout = open(outfile,'w')
-mout.write(str(n)+"\n")
         
-for c in chains:
-        print "PREFIX:",c
-        mout.write("START CLASS\n")
-        for ac in c:
-            mout.write(ac+"\n")
-        mout.write("END CLASS\n")
-        counts = {}
-        total = 0.0
-        for suffix in chains[c]:
-                total += 1
-                if suffix not in counts:
-                        counts[suffix] = 0
-                counts[suffix] += 1
-        for suffix in counts:
-                print suffix,counts[suffix]/total
-                mout.write(str(counts[suffix]/total) + " %%%% "+suffix+"\n")
+for c in classes:
+    P = totals[c] / (len(tests) * 1.0)
+    mout.write(c + " %%%% " + str(P) + "\n")
 
 mout.close()

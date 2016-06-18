@@ -210,6 +210,8 @@ def randomEnabledClassProbs(self,rgen,probs):
                 break
         a = self.randomEnabled(rgen,actFilter = lambda act:self.actionClass(act) == ac)
         if a == None:
+            if len(probs) == 1:
+                return None
             padd = pac / (len(probs)-1)
             newprobs = []
             for (pac,tac2) in probs:
@@ -526,7 +528,7 @@ def failsAny(self, test, verbose=False, failure=None):
         self.__failure = sys.exc_info()
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True                
-        return True
+        return False
     if r == False:
         self.__failure = sys.exc_info()
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):

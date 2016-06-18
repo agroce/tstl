@@ -1,5 +1,6 @@
 import sut as SUT
 import sys
+import traceback
 
 rout = open("replay.out",'w')
 
@@ -16,19 +17,21 @@ for l in open(file):
         rout.write("RESTART\n")
         t.restart()
     else:
-        #print "STEP",i,name
+        #print "STEP",i,t.prettyName(name)
         rout.write("STEP " + str(i) + name + "\n")
         action = t.playable(name)
         if action[1](): # check the guard
             stepOk = t.safely(action)
             if not stepOk:
-                pass
-                #print "FAILED STEP"
+                print "FAILED STEP"
+                print t.failure()
+                traceback.print_tb(t.failure()[2])
         if not nocheck:
             checkResult = t.check()
             if not checkResult:
-                pass
-            #print "FAILED PROPERTY"
+                print "FAILED PROPERTY"
+                print t.failure()
+                traceback.print_tb(t.failure()[2])
     i += 1
 
 rout.write("TEST REPLAYED SUCCESSFULLY\n")
