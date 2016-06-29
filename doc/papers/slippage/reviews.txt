@@ -1,0 +1,200 @@
+PAPER: 3
+TITLE: One Test Case To Rule Them All
+AUTHORS: Alex Groce, Josie Holmes and Kevin Kellar
+
+OVERALL EVALUATION: 2 (C: Weak paper, though I will not fight strongly against it.)
+REVIEWER'S CONFIDENCE: 4 (high)
+NOVELTY: 3 (Solid)
+STRENGTH OF EVIDENCE: 2 (Weak)
+CLARITY: 2 (Needs improvement)
+DISTINGUISHED PAPER: 1 (No)
+
+----------- BRIEF SUMMARY -----------
+This paper proposes a way to 'normalize' test cases, in the context of the TSTL test case generator for Python.
+
+Section 2 describes the background of this research, the TSTL test specification language and accompniying test generators (published before).
+It then proceeds to explain the novel contributions of this paper:
+(1) a normalization algorithm to turn generated test case into a unique and minimal 'normal form' (using minimum values and sorting test lexicographically)
+(2) a generalization algorithm to indicate to testers what variations in the test case are permitted while still triggering the same failures.
+
+Section 3 describes 5 systems to which the proposed approach has been applied. These include 2 small systems (AVL, XML parser), TSTL itself, and two larger Python systems for matrix manipulation and geographic information processing. The paper investigates reduction in the number of failures, potential loss of faults, normalization cost, a comparison to delta-debugging, and the potential benefits of the approach.
+
+----------- STRENGTHS AND WEAKNESSES -----------
++ Concrete implementation available
++ Experimental data mostly available on github
++ Interesting and original take on test data generation
+- Approach as presented is very TSTL specific
+- Proposed approach may work for generated test cases, but is sold as working for hand written test suites.
+- Experiments are very preliminary, lacking required rigor and clear answers.
+
+----------- DETAILED EVALUATION -----------
+I found section 2 confusing, as it does not clearly separate the existing TSTL work from the new contributions of this paper.
+Also the title of section 2, 'formal definitions', does not do justice to the actual content of the section, which describes the core normalization and generalization algorithm.
+
+The choice for some of the case study systems is not very well motivated.
+
+Why is an AVL implementation coming from a StackOverflow question a good candidate for studying test case normalization? Why is a very little used and very incomplete XML parser a suitable system?
+
+The ArcPy case study sounds potentially interesting.
+Unfortunately, it is not clear which research questions are answered for the ArcPy case, and, as a consequence, it is also not clear what the actual (general) conclusions are that can be drawn from the ArcPy case.
+In fact, the AcrPy case seems very much work in progress: "are being used to prepare", "we are preparing".
+
+The treatment of the research questions is very informal and anecdotal. The paper essentially indicates what possibly interesting research questions are, and presents nuggets of information that might be relevant for the answers. But the paper shows no attempt at seriously providing definitive answers.
+
+The paper is very much tailored towards TSTL. This is not a problem per se, but the abstract does not even mention TSTL. Instead, the abstract oversells the paper, making very general claims about allowing "a user to replace reading a large set of test cases that vary in unimportant ways with reading one annotated summary test case."
+
+Overall, my impression is that the authors have hit a very interesting and potentially useful idea. However, the research is in a very preliminary stage, and this shows in both the technical explanation and the evaluation.
+
+----------- QUESTIONS TO THE AUTHORS -----------
+NONE
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 3
+TITLE: One Test Case To Rule Them All
+AUTHORS: Alex Groce, Josie Holmes and Kevin Kellar
+
+OVERALL EVALUATION: 2 (C: Weak paper, though I will not fight strongly against it.)
+REVIEWER'S CONFIDENCE: 4 (high)
+NOVELTY: 3 (Solid)
+STRENGTH OF EVIDENCE: 2 (Weak)
+CLARITY: 3 (Well written)
+DISTINGUISHED PAPER: 1 (No)
+
+----------- BRIEF SUMMARY -----------
+In the presence of a large number of tests cases, when a fault occurs, multiple tests might fail. This is not ideal because the developer does not know whether to examine only one of them, or all of them. It would be nice to have a distinct test per fault, or as few as possible, per fault.   Previous work has looked at reducing length of auto-generated tests, but this does not necessarily help with the problem above in a direct manner. This paper proposes ‘normalization’, which attempts to reduce each tests to a canonical form, with the intention that the fault is preserved in the normalized test.  Normalization can map multiple tests to the same canonical tests, reducing the number of distinct tests that fail for the same reason.  Normalization is carried out by syntactic exploration - they have a set of rewrite rules, each of which produces a “simpler” test in a total order of tests.  (This total order is also syntactical, based on values and API calls.) The paper !
+ also proposes ‘generalization’, which brings out when ordering between statements of a normalized tests is purposeful, and when it is accidental.  Generalization can help with understanding tests cases.
+
+Preliminary experimental data shows that normalization can be quite effective in reducing the number of tests cases that fail for the same fault.
+
+----------- STRENGTHS AND WEAKNESSES -----------
+Pros:
+
++ Very interesting idea, going beyond delta-debugging in this goal, because delta debugging only explores a certain class of variations of a program, and does not explore all the other variations that this technique can explore.
++ Seems to handle a real problem
++ Preliminary data seems useful
+
+Cons:
+
+- Not clear if after normalization, the cause of the fault is necessarily preserved.
+- The experimental section beyond the first tests subject seems quite anecdotal
+- Impact of generalization needs to be evaluated as well.
+
+----------- DETAILED EVALUATION -----------
+I found the TSTL language more or less a distraction. The concept of ordering is unnecessarily tied to the TSTL language in Sec 2.  Isn’t TSTL language mostly an implementation issue for this technique?
+
+For the technique to meet its intended purpose, it is necessary to preserve the root cause of the failure. I found the paper very unsatisfactory on this front  I did not quite see why in Section 2.1, “the rules for normalization always either change at most one action, or make changes only to the pools user or to the positions of actions”  why is this likely to preserve the reason for the failure.   Moreover, why does this argument hold transitively across multiple rewrite steps.   Also, elsewhere you say this technique preserve faults as well as delta-debugging does, but that’s not very helpful.
+
+In Sec 2.1.2, how did you end up with these specific rewrite rules? Do these subsume other potentially interesting rewrites?  Some of these seem to be doing a lot of work, so please give more illustrative examples, beyond Fig 4.
+
+(Also, as a matter of clarification for me, in Sec 2.1.1, your definition of “<“ compares sets when their least elements are related by the < order.  In which rule does this come up?)
+
+I can see that you are moving the tests to “simpler” tests (in a total order, by design) and eventually the process will stop.  I don’t immediately see a Church-Rosser like confluent property that you can pick any rewrite and in the end you arrive at the same place.   Is there something special about orders of 1-7 in 2.1.2 ?  If not, is confluent property important?   Or is it the case that this order just happens to work well, but you don’t want to necessarily explore all orders of rewrites for cost reasons?
+
+In the AVLTree evaluation, I was completely lost in your discussion of RQ2, whether you lose faults in this kind of reduction.  What are you hoping to accomplish by these higher-order mutants?  May be this is a well-established protocol, but may not be familiar to a broader audience. Please explain this much more carefully.
+
+The evaluation section of the paper is kind of work-in-progress.   The presentation of the AVLTree experiment was good, but beyond that it seems to have slipped into anecdotal and it was hard to get an overall sense of how well the technique works.  There other tests subjects referred to RQ4 and RQ5 but no systematic details were given. The whole thing seems to be written rather hurriedly.
+
+On the whole, while I like the idea of normalization a lot, I did not quite appreciate the value of generalization.  In a real human study, would it actually be more distracting for a developer to constantly think about these potential variations ?
+
+----------- QUESTIONS TO THE AUTHORS -----------
+Please see inline above.
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 3
+TITLE: One Test Case To Rule Them All
+AUTHORS: Alex Groce, Josie Holmes and Kevin Kellar
+
+OVERALL EVALUATION: 2 (C: Weak paper, though I will not fight strongly against it.)
+REVIEWER'S CONFIDENCE: 4 (high)
+NOVELTY: 2 (Incremental)
+STRENGTH OF EVIDENCE: 2 (Weak)
+CLARITY: 3 (Well written)
+DISTINGUISHED PAPER: 1 (No)
+
+----------- BRIEF SUMMARY -----------
+This paper presents an approach for test-case reduction which works on
+reducing the "semantic complexity" of a test-suite. The technique is
+termed as "normalization", wherein syntactically different test cases
+which fail due to the same fault are summarized into one test-case. It
+tries to remove "accidental" aspects of tests (variable values,
+ordering of steps so on), which differentiate them but maybe causing
+the same failure.  Normalization is performed by re-writing each test
+case into a simpler form while preserving the failure. This is
+followed by a "generalization" step which determines which aspects of
+the test can be changed while preserving the failure.
+
+----------- STRENGTHS AND WEAKNESSES -----------
++ Interesting idea.
+
++ Useful formalization.
+
++ Experiments show benefit.
+
+
+- Applicability and usefulness of the approach is unclear.
+
+- Evaluation needs to be more comprehensive
+
+----------- DETAILED EVALUATION -----------
+On the positive side:
+
++ The idea of reducing semantic complexity of a test-suite
+(i.e. syntactically different tests with the semantics) is meaningful.
+Techniques such as delta-debugging based reduction look primarily at
+reducing the test-case length syntactically.
+
++ Definitions and formalization of concepts are potentially useful.
+
++ Experiments are performed on realistic programs such as XMLparser,
+NumPy and ArcPy libraries. Case-studies highlight how the idea of
+normalization could also be used to understand complicated tests for
+complex systems.
+
+
+On the negative side:
+
+- Many failing test cases for the same fault, i.e. covering different
+code entities/heap space but causing the same failure, may be required
+to better localize faults. Hence semantic complexity need not
+necessarily be a drawback for a test-suite.
+
+- Identifying different tests failing due to the same fault is
+non-trivial. Same fault may cause different failures and different
+faults may cause the same failure. Therefore grouping tests displaying
+the same failure need not guarantee that they are caused due to the
+same fault. Could such a reduction lead to missing faults?
+
+- There may be faults that have dependencies with other faults in the
+code. How do we have a summarized test that corresponds to just one
+fault in such a case?
+
+- The reason for the failure may change in the process of
+normalization of the test. Hence for accurate normalization, the
+predicate which checks for "preservation of the failure" needs to be
+based on precise specification of correctness.
+
+- The process of normalization seems to have high time complexity and
+hence can be a performance bottleneck.
+
+- Normalization may lead to reduction in heap coverage of the
+test-suite, which may be a requirement to increase confidence in the
+program in covering different input structures. Specifically in
+data-structure manipulating programs.
+
+- The evaluation is described in the form of case-studies on 3
+subjects with randomly generated tests. A bigger evaluation is
+necessary to assess the accuracy and benefits of this approach and
+judge if the benefits outweigh the performance bottleneck.
+
+Possible improvement:
+
+In the normalization algorithm, instead of having a predicate that
+just checks if the reduced test fails for the same reason, analysis
+into the actual reason for failure can help reduce the rewriting
+effort. For instance, an unsat core or fault localization algorithm
+could point to test actions which are possibly wrong. The rewriting
+algorithm could use this guidance to reduce the space of
+possibilities.
+
+----------- QUESTIONS TO THE AUTHORS -----------
+See questions in detailed evaluation.

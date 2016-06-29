@@ -1,0 +1,63 @@
+We thank the reviewers for very helpful comments.
+
+R1:
+
+Q: sold as working for hand written test suites.
+
+Only due to imprecise writing!  Normalization is for automatically generated tests, not manual tests (where its motivation is weaker).   Generalization might be useful for manual tests, but we don't claim that here.
+
+Q: AVL... XML...?
+
+Container classes a good normalization test: few method calls == hard to normalize.  AVL/XML represent early-stage code with many potential bugs.
+
+R2:
+
+Q: ...TSTL ...mostly an implementation issue...?
+
+Yes!  Any system with total order over finite action set works; e.g., transitions in the SPIN model-checker.  Just lexicographic order on arbitrary code would enable rules 2, 3, 5, and 6, but limit normalization and generalization.
+
+Q: ...why ...likely... preserve... reason for the failure.  ...transitively across... steps. ...preserve faults as well as delta-debugging does...
+
+Tried various rules, e.g. disallowing pool reassignment: all performed worse.  Not exhaustive search, though.  Each step has low probability of change, based on our experience with API-call test cases.  A series of low probabilities can add up to a large probability, but this may take many steps, and there are usually only 10-15 rewrites.  Experience with random testing of real systems convinces us delta-debugging is very useful despite slippage, and thus normalization as well.  "Tricks" people use in delta-debugging to avoid slippage (require same exception, etc.) work for normalization, but we evaluated without any user assistance.
+
+Q: ...rewrite rules? ...subsume...?
+
+Rules 1, 2, 4, 6, and 7 are basic.  There is an alternative approach, where re-assignments are avoided (so rejects rules 2 and 3): gives more normalization, but doubles slippage.  We'll give more examples, better motivate choices.
+
+Q: ...“<“ compares sets ...In which rule...?
+
+#5: delta produces set, ordered using <.
+
+Q: ...Church-Rosser... confluent... order just happens to work well... explore all orders of rewrites...?
+
+No confluence guarantee, partly because we rely on the test execution to control which rewrites are allowed.  The order given here resulted from experimentation with speed and degree of normalization, but may be suboptimal.  Our implementation provides different orders, trading off speed and normalization.  The default moves a rule to the end of the set once it fails to fire.  Exploring all orders for each test seems extremely expensive.  While no guarantee of confluence, in practice orderings produced the same results about 90% of the time.
+
+Q: ...accomplish... higher-order mutants?
+
+Likely novel method (slippage is sadly understudied):  with two mutants (faults), when we can produce tests t1, t2, such that t1 still fails if you remove fault 1, but leave fault 2, and t2 vice versa, there is no slippage.
+
+Q: ...would it actually be more distracting...?
+
+Depends!  For complex ArcPy and NumPy tests, it was helpful to generalize.
+
+R3:
+
+Q: may be required... localize faults
+
+Right!  Normalization is for human examination:  keep/add originals for algorithms.  Normalization can also add heap/code coverage.
+
+Q: ...lead to missing faults?
+
+It can, hence slippage, but note that we reduce based on structure, not "same failure" so can handle this in many cases.
+
+Q: ...summarized test... one fault...?
+
+We can't, it is a sometimes impossible ideal.
+
+Q: ..reduction in heap coverage...
+
+We suggest keeping original failures for regression; normalization does not limit newly generated tests, of course.
+
+Q: ...unsat core or fault localization algorithm...
+
+Nice ideas!  We are exploring Ball's Z3-based Python symbolic execution, which might enable unsat.  In single-fault settings, fault localization should help.  One downside is that translating Python to SAT/SMT and most localizations in the literature that work in multi-fault settings are probably much more expensive than normalization.

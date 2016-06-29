@@ -1,0 +1,170 @@
+\section{Introduction}
+
+Automated testing often goes hand in hand with
+test reduction or minimization \cite{DD,MinUnit,TCminim,ICSEDiff,CReduce}.
+Such reduction is
+now standard practice in industrial testing tools such as Mozilla's
+{\tt jsfunfuzz} \cite{jsfunfuzz,jsfunfuzz2,lithium}.  Many automated
+test generation methods, especially those based on random testing,
+produce long tests with many irrelevant components.  Such tests are
+hard to understand for debugging and slow to execute.  Delta debugging
+and related algorithms automatically reduce the size of such tests,
+producing a smaller test that still fails.
+
+Unfortunately, the consequences of reducing a test are not always
+desirable.  In particular, sometimes the unreduced test no longer
+detects the same faults it originally detected.  This phenomenon is
+called \emph{slippage} \cite{PLDI13}.  
+
+Formally, we define slippage as occurring whenever a test $t$ detects
+faults $F$, and the reduction $r$ of $t$ detects a different set of
+faults, $F' \neq F$.  Informally, most discussion of slippage is
+concerned with the case where
+$\exists f .  f \in F \wedge f \not\in F'$ --- that is, when slippage
+causes loss of a fault.  Slippage is usually avoided by using
+heuristics, such as that tests failing with the same error message or
+ending in the same step are due to the same fault \cite{ICSEDiff}.  In
+some cases, such as system invariant violations or compiler wrong-code
+bugs \cite{PLDI13}, such methods do not work well.  The extent to
+which slippage is a practically important problem in real-world
+testing is unknown, since most slippage is unobserved.
+
+However, all slippage is not
+harmful.  Even when a fault is lost, the new fault may be more
+interesting or harder-to-find.  We suspect this is usually not the
+case, as slippage probably tends to favor easy-to-detect faults, but
+there is no hard data on the matter.  Considering the
+possibility of beneficial slippage naturally leads to a new approach to
+mitigating slippage.  In place of traditional delta debugging, which,
+given one failing test, produces one reduced failing test, we propose
+to modify delta debugging to produce a set of reduced
+failing tests.  Ideally, this set exposes more than one fault, if possible.
+Throughout the remainder of this paper, we refer to the original,
+one-test, delta debugging algorithm \cite{DD} as {\tt ddmin}.  
+
+We
+propose two novel approaches to slippage mitigation (and
+exploitation), both making use of any existing {\tt ddmin}
+implementation, even (we believe) ones that are significantly different than the
+version of Hildebrandt and Zeller \cite{DD}.  The contributions of this paper are:
+
+\begin{enumerate}
+\item A formal definition of slippage, and the notion that slippage
+  may be either harmful or beneficial.
+\item A proposal to avoid and make use of slippage by producing more
+  than one reduced test per failing test case.
+\item Two novel approaches to slippage mitigation.
+\item Some preliminary experimental results showing the basic effectiveness of these
+  methods for a very large set of mutant-simulated faults in a Python
+  AVL tree and for a set of real-world tests and faults for a complex
+  JavaScript compiler.
+%\item Further data on the prevalence of  and factors determining slippage.
+\end{enumerate}
+
+Our results show that not only do our methods reduce harmful slippage,
+they result in detection of additional faults.  Slippage reduction
+based on using combinations of components of reduced tests seems to be
+both more effective and less expensive than adding non-determinism to
+the {\tt ddmin} algorithm and running it multiple times.
+
+\section{Slippage Mitigation Approaches}
+
+\subsection{The Combinatorial Blocking Algorithm}
+
+The first algorithm uses additional unmodified {\tt ddmin} runs, but
+``blocks'' them from producing the same reduced test by modifying the
+test input to delta debugging.  The algorithm is called combinatorial
+because it uses combinations of components in $t$ to construct new
+starting tests, and blocking because the purpose of these combinations
+is to ensure that we do not get the same solution as the first run of
+{\tt ddmin}, in a way that is analogous to the use of blocking clauses
+to force new solutions from SAT solvers.
+
+Given test $t$ that reduces to $r$, we compute all subsets of
+components of $r$, $C_r$.  The set of reduced tests is then computed
+by running delta debugging starting with each $t-c$ that fails, for all
+$c \in C_r$: $c$ is the blocked components of $r$.  So long as even
+one component is blocked, it is impossible to reproduce the same $r$.
+The intuition is that to find a reduced failing test that exhibits a
+different fault than $r$, we want to run delta debugging in such a way
+as to produce a test as different as possible from $r$; ideally we
+would like a reduced test sharing no components with $r$.  However,
+$r$ will likely contain components that must appear in any failing
+test: for example, calls to {\tt mount} appear in all useful file
+system tests, and interesting XML files seldom lack the {\tt <}
+character.  Therefore, rather than only trying to block all components of $r$,
+we try delta debugging with different combinations of components blocked.
+
+In practice, iterating through all subsets may be too expensive if $r$
+is long.  We therefore make a simplifying assumption:  if $t-c_1$ does not fail,
+and $c_1 \subset c_2$, then $t-c_2$ also does not fail.  The blocking
+algorithm begins its search by blocking all single components of $r$,
+then proceeds to all combinations of 2 components, etc., at each stage
+only considering combinations that contain no smaller combination that did not
+yield a failing test.  With this optimization, the expense of blocking
+becomes low enough to also apply the approach to the new
+reduced tests found at each stage.  To block all previously discovered
+reductions, it is neccessary to compute combinations that include at
+least one component from each reduced test produced thus far.
+
+ Algorithm \ref{comb-block} shows
+the formal definition of the {\tt comb-block} algorithm.  This algorithm depends on a
+function {\tt block-all ($T$,$s$)}, which given a set of tests $T$ and
+a combination size $s$,  returns all size $s$ combinations of components of tests $t
+\in T$ such that each combination has at least one element
+from each $t \in T$.  We omit the definition of {\tt block-all} in
+the interests of space.  Our Python implementation \cite{tstl} simply
+filters invalid combinations, which works well with the typically
+small $s$ for reduced tests.
+
+\begin{algorithm}
+\caption{}
+\label{comb-block}
+\begin{algorithmic}[1]
+\Require{failing test $t$, reduced failing test $r$, search depth
+  $d$, max combinations to consider $m$}
+\State {reductions = \{$r$\}}
+\State {handled = $\emptyset$}
+\State {notfailed = $\emptyset$}
+\State {count = 0}
+\While {$d$ > 0}
+\State{new = $\emptyset$}
+\For {$s$ = 1 to total components in reductions}
+\For {$c \in$ {\tt block-all}(reductions-handled, $s$)}
+\State {count = count + 1}
+\If {count > $m$}
+\Return {reductions}
+\EndIf
+\State {handled = handled $\cup$ \{$c$\}}
+\If {$\neg \exists c' . c' \in c \wedge c' \in$ notfailed}
+\If {fails($t-c$)}
+\State{new = new $\cup$ \{\tt{ddmin}($t-c$)\}}
+\Else
+\State{notfailed = notfailed $\cup$ \{$c$\}}
+\EndIf
+\EndIf
+\EndFor
+\EndFor
+\State{$d$ = $d - 1$}
+\State{reductions = reductions $\cup$ new}
+\EndWhile
+\State {return reductions}
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Randomized Mutliple-Run Delta Debugging}
+
+Our second mitigation approach simply notes that slippage in {\tt ddmin} is
+deterministic only because of the fixed order in which possible
+reductions of a test  are considered.  However, if we randomize
+the order of checks on smaller tests in {\tt ddmin}, it can produce different
+reduced tests when executed with a different random seed.  This means
+we can try to avoid slippage by simply running {\tt ddmin} multiple
+times with different seeds.  The advantage of this {\tt multi-ddmin} approach is its
+simplicity, and that it will work even when no test removing
+components of the original test is failing.  The non-existence of such
+failing tests does not mean
+there is no alternative reduction; it does mean that finding it will
+require removing \emph{more} than a simple combination of components.
+The disadvantage is that we lose {\tt comb-block}'s directed search
+for dissimilar reductions, and must modify the internals of {\tt ddmin}.

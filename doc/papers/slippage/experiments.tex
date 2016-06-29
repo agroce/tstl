@@ -1,0 +1,176 @@
+\section {Experimental Results}
+
+\subsection{AVL Tree}
+
+For basic experiments, we used a simple Python AVL tree found on the
+web \cite{avltree}, with 225 lines of code\footnote{All sizes
+  non-comment, non-blank lines, by cloc \cite{cloc}.}.  We used MutPy
+to generate 82 valid, non-equivalent (measured by applying random
+testing for one hour, and assuming mutants with no failing tests were
+equivalent) mutants of the AVL implementation.  The test harness and
+reduction implementations used the TSTL \cite{tstl,ISSTA15,NFM15}
+testing language for Python.  The AVL tree forms a good simple basis
+for experimentation with slippage.  It has a strong oracle, letting us
+ignore specification problems, but tests are all very similar, making
+the construction of pattern-based slippage avoidance mechanisms
+difficult.  AVL is also sufficiently complex to allow for many different
+faults, some of which are fairly difficult to detect without effective
+automated testing.
+
+Combining two mutants that cover different lines of code yields a version
+of AVL tree with two faults that are, we know, independently
+detectable (that is, we can find each fault in isolation).  This
+results in a program to test with the potential for test slippage.
+There are 3,274 such combinations, which we used to explore slippage
+and perform a simple evaluation of our slippage mitigation algorithms.
+
+For the mutant pair $(m_1,m_2)$, let $m_1+m_2$ be the program
+combining $m_1$ and $m_2$.  We randomly sampled mutant pairs, and
+performed random testing on $m1+m2$ for 60 seconds. In all but a very
+small number of cases, 60 seconds of random testing produces a failing
+test case , $t$.  Executing $t$ on both $m1$ and $m2$ yields a number,
+$|f|_t$, between 0 and 2, the number of isolated faults $t$ detects (2
+if each fault can be detected in isolation by $t$, 1 if only 1 of the
+mutants is detected in isolation).  In a small number of cases, $t$
+only detects the combined fault, and detects neither fault in
+isolation.  We then applied delta debugging to produce a reduced test
+case $r$, and used the same process to produce $|f|_r$, which could,
+compared to $|f|_t$, either be smaller (slippage with fault loss),
+larger (beneficial slippage), or the same (either no slippage or
+change of fault).  Finally, we applied the {\tt comb-block} algorithm
+to produce a set of tests, $T_c$ and the {\tt multi-ddmin} algorithm
+to produce a set of tests, $T_m$.  For parameters, we chose to run
+{\tt ddmin} 10 times in {\tt multi-ddmin}, and constrainted
+combinations{\tt comb-block} to approximately the same runtime by
+limiting it to a search depth of 5 and a maximum of 1,000 attempted
+combinations.  We computed $|f|_c$ as the count of isolated faults
+detected by \emph{any} test in $T_c$; $|f|_m$ was defined in the same
+way, except using $T_m$.
+
+\begin{table}
+\centering
+{\scriptsize
+\begin{tabular}{|c|c|c|c|}
+\hline
+Tests & Runtime(s) & $|f|_x$ (Faults) & \# Tests\\
+\hline
+\hline
+Unreduced tests & N/A & 1.08 & 1 \\
+\hline
+{\tt ddmin} & 0.41 & 1.05 & 1 \\
+\hline
+{\tt comb-block} & 2.79 & 1.14 & 2.9 \\
+\hline
+{\tt multi-ddmin} & 4.24 & 1.11 & 1.9 \\
+\hline
+\end{tabular}
+}
+\caption{Average runtimes, faults detected in isolation, and number of
+  tests for a user to examine for AVL
+  tree mutant pairs.}
+\label{tab1}
+\end{table}
+
+We produced 7,500 tests, sampling all 82 mutants numerous times, and
+sampling 2,959 of the 3,274 mutant pairs.  Table \ref{tab1} shows the
+results.  All differences between means are significant by Wilcoxon
+test with $p < 10^{-12}$.  The {\tt ddmin} results show that using
+only a single run of classic delta debugging results in fewer faults
+per test case than using un-reduced test cases:  harmful slippage
+results in a 2.8\% total reduction in fault detection, even with
+beneficial slippage taken into account.  Slightly over 8\% of test
+cases had slippage of some kind when reduced.  
+
+Both  approaches to slippage reduction produced a significantly higher
+average number of faults detected than the unreduced test cases.
+Using {\tt comb-block} increased fault detection by about 5.5\%, and
+using {\tt multi-ddmin} increased it by 2.7\% (the same margin,
+interestingly, as a single reduction decreased fault detection).  The
+cost of this improvement was close to a 6x increase in runtime
+for {\tt comb-block} and over a 9x increase for {\tt multi-ddmin}.
+
+One concern with slippage mitigation is that avoiding slippage may
+produce a large number of additional tests a developer must examine to
+see if they expose different faults \cite{PLDI13}.  However, at least
+for our AVL example, the number of different tests produced is not
+particularly larger than the number of faults discovered on average.
+In most cases, we speculate that {\tt comb-block} and {\tt
+  multi-ddmin} will not produce far more different tests than faults.
+
+While only 8\% of all
+tests showed slippage, we also ran some experiments with 30 runs for
+every mutant pair (producing a total of 98,100 failing tests), but only running {\tt comb-block} and {\tt
+  multi-ddmin} if reduction caused  loss-of-fault slippage, and
+checking whether the two approaches managed to restore the lost fault
+(without losing the other exposed fault).  These
+results showed that 8\% of mutant pairs had harmful slippage, and that these
+pairs had slippage rates up to 83\%, making some faults very
+hard to detect in isolation without slippage mitigation.  The {\tt
+  comb-block} approach avoided loss-of-fault slippage for 56\% of
+slipped tests for each mutant, on average, while {\tt multi-ddmin}
+only avoided it in 33\% of slipped tests, on average.  The difference
+was significant with $p < 10^{-96}$.
+
+\subsection{SpiderMonkey}
+
+We also performed limited experiments with the Mozilla
+SpiderMonkey JavaScript engine version 1.6 tests produced by {\tt jsfunfuzz}, used in the PLDI 2013 paper introducing
+the concept of slippage \cite{PLDI13}.  SpiderMonkey is a large (about
+70KLOC), complex, widely used program, and {\tt jsfunfuzz}
+\cite{jsfunfuzz} has been used to discover over 1,700 bugs in
+JavaScript engines.  For 113 randomly sampled
+tests, using a single reduction produced slippage only about 2.7\% of the
+time (in exactly 3 tests).  In these experiments we limited
+{\tt comb-block} to a depth of 1, with no ``recursive'' exploration of
+new tests.  For {\tt multi-ddmin} we used 10 reductions, as in the AVL experiments.
+
+The small number of slippage cases
+allowed us to analyze the results in detail.  The {\tt comb-block} approach did
+not manage to avoid slippage in any of these three cases.  For two
+of the three cases, no blocking combination produced a failing test.
+In the third case, one combination did produce a failing test, but it
+reduced to the same fault as the slipped {\tt ddmin} test.  The {\tt
+  multi-ddmin} algorithm fared only slightly better, restoring the
+originally detected fault in one of the three slippage cases.
+
+Interestingly, the overall rate for slippage in the original paper is
+estimated as 23\%, not under 3\%.  We attribute this to the use of a
+far more aggressive and powerful reduction algorithm than our
+line-based {\tt ddmin}.  The PLDI 13 reducer is a hand-crafted
+modification of {\tt ddmin} that performs both character and line
+based passes, and applies constant propagation and other specialized
+techniques for JavaScript.  Note that both of our mitigation
+techniques also apply to this method, though {\tt comb-block} is
+probably easier to apply as it does not require modifying the internals of the
+more powerful reducer.
+
+Slippage avoidance is not the only goal of our methods.  We also computed the total number of discovered faults for
+{\tt comb-block} and {\tt multi-ddmin}, as with the AVL tree
+experiments.  One-test {\tt ddmin}, in this setting, always produced a
+single test, detecting one fault.  The {\tt comb-block} algorithm
+discovered 1.34 different faults on average, and the {\tt multi-ddmin}
+approach discovered 1.09 different faults on average.  These
+differences are significant by Wilcoxon test with $p < 10^{-5}$.  Note
+that the strong results for {\tt comb-block} are in spite of nearly
+70\% of tests not having any failing blocked versions, and using a
+search depth of only 1 (no attempt to block based on newly discovered
+tests).  Blocking seems quite effective in producing tests due to a
+different fault, when this is possible.  The total set
+of distinct faults discovered by each method favored {\tt
+  multi-ddmin}, which produced tests revealing 10 distinct faults,
+while {\tt comb-block} discovered 8 distinct faults over all 113
+tests.  The original set of unreduced tests contains 8 distinct
+faults, and simple {\tt ddmin} reduced the count to 7 faults.
+
+In part because many tests do not have any combinations that produce a failing
+test case when removed, the runtimes for {\tt comb-block} are
+generally much lower than for {\tt multi-ddmin}, which takes about 10x
+or more the time for a single-test {\tt ddmin} run (the average is
+higher than 10x because of the structure of JavaScript tests, where
+the first attempt in non-randomized {\tt ddmin} is very likely to
+fail).
+
+Given the (surprising to us) extreme differences in runtimes observed
+for SpiderMonkey tests, and the smaller but real differences for AVL tree,
+in future experiments we plan to exploit the ``best effort'' nature of
+both mitigation approaches, and simply use a fixed timeout for each method.

@@ -1,0 +1,127 @@
+%\documentclass{sig-alternate}
+\documentclass{sig-alternate-05-2015}
+\usepackage{graphicx}
+\usepackage{pifont}
+\usepackage{url}
+\usepackage{code}
+\usepackage{amsmath}
+\usepackage{algpseudocode} 
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{xcolor}
+%\usepackage{flushend}
+
+\newcommand{\mycomment}[1]{}
+
+\title{One Test Case to Rule Them All}
+%\title{Normalizing and Generalizing Test Cases}
+
+\numberofauthors{3}
+
+\author{
+\alignauthor
+Alex Groce\\
+       \affaddr{School of Electrical Engineering and Computer Science}\\
+       \affaddr{Oregon State University}\\
+%       \email{agroce@gmail.com}
+% 2nd. author
+\alignauthor
+Josie Holmes\\
+       \affaddr{Department of Geography}\\
+       \affaddr{Pennsylvania State University}\\
+%       \email{webmaster@marysville-ohio.com}
+% 3rd. author
+\alignauthor Kevin Kellar\\
+       \affaddr{Crescent Valley High School}\\
+%       \affaddr{1 Th{\o}rv{\"a}ld Circle}\\
+%      \affaddr{Hekla, Iceland}\\
+%      \email{larst@affiliation.org}
+}
+
+\mycomment{
+
+\author{\IEEEauthorblockN{%
+Alex Groce,\IEEEauthorrefmark{1}
+Josie Holmes\IEEEauthorrefmark{2}
+Kevin Kellar\IEEEauthorrefmark{3}
+}
+
+\IEEEauthorblockA{\IEEEauthorrefmark{1}%
+School of Electrical Engineering and Computer Science\\
+Oregon State University\\
+\IEEEauthorrefmark{2}
+Department of Geography\\
+Pennsylvania State University
+\IEEEauthorrefmark{3}
+Crescent Valley High School
+}
+
+
+}
+%\author{\IEEEauthorblockN{Alex Groce, Amin Alipour, Chaoqiang Zhang, Yang Chen, John Regehr}
+%\IEEEauthorblockA{School of Electrical Engineering and Computer Science\\
+%Oregon State University, Corvallis, OR\\
+%Email: agroce@gmail.com, alipourm,zhangch@onid.oregonstate.edu}}
+}
+
+\mycomment{
+\numberofauthors{1}
+\author{
+\alignauthor
+Arpit Christi, Matthew Lyle Olson, Mohammad Amin Alipour, Alex Groce\\
+\affaddr{School of Electrical Engineering and Computer Science}\\
+\affaddr{Oregon State University}
+\affaddr{Corvallis, OR USA}\\
+%\affaddr{Corvallis, OR}\\
+%\affaddr{USA}
+}
+}
+
+\begin{document}
+
+\maketitle 
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
+<concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+
+\printccsdesc
+
+\keywords{test case reduction, semantic simplification, fuzzer taming,
+  random testing, automated debugging}
+
+\input{intro}
+
+\input{formal}
+
+\input{casestudies}
+
+\input{related}
+
+
+
+\input{conclusions}
+
+%\IEEEtriggeratref{21}
+
+%\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+
+%\def\IEEEbibitemsep{0.6pt plus 0.9pt}
+
+\bibliographystyle{abbrv}
+\bibliography{bibliography}
+
+\end{document}

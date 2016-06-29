@@ -1,0 +1,16 @@
+\section{Related Work}
+
+Chen et al. introduced the idea of slippage in the course of
+describing efforts to automatically detect different faults in a large
+set of failing test cases \cite{PLDI13}.  Hughes et
+al. \cite{FindMoreBugs} proposed a modification of QuickCheck
+\cite{ClaessenH00} to avoid re-producing known bugs that (in theory)
+could mitigate the problem of slippage, but is not directly comparable
+to our approach.  The approach of Hughes et al. requires
+interpretation of test components (e.g. method calls), and analysis of
+patterns, while our approaches are purely algorithmic, with no
+additional requirements beyond those of delta debugging itself
+\cite{DD}.  It is not clear how best to apply such an approach
+ to cases such as {\tt jsfunfuzz} where each component is not a
+method call but essentially an arbitrary string, without significant
+user effort to define abstractions of components.

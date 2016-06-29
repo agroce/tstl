@@ -1,0 +1,76 @@
+
+
+\subsection{Algorithm 1:  Combinatorial Blocking}
+
+The first algorithm uses additional unmodified delta debugging passes, but
+``blocks'' them from producing the same reduced test.  Given test $t$
+that reduces to $r$, we compute all subsets of components of $r$,
+$C_r$.  The set of reduced tests is then computed by running delta
+debugging starting with each $t-c$ that fails, where $c \in C_r$: $c$
+is the blocked components of $r$.  So long as even one component is
+blocked, it is impossible to reproduce the same $r$.  The intuition
+is that to find a reduced failing test that exhibits a different fault
+than $r$, we want to run delta debugging in such a way as to produce a
+test as different as possible from $r$; ideally we would like a
+reduced test sharing no components with $r$.  However, $r$ will likely contain
+components that must appear in any failing test:  for example,
+calls to {\tt mount} appear in all useful file system tests,
+and interesting XML files seldom lack the {\tt <} character.
+Therefore, rather than ``blocking'' all components of $r$, we try
+delta debugging with different sets of components blocked.
+
+In practice, iterating through all subsets may be too expensive if $r$
+is large.  We therefore make an assumption:  if $t-c_1$ does not fail,
+and $c_1 \subset c_2$, then $t-c_2$ also does not fail.  The blocking
+algorithm begins its search by blocking all single components of $r$,
+then proceeds to all combinations of 2 components, etc., at each stage
+only considering combinations that contain no combination that did not
+yield a failing test.  With this optimization, the expense of blocking
+becomes low enough to also apply the approach to the new
+reduced tests found at each stage.  To block all previously discovered
+reductions, it is neccessary to compute combinations that include at
+least one component from each reduced test produced thus far.
+
+ Algorithm \ref{comb-block} shows
+the formal definition of the algorithm, which we refer to as {\tt
+  comb-block} (combinatorial blocking).  This algorithm depends on a
+function {\tt block-all ($T$,$s$)}, which given a set of tests $T$ and
+a combination size $s$,  returns all combinations of components of tests $t
+\in T$ of size $s$ such that each combination has at least one element
+from each $t \in T$.  We omit the definition of {\tt block-all} in
+the interests of space.
+
+\begin{algorithm}
+\caption{}
+\label{comb-block}
+\begin{algorithmic}[1]
+\Require{failing test $t$, reduced failing test $r$, search depth
+  $d$, max combinations to consider $m$}
+\State {reductions = \{$r$\}}
+\State {handled = $\emptyset$}
+\State {notfailed = $\emptyset$}
+\State {count = 0}
+\While {$d$ > 0}
+\State{new = $\emptyset$}
+\For {$s$ = 1 to total components in reductions}
+\For {$c \in$ {\tt block-all}(reductions-handled, $s$)}
+\State {count = count + 1}
+\If {count > $m$}
+\Return {reductions}
+\EndIf
+\State {handled = handled $\cup$ \{$c$\}}
+\If {$c \not\in$ notfailed}
+\If {fails($t-c$)}
+\State{new = new $\cup$ \{\tt{ddmin}($t-c$)\}}
+\Else
+\State{notfailed = notfailed $\cup$ \{$c$\}}
+\EndIf
+\EndIf
+\EndFor
+\EndFor
+\State{$d$ = $d - 1$}
+\State{reductions = reductions $\cup$ new}
+\EndWhile
+\State {return reductions}
+\end{algorithmic}
+\end{algorithm}

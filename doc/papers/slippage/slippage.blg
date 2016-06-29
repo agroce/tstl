@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2014)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: slippage.aux
+The style file: abbrv.bst
+Database file #1: bibliography.bib
+You've used 16 entries,
+            2118 wiz_defined-function locations,
+            592 strings with 6224 characters,
+and the built_in function-call counts, 6296 in all, are:
+= -- 615
+> -- 283
+< -- 9
++ -- 113
+- -- 96
+* -- 371
+:= -- 953
+add.period$ -- 49
+call.type$ -- 16
+change.case$ -- 96
+chr.to.int$ -- 0
+cite$ -- 16
+duplicate$ -- 258
+empty$ -- 524
+format.name$ -- 96
+if$ -- 1402
+int.to.chr$ -- 0
+int.to.str$ -- 16
+missing$ -- 10
+newline$ -- 83
+num.names$ -- 32
+pop$ -- 143
+preamble$ -- 1
+purify$ -- 80
+quote$ -- 0
+skip$ -- 231
+stack$ -- 0
+substring$ -- 378
+swap$ -- 103
+text.length$ -- 9
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 64
+warning$ -- 0
+while$ -- 59
+width$ -- 18
+write$ -- 172
