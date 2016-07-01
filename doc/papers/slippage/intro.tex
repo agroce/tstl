@@ -52,7 +52,7 @@ version of Hildebrandt and Zeller \cite{DD}.  The contributions of this paper ar
 \item A formal definition of slippage, and the notion that slippage
   may be either harmful or beneficial.
 \item A proposal to avoid and make use of slippage by producing more
-  than one reduced test per failing test case.
+  than one reduced test per unreduced failing test.
 \item Two novel approaches to slippage mitigation.
 \item Some preliminary experimental results showing the basic effectiveness of these
   methods for a very large set of mutant-simulated faults in a Python
@@ -104,7 +104,7 @@ only considering combinations that contain no smaller combination that did not
 yield a failing test.  With this optimization, the expense of blocking
 becomes low enough to also apply the approach to the new
 reduced tests found at each stage.  To block all previously discovered
-reductions, it is neccessary to compute combinations that include at
+reductions, it is necessary to compute combinations that include at
 least one component from each reduced test produced thus far.
 
  Algorithm \ref{comb-block} shows
@@ -152,7 +152,7 @@ small $s$ for reduced tests.
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Randomized Mutliple-Run Delta Debugging}
+\subsection{Randomized Multiple-Run Delta Debugging}
 
 Our second mitigation approach simply notes that slippage in {\tt ddmin} is
 deterministic only because of the fixed order in which possible
@@ -165,6 +165,6 @@ simplicity, and that it will work even when no test removing
 components of the original test is failing.  The non-existence of such
 failing tests does not mean
 there is no alternative reduction; it does mean that finding it will
-require removing \emph{more} than a simple combination of components.
+require removing more than a simple combination of components.
 The disadvantage is that we lose {\tt comb-block}'s directed search
 for dissimilar reductions, and must modify the internals of {\tt ddmin}.

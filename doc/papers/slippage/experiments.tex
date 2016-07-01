@@ -28,19 +28,19 @@ For the mutant pair $(m_1,m_2)$, let $m_1+m_2$ be the program
 combining $m_1$ and $m_2$.  We randomly sampled mutant pairs, and
 performed random testing on $m1+m2$ for 60 seconds. In all but a very
 small number of cases, 60 seconds of random testing produces a failing
-test case , $t$.  Executing $t$ on both $m1$ and $m2$ yields a number,
+test, $t$.  Executing $t$ on both $m1$ and $m2$ yields a number,
 $|f|_t$, between 0 and 2, the number of isolated faults $t$ detects (2
 if each fault can be detected in isolation by $t$, 1 if only 1 of the
 mutants is detected in isolation).  In a small number of cases, $t$
 only detects the combined fault, and detects neither fault in
 isolation.  We then applied delta debugging to produce a reduced test
-case $r$, and used the same process to produce $|f|_r$, which could,
+$r$, and used the same process to produce $|f|_r$, which could,
 compared to $|f|_t$, either be smaller (slippage with fault loss),
 larger (beneficial slippage), or the same (either no slippage or
 change of fault).  Finally, we applied the {\tt comb-block} algorithm
 to produce a set of tests, $T_c$ and the {\tt multi-ddmin} algorithm
 to produce a set of tests, $T_m$.  For parameters, we chose to run
-{\tt ddmin} 10 times in {\tt multi-ddmin}, and constrainted
+{\tt ddmin} 10 times in {\tt multi-ddmin}, and constrained
 combinations{\tt comb-block} to approximately the same runtime by
 limiting it to a search depth of 5 and a maximum of 1,000 attempted
 combinations.  We computed $|f|_c$ as the count of isolated faults
@@ -76,13 +76,13 @@ sampling 2,959 of the 3,274 mutant pairs.  Table \ref{tab1} shows the
 results.  All differences between means are significant by Wilcoxon
 test with $p < 10^{-12}$.  The {\tt ddmin} results show that using
 only a single run of classic delta debugging results in fewer faults
-per test case than using un-reduced test cases:  harmful slippage
+per test than using un-reduced tests:  harmful slippage
 results in a 2.8\% total reduction in fault detection, even with
 beneficial slippage taken into account.  Slightly over 8\% of test
 cases had slippage of some kind when reduced.  
 
 Both  approaches to slippage reduction produced a significantly higher
-average number of faults detected than the unreduced test cases.
+average number of faults detected than the unreduced tests.
 Using {\tt comb-block} increased fault detection by about 5.5\%, and
 using {\tt multi-ddmin} increased it by 2.7\% (the same margin,
 interestingly, as a single reduction decreased fault detection).  The
@@ -163,7 +163,7 @@ tests.  The original set of unreduced tests contains 8 distinct
 faults, and simple {\tt ddmin} reduced the count to 7 faults.
 
 In part because many tests do not have any combinations that produce a failing
-test case when removed, the runtimes for {\tt comb-block} are
+test when removed, the runtimes for {\tt comb-block} are
 generally much lower than for {\tt multi-ddmin}, which takes about 10x
 or more the time for a single-test {\tt ddmin} run (the average is
 higher than 10x because of the structure of JavaScript tests, where
