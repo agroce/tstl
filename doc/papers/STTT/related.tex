@@ -42,10 +42,29 @@ There exist various testing tools and languages of a somewhat
 different flavor: e.g. Korat \cite{Korat}, which has a much more fixed
 input domain specification, or the tools built to support the Next
 Generation Air Transportation System (NextGen) software
-\cite{TameInputs}.  The closest of these is the UDITA language
+\cite{TameInputs}, or the model-based TestStories approach of Felderer et
+al. \cite{TestStories}.  Utting et al. survey the wide variety of
+specifically model-based testing approaches, including many tools
+\cite{Taxonomy}; while TSTL is not specifically model-based, it can be
+used to facilitate model-based testing in theory.
+Behavior-driven-development (BDD) \cite{BDD} is often supported by extracting
+formally meaningful parts of a specification document to (partially)
+instantiate a test.
+
+The primary difference between such systems and TSTL is that TSTL is
+meant to be much more general, without focusing on a particular system
+model or specification method.  
+TSTL, unlike any other system of which we are
+aware, aims to make test cases first-class objects, and provides tools
+for development of code that manipulates, executes, and analyzes test
+cases.  
+
+
+Perhaps the most similar system is the UDITA language
 \cite{UDITA}, an extension of Java with non-deterministic choice
 operators and {\tt assume}, which yields a very different language
-that shares our goal.  TSTL aims more at the \emph{generation} of
+that shares our goal of making it easy to define the set of valid
+tests for a system.  TSTL aims more at the \emph{generation} of
 tests than the \emph{filtering} of tests (as defined in the UDITA
 paper), while UDITA supports both approaches.  This goal of UDITA (and
 resulting need for first-class {\tt assume} statements) means that it
@@ -55,6 +74,7 @@ stand-alone simple interface to a test space, as with TSTL.  Building
 ``UDITA'' for a new language is far more challenging than porting
 TSTL.  UDITA supports many fewer constructs to assist harness
 development.
+
 
 The design of the SPIN model checker \cite{SPIN} and its model-driven
 extension to include native C code \cite{ModelDriven} inspired the

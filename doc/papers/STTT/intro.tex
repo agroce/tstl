@@ -180,6 +180,23 @@ Science Laboratory software \cite{scriptstospecs}.  We adopt this
 approach for our own language and embed the general-purpose language (for expressiveness) in a
 DSL (for concision and ease-of-use).
 
+The most significant difference between TSTL and other DSLs for
+testing and verification, including SPIN, is that most such systems
+are primarily intended to be used as stand-alone tools.  Whether model
+checkers \cite{SPIN,JPF2}, model-based testing tools \cite{Taxonomy},
+or random testing tools \cite{Pacheco}, these systems are primarily
+designed as ``things to \emph{run on} the system under test.''  TSTL
+can operate in this manner, but at heart it transforms a definition of
+valid tests into a library for creating, executing, manipulating, and
+analyzing test cases.  An experienced TSTL user can interact with TSTL
+at an interactive command prompt in the language of the SUT, creating,
+saving, and modifying tests on-the-fly.  TSTL tools are simply
+scripted formalizations of this mode of use, automating repetitive
+tasks.  Such an approach is not possible with any other tool of which we
+are aware.  Many tasks that are constrainted to the features provided
+by the tools in other systems (e.g., replay of regression tests) in
+TSTL are made very simple by this approach.
+
 \subsection{TSTL: The Template Scripting Testing Language}
 
 TSTL is based on understanding a test harness as a declaration
@@ -300,7 +317,7 @@ of the SUT and the TSTL state, including pools of values to be used in actions.
 
 \subsection{Contributions}
 
-We showcase the TSTL approach and tools using an ongoing case study,
+We describe the TSTL approach and tools using an ongoing case study,
 applying TSTL and its tool suite to a large, real-world software
 library used in critical applications.  The test effort has been driven and directed not by a
 software testing researcher (as is the usual case), but by a domain
@@ -310,14 +327,15 @@ under test have been discovered, and the TSTL language and tool suite have
 been improved.
 
 This paper presents the most complete presentation of the TSTL
-language and tools, and we hope that it satisfies two critical goals:
+language and tools, and we hope that it satisfies three critical goals:
 
 \begin{itemize}
 \item First, would-be users wanting to take advantage of automated
   test generation should be able to base their own testing
   efforts using TSTL on the example code in this paper (and that available
   in the TSTL github repository \cite{tstl}).
-  This paper thus serves as a basic ``TSTL cookbook.''
+  This paper thus completely describes the concepts behind TSTL, the
+  semantics of the language, and the tools available in TSTL.
 
 \item Second, researchers should be able to use the information in this paper to
   extend existing TSTL tools or build their own tools to explore novel
@@ -329,6 +347,18 @@ language and tools, and we hope that it satisfies two critical goals:
   included in the TSTL distribution, which includes large and widely
   used Python libraries, can provide benchmarks for
   experimental efforts.  
+
+\item Finally, unlike previous publications on TSTL, this paper
+  emphasizes the fact that TSTL, unlike other testing DSLs or tools,
+  at heart transforms a definition of valid tests (and properties) for
+  a System Under Test into a programming language library for testing
+  that system.  Tests in TSTL are not inaccessible objects internal to
+  a tool,
+  or only represented as unit tests (e.g., programs) that cannot be
+  easily manipulated and analyzed, but first-class entities in the
+  language of the System Under Test.  To our knowledge, this approach
+  to testing has not been previously explored, and it was not
+  emphasized (or even clearly presented) in earlier publications on TSTL.
 \end{itemize}
 
 
