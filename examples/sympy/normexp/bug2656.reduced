@@ -1,0 +1,7 @@
+self.p_c[1] = Integer(0) 
+self.p_v[0] = Symbol('c') 
+self.p_v[3] = Symbol('y') 
+self.p_expr[0] = I 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[0] 

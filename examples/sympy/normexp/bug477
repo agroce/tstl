@@ -1,0 +1,9 @@
+self.p_v[2] = Symbol('b') 
+self.p_c[0] = Integer(0) 
+self.p_c[1] = Integer(8) 
+self.p_expr[3] = E 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[1],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[3] + self.p_expr[1] 
+self.p_c[0] = Integer(3) 
+self.p_expr[1] = expand(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[2] % self.p_expr[1] 

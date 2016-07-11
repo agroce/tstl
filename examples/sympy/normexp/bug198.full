@@ -1,0 +1,19 @@
+self.p_c[2] = Integer(4) 
+self.p_v[0] = Symbol('k',positive=True) 
+self.p_c[1] = Integer(1) 
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_expr[3] = self.p_c[2] 
+self.p_expr[0] = Sum(self.p_expr[3],(self.p_v[3],self.p_c[1],self.p_c[2])) 
+self.p_v[3] = Symbol('l',positive=True) 
+self.p_expr[1] = self.p_expr[3] ** self.p_expr[3] 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[2] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2] + self.p_expr[1] 
+self.p_expr[1] = factor(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1] ** self.p_expr[0] 
+self.p_expr[1] = self.p_expr[0] + self.p_expr[3] 
+self.p_expr[0] = powsimp(self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[1] = expand_log(self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[0] 

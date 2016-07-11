@@ -1,0 +1,19 @@
+self.p_v[1] = Symbol('g',positive=True) 
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_c[1] = Integer(6) 
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_c[2] = Integer(8) 
+self.p_term[1] = self.p_c[2] * self.p_v[3] ** self.p_c[2] 
+self.p_v[0] = Symbol('i',positive=True) 
+self.p_c[2] = Integer(7) 
+self.p_expr[1] = Rational(self.p_c[1],self.p_c[2]) 
+self.p_expr[2] = expand_log(self.p_expr[1]) 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[1],self.p_c[2],self.p_c[2])) 
+self.p_term[0] = self.p_c[2] * self.p_v[2] ** self.p_c[1] 
+self.p_expr[2] = powsimp(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] / self.p_expr[2] 
+self.p_expr[0] = Product(self.p_expr[1],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[2] = expand(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[2] 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[3] 

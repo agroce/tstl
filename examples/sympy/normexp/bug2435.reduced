@@ -1,0 +1,7 @@
+self.p_c[2] = Integer(0) 
+self.p_c[1] = Integer(7) 
+self.p_expr[0] = E 
+self.p_v[3] = Symbol('z') 
+self.p_expr[1] = self.p_expr[0].doit() 
+self.p_expr[3] = Sum(self.p_expr[0],(self.p_v[3],self.p_c[1],self.p_c[2])) 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[3] 

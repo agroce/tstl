@@ -1,0 +1,1 @@
+NotAlgebraic("Sum(0, (l, 0, 6), (i, 10, 0)) doesn't seem to be an algebraic element",)

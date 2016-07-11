@@ -1,0 +1,11 @@
+self.p_c[3] = Integer(1) 
+self.p_v[1] = Symbol('z') 
+self.p_v[3] = Symbol('j',positive=True) 
+self.p_expr[1] = self.p_c[3] 
+self.p_c[2] = Integer(1) 
+self.p_expr[3] = cos(self.p_expr[1]) 
+self.p_term[1] = self.p_c[3] * self.p_v[3] ** self.p_c[3] 
+self.p_expr[0] = collect(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[1] + self.p_expr[1] 
+self.p_expr[3] = Product(self.p_expr[0],(self.p_v[3],self.p_c[3],self.p_c[2])) 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[3] 

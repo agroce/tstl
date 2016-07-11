@@ -1,0 +1,12 @@
+self.p_c[0] = Integer(2) 
+self.p_v[1] = Symbol('i',positive=True) 
+self.p_c[1] = Integer(9) 
+self.p_expr[3] = Rational(self.p_c[0],self.p_c[1]) 
+self.p_expr[1] = expand_func(self.p_expr[3]) 
+self.p_v[0] = Symbol('y') 
+self.p_expr[3] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_term[1] = self.p_c[0] * self.p_v[1] ** self.p_c[0] 
+self.p_expr[2] = expand(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[0] 

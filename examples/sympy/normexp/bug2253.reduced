@@ -1,0 +1,4 @@
+self.p_expr[1] = E 
+self.p_expr[2] = self.p_expr[1].doit() 
+self.p_expr[1] = sqrt(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[1].subs(self.p_expr[2],self.p_expr[1]) 

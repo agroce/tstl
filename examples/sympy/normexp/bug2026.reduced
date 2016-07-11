@@ -1,0 +1,8 @@
+self.p_v[1] = Symbol('a') 
+self.p_expr[0] = E 
+self.p_c[0] = Integer(1) 
+self.p_c[1] = Integer(4) 
+self.p_expr[1] = powsimp(self.p_expr[0]) 
+self.p_expr[3] = expand_log(self.p_expr[1]) 
+self.p_expr[1] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[1],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[1] 

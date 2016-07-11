@@ -1,0 +1,7 @@
+self.p_c[0] = Integer(7) 
+self.p_expr[0] = self.p_c[0] 
+self.p_expr[2] = factorial(self.p_expr[0]) 
+self.p_expr[1] = pi 
+self.p_expr[0] = self.p_expr[0] + self.p_expr[1] 
+self.p_expr[1] = asin(self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[2] 

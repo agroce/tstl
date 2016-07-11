@@ -1,0 +1,27 @@
+self.p_expr[1] = pi 
+self.p_v[1] = Symbol('g',positive=True) 
+self.p_expr[0] = atan(self.p_expr[1]) 
+self.p_c[0] = Integer(3) 
+self.p_v[0] = Symbol('h',positive=True) 
+self.p_term[1] = self.p_c[0] * self.p_v[1] ** self.p_c[0] 
+self.p_expr[3] = self.p_expr[1] / self.p_expr[1] 
+self.p_expr[1] = I 
+self.p_expr[2] = expand(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1].doit() 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_c[2] = Integer(2) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[0] = expand_func(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] ** self.p_expr[2] 
+self.p_expr[3] = self.p_expr[3] ** self.p_expr[3] 
+self.p_expr[3] = trigsimp(self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[1] = cos(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[3] 
+self.p_expr[3] = acos(self.p_expr[0]) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[0],self.p_c[0],self.p_c[2])) 
+self.p_expr[0] = powdenest(self.p_expr[1]) 
+self.p_v[2] = Symbol('g',positive=True) 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[2] 

@@ -1,0 +1,29 @@
+self.p_c[3] = Integer(5) 
+self.p_v[3] = Symbol('b') 
+self.p_v[1] = Symbol('g',positive=True) 
+self.p_expr[1] = self.p_c[3] 
+self.p_expr[0] = self.p_c[3] 
+self.p_expr[3] = self.p_expr[1] + self.p_expr[0] 
+self.p_expr[1] = collect(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = collect(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_v[2] = Symbol('i',positive=True) 
+self.p_expr[2] = self.p_expr[3] / self.p_expr[0] 
+self.p_expr[0] = collect(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_c[0] = Integer(3) 
+self.p_expr[3] = collect(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[3] ** self.p_expr[3] 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[2],self.p_c[3],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[0] 
+self.p_expr[3] = apart(self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[0] = tan(self.p_expr[0]) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[2] % self.p_expr[1] 
+self.p_expr[0] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[2] = expand_log(self.p_expr[0]) 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[3],self.p_c[0])) 
+self.p_term[3] = self.p_c[3] * self.p_v[3] ** self.p_c[0] 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[3] 

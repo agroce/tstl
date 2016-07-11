@@ -1,0 +1,25 @@
+self.p_v[0] = Symbol('k',positive=True) 
+self.p_c[0] = Integer(4) 
+self.p_v[3] = Symbol('g',positive=True) 
+self.p_v[2] = Symbol('i',positive=True) 
+self.p_expr[3] = Rational(self.p_c[0],self.p_c[0]) 
+self.p_expr[0] = self.p_expr[3] - self.p_expr[3] 
+self.p_term[0] = self.p_c[0] * self.p_v[3] ** self.p_c[0] 
+self.p_expr[3] = self.p_expr[3] ** self.p_expr[0] 
+self.p_expr[1] = E 
+self.p_expr[0] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = sqrt(self.p_expr[3]) 
+self.p_expr[3] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[2] = acos(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = collect(self.p_expr[3],self.p_expr[2]) 
+self.p_c[0] = Integer(6) 
+self.p_c[1] = Integer(6) 
+self.p_expr[3] = self.p_expr[1] * self.p_expr[3] 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[2] = self.p_expr[2] / self.p_expr[0] 
+self.p_expr[0] = self.p_expr[0] - self.p_expr[0] 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[1] 

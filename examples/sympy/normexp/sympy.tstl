@@ -1,0 +1,86 @@
+@import sympy
+@from sympy import *
+@from sympy.core.cache import *
+
+init: clear_cache()
+
+pool: <c> 4 CONST
+pool: <v> 4 CONST
+pool: <expr> 4 CONST
+pool: <term> 4 CONST
+pool: <poly> 4 CONST
+
+exception: OverflowError
+exception: NotImplementedError
+
+log: 0 <expr>
+
+<c> := Integer(<[0..10]>)
+<v> := Symbol(<['a'..'d']>)
+<v> := Symbol(<['x'..'z']>)
+<v> := Symbol(<['e'..'l']>,positive=True)
+
+<expr> := Rational(<c>,<c>)
+<expr> := <v>
+<expr> := <c>
+
+<term> := <c> * <v> ** <c>
+<poly> := <term>
+<poly> := <term> + <term>
+
+<expr> := <poly>
+<expr> := <expr> + <expr>
+<expr> := <expr> - <expr>
+<expr> := <expr> * <expr>
+<expr> := <expr> ** <expr>
+<expr> := <expr> / <expr>
+
+{ZeroDivisionError} <expr> := <expr> % <expr>
+
+<expr> := sin(<expr>)
+<expr> := cos(<expr>)
+<expr> := tan(<expr>)
+<expr> := asin(<expr>)
+<expr> := acos(<expr>)
+<expr> := atan(<expr>)
+
+<expr> := sqrt(<expr>)
+
+<expr> := factorial(<expr>)
+
+<expr> := <expr>.subs(<expr>,<expr>)
+
+<expr> := pi
+<expr> := E
+<expr> := I
+
+<expr> := Sum(<expr>,(<v>,<c>,<c>))
+<expr> := Product(<expr>,(<v>,<c>,<c>))
+
+<expr> := <expr>.doit()
+
+<expr> := simplify(<expr>)
+<expr> := expand(<expr>)
+<expr> := expand(<expr>,force=True)
+{ValueError} <expr> := factor(<expr>)
+<expr> := collect(<expr>,<expr>)
+<expr> := cancel(<expr>)
+{PolynomialError} <expr> := apart(<expr>)
+
+<expr> := trigsimp(<expr>)
+<expr> := expand_trig(<expr>)
+
+<expr> := powsimp(<expr>)
+<expr> := expand_power_exp(<expr>)
+<expr> := expand_power_base(<expr>)
+<expr> := powdenest(<expr>)
+
+<expr> := expand_log(<expr>)
+<expr> := logcombine(<expr>)
+
+<expr> := expand_func(<expr>)
+<expr> := combsimp(<expr>)
+
+<expr>.evalf()
+
+#property: ("<expr>" == "<expr>") or (simplify(<expr,1>-<expr,2>) != 0) or (<expr,1>.equals(<expr,2>))

@@ -1,0 +1,12 @@
+self.p_c[0] = Integer(2) 
+self.p_v[1] = Symbol('z') 
+self.p_expr[3] = Rational(self.p_c[0],self.p_c[0]) 
+self.p_c[2] = Integer(4) 
+self.p_c[3] = Integer(5) 
+self.p_expr[2] = Rational(self.p_c[2],self.p_c[0]) 
+self.p_expr[1] = apart(self.p_expr[3]) 
+self.p_expr[0] = Product(self.p_expr[1],(self.p_v[1],self.p_c[2],self.p_c[3])) 
+self.p_expr[1] = expand(self.p_expr[2],force=True) 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[0] ** self.p_expr[2] 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[2] 

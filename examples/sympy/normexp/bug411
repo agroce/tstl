@@ -1,0 +1,19 @@
+self.p_v[0] = Symbol('b') 
+self.p_v[2] = Symbol('e',positive=True) 
+self.p_c[1] = Integer(3) 
+self.p_v[1] = Symbol('j',positive=True) 
+self.p_expr[0] = self.p_c[1] 
+self.p_c[0] = Integer(1) 
+self.p_term[0] = self.p_c[0] * self.p_v[1] ** self.p_c[1] 
+self.p_expr[1] = expand_trig(self.p_expr[0]) 
+self.p_expr[3] = atan(self.p_expr[1]) 
+self.p_c[1] = Integer(3) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[0] = Product(self.p_expr[0],(self.p_v[0],self.p_c[0],self.p_c[1])) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[0] = cancel(self.p_expr[3]) 
+self.p_term[3] = self.p_c[0] * self.p_v[1] ** self.p_c[1] 
+self.p_expr[3] = expand(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[3] 
+self.p_poly[3] = self.p_term[0] 
+self.p_expr[1] = self.p_expr[3] % self.p_expr[2] 

@@ -1,0 +1,18 @@
+self.p_v[1] = Symbol('g',positive=True) 
+self.p_c[3] = Integer(8) 
+self.p_c[2] = Integer(9) 
+self.p_v[0] = Symbol('i',positive=True) 
+self.p_v[2] = Symbol('a') 
+self.p_term[0] = self.p_c[3] * self.p_v[0] ** self.p_c[2] 
+self.p_c[0] = Integer(2) 
+self.p_expr[1] = self.p_c[0] 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[0],self.p_c[0],self.p_c[3])) 
+self.p_expr[1] = pi 
+self.p_term[1] = self.p_c[3] * self.p_v[2] ** self.p_c[3] 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_expr[2] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[3],self.p_c[2])) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[2],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[3] - self.p_expr[1] 
+self.p_expr[2] = self.p_expr[1] ** self.p_expr[0] 
+self.p_expr[0] = expand(self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[3] 

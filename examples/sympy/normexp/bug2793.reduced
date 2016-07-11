@@ -1,0 +1,9 @@
+self.p_c[0] = Integer(8) 
+self.p_expr[2] = self.p_c[0] 
+self.p_expr[0] = tan(self.p_expr[2]) 
+self.p_v[0] = Symbol('k',positive=True) 
+self.p_expr[3] = self.p_expr[2] - self.p_expr[0] 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = cancel(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1] / self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[0] 

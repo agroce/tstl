@@ -1,0 +1,7 @@
+self.p_v[1] = Symbol('e',positive=True) 
+self.p_expr[3] = E 
+self.p_c[0] = Integer(7) 
+self.p_expr[1] = simplify(self.p_expr[3]) 
+self.p_expr[0] = Product(self.p_expr[3],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = self.p_expr[1] - self.p_expr[0] 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[3] 

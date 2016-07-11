@@ -1,0 +1,14 @@
+self.p_v[3] = Symbol('x') 
+self.p_v[0] = Symbol('h',positive=True) 
+self.p_v[1] = Symbol('z') 
+self.p_v[2] = Symbol('h',positive=True) 
+self.p_expr[1] = pi 
+self.p_c[0] = Integer(4) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = acos(self.p_expr[2]) 
+self.p_expr[3] = powsimp(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[1] ** self.p_expr[2] 
+self.p_term[0] = self.p_c[0] * self.p_v[0] ** self.p_c[0] 
+self.p_expr[2] = powsimp(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[2] = self.p_expr[3] % self.p_expr[0] 

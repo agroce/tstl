@@ -1,0 +1,24 @@
+self.p_c[0] = Integer(8) 
+self.p_c[3] = Integer(9) 
+self.p_expr[1] = pi 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[1] = simplify(self.p_expr[2]) 
+self.p_v[2] = Symbol('i',positive=True) 
+self.p_expr[2] = pi 
+self.p_v[3] = Symbol('c') 
+self.p_expr[3] = powsimp(self.p_expr[2]) 
+self.p_expr[2] = asin(self.p_expr[1]) 
+self.p_expr[0] = simplify(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2] - self.p_expr[1] 
+self.p_expr[2] = collect(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[2] 
+self.p_expr[3] = self.p_expr[3] - self.p_expr[3] 
+self.p_term[0] = self.p_c[3] * self.p_v[3] ** self.p_c[0] 
+self.p_expr[1] = tan(self.p_expr[3]) 
+self.p_term[3] = self.p_c[0] * self.p_v[3] ** self.p_c[3] 
+self.p_c[2] = Integer(9) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[0] 
+self.p_expr[3] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2] % self.p_expr[1] 

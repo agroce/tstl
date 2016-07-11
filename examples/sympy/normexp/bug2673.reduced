@@ -1,0 +1,9 @@
+self.p_c[3] = Integer(10) 
+self.p_v[0] = Symbol('c') 
+self.p_c[1] = Integer(3) 
+self.p_expr[1] = pi 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[0],self.p_c[3],self.p_c[1])) 
+self.p_expr[1] = logcombine(self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[2] 

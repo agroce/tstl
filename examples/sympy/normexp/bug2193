@@ -1,0 +1,27 @@
+self.p_v[2] = Symbol('d') 
+self.p_c[3] = Integer(2) 
+self.p_v[0] = Symbol('b') 
+self.p_term[1] = self.p_c[3] * self.p_v[2] ** self.p_c[3] 
+self.p_term[3] = self.p_c[3] * self.p_v[2] ** self.p_c[3] 
+self.p_expr[3] = pi 
+self.p_c[1] = Integer(7) 
+self.p_c[3] = Integer(0) 
+self.p_expr[2] = expand(self.p_expr[3],force=True) 
+self.p_v[1] = Symbol('i',positive=True) 
+self.p_term[0] = self.p_c[3] * self.p_v[2] ** self.p_c[1] 
+self.p_c[1] = Integer(5) 
+self.p_expr[3] = self.p_expr[3] + self.p_expr[2] 
+self.p_expr[3] = self.p_expr[3] / self.p_expr[3] 
+self.p_expr[1] = factor(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[0] = Product(self.p_expr[3],(self.p_v[1],self.p_c[1],self.p_c[3])) 
+self.p_v[1] = Symbol('l',positive=True) 
+self.p_expr[2] = self.p_expr[2] ** self.p_expr[0] 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[2] = self.p_expr[1] + self.p_expr[1] 
+self.p_expr[3] = asin(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[3] % self.p_expr[1] 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_c[0] = Integer(8) 
+self.p_expr[1] = self.p_expr[0].doit() 
+self.p_expr[3] = self.p_expr[2] % self.p_expr[3] 

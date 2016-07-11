@@ -1,0 +1,35 @@
+self.p_v[1] = Symbol('i',positive=True) 
+self.p_c[0] = Integer(3) 
+self.p_c[1] = Integer(0) 
+self.p_expr[2] = Rational(self.p_c[1],self.p_c[0]) 
+self.p_expr[3] = expand_log(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[1] = expand_trig(self.p_expr[2]) 
+self.p_expr[0] = expand_trig(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[3] + self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[2] - self.p_expr[3] 
+self.p_term[1] = self.p_c[1] * self.p_v[1] ** self.p_c[0] 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[2] = cancel(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[2] ** self.p_expr[0] 
+self.p_expr[0] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[2] = self.p_expr[0] ** self.p_expr[0] 
+self.p_expr[1] = expand_power_exp(self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[1] 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = expand_func(self.p_expr[3]) 
+self.p_c[2] = Integer(1) 
+self.p_expr[0] = self.p_expr[1] ** self.p_expr[2] 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = Product(self.p_expr[3],(self.p_v[1],self.p_c[0],self.p_c[1])) 
+self.p_v[0] = Symbol('e',positive=True) 
+self.p_expr[1] = self.p_expr[0] * self.p_expr[3] 
+self.p_expr[0] = collect(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[3] = collect(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[1] = trigsimp(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[0] 

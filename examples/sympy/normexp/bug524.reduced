@@ -1,0 +1,10 @@
+self.p_expr[0] = pi 
+self.p_v[3] = Symbol('j',positive=True) 
+self.p_c[3] = Integer(5) 
+self.p_v[1] = Symbol('a') 
+self.p_c[1] = Integer(5) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[1],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = expand_power_exp(self.p_expr[2]) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[3],self.p_c[1],self.p_c[3])) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[2] = combsimp(self.p_expr[0]) 

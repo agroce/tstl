@@ -1,0 +1,27 @@
+self.p_c[2] = Integer(6) 
+self.p_c[3] = Integer(8) 
+self.p_expr[0] = Rational(self.p_c[2],self.p_c[2]) 
+self.p_expr[1] = self.p_c[3] 
+self.p_c[3] = Integer(9) 
+self.p_expr[3] = tan(self.p_expr[1]) 
+self.p_expr[2] = collect(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[1] = asin(self.p_expr[1]) 
+self.p_v[1] = Symbol('f',positive=True) 
+self.p_expr[0] = self.p_expr[0] / self.p_expr[0] 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[3] = combsimp(self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[2] = sqrt(self.p_expr[1]) 
+self.p_expr[1] = simplify(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[3] - self.p_expr[2] 
+self.p_expr[1] = self.p_expr[0].doit() 
+self.p_expr[2] = self.p_c[3] 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[3] - self.p_expr[1] 
+self.p_expr[3] = Sum(self.p_expr[3],(self.p_v[1],self.p_c[3],self.p_c[2])) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[0] 
+self.p_expr[3] = self.p_expr[1] ** self.p_expr[2] 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[2] 

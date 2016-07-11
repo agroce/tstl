@@ -1,0 +1,10 @@
+self.p_c[0] = Integer(7) 
+self.p_v[0] = Symbol('b') 
+self.p_v[1] = Symbol('f',positive=True) 
+self.p_expr[0] = pi 
+self.p_expr[2] = atan(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = Product(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[0] 

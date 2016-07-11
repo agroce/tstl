@@ -1,0 +1,7 @@
+self.p_v[2] = Symbol('z') 
+self.p_c[3] = Integer(3) 
+self.p_expr[1] = E 
+self.p_expr[3] = expand_power_base(self.p_expr[1]) 
+self.p_expr[1] = expand_power_exp(self.p_expr[3]) 
+self.p_expr[3] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[3] 

@@ -1,0 +1,12 @@
+self.p_v[1] = Symbol('j',positive=True) 
+self.p_c[2] = Integer(2) 
+self.p_v[3] = Symbol('a') 
+self.p_c[3] = Integer(9) 
+self.p_expr[1] = Rational(self.p_c[3],self.p_c[2]) 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[2])) 
+self.p_expr[0] = acos(self.p_expr[1]) 
+self.p_expr[2] = cos(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[2] 

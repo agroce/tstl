@@ -1,0 +1,10 @@
+self.p_v[1] = Symbol('h',positive=True) 
+self.p_expr[3] = E 
+self.p_c[2] = Integer(0) 
+self.p_expr[0] = factor(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[0] ** self.p_expr[3] 
+self.p_expr[1] = self.p_expr[3] % self.p_expr[2] 
+self.p_expr[3] = collect(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[0] = apart(self.p_expr[0]) 
+self.p_c[0] = Integer(9) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 

@@ -1,0 +1,29 @@
+self.p_c[3] = Integer(3) 
+self.p_expr[1] = pi 
+self.p_expr[0] = self.p_c[3] 
+self.p_expr[3] = cancel(self.p_expr[1]) 
+self.p_expr[2] = cos(self.p_expr[1]) 
+self.p_v[3] = Symbol('l',positive=True) 
+self.p_v[1] = Symbol('c') 
+self.p_expr[1] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = collect(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[2] = expand(self.p_expr[3],force=True) 
+self.p_expr[3] = acos(self.p_expr[2]) 
+self.p_expr[2] = trigsimp(self.p_expr[2]) 
+self.p_expr[2] = collect(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[1] + self.p_expr[0] 
+self.p_expr[0] = powsimp(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2] - self.p_expr[2] 
+self.p_term[1] = self.p_c[3] * self.p_v[3] ** self.p_c[3] 
+self.p_v[0] = Symbol('j',positive=True) 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[3] = trigsimp(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[0] = expand_power_base(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[2] = powsimp(self.p_expr[2]) 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[2] - self.p_expr[0] 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[0] 

@@ -1,0 +1,87 @@
+self.p_c[0] = Integer(0) 
+self.p_c[1] = Integer(2) 
+self.p_v[2] = Symbol('k',positive=True) 
+self.p_expr[3] = I 
+self.p_expr[0] = factor(self.p_expr[3]) 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_v[1] = Symbol('z') 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_c[3] = Integer(2) 
+self.p_expr[3] = collect(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[3] = expand_power_base(self.p_expr[2]) 
+self.p_expr[2] = pi 
+self.p_term[0] = self.p_c[1] * self.p_v[1] ** self.p_c[0] 
+self.p_term[2] = self.p_c[0] * self.p_v[2] ** self.p_c[0] 
+self.p_term[1] = self.p_c[1] * self.p_v[2] ** self.p_c[1] 
+self.p_v[1] = Symbol('j',positive=True) 
+self.p_term[3] = self.p_c[0] * self.p_v[1] ** self.p_c[0] 
+self.p_poly[1] = self.p_term[3] + self.p_term[1] 
+self.p_term[3] = self.p_c[3] * self.p_v[2] ** self.p_c[0] 
+self.p_poly[0] = self.p_term[3] + self.p_term[2] 
+self.p_c[1] = Integer(1) 
+self.p_c[2] = Integer(3) 
+self.p_poly[2] = self.p_term[2] 
+self.p_v[1] = Symbol('y') 
+self.p_v[0] = Symbol('f',positive=True) 
+self.p_poly[3] = self.p_term[0] + self.p_term[3] 
+self.p_term[3] = self.p_c[1] * self.p_v[2] ** self.p_c[2] 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_term[2] = self.p_c[1] * self.p_v[2] ** self.p_c[0] 
+self.p_term[0] = self.p_c[1] * self.p_v[1] ** self.p_c[3] 
+self.p_v[1] = Symbol('k',positive=True) 
+self.p_term[1] = self.p_c[0] * self.p_v[0] ** self.p_c[1] 
+self.p_c[0] = Integer(7) 
+self.p_c[1] = Integer(9) 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_v[0] = Symbol('i',positive=True) 
+self.p_v[3] = Symbol('b') 
+self.p_c[2] = Integer(10) 
+self.p_expr[3].evalf() 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[0],self.p_c[1],self.p_c[3])) 
+self.p_expr[2] = Product(self.p_expr[0],(self.p_v[3],self.p_c[3],self.p_c[2])) 
+self.p_expr[0] = trigsimp(self.p_expr[0]) 
+self.p_c[3] = Integer(1) 
+self.p_expr[0] = self.p_expr[3] + self.p_expr[3] 
+self.p_expr[3] = Product(self.p_expr[0],(self.p_v[1],self.p_c[2],self.p_c[0])) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[3],self.p_c[3],self.p_c[2])) 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_c[1] = Integer(9) 
+self.p_expr[0] = Product(self.p_expr[0],(self.p_v[0],self.p_c[2],self.p_c[1])) 
+self.p_expr[0] = Product(self.p_expr[0],(self.p_v[3],self.p_c[1],self.p_c[3])) 
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_expr[0] = atan(self.p_expr[2]) 
+self.p_expr[2] = self.p_v[2] 
+self.p_v[3] = Symbol('a') 
+self.p_c[2] = Integer(6) 
+self.p_v[0] = Symbol('a') 
+self.p_v[1] = Symbol('y') 
+self.p_c[3] = Integer(7) 
+self.p_c[1] = Integer(0) 
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_c[0] = Integer(7) 
+self.p_expr[1].evalf() 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[1],self.p_c[2],self.p_c[3])) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[1] 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[2])) 
+self.p_expr[0] = Sum(self.p_expr[3],(self.p_v[3],self.p_c[0],self.p_c[2])) 
+self.p_expr[3] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_expr[3] = Product(self.p_expr[3],(self.p_v[3],self.p_c[0],self.p_c[2])) 
+self.p_expr[3] = Sum(self.p_expr[3],(self.p_v[1],self.p_c[0],self.p_c[1])) 
+self.p_expr[3] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_c[2] = Integer(8) 
+self.p_expr[0] = Product(self.p_expr[3],(self.p_v[2],self.p_c[2],self.p_c[2])) 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[1])) 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[2],self.p_c[2],self.p_c[1])) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[1],self.p_c[2],self.p_c[1])) 
+self.p_expr[0] = self.p_expr[1] / self.p_expr[1] 
+self.p_expr[3] = expand_func(self.p_expr[2]) 
+self.p_c[2] = Integer(0) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[1],self.p_c[3],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[3] = trigsimp(self.p_expr[3]) 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[2],self.p_c[2],self.p_c[3])) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[2],self.p_c[0],self.p_c[2])) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[2] 

@@ -1,0 +1,23 @@
+self.p_c[3] = Integer(9) 
+self.p_v[3] = Symbol('d') 
+self.p_v[0] = Symbol('a') 
+self.p_v[2] = Symbol('i',positive=True) 
+self.p_term[1] = self.p_c[3] * self.p_v[3] ** self.p_c[3] 
+self.p_c[0] = Integer(7) 
+self.p_expr[1] = self.p_v[3] 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[0])) 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[0])) 
+self.p_expr[1] = self.p_c[3] 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] / self.p_expr[1] 
+self.p_expr[2] = expand(self.p_expr[1],force=True) 
+self.p_expr[3] = self.p_expr[0] * self.p_expr[1] 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[3],self.p_c[3],self.p_c[0])) 
+self.p_expr[0] = collect(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[1] - self.p_expr[0] 
+self.p_c[3] = Integer(4) 
+self.p_expr[1] = trigsimp(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[0] 

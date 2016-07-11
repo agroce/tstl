@@ -1,0 +1,7 @@
+self.p_c[0] = Integer(0) 
+self.p_c[1] = Integer(1) 
+self.p_expr[0] = Rational(self.p_c[1],self.p_c[0]) 
+self.p_expr[1] = asin(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0] + self.p_expr[1] 
+self.p_expr[1] = self.p_expr[0] ** self.p_expr[0] 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[0] 

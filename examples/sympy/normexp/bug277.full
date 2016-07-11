@@ -1,0 +1,20 @@
+self.p_c[0] = Integer(6) 
+self.p_c[2] = Integer(1) 
+self.p_v[2] = Symbol('e',positive=True) 
+self.p_expr[2] = E 
+self.p_expr[1] = apart(self.p_expr[2]) 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[2],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[0] = collect(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[0] 
+self.p_expr[1] = collect(self.p_expr[3],self.p_expr[2]) 
+self.p_term[0] = self.p_c[2] * self.p_v[2] ** self.p_c[0] 
+self.p_expr[0] = self.p_expr[1] ** self.p_expr[1] 
+self.p_expr[2] = combsimp(self.p_expr[1]) 
+self.p_expr[3] = factor(self.p_expr[1]) 
+self.p_c[3] = Integer(9) 
+self.p_expr[1] = self.p_expr[1] * self.p_expr[3] 
+self.p_expr[1] = self.p_expr[3] - self.p_expr[3] 
+self.p_expr[3] = Product(self.p_expr[3],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[0] 
+self.p_expr[3] = self.p_expr[2] % self.p_expr[3] 

@@ -1,0 +1,66 @@
+self.p_v[1] = Symbol('i',positive=True) 
+self.p_v[0] = Symbol('d') 
+self.p_v[2] = Symbol('h',positive=True) 
+self.p_expr[1] = pi 
+self.p_expr[2] = expand_func(self.p_expr[1]) 
+self.p_expr[1] = atan(self.p_expr[1]) 
+self.p_expr[3] = trigsimp(self.p_expr[2]) 
+self.p_expr[0] = powdenest(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[3] * self.p_expr[1] 
+self.p_expr[1] = expand_trig(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[0].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2] * self.p_expr[3] 
+self.p_expr[3] = collect(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[2] = expand_power_exp(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[0] = self.p_expr[3] / self.p_expr[0] 
+self.p_expr[3] = self.p_expr[3] ** self.p_expr[3] 
+self.p_expr[3].evalf() 
+self.p_expr[3] = simplify(self.p_expr[1]) 
+self.p_expr[1] = expand_power_base(self.p_expr[0]) 
+self.p_expr[2] = expand_power_base(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1] / self.p_expr[2] 
+self.p_expr[1] = self.p_expr[3] - self.p_expr[3] 
+self.p_expr[3] = self.p_expr[1].doit() 
+self.p_expr[1] = asin(self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[2] * self.p_expr[3] 
+self.p_expr[2] = collect(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[2] - self.p_expr[1] 
+self.p_expr[1] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = factorial(self.p_expr[0]) 
+self.p_expr[3] = collect(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[0] = simplify(self.p_expr[3]) 
+self.p_expr[0].evalf() 
+self.p_expr[0] = combsimp(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[1] 
+self.p_expr[1].evalf() 
+self.p_expr[3] = self.p_expr[0] ** self.p_expr[3] 
+self.p_expr[3] = cancel(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[0] + self.p_expr[3] 
+self.p_expr[3] = logcombine(self.p_expr[3]) 
+self.p_expr[3] = asin(self.p_expr[0]) 
+self.p_expr[0] = factor(self.p_expr[1]) 
+self.p_c[0] = Integer(3) 
+self.p_expr[1] = self.p_expr[0] ** self.p_expr[0] 
+self.p_expr[0] = self.p_expr[1] * self.p_expr[3] 
+self.p_expr[3] = Product(self.p_expr[3],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = expand_log(self.p_expr[1]) 
+self.p_expr[1] = factor(self.p_expr[0]) 
+self.p_expr[3] = collect(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[3] = Product(self.p_expr[0],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = expand_func(self.p_expr[1]) 
+self.p_expr[2] = expand(self.p_expr[2]) 
+self.p_c[1] = Integer(4) 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[1],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[1],self.p_c[0])) 
+self.p_expr[2] = expand_power_base(self.p_expr[0]) 
+self.p_term[1] = self.p_c[1] * self.p_v[2] ** self.p_c[0] 
+self.p_expr[1] = sqrt(self.p_expr[3]) 
+self.p_expr[0] = collect(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[0],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[1] ** self.p_expr[1] 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[2] 

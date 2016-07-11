@@ -1,0 +1,7 @@
+self.p_expr[1] = I 
+self.p_v[2] = Symbol('b') 
+self.p_c[3] = Integer(9) 
+self.p_expr[3] = expand_log(self.p_expr[1]) 
+self.p_expr[0] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_expr[3] = sin(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[3] 

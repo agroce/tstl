@@ -1,0 +1,12 @@
+self.p_v[1] = Symbol('g',positive=True) 
+self.p_c[3] = Integer(1) 
+self.p_expr[1] = pi 
+self.p_expr[3] = cancel(self.p_expr[1]) 
+self.p_expr[1] = self.p_c[3] 
+self.p_v[3] = Symbol('f',positive=True) 
+self.p_v[0] = Symbol('l',positive=True) 
+self.p_expr[0] = combsimp(self.p_expr[1]) 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[3] = cos(self.p_expr[0]) 
+self.p_expr[0] = expand(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[1] 

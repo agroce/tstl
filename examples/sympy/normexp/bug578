@@ -1,0 +1,10 @@
+self.p_v[1] = Symbol('j',positive=True) 
+self.p_v[0] = Symbol('f',positive=True) 
+self.p_c[0] = Integer(3) 
+self.p_v[2] = Symbol('c') 
+self.p_expr[0] = I 
+self.p_expr[3] = Rational(self.p_c[0],self.p_c[0]) 
+self.p_expr[2] = sin(self.p_expr[0]) 
+self.p_expr[0] = expand_trig(self.p_expr[2]) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[2] % self.p_expr[0] 

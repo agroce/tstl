@@ -1,0 +1,22 @@
+self.p_v[2] = Symbol('a') 
+self.p_v[3] = Symbol('k',positive=True) 
+self.p_v[0] = Symbol('h',positive=True) 
+self.p_expr[1] = self.p_v[0] 
+self.p_expr[2] = expand(self.p_expr[1],force=True) 
+self.p_expr[1] = self.p_expr[1].doit() 
+self.p_c[3] = Integer(2) 
+self.p_expr[1] = self.p_expr[2] - self.p_expr[2] 
+self.p_expr[2] = powsimp(self.p_expr[1]) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[0] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[2] = self.p_expr[2] + self.p_expr[0] 
+self.p_expr[0] = powdenest(self.p_expr[3]) 
+self.p_expr[1] = atan(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0] - self.p_expr[1] 
+self.p_expr[2] = expand_power_base(self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[2] * self.p_expr[3] 
+self.p_expr[2] = self.p_expr[2] ** self.p_expr[1] 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[2] = expand_power_exp(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[3] 

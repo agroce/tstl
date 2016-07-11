@@ -1,0 +1,19 @@
+self.p_c[1] = Integer(10) 
+self.p_expr[2] = Rational(self.p_c[1],self.p_c[1]) 
+self.p_v[3] = Symbol('d') 
+self.p_expr[3] = sqrt(self.p_expr[2]) 
+self.p_expr[0] = expand(self.p_expr[3],force=True) 
+self.p_expr[3] = self.p_c[1] 
+self.p_c[2] = Integer(0) 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_expr[2] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = combsimp(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[3] ** self.p_expr[1] 
+self.p_expr[3] = powdenest(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2] / self.p_expr[0] 
+self.p_expr[2] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = self.p_expr[2] * self.p_expr[2] 
+self.p_expr[1] = powsimp(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] * self.p_expr[3] 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[0] 

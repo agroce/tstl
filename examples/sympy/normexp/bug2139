@@ -1,0 +1,8 @@
+self.p_v[2] = Symbol('d') 
+self.p_c[3] = Integer(7) 
+self.p_c[0] = Integer(4) 
+self.p_expr[2] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = Rational(self.p_c[3],self.p_c[0]) 
+self.p_v[0] = Symbol('d') 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[3] 

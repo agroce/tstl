@@ -1,0 +1,6 @@
+self.p_expr[1] = E 
+self.p_c[1] = Integer(6) 
+self.p_v[3] = Symbol('d') 
+self.p_expr[0] = expand_power_exp(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[1]) 

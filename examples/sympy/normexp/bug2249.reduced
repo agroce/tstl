@@ -1,0 +1,6 @@
+self.p_v[3] = Symbol('h',positive=True) 
+self.p_c[0] = Integer(6) 
+self.p_c[3] = Integer(6) 
+self.p_expr[0] = self.p_c[0] 
+self.p_expr[1] = Sum(self.p_expr[0],(self.p_v[3],self.p_c[3],self.p_c[0])) 
+self.p_expr[0] = self.p_expr[0] % self.p_expr[1] 

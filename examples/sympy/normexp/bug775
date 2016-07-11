@@ -1,0 +1,18 @@
+self.p_v[1] = Symbol('c') 
+self.p_c[1] = Integer(0) 
+self.p_term[2] = self.p_c[1] * self.p_v[1] ** self.p_c[1] 
+self.p_v[0] = Symbol('g',positive=True) 
+self.p_expr[3] = E 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[1],self.p_c[1],self.p_c[1])) 
+self.p_v[3] = Symbol('f',positive=True) 
+self.p_expr[0] = collect(self.p_expr[3],self.p_expr[3]) 
+self.p_c[1] = Integer(7) 
+self.p_expr[2] = logcombine(self.p_expr[1]) 
+self.p_expr[3] = expand_func(self.p_expr[1]) 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[1],self.p_c[1],self.p_c[1])) 
+self.p_poly[0] = self.p_term[2] 
+self.p_expr[2] = factorial(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[0] * self.p_expr[1] 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[1] = self.p_expr[3] + self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[0] 

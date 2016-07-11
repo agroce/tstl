@@ -1,0 +1,20 @@
+self.p_c[1] = Integer(9) 
+self.p_c[3] = Integer(7) 
+self.p_expr[1] = self.p_c[3] 
+self.p_expr[3] = self.p_c[3] 
+self.p_expr[0] = expand_trig(self.p_expr[3]) 
+self.p_expr[2] = Rational(self.p_c[1],self.p_c[1]) 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[2] = self.p_expr[0] - self.p_expr[2] 
+self.p_expr[0] = expand_power_exp(self.p_expr[1]) 
+self.p_expr[3].evalf() 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_v[1] = Symbol('l',positive=True) 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[1],self.p_c[1],self.p_c[3])) 
+self.p_expr[0] = self.p_expr[2] ** self.p_expr[3] 
+self.p_expr[3] = expand_func(self.p_expr[1]) 
+self.p_v[2] = Symbol('l',positive=True) 
+self.p_expr[2] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[1],self.p_c[1])) 
+self.p_expr[1] = self.p_expr[2] + self.p_expr[2] 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[1],self.p_c[3],self.p_c[3])) 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[2] 

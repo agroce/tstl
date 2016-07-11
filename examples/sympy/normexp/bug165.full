@@ -1,0 +1,29 @@
+self.p_expr[2] = pi 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_expr[1] = powdenest(self.p_expr[2]) 
+self.p_expr[2] = expand_trig(self.p_expr[2]) 
+self.p_expr[2] = expand_func(self.p_expr[2]) 
+self.p_c[0] = Integer(6) 
+self.p_expr[3] = self.p_c[0] 
+self.p_expr[2] = apart(self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[3] ** self.p_expr[2] 
+self.p_expr[3] = factor(self.p_expr[1]) 
+self.p_c[3] = Integer(10) 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[3],self.p_c[0])) 
+self.p_expr[2] = simplify(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[2] = expand_power_base(self.p_expr[0]) 
+self.p_expr[0] = cos(self.p_expr[3]) 
+self.p_expr[3] = sin(self.p_expr[3]) 
+self.p_v[0] = Symbol('g',positive=True) 
+self.p_expr[3] = collect(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[3] = logcombine(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[1] + self.p_expr[1] 
+self.p_v[1] = Symbol('d') 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[1],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[2] - self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] - self.p_expr[2] 
+self.p_expr[1] = self.p_expr[3] + self.p_expr[0] 
+self.p_expr[2] = powsimp(self.p_expr[0]) 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[3] 

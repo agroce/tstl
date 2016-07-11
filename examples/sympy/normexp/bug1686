@@ -1,0 +1,20 @@
+self.p_c[1] = Integer(3) 
+self.p_v[2] = Symbol('z') 
+self.p_v[3] = Symbol('j',positive=True) 
+self.p_expr[1] = Rational(self.p_c[1],self.p_c[1]) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_c[1] = Integer(1) 
+self.p_expr[1] = cancel(self.p_expr[1]) 
+self.p_expr[2] = expand(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[0] + self.p_expr[0] 
+self.p_v[3] = Symbol('b') 
+self.p_expr[0] = apart(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[2] = simplify(self.p_expr[1]) 
+self.p_expr[1] = logcombine(self.p_expr[1]) 
+self.p_expr[0] = cos(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] * self.p_expr[3] 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[1] 

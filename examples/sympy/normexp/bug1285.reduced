@@ -1,0 +1,8 @@
+self.p_expr[0] = E 
+self.p_expr[3] = combsimp(self.p_expr[0]) 
+self.p_v[0] = Symbol('g',positive=True) 
+self.p_c[0] = Integer(0) 
+self.p_expr[2] = sqrt(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] / self.p_expr[2] 
+self.p_expr[1] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = self.p_expr[0] % self.p_expr[1] 

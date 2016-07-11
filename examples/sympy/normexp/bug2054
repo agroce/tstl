@@ -1,0 +1,19 @@
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_c[2] = Integer(10) 
+self.p_c[0] = Integer(6) 
+self.p_c[1] = Integer(8) 
+self.p_expr[0] = self.p_c[1] 
+self.p_term[0] = self.p_c[0] * self.p_v[2] ** self.p_c[2] 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[0] 
+self.p_expr[0] = powdenest(self.p_expr[0]) 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[2],self.p_c[2],self.p_c[0])) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_v[2] = Symbol('g',positive=True) 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[2],self.p_c[0],self.p_c[1])) 
+self.p_term[2] = self.p_c[0] * self.p_v[2] ** self.p_c[0] 
+self.p_expr[0] = Rational(self.p_c[0],self.p_c[1]) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[2],self.p_c[0],self.p_c[2])) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_poly[3] = self.p_term[2] 
+self.p_expr[0] = self.p_expr[0] + self.p_expr[0] 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[3] 

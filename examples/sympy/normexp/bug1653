@@ -1,0 +1,15 @@
+self.p_v[3] = Symbol('c') 
+self.p_v[2] = Symbol('c') 
+self.p_v[1] = Symbol('l',positive=True) 
+self.p_v[0] = Symbol('y') 
+self.p_expr[1] = I 
+self.p_expr[0] = sqrt(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[1] + self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_c[1] = Integer(7) 
+self.p_expr[3] = Rational(self.p_c[1],self.p_c[1]) 
+self.p_expr[2] = Product(self.p_expr[0],(self.p_v[2],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = Product(self.p_expr[1],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_c[3] = Integer(2) 
+self.p_expr[1] = self.p_expr[3] % self.p_expr[0] 

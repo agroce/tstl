@@ -1,0 +1,46 @@
+self.p_c[1] = Integer(1) 
+self.p_v[2] = Symbol('e',positive=True) 
+self.p_expr[1] = self.p_c[1] 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[1] 
+self.p_expr[0] = self.p_expr[1] - self.p_expr[1] 
+self.p_expr[1] = self.p_expr[3] / self.p_expr[1] 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[2],self.p_c[1],self.p_c[1])) 
+self.p_expr[1] = expand(self.p_expr[1],force=True) 
+self.p_expr[3] = self.p_expr[0] ** self.p_expr[3] 
+self.p_expr[0] = powsimp(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[1] = simplify(self.p_expr[1]) 
+self.p_expr[2] = collect(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[2].doit() 
+self.p_expr[0] = self.p_expr[1] / self.p_expr[3] 
+self.p_v[1] = Symbol('a') 
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_expr[2] = self.p_expr[2] + self.p_expr[2] 
+self.p_expr[2] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[1],self.p_c[1])) 
+self.p_expr[1] = cos(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[2] % self.p_expr[2] 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[1] + self.p_expr[0] 
+self.p_expr[1] = apart(self.p_expr[3]) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[1],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[2] = powdenest(self.p_expr[3]) 
+self.p_term[3] = self.p_c[1] * self.p_v[1] ** self.p_c[1] 
+self.p_expr[0] = cancel(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[1] 
+self.p_expr[2] = self.p_expr[2] * self.p_expr[2] 
+self.p_expr[0] = self.p_expr[0] / self.p_expr[2] 
+self.p_expr[0] = expand_func(self.p_expr[2]) 
+self.p_expr[2] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[1],self.p_c[1])) 
+self.p_c[2] = Integer(2) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[1] 
+self.p_expr[2] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[0] 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[1],self.p_c[2],self.p_c[1])) 
+self.p_expr[2] = self.p_expr[0] + self.p_expr[0] 
+self.p_expr[0] = Rational(self.p_c[1],self.p_c[2]) 
+self.p_expr[1] = Product(self.p_expr[2],(self.p_v[1],self.p_c[2],self.p_c[1])) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[2] 

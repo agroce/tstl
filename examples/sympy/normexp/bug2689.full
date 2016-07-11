@@ -1,0 +1,39 @@
+self.p_expr[0] = I 
+self.p_v[1] = Symbol('g',positive=True) 
+self.p_c[0] = Integer(1) 
+self.p_v[3] = Symbol('h',positive=True) 
+self.p_expr[1] = combsimp(self.p_expr[0]) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1].doit() 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[2] = powdenest(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = apart(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[3] 
+self.p_expr[3] = apart(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] / self.p_expr[3] 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3] - self.p_expr[2] 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = sin(self.p_expr[1]) 
+self.p_v[2] = Symbol('l',positive=True) 
+self.p_v[1] = Symbol('a') 
+self.p_expr[3] = self.p_expr[1] * self.p_expr[0] 
+self.p_expr[0] = collect(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[1] = expand_power_exp(self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[3] * self.p_expr[1] 
+self.p_expr[1] = expand_func(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[3] = expand(self.p_expr[3],force=True) 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = self.p_expr[0] ** self.p_expr[0] 
+self.p_term[2] = self.p_c[0] * self.p_v[3] ** self.p_c[0] 
+self.p_expr[1] = self.p_expr[1] - self.p_expr[3] 
+self.p_c[2] = Integer(9) 
+self.p_expr[2] = self.p_expr[3] / self.p_expr[2] 
+self.p_expr[2] = expand_trig(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[2] 

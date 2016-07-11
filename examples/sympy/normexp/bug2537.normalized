@@ -1,0 +1,5 @@
+self.p_expr[1] = I 
+self.p_expr[0] = self.p_expr[1] + self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] ** self.p_expr[0] 
+self.p_expr[1] = asin(self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[0] % self.p_expr[1] 

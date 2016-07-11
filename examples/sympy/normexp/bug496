@@ -1,0 +1,15 @@
+self.p_c[1] = Integer(9) 
+self.p_v[0] = Symbol('g',positive=True) 
+self.p_expr[2] = pi 
+self.p_expr[0] = combsimp(self.p_expr[2]) 
+self.p_expr[3] = collect(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[2] = sqrt(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] + self.p_expr[2] 
+self.p_expr[1] = combsimp(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[3] = E 
+self.p_expr[1] = cancel(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3] % self.p_expr[1] 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[2] + self.p_expr[2] 
+self.p_expr[0] = apart(self.p_expr[0]) 

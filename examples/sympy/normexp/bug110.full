@@ -1,0 +1,9 @@
+self.p_v[0] = Symbol('c') 
+self.p_v[2] = Symbol('y') 
+self.p_c[3] = Integer(3) 
+self.p_term[0] = self.p_c[3] * self.p_v[0] ** self.p_c[3] 
+self.p_c[1] = Integer(8) 
+self.p_v[1] = Symbol('g',positive=True) 
+self.p_expr[0] = E 
+self.p_expr[3] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[1],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[3] 

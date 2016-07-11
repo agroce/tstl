@@ -1,0 +1,18 @@
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_v[2] = Symbol('x') 
+self.p_v[1] = Symbol('e',positive=True) 
+self.p_expr[2] = self.p_v[3] 
+self.p_expr[3] = expand_log(self.p_expr[2]) 
+self.p_expr[0] = expand(self.p_expr[3]) 
+self.p_expr[3] = acos(self.p_expr[2]) 
+self.p_c[0] = Integer(1) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[3] 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = factor(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[2] 
+self.p_expr[0] = self.p_expr[3] + self.p_expr[1] 
+self.p_expr[3] = expand_power_exp(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[0] % self.p_expr[2] 

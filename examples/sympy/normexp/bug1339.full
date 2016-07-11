@@ -1,0 +1,12 @@
+self.p_v[0] = Symbol('x') 
+self.p_c[3] = Integer(3) 
+self.p_v[3] = Symbol('a') 
+self.p_c[0] = Integer(6) 
+self.p_expr[0] = Rational(self.p_c[0],self.p_c[3]) 
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_term[0] = self.p_c[3] * self.p_v[3] ** self.p_c[0] 
+self.p_expr[2] = self.p_c[3] 
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[0] 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[1] 

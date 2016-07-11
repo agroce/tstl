@@ -1,0 +1,7 @@
+self.p_c[0] = Integer(5) 
+self.p_v[0] = Symbol('h',positive=True) 
+self.p_expr[0] = Rational(self.p_c[0],self.p_c[0]) 
+self.p_expr[1] = self.p_expr[0] - self.p_expr[0] 
+self.p_expr[0] = Product(self.p_expr[1],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[1] 
+self.p_expr[0] = apart(self.p_expr[1]) 

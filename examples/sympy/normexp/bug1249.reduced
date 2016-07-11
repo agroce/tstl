@@ -1,0 +1,7 @@
+self.p_v[3] = Symbol('a') 
+self.p_expr[3] = I 
+self.p_expr[2] = expand_power_exp(self.p_expr[3]) 
+self.p_c[3] = Integer(2) 
+self.p_expr[3] = Product(self.p_expr[3],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = asin(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[3] 

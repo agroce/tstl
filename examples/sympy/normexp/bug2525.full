@@ -1,0 +1,89 @@
+self.p_v[2] = Symbol('z') 
+self.p_v[3] = Symbol('f',positive=True) 
+self.p_v[0] = Symbol('i',positive=True) 
+self.p_v[1] = Symbol('e',positive=True) 
+self.p_c[1] = Integer(9) 
+self.p_c[0] = Integer(9) 
+self.p_term[2] = self.p_c[1] * self.p_v[2] ** self.p_c[0] 
+self.p_expr[2] = I 
+self.p_expr[3] = expand_power_exp(self.p_expr[2]) 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[1],self.p_c[0],self.p_c[1])) 
+self.p_expr[2] = collect(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[1] 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3] ** self.p_expr[1] 
+self.p_expr[2] = collect(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[2] = factor(self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3] ** self.p_expr[0] 
+self.p_expr[3] = powdenest(self.p_expr[3]) 
+self.p_expr[0] = logcombine(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] ** self.p_expr[2] 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[0] 
+self.p_expr[1] = expand_power_base(self.p_expr[2]) 
+self.p_expr[2] = Product(self.p_expr[3],(self.p_v[1],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = Product(self.p_expr[2],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_v[2] = Symbol('i',positive=True) 
+self.p_expr[2] = sin(self.p_expr[3]) 
+self.p_c[3] = Integer(4) 
+self.p_term[0] = self.p_c[0] * self.p_v[3] ** self.p_c[1] 
+self.p_expr[3] = self.p_expr[2] + self.p_expr[3] 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[3],self.p_c[0],self.p_c[3])) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = Sum(self.p_expr[1],(self.p_v[2],self.p_c[3],self.p_c[1])) 
+self.p_expr[1] = self.p_c[3] 
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_v[0] = Symbol('k',positive=True) 
+self.p_term[1] = self.p_c[0] * self.p_v[3] ** self.p_c[0] 
+self.p_c[1] = Integer(2) 
+self.p_v[1] = Symbol('k',positive=True) 
+self.p_poly[2] = self.p_term[0] + self.p_term[0] 
+self.p_poly[1] = self.p_term[0] + self.p_term[1] 
+self.p_term[1] = self.p_c[3] * self.p_v[2] ** self.p_c[1] 
+self.p_v[3] = Symbol('k',positive=True) 
+self.p_poly[0] = self.p_term[0] + self.p_term[0] 
+self.p_c[2] = Integer(5) 
+self.p_poly[3] = self.p_term[0] 
+self.p_term[3] = self.p_c[2] * self.p_v[1] ** self.p_c[0] 
+self.p_v[2] = Symbol('e',positive=True) 
+self.p_term[0] = self.p_c[3] * self.p_v[1] ** self.p_c[1] 
+self.p_c[3] = Integer(3) 
+self.p_c[0] = Integer(2) 
+self.p_c[2] = Integer(6) 
+self.p_v[1] = Symbol('d') 
+self.p_c[1] = Integer(8) 
+self.p_expr[3].evalf() 
+self.p_expr[3] = expand_trig(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[3].doit() 
+self.p_expr[3] = Sum(self.p_expr[2],(self.p_v[1],self.p_c[1],self.p_c[3])) 
+self.p_expr[2] = expand_power_exp(self.p_expr[2]) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[3],self.p_c[2],self.p_c[1])) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[1],self.p_c[2],self.p_c[2])) 
+self.p_expr[2] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[0],self.p_c[2])) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_v[1] = Symbol('z') 
+self.p_expr[2] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[1] = Sum(self.p_expr[1],(self.p_v[0],self.p_c[1],self.p_c[3])) 
+self.p_expr[3] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[0])) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[2],self.p_c[1],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[0] - self.p_expr[0] 
+self.p_expr[0] = logcombine(self.p_expr[2]) 
+self.p_c[0] = Integer(1) 
+self.p_expr[2] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[2],self.p_c[3])) 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[0] = Product(self.p_expr[2],(self.p_v[1],self.p_c[2],self.p_c[3])) 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[2],self.p_c[0],self.p_c[1])) 
+self.p_expr[2] = factor(self.p_expr[1]) 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = Product(self.p_expr[3],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[1] + self.p_expr[2] 
+self.p_expr[2] = self.p_expr[3] / self.p_expr[2] 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[0],self.p_c[1],self.p_c[2])) 
+self.p_expr[0] = self.p_expr[1] + self.p_expr[3] 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[1] 

@@ -1,0 +1,5 @@
+self.p_expr[3] = E 
+self.p_expr[0] = expand_power_base(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0] ** self.p_expr[0] 
+self.p_expr[2] = expand(self.p_expr[3],force=True) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[3]) 

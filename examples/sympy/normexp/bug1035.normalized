@@ -1,0 +1,5 @@
+self.p_c[0] = Integer(1) 
+self.p_v[0] = Symbol('a') 
+self.p_expr[0] = Rational(self.p_c[0],self.p_c[0]) 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = self.p_expr[0] % self.p_expr[1] 

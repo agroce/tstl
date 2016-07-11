@@ -1,0 +1,20 @@
+self.p_v[0] = Symbol('e',positive=True) 
+self.p_c[3] = Integer(8) 
+self.p_expr[1] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_expr[0] = tan(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[1] / self.p_expr[1] 
+self.p_expr[2] = self.p_expr[1].doit() 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[1] 
+self.p_c[1] = Integer(8) 
+self.p_expr[1] = collect(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[0] * self.p_expr[1] 
+self.p_expr[3] = self.p_expr[1] / self.p_expr[3] 
+self.p_expr[0] = Rational(self.p_c[1],self.p_c[1]) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[1] / self.p_expr[1] 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[0],self.p_c[1],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[1],self.p_c[3])) 
+self.p_expr[2] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[2] = self.p_expr[3] % self.p_expr[2] 

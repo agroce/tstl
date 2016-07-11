@@ -1,0 +1,1 @@
+AttributeError("'NaN' object has no attribute '_mpf_'",)

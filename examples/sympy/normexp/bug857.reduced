@@ -1,0 +1,7 @@
+self.p_v[0] = Symbol('y') 
+self.p_c[3] = Integer(8) 
+self.p_expr[0] = I 
+self.p_expr[2] = tan(self.p_expr[0]) 
+self.p_c[1] = Integer(2) 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[1],self.p_c[3])) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[1] 

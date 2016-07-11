@@ -1,0 +1,9 @@
+self.p_c[3] = Integer(2) 
+self.p_c[1] = Integer(5) 
+self.p_expr[0] = self.p_c[3] 
+self.p_expr[1] = tan(self.p_expr[0]) 
+self.p_v[0] = Symbol('f',positive=True) 
+self.p_expr[3] = self.p_expr[1] ** self.p_expr[0] 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[1] 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[2] % self.p_expr[1] 

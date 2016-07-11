@@ -1,0 +1,21 @@
+self.p_v[3] = Symbol('h',positive=True) 
+self.p_v[0] = Symbol('a') 
+self.p_v[1] = Symbol('y') 
+self.p_expr[2] = E 
+self.p_expr[3] = logcombine(self.p_expr[2]) 
+self.p_expr[0] = acos(self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[2] % self.p_expr[3] 
+self.p_expr[2] = atan(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[1] / self.p_expr[2] 
+self.p_expr[2] = apart(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2].doit() 
+self.p_expr[1] = asin(self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[2] / self.p_expr[0] 
+self.p_expr[2] = self.p_expr[2] ** self.p_expr[1] 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[3] 
+self.p_expr[2] = sqrt(self.p_expr[1]) 
+self.p_expr[3] = powdenest(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[0] % self.p_expr[0] 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[3] 

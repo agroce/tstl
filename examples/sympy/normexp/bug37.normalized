@@ -1,0 +1,6 @@
+self.p_c[0] = Integer(0) 
+self.p_v[0] = Symbol('a') 
+self.p_expr[0] = self.p_c[0] 
+self.p_expr[1] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = self.p_expr[1] + self.p_expr[1] 
+self.p_expr[0].evalf() 

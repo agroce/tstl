@@ -1,0 +1,12 @@
+self.p_expr[0] = I 
+self.p_expr[2] = expand_func(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[2] 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[0] 
+self.p_expr[2] = self.p_expr[1] / self.p_expr[3] 
+self.p_expr[3] = cos(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[2] = sin(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[0] 
+self.p_expr[1] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[2] = trigsimp(self.p_expr[1]) 

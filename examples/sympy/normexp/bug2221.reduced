@@ -1,0 +1,9 @@
+self.p_c[3] = Integer(6) 
+self.p_c[0] = Integer(10) 
+self.p_v[0] = Symbol('y') 
+self.p_v[3] = Symbol('g',positive=True) 
+self.p_expr[0] = self.p_v[0] 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[3],self.p_c[3],self.p_c[0])) 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[1] 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[0],self.p_c[3],self.p_c[0])) 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[0] 

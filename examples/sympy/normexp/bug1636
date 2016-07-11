@@ -1,0 +1,42 @@
+self.p_c[3] = Integer(5) 
+self.p_c[1] = Integer(7) 
+self.p_v[1] = Symbol('e',positive=True) 
+self.p_expr[3] = I 
+self.p_expr[1] = expand_log(self.p_expr[3]) 
+self.p_term[2] = self.p_c[3] * self.p_v[1] ** self.p_c[1] 
+self.p_expr[3] = self.p_expr[1] ** self.p_expr[3] 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[3] 
+self.p_expr[3] = self.p_expr[3].doit() 
+self.p_v[3] = Symbol('y') 
+self.p_v[0] = Symbol('h',positive=True) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[0] 
+self.p_expr[0] = self.p_expr[1] + self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = factor(self.p_expr[3]) 
+self.p_expr[2] = asin(self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[2] - self.p_expr[3] 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[1],self.p_c[1],self.p_c[3])) 
+self.p_expr[1] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[1],self.p_c[3])) 
+self.p_expr[2] = powsimp(self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[2] = self.p_expr[3] ** self.p_expr[3] 
+self.p_expr[1] = apart(self.p_expr[3]) 
+self.p_expr[3] = Sum(self.p_expr[3],(self.p_v[1],self.p_c[3],self.p_c[1])) 
+self.p_v[0] = Symbol('l',positive=True) 
+self.p_expr[3] = Sum(self.p_expr[0],(self.p_v[1],self.p_c[3],self.p_c[1])) 
+self.p_expr[0] = factor(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[2] * self.p_expr[2] 
+self.p_expr[2] = Product(self.p_expr[0],(self.p_v[1],self.p_c[1],self.p_c[3])) 
+self.p_expr[0] = Product(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = cos(self.p_expr[0]) 
+self.p_expr[0] = expand_log(self.p_expr[1]) 
+self.p_term[0] = self.p_c[3] * self.p_v[1] ** self.p_c[1] 
+self.p_expr[1] = collect(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[2] = Product(self.p_expr[0],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_expr[0] = factorial(self.p_expr[1]) 
+self.p_v[2] = Symbol('i',positive=True) 
+self.p_term[1] = self.p_c[1] * self.p_v[2] ** self.p_c[3] 
+self.p_c[2] = Integer(1) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[2] 

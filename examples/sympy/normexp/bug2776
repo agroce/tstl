@@ -1,0 +1,14 @@
+self.p_c[3] = Integer(6) 
+self.p_v[0] = Symbol('d') 
+self.p_c[2] = Integer(5) 
+self.p_expr[0] = Rational(self.p_c[2],self.p_c[3]) 
+self.p_expr[2] = Product(self.p_expr[0],(self.p_v[0],self.p_c[3],self.p_c[2])) 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_c[2] = Integer(7) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[2] 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[2] = cos(self.p_expr[2]) 
+self.p_expr[0] = collect(self.p_expr[2],self.p_expr[0]) 
+self.p_c[1] = Integer(5) 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[2] 

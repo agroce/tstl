@@ -1,0 +1,30 @@
+self.p_expr[1] = I 
+self.p_expr[3] = logcombine(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3] - self.p_expr[3] 
+self.p_v[0] = Symbol('z') 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_v[1] = Symbol('j',positive=True) 
+self.p_v[3] = Symbol('f',positive=True) 
+self.p_expr[1] = powdenest(self.p_expr[3]) 
+self.p_c[0] = Integer(2) 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_expr[0] = self.p_v[2] 
+self.p_term[0] = self.p_c[0] * self.p_v[1] ** self.p_c[0] 
+self.p_expr[3] = trigsimp(self.p_expr[2]) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = asin(self.p_expr[1]) 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = self.p_expr[1] + self.p_expr[3] 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[1] = trigsimp(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] - self.p_expr[1] 
+self.p_expr[2] = self.p_expr[2] * self.p_expr[3] 
+self.p_expr[3] = self.p_expr[0] ** self.p_expr[0] 
+self.p_expr[2] = expand_func(self.p_expr[2]) 
+self.p_expr[1] = Sum(self.p_expr[1],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = cancel(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[0] + self.p_expr[3] 
+self.p_v[1] = Symbol('z') 
+self.p_expr[3] = apart(self.p_expr[2]) 

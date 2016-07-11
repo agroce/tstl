@@ -1,0 +1,9 @@
+self.p_c[3] = Integer(9) 
+self.p_v[2] = Symbol('g',positive=True) 
+self.p_expr[1] = self.p_c[3] 
+self.p_expr[3] = trigsimp(self.p_expr[1]) 
+self.p_expr[0] = atan(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_expr[0] = factor(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[2] % self.p_expr[0] 

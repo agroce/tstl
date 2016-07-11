@@ -1,0 +1,20 @@
+self.p_v[1] = Symbol('i',positive=True) 
+self.p_c[3] = Integer(9) 
+self.p_c[1] = Integer(0) 
+self.p_v[0] = Symbol('z') 
+self.p_expr[2] = pi 
+self.p_expr[3] = E 
+self.p_expr[1] = self.p_expr[2] * self.p_expr[2] 
+self.p_v[3] = Symbol('c') 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = self.p_expr[3] / self.p_expr[3] 
+self.p_expr[3] = cos(self.p_expr[2]) 
+self.p_expr[2] = sqrt(self.p_expr[3]) 
+self.p_expr[3] = sqrt(self.p_expr[0]) 
+self.p_expr[1] = Sum(self.p_expr[0],(self.p_v[1],self.p_c[3],self.p_c[3])) 
+self.p_expr[0] = self.p_expr[2] / self.p_expr[3] 
+self.p_expr[3] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[3] = expand(self.p_expr[1],force=True) 
+self.p_expr[2] = cancel(self.p_expr[3]) 
+self.p_expr[3] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[1])) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[1] 

@@ -1,0 +1,13 @@
+self.p_c[0] = Integer(4) 
+self.p_c[1] = Integer(8) 
+self.p_v[0] = Symbol('g',positive=True) 
+self.p_expr[0] = Rational(self.p_c[0],self.p_c[0]) 
+self.p_expr[1] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[0],self.p_c[1])) 
+self.p_c[1] = Integer(7) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[0],self.p_c[0],self.p_c[1])) 
+self.p_c[0] = Integer(0) 
+self.p_expr[1] = Rational(self.p_c[0],self.p_c[1]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[0] = Product(self.p_expr[0],(self.p_v[0],self.p_c[1],self.p_c[0])) 
+self.p_expr[0] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[0] = apart(self.p_expr[0]) 

@@ -1,0 +1,33 @@
+self.p_expr[3] = I 
+self.p_expr[2] = self.p_expr[3] * self.p_expr[3] 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = expand_log(self.p_expr[3]) 
+self.p_expr[0] = acos(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0] ** self.p_expr[1] 
+self.p_expr[0] = self.p_expr[2] - self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[3] 
+self.p_c[3] = Integer(2) 
+self.p_expr[2] = self.p_expr[0] * self.p_expr[3] 
+self.p_expr[3] = self.p_expr[2] + self.p_expr[2] 
+self.p_expr[1] = atan(self.p_expr[2]) 
+self.p_v[1] = Symbol('z') 
+self.p_expr[0] = collect(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = self.p_c[3] 
+self.p_expr[2] = expand_power_base(self.p_expr[0]) 
+self.p_expr[0] = E 
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_v[0] = Symbol('k',positive=True) 
+self.p_expr[1].evalf() 
+self.p_c[3] = Integer(5) 
+self.p_expr[1] = cos(self.p_expr[0]) 
+self.p_v[3] = Symbol('f',positive=True) 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[0].evalf() 
+self.p_expr[2] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_expr[3] = self.p_expr[2] / self.p_expr[2] 
+self.p_expr[0] = self.p_expr[3] / self.p_expr[3] 
+self.p_expr[2] = self.p_expr[2] / self.p_expr[0] 
+self.p_expr[2] = Product(self.p_expr[3],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_c[3] = Integer(9) 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[2] 

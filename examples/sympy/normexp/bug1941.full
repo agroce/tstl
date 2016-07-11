@@ -1,0 +1,19 @@
+self.p_v[3] = Symbol('f',positive=True) 
+self.p_c[3] = Integer(7) 
+self.p_v[1] = Symbol('k',positive=True) 
+self.p_expr[2] = I 
+self.p_expr[1] = powsimp(self.p_expr[2]) 
+self.p_c[2] = Integer(1) 
+self.p_expr[3] = powdenest(self.p_expr[2]) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[2],self.p_c[2])) 
+self.p_expr[2] = self.p_expr[0] * self.p_expr[3] 
+self.p_expr[3] = Sum(self.p_expr[0],(self.p_v[3],self.p_c[2],self.p_c[2])) 
+self.p_term[3] = self.p_c[3] * self.p_v[3] ** self.p_c[3] 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3] - self.p_expr[3] 
+self.p_term[1] = self.p_c[3] * self.p_v[1] ** self.p_c[3] 
+self.p_expr[0] = cancel(self.p_expr[1]) 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[1],self.p_c[2],self.p_c[2])) 
+self.p_poly[3] = self.p_term[1] 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[1],self.p_c[2],self.p_c[2])) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[2] 

@@ -1,0 +1,34 @@
+self.p_v[2] = Symbol('l',positive=True) 
+self.p_c[2] = Integer(7) 
+self.p_c[1] = Integer(2) 
+self.p_v[1] = Symbol('e',positive=True) 
+self.p_expr[3] = pi 
+self.p_expr[2] = logcombine(self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[2].doit() 
+self.p_expr[0] = self.p_expr[1] ** self.p_expr[3] 
+self.p_expr[1] = simplify(self.p_expr[0]) 
+self.p_expr[0] = Product(self.p_expr[2],(self.p_v[2],self.p_c[2],self.p_c[2])) 
+self.p_expr[3] = self.p_v[1] 
+self.p_v[1] = Symbol('f',positive=True) 
+self.p_c[3] = Integer(6) 
+self.p_term[1] = self.p_c[1] * self.p_v[1] ** self.p_c[1] 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[2],self.p_c[2],self.p_c[1])) 
+self.p_expr[1] = cancel(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0] + self.p_expr[0] 
+self.p_expr[0] = expand_func(self.p_expr[0]) 
+self.p_expr[0] = expand_trig(self.p_expr[1]) 
+self.p_term[0] = self.p_c[3] * self.p_v[2] ** self.p_c[1] 
+self.p_v[1] = Symbol('z') 
+self.p_v[0] = Symbol('e',positive=True) 
+self.p_expr[1] = self.p_expr[3] ** self.p_expr[0] 
+self.p_expr[0] = Sum(self.p_expr[3],(self.p_v[1],self.p_c[2],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[1] * self.p_expr[3] 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_c[0] = Integer(3) 
+self.p_expr[0] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[3],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[0] = expand_power_exp(self.p_expr[0]) 
+self.p_expr[0] = Product(self.p_expr[2],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[2],self.p_c[3])) 
+self.p_expr[2] = self.p_expr[1] - self.p_expr[2] 
+self.p_expr[1] = self.p_expr[2] % self.p_expr[1] 

@@ -1,0 +1,17 @@
+self.p_c[2] = Integer(10) 
+self.p_expr[1] = self.p_c[2] 
+self.p_expr[2] = cancel(self.p_expr[1]) 
+self.p_expr[0] = combsimp(self.p_expr[2]) 
+self.p_c[1] = Integer(6) 
+self.p_expr[2] = self.p_c[2] 
+self.p_expr[1] = sqrt(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] ** self.p_expr[1] 
+self.p_expr[1] = collect(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[2] = collect(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[3] = collect(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[0] = logcombine(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[2] = collect(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[2] 

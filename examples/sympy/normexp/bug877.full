@@ -1,0 +1,22 @@
+self.p_c[2] = Integer(1) 
+self.p_c[0] = Integer(5) 
+self.p_expr[0] = E 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[0] 
+self.p_expr[3] = powsimp(self.p_expr[2]) 
+self.p_expr[2] = expand_func(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_v[1] = Symbol('e',positive=True) 
+self.p_expr[2] = self.p_expr[2] - self.p_expr[3] 
+self.p_v[3] = Symbol('e',positive=True) 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] - self.p_expr[3] 
+self.p_v[3] = Symbol('x') 
+self.p_expr[3] = combsimp(self.p_expr[1]) 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = expand(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] * self.p_expr[1] 
+self.p_expr[3] = self.p_expr[3] + self.p_expr[2] 
+self.p_expr[1] = Product(self.p_expr[2],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = expand_log(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[2] 

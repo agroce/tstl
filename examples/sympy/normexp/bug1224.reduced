@@ -1,0 +1,12 @@
+self.p_expr[2] = E 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_c[2] = Integer(0) 
+self.p_expr[3] = trigsimp(self.p_expr[2]) 
+self.p_v[0] = Symbol('d') 
+self.p_expr[2] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = self.p_v[2] 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[1] 
+self.p_expr[2] = self.p_expr[0] - self.p_expr[2] 
+self.p_expr[1] = I 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[2] 

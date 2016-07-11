@@ -1,0 +1,25 @@
+self.p_v[0] = Symbol('l',positive=True) 
+self.p_expr[0] = I 
+self.p_v[3] = Symbol('a') 
+self.p_expr[2] = self.p_expr[0] ** self.p_expr[0] 
+self.p_expr[0] = factor(self.p_expr[0]) 
+self.p_expr[1] = factorial(self.p_expr[2]) 
+self.p_c[3] = Integer(9) 
+self.p_expr[2] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[2] / self.p_expr[2] 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[2] / self.p_expr[1] 
+self.p_expr[1] = cancel(self.p_expr[1]) 
+self.p_expr[0] = tan(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[0] ** self.p_expr[3] 
+self.p_expr[0] = logcombine(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[3] / self.p_expr[2] 
+self.p_expr[0] = pi 
+self.p_expr[3] = factor(self.p_expr[1]) 
+self.p_expr[2] = apart(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[0] * self.p_expr[0] 
+self.p_expr[3] = tan(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[1] 

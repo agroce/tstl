@@ -1,0 +1,12 @@
+self.p_v[0] = Symbol('j',positive=True) 
+self.p_expr[3] = E 
+self.p_v[3] = Symbol('c') 
+self.p_expr[0] = expand(self.p_expr[3]) 
+self.p_expr[2] = expand_power_exp(self.p_expr[3]) 
+self.p_expr[3] = asin(self.p_expr[3]) 
+self.p_expr[1] = acos(self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[0] 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_c[1] = Integer(9) 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[2],self.p_expr[0]) 

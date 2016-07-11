@@ -1,0 +1,29 @@
+self.p_c[0] = Integer(1) 
+self.p_v[2] = Symbol('b') 
+self.p_c[1] = Integer(3) 
+self.p_expr[1] = pi 
+self.p_expr[2] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[1] = simplify(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[1] / self.p_expr[2] 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[1],self.p_c[0])) 
+self.p_expr[2] = expand(self.p_expr[1],force=True) 
+self.p_expr[1] = factor(self.p_expr[2]) 
+self.p_expr[3] = Product(self.p_expr[3],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_expr[0] = cos(self.p_expr[3]) 
+self.p_expr[3] = pi 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[1] * self.p_expr[3] 
+self.p_expr[0] = acos(self.p_expr[3]) 
+self.p_expr[1] = trigsimp(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[0] 
+self.p_expr[0] = I 
+self.p_expr[3] = powdenest(self.p_expr[0]) 
+self.p_expr[0] = combsimp(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_c[2] = Integer(2) 
+self.p_term[0] = self.p_c[1] * self.p_v[2] ** self.p_c[2] 
+self.p_v[1] = Symbol('i',positive=True) 
+self.p_v[0] = Symbol('i',positive=True) 
+self.p_expr[2] = self.p_expr[3] % self.p_expr[2] 

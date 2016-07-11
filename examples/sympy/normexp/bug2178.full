@@ -1,0 +1,23 @@
+self.p_expr[1] = E 
+self.p_expr[3] = powsimp(self.p_expr[1]) 
+self.p_v[0] = Symbol('y') 
+self.p_expr[2] = self.p_expr[3] - self.p_expr[3] 
+self.p_expr[1] = apart(self.p_expr[1]) 
+self.p_v[3] = Symbol('a') 
+self.p_expr[0] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_v[1] = Symbol('c') 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_c[1] = Integer(9) 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[2] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_expr[3] = expand_func(self.p_expr[2]) 
+self.p_expr[1] = simplify(self.p_expr[0]) 
+self.p_expr[2] = factorial(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[2] 
+self.p_expr[2] = expand(self.p_expr[3],force=True) 
+self.p_expr[0] = powsimp(self.p_expr[1]) 
+self.p_expr[3] = expand(self.p_expr[0],force=True) 
+self.p_expr[0] = E 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[1] 

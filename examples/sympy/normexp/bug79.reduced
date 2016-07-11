@@ -1,0 +1,7 @@
+self.p_c[1] = Integer(5) 
+self.p_v[0] = Symbol('g',positive=True) 
+self.p_expr[0] = pi 
+self.p_expr[3] = cos(self.p_expr[0]) 
+self.p_expr[2] = Product(self.p_expr[3],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[1] = factorial(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[0] 

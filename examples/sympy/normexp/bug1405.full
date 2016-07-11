@@ -1,0 +1,29 @@
+self.p_v[0] = Symbol('l',positive=True) 
+self.p_c[1] = Integer(4) 
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_c[3] = Integer(6) 
+self.p_v[3] = Symbol('c') 
+self.p_expr[1] = Rational(self.p_c[1],self.p_c[3]) 
+self.p_expr[2] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_expr[0] = tan(self.p_expr[1]) 
+self.p_expr[1] = Sum(self.p_expr[1],(self.p_v[0],self.p_c[1],self.p_c[3])) 
+self.p_term[3] = self.p_c[3] * self.p_v[2] ** self.p_c[1] 
+self.p_expr[1] = self.p_v[0] 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[2] = Sum(self.p_expr[1],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = Product(self.p_expr[2],(self.p_v[3],self.p_c[1],self.p_c[1])) 
+self.p_v[2] = Symbol('x') 
+self.p_c[1] = Integer(3) 
+self.p_expr[2] = collect(self.p_expr[2],self.p_expr[0]) 
+self.p_v[1] = Symbol('y') 
+self.p_expr[0] = sqrt(self.p_expr[1]) 
+self.p_term[2] = self.p_c[3] * self.p_v[2] ** self.p_c[1] 
+self.p_expr[1] = collect(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[2] = Product(self.p_expr[3],(self.p_v[2],self.p_c[1],self.p_c[3])) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[2],self.p_c[1],self.p_c[3])) 
+self.p_expr[1] = combsimp(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[1],self.p_c[3],self.p_c[1])) 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[1])) 
+self.p_expr[1] = self.p_expr[3] % self.p_expr[2] 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[3] 

@@ -1,0 +1,18 @@
+self.p_expr[2] = I 
+self.p_v[2] = Symbol('h',positive=True) 
+self.p_expr[0] = powsimp(self.p_expr[2]) 
+self.p_expr[1] = tan(self.p_expr[2]) 
+self.p_expr[2] = trigsimp(self.p_expr[1]) 
+self.p_expr[1] = factor(self.p_expr[1]) 
+self.p_expr[1] = expand_trig(self.p_expr[2]) 
+self.p_expr[3] = asin(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1] + self.p_expr[0] 
+self.p_expr[0] = self.p_expr[2] - self.p_expr[1] 
+self.p_expr[1] = asin(self.p_expr[2]) 
+self.p_expr[2] = cos(self.p_expr[3]) 
+self.p_c[0] = Integer(2) 
+self.p_v[0] = Symbol('i',positive=True) 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[1] 
+self.p_expr[0] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[1] = self.p_expr[3].doit() 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[0] 

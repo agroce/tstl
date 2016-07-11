@@ -1,0 +1,8 @@
+self.p_c[0] = Integer(10) 
+self.p_expr[0] = self.p_c[0] 
+self.p_expr[1] = expand_power_exp(self.p_expr[0]) 
+self.p_expr[2] = tan(self.p_expr[1]) 
+self.p_expr[3] = acos(self.p_expr[1]) 
+self.p_expr[1] = powsimp(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2] * self.p_expr[1] 
+self.p_expr[1] = self.p_expr[3] % self.p_expr[0] 

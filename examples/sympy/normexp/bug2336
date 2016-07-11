@@ -1,0 +1,12 @@
+self.p_c[0] = Integer(9) 
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_v[0] = Symbol('i',positive=True) 
+self.p_expr[2] = self.p_c[0] 
+self.p_expr[3] = trigsimp(self.p_expr[2]) 
+self.p_expr[0] = asin(self.p_expr[3]) 
+self.p_expr[1] = expand_power_exp(self.p_expr[2]) 
+self.p_expr[3] = simplify(self.p_expr[2]) 
+self.p_expr[2] = Product(self.p_expr[3],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[0],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[2] % self.p_expr[3] 

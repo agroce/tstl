@@ -1,0 +1,18 @@
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_c[0] = Integer(9) 
+self.p_v[1] = Symbol('k',positive=True) 
+self.p_c[1] = Integer(5) 
+self.p_expr[3] = self.p_v[1] 
+self.p_expr[2] = self.p_expr[3] - self.p_expr[3] 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[1],self.p_c[1],self.p_c[1])) 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[2],self.p_c[0],self.p_c[1])) 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[1])) 
+self.p_v[3] = Symbol('x') 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_term[2] = self.p_c[0] * self.p_v[2] ** self.p_c[1] 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[0],self.p_c[1])) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[1])) 
+self.p_expr[1] = asin(self.p_expr[1]) 
+self.p_expr[1] = combsimp(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[3] / self.p_expr[3] 
+self.p_expr[3] = self.p_expr[2] % self.p_expr[1] 

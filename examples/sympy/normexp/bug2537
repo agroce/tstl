@@ -1,0 +1,14 @@
+self.p_expr[2] = I 
+self.p_expr[0] = self.p_expr[2] * self.p_expr[2] 
+self.p_expr[1] = expand_power_base(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[1] 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[3] = logcombine(self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[3] 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[0] = apart(self.p_expr[2]) 
+self.p_expr[3] = acos(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[3] 

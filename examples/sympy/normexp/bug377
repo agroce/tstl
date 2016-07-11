@@ -1,0 +1,18 @@
+self.p_c[3] = Integer(6) 
+self.p_expr[2] = E 
+self.p_v[1] = Symbol('y') 
+self.p_expr[0] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_expr[1] = expand(self.p_expr[0]) 
+self.p_expr[0] = simplify(self.p_expr[2]) 
+self.p_v[0] = Symbol('g',positive=True) 
+self.p_expr[3] = expand(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[1] 
+self.p_expr[2] = E 
+self.p_expr[0] = factorial(self.p_expr[3]) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = apart(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] ** self.p_expr[3] 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[2] 

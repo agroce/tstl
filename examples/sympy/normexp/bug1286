@@ -1,0 +1,17 @@
+self.p_v[1] = Symbol('a') 
+self.p_expr[1] = pi 
+self.p_expr[0] = trigsimp(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[1] * self.p_expr[0] 
+self.p_expr[1] = self.p_expr[1] / self.p_expr[0] 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_v[3] = Symbol('d') 
+self.p_expr[1] = expand_log(self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[3] 
+self.p_expr[1] = expand_power_base(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1] - self.p_expr[0] 
+self.p_expr[0] = acos(self.p_expr[2]) 
+self.p_expr[3] = apart(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_v[0] = Symbol('a') 
+self.p_expr[0] = apart(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0] % self.p_expr[2] 

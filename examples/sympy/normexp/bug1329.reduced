@@ -1,0 +1,10 @@
+self.p_expr[0] = E 
+self.p_expr[3] = simplify(self.p_expr[0]) 
+self.p_c[1] = Integer(10) 
+self.p_expr[0] = sqrt(self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[3] - self.p_expr[0] 
+self.p_v[2] = Symbol('l',positive=True) 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[2],self.p_c[1],self.p_c[1])) 
+self.p_expr[2] = self.p_expr[0] + self.p_expr[1] 
+self.p_expr[3] = sqrt(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[0] 

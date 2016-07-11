@@ -1,0 +1,7 @@
+self.p_expr[0] = pi 
+self.p_expr[1] = self.p_expr[0] * self.p_expr[0] 
+self.p_expr[0] = self.p_expr[0] + self.p_expr[1] 
+self.p_expr[1] = self.p_expr[0] * self.p_expr[0] 
+self.p_expr[0] = self.p_expr[0] - self.p_expr[0] 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[0] 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[2]) 

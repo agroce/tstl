@@ -1,0 +1,23 @@
+self.p_v[2] = Symbol('g',positive=True) 
+self.p_v[1] = Symbol('d') 
+self.p_c[2] = Integer(7) 
+self.p_v[3] = Symbol('i',positive=True) 
+self.p_v[0] = Symbol('y') 
+self.p_c[0] = Integer(2) 
+self.p_c[3] = Integer(1) 
+self.p_term[1] = self.p_c[0] * self.p_v[0] ** self.p_c[3] 
+self.p_term[2] = self.p_c[3] * self.p_v[1] ** self.p_c[0] 
+self.p_expr[2] = self.p_c[0] 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[2] 
+self.p_term[0] = self.p_c[2] * self.p_v[0] ** self.p_c[2] 
+self.p_expr[2] = self.p_expr[3] % self.p_expr[3] 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[1],self.p_c[3],self.p_c[2])) 
+self.p_expr[2] = Rational(self.p_c[2],self.p_c[3]) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[3],self.p_c[2])) 
+self.p_poly[2] = self.p_term[0] + self.p_term[0] 
+self.p_expr[2] = collect(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[2] = Product(self.p_expr[0],(self.p_v[3],self.p_c[3],self.p_c[0])) 
+self.p_poly[0] = self.p_term[2] + self.p_term[1] 
+self.p_term[3] = self.p_c[3] * self.p_v[0] ** self.p_c[2] 
+self.p_expr[1] = acos(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[3] 

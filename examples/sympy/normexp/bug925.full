@@ -1,0 +1,40 @@
+self.p_v[1] = Symbol('a') 
+self.p_expr[3] = I 
+self.p_expr[0] = apart(self.p_expr[3]) 
+self.p_v[2] = Symbol('e',positive=True) 
+self.p_expr[2] = self.p_expr[0] * self.p_expr[3] 
+self.p_expr[3] = self.p_expr[0] + self.p_expr[3] 
+self.p_expr[1] = powdenest(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[0] - self.p_expr[0] 
+self.p_expr[2] = self.p_expr[1].doit() 
+self.p_expr[0] = expand(self.p_expr[2],force=True) 
+self.p_expr[1] = sin(self.p_expr[3]) 
+self.p_c[3] = Integer(7) 
+self.p_expr[2] = self.p_expr[2] * self.p_expr[0] 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[0] 
+self.p_expr[2] = expand(self.p_expr[2]) 
+self.p_expr[0] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_term[3] = self.p_c[3] * self.p_v[1] ** self.p_c[3] 
+self.p_c[3] = Integer(8) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[3] + self.p_expr[1] 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] - self.p_expr[3] 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_v[1] = Symbol('a') 
+self.p_expr[3] = pi 
+self.p_v[3] = Symbol('g',positive=True) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[2] 
+self.p_expr[2] = self.p_expr[3] - self.p_expr[3] 
+self.p_expr[0] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[2] - self.p_expr[3] 
+self.p_c[3] = Integer(2) 
+self.p_expr[3] = self.p_expr[0].doit() 
+self.p_expr[3].evalf() 
+self.p_expr[3] = self.p_expr[2] - self.p_expr[0] 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = expand(self.p_expr[2],force=True) 
+self.p_expr[3] = expand_power_exp(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[0] 
+self.p_expr[2] = apart(self.p_expr[3]) 

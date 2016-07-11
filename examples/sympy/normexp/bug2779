@@ -1,0 +1,17 @@
+self.p_c[2] = Integer(2) 
+self.p_v[0] = Symbol('e',positive=True) 
+self.p_v[3] = Symbol('j',positive=True) 
+self.p_c[1] = Integer(10) 
+self.p_expr[2] = Rational(self.p_c[2],self.p_c[1]) 
+self.p_expr[0] = Product(self.p_expr[2],(self.p_v[0],self.p_c[2],self.p_c[2])) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[0],self.p_c[2],self.p_c[1])) 
+self.p_expr[0] = Product(self.p_expr[0],(self.p_v[0],self.p_c[1],self.p_c[2])) 
+self.p_expr[0] = atan(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[0] - self.p_expr[2] 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[1] = atan(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[2] + self.p_expr[3] 
+self.p_expr[3] = expand_power_exp(self.p_expr[3]) 
+self.p_c[1] = Integer(3) 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[2] 

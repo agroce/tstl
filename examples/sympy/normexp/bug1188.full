@@ -1,0 +1,11 @@
+self.p_c[3] = Integer(2) 
+self.p_expr[1] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_v[3] = Symbol('g',positive=True) 
+self.p_v[0] = Symbol('j',positive=True) 
+self.p_v[1] = Symbol('g',positive=True) 
+self.p_c[3] = Integer(8) 
+self.p_c[1] = Integer(9) 
+self.p_term[1] = self.p_c[1] * self.p_v[1] ** self.p_c[1] 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[1],self.p_c[1],self.p_c[1])) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[1],self.p_c[1],self.p_c[3])) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[2] 

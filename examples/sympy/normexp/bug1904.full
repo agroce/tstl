@@ -1,0 +1,24 @@
+self.p_c[2] = Integer(7) 
+self.p_v[2] = Symbol('i',positive=True) 
+self.p_v[3] = Symbol('y') 
+self.p_v[1] = Symbol('l',positive=True) 
+self.p_expr[1] = I 
+self.p_v[0] = Symbol('b') 
+self.p_expr[2] = self.p_v[2] 
+self.p_expr[0] = powdenest(self.p_expr[1]) 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[0],self.p_c[2],self.p_c[2])) 
+self.p_v[2] = Symbol('k',positive=True) 
+self.p_c[0] = Integer(7) 
+self.p_term[1] = self.p_c[0] * self.p_v[2] ** self.p_c[2] 
+self.p_expr[1] = trigsimp(self.p_expr[1]) 
+self.p_expr[1] = expand_power_exp(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[1] - self.p_expr[0] 
+self.p_expr[0] = collect(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[1],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = self.p_expr[3] / self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[0] / self.p_expr[1] 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[3],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = self.p_v[0] 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[3] 

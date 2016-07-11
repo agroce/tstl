@@ -1,0 +1,20 @@
+self.p_v[3] = Symbol('j',positive=True) 
+self.p_expr[3] = self.p_v[3] 
+self.p_expr[1] = collect(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[2] = expand_power_exp(self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[2] - self.p_expr[2] 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[2] = logcombine(self.p_expr[0]) 
+self.p_expr[0] = collect(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = acos(self.p_expr[2]) 
+self.p_expr[1] = factor(self.p_expr[2]) 
+self.p_expr[3] = tan(self.p_expr[0]) 
+self.p_expr[0] = simplify(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[3]) 
+self.p_expr[3] = expand_power_base(self.p_expr[1]) 
+self.p_expr[0] = trigsimp(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[3] ** self.p_expr[0] 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[1] 
+self.p_expr[3] = cancel(self.p_expr[3]) 

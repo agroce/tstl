@@ -1,0 +1,10 @@
+self.p_v[2] = Symbol('y') 
+self.p_v[0] = Symbol('e',positive=True) 
+self.p_c[2] = Integer(2) 
+self.p_expr[2] = E 
+self.p_expr[1] = logcombine(self.p_expr[2]) 
+self.p_expr[3] = expand_log(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[1] / self.p_expr[1] 
+self.p_expr[2] = Sum(self.p_expr[0],(self.p_v[0],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = collect(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[2] 

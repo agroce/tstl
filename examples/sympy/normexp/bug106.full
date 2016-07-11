@@ -1,0 +1,31 @@
+self.p_c[1] = Integer(3) 
+self.p_v[1] = Symbol('d') 
+self.p_term[0] = self.p_c[1] * self.p_v[1] ** self.p_c[1] 
+self.p_v[2] = Symbol('e',positive=True) 
+self.p_c[0] = Integer(4) 
+self.p_v[0] = Symbol('e',positive=True) 
+self.p_expr[3] = Rational(self.p_c[1],self.p_c[0]) 
+self.p_term[1] = self.p_c[1] * self.p_v[2] ** self.p_c[1] 
+self.p_v[1] = Symbol('x') 
+self.p_c[1] = Integer(9) 
+self.p_expr[2] = asin(self.p_expr[3]) 
+self.p_expr[0] = Rational(self.p_c[0],self.p_c[1]) 
+self.p_expr[3] = apart(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[3] / self.p_expr[2] 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[0] 
+self.p_expr[0] = Sum(self.p_expr[0],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = expand_log(self.p_expr[0]) 
+self.p_expr[1] = expand_power_exp(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[1] + self.p_expr[1] 
+self.p_expr[2] = Sum(self.p_expr[3],(self.p_v[1],self.p_c[0],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[1] / self.p_expr[1] 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[0] 
+self.p_expr[0] = self.p_expr[3] ** self.p_expr[0] 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[2] 
+self.p_expr[0] = Product(self.p_expr[1],(self.p_v[2],self.p_c[1],self.p_c[0])) 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[0],self.p_c[1],self.p_c[1])) 
+self.p_expr[2] = expand(self.p_expr[0]) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[2] - self.p_expr[1] 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[1] 

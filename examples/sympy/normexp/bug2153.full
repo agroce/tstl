@@ -1,0 +1,18 @@
+self.p_v[1] = Symbol('y') 
+self.p_v[3] = Symbol('h',positive=True) 
+self.p_expr[3] = pi 
+self.p_c[0] = Integer(6) 
+self.p_expr[1] = self.p_expr[3] / self.p_expr[3] 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = self.p_v[3] 
+self.p_expr[3] = self.p_expr[3] * self.p_expr[1] 
+self.p_expr[0] = self.p_expr[3] - self.p_expr[3] 
+self.p_expr[2] = asin(self.p_expr[0]) 
+self.p_expr[1] = Product(self.p_expr[2],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_c[1] = Integer(8) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[0] ** self.p_expr[2] 
+self.p_expr[2].evalf() 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[2] = Sum(self.p_expr[2],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[0] 

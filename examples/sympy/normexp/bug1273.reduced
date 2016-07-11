@@ -1,0 +1,7 @@
+self.p_expr[2] = pi 
+self.p_expr[1] = self.p_expr[2].doit() 
+self.p_expr[3] = E 
+self.p_expr[2] = sqrt(self.p_expr[3]) 
+self.p_expr[0] = atan(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 

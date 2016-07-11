@@ -1,0 +1,7 @@
+self.p_expr[1] = pi 
+self.p_expr[0] = self.p_expr[1] - self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] / self.p_expr[0] 
+self.p_expr[1] = cos(self.p_expr[1]) 
+self.p_expr[1] = sin(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1] ** self.p_expr[1] 
+self.p_expr[0] = simplify(self.p_expr[1]) 

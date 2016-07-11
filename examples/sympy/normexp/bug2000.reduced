@@ -1,0 +1,7 @@
+self.p_c[3] = Integer(7) 
+self.p_expr[2] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_v[1] = Symbol('h',positive=True) 
+self.p_expr[1] = expand_trig(self.p_expr[2]) 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[1],self.p_c[3],self.p_c[3])) 
+self.p_expr[0] = self.p_expr[1] - self.p_expr[2] 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[2] 

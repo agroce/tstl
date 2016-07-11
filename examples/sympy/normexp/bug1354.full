@@ -1,0 +1,10 @@
+self.p_v[2] = Symbol('k',positive=True) 
+self.p_expr[0] = I 
+self.p_expr[3] = expand_power_base(self.p_expr[0]) 
+self.p_expr[1] = powdenest(self.p_expr[3]) 
+self.p_expr[0] = self.p_expr[0] * self.p_expr[3] 
+self.p_expr[0] = simplify(self.p_expr[0]) 
+self.p_expr[2] = atan(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0].doit() 
+self.p_expr[0] = self.p_expr[2] - self.p_expr[0] 
+self.p_expr[2] = self.p_expr[3] % self.p_expr[0] 

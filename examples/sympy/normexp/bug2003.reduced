@@ -1,0 +1,8 @@
+self.p_c[0] = Integer(2) 
+self.p_c[3] = Integer(4) 
+self.p_v[3] = Symbol('b') 
+self.p_expr[1] = Rational(self.p_c[3],self.p_c[0]) 
+self.p_expr[2] = powsimp(self.p_expr[1]) 
+self.p_expr[3] = Sum(self.p_expr[2],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[1] 

@@ -1,0 +1,26 @@
+self.p_c[0] = Integer(2) 
+self.p_expr[1] = E 
+self.p_expr[0] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[3] = trigsimp(self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[1] * self.p_expr[3] 
+self.p_expr[0] = cancel(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[2] = acos(self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[0] + self.p_expr[1] 
+self.p_expr[1] = collect(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1] - self.p_expr[0] 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[1] = collect(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[3] 
+self.p_expr[2] = self.p_expr[1] / self.p_expr[2] 
+self.p_expr[2] = atan(self.p_expr[3]) 
+self.p_expr[1] = simplify(self.p_expr[0]) 
+self.p_expr[3] = expand_log(self.p_expr[1]) 
+self.p_expr[1] = pi 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[2] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1] % self.p_expr[2] 

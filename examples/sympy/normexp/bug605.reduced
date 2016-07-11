@@ -1,0 +1,7 @@
+self.p_expr[2] = pi 
+self.p_expr[0] = self.p_expr[2] ** self.p_expr[2] 
+self.p_v[0] = Symbol('j',positive=True) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[0] 
+self.p_c[2] = Integer(7) 
+self.p_expr[2] = Sum(self.p_expr[1],(self.p_v[0],self.p_c[2],self.p_c[2])) 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[2] 

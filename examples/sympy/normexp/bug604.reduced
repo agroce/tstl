@@ -1,0 +1,8 @@
+self.p_c[3] = Integer(3) 
+self.p_v[3] = Symbol('e',positive=True) 
+self.p_expr[0] = I 
+self.p_expr[3] = expand(self.p_expr[0]) 
+self.p_c[1] = Integer(6) 
+self.p_expr[1] = self.p_expr[3] / self.p_expr[3] 
+self.p_expr[2] = Sum(self.p_expr[1],(self.p_v[3],self.p_c[3],self.p_c[1])) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[2] 

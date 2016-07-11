@@ -1,0 +1,4 @@
+self.p_expr[0] = pi 
+self.p_expr[1] = acos(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[0] 

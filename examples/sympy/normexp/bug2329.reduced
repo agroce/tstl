@@ -1,0 +1,10 @@
+self.p_c[3] = Integer(0) 
+self.p_v[1] = Symbol('d') 
+self.p_expr[3] = I 
+self.p_c[1] = Integer(2) 
+self.p_expr[2] = cancel(self.p_expr[3]) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[1],self.p_c[1],self.p_c[3])) 
+self.p_expr[2] = tan(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[2] / self.p_expr[3] 
+self.p_expr[0] = self.p_expr[3] - self.p_expr[0] 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[2] 

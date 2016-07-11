@@ -1,0 +1,9 @@
+self.p_c[3] = Integer(9) 
+self.p_v[0] = Symbol('x') 
+self.p_expr[2] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_expr[1] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_c[2] = Integer(10) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[1] 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[2])) 
+self.p_expr[0] = atan(self.p_expr[1]) 
+self.p_expr[0].evalf() 

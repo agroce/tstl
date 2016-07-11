@@ -1,0 +1,34 @@
+self.p_v[1] = Symbol('i',positive=True) 
+self.p_expr[2] = pi 
+self.p_expr[0] = apart(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[0] * self.p_expr[0] 
+self.p_expr[2] = factorial(self.p_expr[0]) 
+self.p_v[2] = Symbol('y') 
+self.p_expr[0] = expand(self.p_expr[3],force=True) 
+self.p_expr[1] = expand_log(self.p_expr[3]) 
+self.p_expr[3] = collect(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[3].evalf() 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[2] = acos(self.p_expr[1]) 
+self.p_expr[3] = tan(self.p_expr[2]) 
+self.p_expr[0] = logcombine(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = logcombine(self.p_expr[3]) 
+self.p_expr[3] = expand_trig(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[0] * self.p_expr[0] 
+self.p_expr[0] = self.p_expr[3] / self.p_expr[3] 
+self.p_expr[3] = expand(self.p_expr[0],force=True) 
+self.p_c[0] = Integer(8) 
+self.p_expr[0] = collect(self.p_expr[1],self.p_expr[2]) 
+self.p_v[3] = Symbol('b') 
+self.p_expr[1] = atan(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[0] 
+self.p_expr[0] = collect(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[1] ** self.p_expr[1] 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[3] = expand_power_exp(self.p_expr[2]) 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_expr[3] = acos(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[3] / self.p_expr[1] 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[3] 

@@ -1,0 +1,20 @@
+self.p_c[2] = Integer(2) 
+self.p_v[3] = Symbol('k',positive=True) 
+self.p_expr[2] = Rational(self.p_c[2],self.p_c[2]) 
+self.p_c[2] = Integer(5) 
+self.p_expr[0] = logcombine(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[0] = self.p_expr[0] / self.p_expr[2] 
+self.p_expr[0] = pi 
+self.p_expr[3] = self.p_expr[0] ** self.p_expr[0] 
+self.p_expr[1] = tan(self.p_expr[0]) 
+self.p_term[1] = self.p_c[2] * self.p_v[3] ** self.p_c[2] 
+self.p_expr[0] = self.p_expr[3] * self.p_expr[0] 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[2] - self.p_expr[3] 
+self.p_expr[2] = expand_power_base(self.p_expr[0]) 
+self.p_expr[0] = I 
+self.p_expr[3] = self.p_expr[0] % self.p_expr[2] 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[2]) 

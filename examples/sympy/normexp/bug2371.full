@@ -1,0 +1,21 @@
+self.p_v[2] = Symbol('l',positive=True) 
+self.p_c[0] = Integer(1) 
+self.p_v[3] = Symbol('e',positive=True) 
+self.p_v[1] = Symbol('j',positive=True) 
+self.p_expr[1] = self.p_c[0] 
+self.p_term[2] = self.p_c[0] * self.p_v[2] ** self.p_c[0] 
+self.p_expr[3] = tan(self.p_expr[1]) 
+self.p_expr[1] = apart(self.p_expr[1]) 
+self.p_expr[1].evalf() 
+self.p_expr[1] = simplify(self.p_expr[3]) 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[0])) 
+self.p_expr[0] = self.p_expr[1] / self.p_expr[3] 
+self.p_expr[3] = collect(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = powsimp(self.p_expr[3]) 
+self.p_poly[2] = self.p_term[2] 
+self.p_expr[3] = self.p_expr[1] * self.p_expr[1] 
+self.p_expr[1] = collect(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[2] = trigsimp(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3] / self.p_expr[3] 
+self.p_expr[3] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[2] 

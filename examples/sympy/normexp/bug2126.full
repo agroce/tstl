@@ -1,0 +1,27 @@
+self.p_v[1] = Symbol('a') 
+self.p_v[2] = Symbol('j',positive=True) 
+self.p_expr[2] = E 
+self.p_expr[0] = expand_log(self.p_expr[2]) 
+self.p_expr[3] = atan(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[3] 
+self.p_c[2] = Integer(8) 
+self.p_expr[0] = sin(self.p_expr[3]) 
+self.p_expr[2] = cancel(self.p_expr[0]) 
+self.p_expr[1] = collect(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[2] = atan(self.p_expr[3]) 
+self.p_v[0] = Symbol('l',positive=True) 
+self.p_expr[1].evalf() 
+self.p_expr[1] = self.p_expr[0].subs(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[2] = cancel(self.p_expr[1]) 
+self.p_expr[1] = simplify(self.p_expr[3]) 
+self.p_expr[0] = expand_power_exp(self.p_expr[0]) 
+self.p_expr[3] = factor(self.p_expr[1]) 
+self.p_expr[0] = self.p_expr[0] / self.p_expr[2] 
+self.p_expr[2] = Product(self.p_expr[3],(self.p_v[0],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = acos(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[0] - self.p_expr[0] 
+self.p_expr[2] = self.p_expr[0] / self.p_expr[3] 
+self.p_expr[3] = self.p_expr[3] % self.p_expr[0] 
+self.p_expr[3] = expand(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[0] % self.p_expr[3] 

@@ -1,0 +1,9 @@
+self.p_v[3] = Symbol('e',positive=True) 
+self.p_expr[0] = E 
+self.p_expr[3] = simplify(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3].doit() 
+self.p_expr[1] = expand(self.p_expr[0]) 
+self.p_expr[0] = collect(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[0] * self.p_expr[1] 
+self.p_expr[2] = self.p_expr[3] ** self.p_expr[1] 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 

@@ -1,0 +1,4 @@
+self.p_expr[0] = E 
+self.p_expr[1] = self.p_expr[0].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0] * self.p_expr[0] 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[0]) 

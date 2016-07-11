@@ -1,0 +1,12 @@
+self.p_c[3] = Integer(10) 
+self.p_expr[1] = pi 
+self.p_expr[3] = apart(self.p_expr[1]) 
+self.p_expr[0] = trigsimp(self.p_expr[1]) 
+self.p_expr[1] = atan(self.p_expr[0]) 
+self.p_c[2] = Integer(9) 
+self.p_expr[2] = collect(self.p_expr[1],self.p_expr[0]) 
+self.p_v[2] = Symbol('k',positive=True) 
+self.p_expr[0] = Product(self.p_expr[2],(self.p_v[2],self.p_c[3],self.p_c[2])) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[3] = asin(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[1] 

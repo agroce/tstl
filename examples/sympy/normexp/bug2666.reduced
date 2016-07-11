@@ -1,0 +1,8 @@
+self.p_v[3] = Symbol('c') 
+self.p_v[0] = Symbol('l',positive=True) 
+self.p_c[2] = Integer(1) 
+self.p_c[3] = Integer(0) 
+self.p_expr[1] = Rational(self.p_c[3],self.p_c[2]) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[3],self.p_c[2],self.p_c[2])) 
+self.p_expr[2] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[2],self.p_c[2])) 
+self.p_expr[1] = self.p_expr[3] % self.p_expr[2] 

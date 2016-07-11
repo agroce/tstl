@@ -1,0 +1,20 @@
+self.p_c[2] = Integer(0) 
+self.p_expr[2] = pi 
+self.p_v[2] = Symbol('e',positive=True) 
+self.p_v[0] = Symbol('b') 
+self.p_expr[0] = apart(self.p_expr[2]) 
+self.p_expr[2] = collect(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = sqrt(self.p_expr[2]) 
+self.p_expr[3] = combsimp(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[2] = expand_power_exp(self.p_expr[1]) 
+self.p_expr[1] = Sum(self.p_expr[0],(self.p_v[2],self.p_c[2],self.p_c[2])) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[2] = collect(self.p_expr[0],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_v[2] = Symbol('l',positive=True) 
+self.p_expr[2] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[0] % self.p_expr[3] 

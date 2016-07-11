@@ -1,0 +1,1 @@
+NotAlgebraic("Sum(Product(Sum(Product(Sum(0, (k, 6, 6)), (d, 10, 9)), (d, 10, 9)), (g, 10, 7)), (l, 10, 10)) doesn't seem to be an algebraic element",)

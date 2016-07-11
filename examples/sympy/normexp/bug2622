@@ -1,0 +1,39 @@
+self.p_v[3] = Symbol('g',positive=True) 
+self.p_v[2] = Symbol('k',positive=True) 
+self.p_v[1] = Symbol('j',positive=True) 
+self.p_expr[0] = self.p_v[1] 
+self.p_expr[3] = powdenest(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] / self.p_expr[0] 
+self.p_expr[2] = expand(self.p_expr[3]) 
+self.p_c[2] = Integer(8) 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2] * self.p_expr[2] 
+self.p_expr[1] = Product(self.p_expr[3],(self.p_v[3],self.p_c[2],self.p_c[2])) 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[2]) 
+self.p_expr[2] = cancel(self.p_expr[3]) 
+self.p_expr[0] = apart(self.p_expr[2]) 
+self.p_c[2] = Integer(0) 
+self.p_expr[2] = cancel(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = expand(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[3] - self.p_expr[0] 
+self.p_term[0] = self.p_c[2] * self.p_v[2] ** self.p_c[2] 
+self.p_expr[1] = expand_log(self.p_expr[3]) 
+self.p_v[1] = Symbol('y') 
+self.p_expr[2] = Product(self.p_expr[1],(self.p_v[3],self.p_c[2],self.p_c[2])) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[1] 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_c[2] = Integer(2) 
+self.p_v[3] = Symbol('j',positive=True) 
+self.p_expr[1] = Product(self.p_expr[1],(self.p_v[1],self.p_c[2],self.p_c[2])) 
+self.p_v[1] = Symbol('c') 
+self.p_term[2] = self.p_c[2] * self.p_v[1] ** self.p_c[2] 
+self.p_expr[1] = factor(self.p_expr[2]) 
+self.p_expr[2] = powdenest(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3] ** self.p_expr[3] 
+self.p_poly[0] = self.p_term[0] 
+self.p_expr[3] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[0] = sin(self.p_expr[3]) 
+self.p_expr[2] = expand(self.p_expr[2]) 
+self.p_expr[2] = apart(self.p_expr[3]) 

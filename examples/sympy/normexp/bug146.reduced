@@ -1,0 +1,8 @@
+self.p_c[3] = Integer(6) 
+self.p_expr[2] = Rational(self.p_c[3],self.p_c[3]) 
+self.p_v[3] = Symbol('e',positive=True) 
+self.p_expr[3] = Product(self.p_expr[2],(self.p_v[3],self.p_c[3],self.p_c[3])) 
+self.p_expr[0] = self.p_expr[3] - self.p_expr[2] 
+self.p_expr[2] = sin(self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[0] ** self.p_expr[2] 
+self.p_expr[0] = self.p_expr[0] % self.p_expr[1] 

@@ -1,0 +1,74 @@
+self.p_v[1] = Symbol('i',positive=True) 
+self.p_c[0] = Integer(9) 
+self.p_expr[2] = self.p_c[0] 
+self.p_expr[3] = cancel(self.p_expr[2]) 
+self.p_expr[2] = asin(self.p_expr[2]) 
+self.p_expr[1] = asin(self.p_expr[3]) 
+self.p_c[0] = Integer(3) 
+self.p_expr[3] = cancel(self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[2] 
+self.p_expr[0] = self.p_expr[1] + self.p_expr[2] 
+self.p_expr[1] = self.p_expr[0] ** self.p_expr[0] 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[3] = cos(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[3] / self.p_expr[2] 
+self.p_expr[2] = simplify(self.p_expr[0]) 
+self.p_expr[0] = expand(self.p_expr[2],force=True) 
+self.p_expr[2] = self.p_expr[3] - self.p_expr[2] 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[3] ** self.p_expr[2] 
+self.p_expr[0] = cos(self.p_expr[2]) 
+self.p_expr[3] = expand_func(self.p_expr[1]) 
+self.p_expr[1] = expand(self.p_expr[3],force=True) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[1] = powdenest(self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[2] + self.p_expr[0] 
+self.p_expr[0] = simplify(self.p_expr[1]) 
+self.p_expr[1] = self.p_expr[0] + self.p_expr[0] 
+self.p_expr[0] = self.p_expr[1] - self.p_expr[1] 
+self.p_expr[2] = acos(self.p_expr[3]) 
+self.p_v[3] = Symbol('g',positive=True) 
+self.p_expr[3] = expand_power_base(self.p_expr[3]) 
+self.p_expr[1] = collect(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[3] * self.p_expr[0] 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[1] 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[1],self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2] % self.p_expr[1] 
+self.p_expr[1] = self.p_expr[2] + self.p_expr[0] 
+self.p_expr[2] = self.p_expr[3] % self.p_expr[2] 
+self.p_c[1] = Integer(0) 
+self.p_expr[3] = self.p_expr[1] / self.p_expr[1] 
+self.p_expr[0] = self.p_expr[1] ** self.p_expr[0] 
+self.p_expr[2] = self.p_expr[1] * self.p_expr[0] 
+self.p_expr[0] = self.p_expr[3] ** self.p_expr[0] 
+self.p_term[0] = self.p_c[1] * self.p_v[1] ** self.p_c[0] 
+self.p_expr[3] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[1],self.p_c[0])) 
+self.p_expr[0] = Sum(self.p_expr[2],(self.p_v[1],self.p_c[1],self.p_c[0])) 
+self.p_expr[2] = factor(self.p_expr[3]) 
+self.p_c[1] = Integer(3) 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[0] = cos(self.p_expr[0]) 
+self.p_expr[0] = self.p_expr[2] - self.p_expr[3] 
+self.p_v[0] = Symbol('y') 
+self.p_expr[3] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[1] = expand_trig(self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[1] = collect(self.p_expr[1],self.p_expr[0]) 
+self.p_term[1] = self.p_c[1] * self.p_v[1] ** self.p_c[0] 
+self.p_expr[0] = sin(self.p_expr[3]) 
+self.p_expr[1] = acos(self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[3] % self.p_expr[3] 
+self.p_expr[0] = self.p_v[0] 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[2] 
+self.p_expr[2] = expand(self.p_expr[0],force=True) 
+self.p_expr[0] = self.p_expr[3].subs(self.p_expr[2],self.p_expr[3]) 
+self.p_expr[1] = Sum(self.p_expr[1],(self.p_v[1],self.p_c[0],self.p_c[1])) 
+self.p_expr[2] = cancel(self.p_expr[1]) 
+self.p_expr[1] = logcombine(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[1] = expand(self.p_expr[3],force=True) 

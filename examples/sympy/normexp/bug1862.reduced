@@ -1,0 +1,11 @@
+self.p_c[0] = Integer(3) 
+self.p_v[2] = Symbol('g',positive=True) 
+self.p_expr[1] = self.p_v[2] 
+self.p_expr[2] = powsimp(self.p_expr[1]) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[2],self.p_c[0],self.p_c[0])) 
+self.p_c[2] = Integer(2) 
+self.p_expr[1] = self.p_expr[1] % self.p_expr[1] 
+self.p_expr[1] = self.p_expr[1] ** self.p_expr[3] 
+self.p_expr[0] = Sum(self.p_expr[1],(self.p_v[2],self.p_c[2],self.p_c[0])) 
+self.p_expr[1] = logcombine(self.p_expr[2]) 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[0] 

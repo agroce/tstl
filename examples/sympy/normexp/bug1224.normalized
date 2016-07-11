@@ -1,0 +1,6 @@
+self.p_v[0] = Symbol('e',positive=True) 
+self.p_expr[0] = self.p_v[0] 
+self.p_expr[2] = pi 
+self.p_expr[1] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[2] = acos(self.p_expr[2]) 
+self.p_expr[0] = self.p_expr[2] % self.p_expr[0] 

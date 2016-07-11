@@ -1,0 +1,47 @@
+self.p_v[3] = Symbol('g',positive=True) 
+self.p_c[2] = Integer(2) 
+self.p_v[1] = Symbol('f',positive=True) 
+self.p_c[1] = Integer(6) 
+self.p_term[3] = self.p_c[2] * self.p_v[3] ** self.p_c[2] 
+self.p_term[1] = self.p_c[1] * self.p_v[1] ** self.p_c[2] 
+self.p_v[0] = Symbol('y') 
+self.p_v[2] = Symbol('l',positive=True) 
+self.p_v[3] = Symbol('l',positive=True) 
+self.p_c[2] = Integer(7) 
+self.p_expr[2] = Rational(self.p_c[1],self.p_c[1]) 
+self.p_c[0] = Integer(7) 
+self.p_expr[1] = Rational(self.p_c[2],self.p_c[0]) 
+self.p_term[2] = self.p_c[2] * self.p_v[3] ** self.p_c[1] 
+self.p_poly[3] = self.p_term[2] 
+self.p_expr[3] = self.p_expr[1].doit() 
+self.p_expr[0] = cos(self.p_expr[1]) 
+self.p_expr[1] = Rational(self.p_c[0],self.p_c[0]) 
+self.p_c[0] = Integer(9) 
+self.p_poly[2] = self.p_term[3] + self.p_term[1] 
+self.p_c[3] = Integer(2) 
+self.p_term[1] = self.p_c[1] * self.p_v[1] ** self.p_c[2] 
+self.p_term[2] = self.p_c[3] * self.p_v[3] ** self.p_c[2] 
+self.p_c[3] = Integer(9) 
+self.p_term[3] = self.p_c[0] * self.p_v[3] ** self.p_c[1] 
+self.p_c[1] = Integer(5) 
+self.p_v[3] = Symbol('a') 
+self.p_term[0] = self.p_c[3] * self.p_v[2] ** self.p_c[3] 
+self.p_poly[0] = self.p_term[3] 
+self.p_poly[1] = self.p_term[3] + self.p_term[0] 
+self.p_term[3] = self.p_c[2] * self.p_v[3] ** self.p_c[3] 
+self.p_c[2] = Integer(8) 
+self.p_term[0] = self.p_c[0] * self.p_v[0] ** self.p_c[1] 
+self.p_expr[0].evalf() 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[1] 
+self.p_expr[1] = Product(self.p_expr[0],(self.p_v[1],self.p_c[0],self.p_c[1])) 
+self.p_expr[3] = self.p_expr[2] ** self.p_expr[2] 
+self.p_expr[0] = Product(self.p_expr[3],(self.p_v[0],self.p_c[0],self.p_c[2])) 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[2],self.p_c[0],self.p_c[2])) 
+self.p_expr[2] = self.p_expr[2] % self.p_expr[3] 
+self.p_expr[2] = Product(self.p_expr[2],(self.p_v[0],self.p_c[3],self.p_c[0])) 
+self.p_expr[3] = Product(self.p_expr[1],(self.p_v[3],self.p_c[0],self.p_c[2])) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[1],self.p_expr[0]) 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[3],self.p_c[2])) 
+self.p_expr[0] = self.p_expr[0] ** self.p_expr[1] 
+self.p_expr[1] = Sum(self.p_expr[2],(self.p_v[2],self.p_c[3],self.p_c[0])) 
+self.p_expr[2] = self.p_expr[1] % self.p_expr[3] 

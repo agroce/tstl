@@ -1,0 +1,22 @@
+self.p_expr[3] = pi 
+self.p_c[3] = Integer(2) 
+self.p_expr[1] = combsimp(self.p_expr[3]) 
+self.p_expr[2] = self.p_expr[1].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[1] = self.p_expr[3].doit() 
+self.p_expr[3] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[2]) 
+self.p_expr[3] = sqrt(self.p_expr[1]) 
+self.p_expr[0] = collect(self.p_expr[1],self.p_expr[1]) 
+self.p_expr[2] = self.p_expr[3].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[3] = self.p_expr[3] ** self.p_expr[1] 
+self.p_expr[1] = self.p_expr[3].subs(self.p_expr[3],self.p_expr[3]) 
+self.p_expr[0] = factor(self.p_expr[3]) 
+self.p_expr[3] = factorial(self.p_expr[3]) 
+self.p_v[2] = Symbol('f',positive=True) 
+self.p_expr[3] = cos(self.p_expr[3]) 
+self.p_expr[3] = self.p_expr[2] / self.p_expr[3] 
+self.p_expr[2] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[0]) 
+self.p_expr[3] = powsimp(self.p_expr[1]) 
+self.p_expr[2] = factorial(self.p_expr[3]) 
+self.p_expr[0] = Sum(self.p_expr[0],(self.p_v[2],self.p_c[3],self.p_c[3])) 
+self.p_expr[1] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[1]) 
+self.p_expr[3] = self.p_expr[1] % self.p_expr[0] 

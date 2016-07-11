@@ -1,0 +1,24 @@
+self.p_expr[1] = I 
+self.p_expr[2] = asin(self.p_expr[1]) 
+self.p_c[0] = Integer(3) 
+self.p_expr[0] = self.p_expr[2].subs(self.p_expr[2],self.p_expr[1]) 
+self.p_expr[3] = cancel(self.p_expr[1]) 
+self.p_expr[1] = cancel(self.p_expr[2]) 
+self.p_expr[2] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[2] = self.p_expr[3] * self.p_expr[2] 
+self.p_expr[3] = atan(self.p_expr[1]) 
+self.p_expr[1] = collect(self.p_expr[1],self.p_expr[2]) 
+self.p_expr[2] = factorial(self.p_expr[0]) 
+self.p_expr[1] = self.p_expr[0] / self.p_expr[0] 
+self.p_expr[0] = self.p_c[0] 
+self.p_v[0] = Symbol('c') 
+self.p_c[3] = Integer(0) 
+self.p_expr[2].evalf() 
+self.p_expr[2] = self.p_expr[0] + self.p_expr[2] 
+self.p_expr[2] = self.p_expr[2] + self.p_expr[0] 
+self.p_expr[0] = self.p_expr[0] - self.p_expr[3] 
+self.p_expr[3] = self.p_expr[1].subs(self.p_expr[0],self.p_expr[0]) 
+self.p_expr[2] = self.p_expr[0].subs(self.p_expr[3],self.p_expr[0]) 
+self.p_expr[1] = Sum(self.p_expr[3],(self.p_v[0],self.p_c[3],self.p_c[3])) 
+self.p_c[3] = Integer(0) 
+self.p_expr[0] = self.p_expr[3] % self.p_expr[1] 
