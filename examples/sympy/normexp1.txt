@@ -1,31 +1,31 @@
-247 TESTS
+468 TESTS
 ==================================================
 LENGTH
-reduced MEAN: 9.84210526316 MEDIAN: 9.0 SDEV: 3.278467417
-normalized MEAN: 5.42105263158 MEDIAN: 5.0 SDEV: 1.15273047844
-normalized VS reduced WilcoxonResult(statistic=0.0, pvalue=1.8085011854141005e-40)
-full MEAN: 46.2793522267 MEDIAN: 44.0 SDEV: 25.7241458348
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=4.1526959699255804e-42)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=2.8463345195043233e-42)
+reduced MEAN: 10.0128205128 MEDIAN: 9.0 SDEV: 3.47331803879
+normalized MEAN: 5.48290598291 MEDIAN: 5.0 SDEV: 1.19905879031
+normalized VS reduced WilcoxonResult(statistic=0.0, pvalue=8.6544176745819438e-76)
+full MEAN: 44.6260683761 MEDIAN: 40.0 SDEV: 25.0110044996
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=3.0578683766753491e-78)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=2.1042202939739624e-78)
 ==================================================
 ACTIONS
-reduced MEAN: 8.06072874494 MEDIAN: 8.0 SDEV: 2.15783017123
-normalized MEAN: 5.24291497976 MEDIAN: 5.0 SDEV: 0.788133399831
-normalized VS reduced WilcoxonResult(statistic=0.0, pvalue=5.2736990656920944e-39)
-full MEAN: 21.0769230769 MEDIAN: 22.0 SDEV: 7.42289337106
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=1.7887307594530739e-41)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=3.9972851576252126e-42)
+reduced MEAN: 8.11324786325 MEDIAN: 8.0 SDEV: 2.19118175549
+normalized MEAN: 5.2905982906 MEDIAN: 5.0 SDEV: 0.765828182063
+normalized VS reduced WilcoxonResult(statistic=47.0, pvalue=1.4919927429025678e-72)
+full MEAN: 20.6901709402 MEDIAN: 21.0 SDEV: 7.14323461924
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=1.2754053127172734e-77)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=2.860561747555675e-78)
 ==================================================
 TIME
-reduced MEAN: 103.912091047 MEDIAN: 18.8176560402 SDEV: 268.396962816
-normalized MEAN: 647.376184434 MEDIAN: 294.099403858 SDEV: 963.930709486
-normalized VS reduced WilcoxonResult(statistic=2205.0, pvalue=1.9772512337160815e-31)
+reduced MEAN: 101.717089359 MEDIAN: 19.4155540466 SDEV: 240.61149275
+normalized MEAN: 591.428269987 MEDIAN: 264.094912529 SDEV: 917.961786679
+normalized VS reduced WilcoxonResult(statistic=7099.0, pvalue=7.1226379806686227e-60)
 full MEAN: 0.0 MEDIAN: 0.0 SDEV: 0.0
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=2.8676205163892451e-42)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=2.8676205163892451e-42)
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=2.1271723596927644e-78)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=2.1271723596927644e-78)
 ==================================================
 
-25 FAILURES
+38 FAILURES
 **************************************************
 full 1 reduced 1 normalized 1 : TypeError('Invalid comparison of complex sin(cos(zoo))',)
 full LENGTH: 76.0 ACTION: 31.0    reduced LENGTH: 12.0 ACTION: 10.0    normalized LENGTH: 7.0 ACTION: 7.0   
@@ -35,45 +35,62 @@ full LENGTH: 15.0 ACTION: 12.0    reduced LENGTH: 7.0 ACTION: 7.0    normalized 
 NO MEAN REDUCTION IN LENGTH
 NO MEAN REDUCTION IN ACTIONS
 **************************************************
-full 2 reduced 2 normalized 2 : ValueError('got complex zero with unknown accuracy',)
-full LENGTH MEAN: 81.5 MEDIAN: 81.5 MIN: 73 MAX: 90 STD: 8.5
-full ACTION MEAN: 25.0 MEDIAN: 25.0 MIN: 22 MAX: 28 STD: 3.0
-reduced LENGTH MEAN: 17.5 MEDIAN: 17.5 MIN: 17 MAX: 18 STD: 0.5
-reduced ACTION MEAN: 12.0 MEDIAN: 12.0 MIN: 9 MAX: 15 STD: 3.0
+full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((j, 1, 9), (x, 4, 9), (j, 9, 4)),)',)
+full LENGTH: 95.0 ACTION: 29.0    reduced LENGTH: 15.0 ACTION: 7.0    normalized LENGTH: 11.0 ACTION: 6.0   
+**************************************************
+full 3 reduced 3 normalized 2 : ValueError('got complex zero with unknown accuracy',)
+full LENGTH MEAN: 78.3333333333 MEDIAN: 73.0 MIN: 72 MAX: 90 STD: 8.25967446224
+full ACTION MEAN: 24.6666666667 MEDIAN: 24.0 MIN: 22 MAX: 28 STD: 2.49443825785
+reduced LENGTH MEAN: 20.6666666667 MEDIAN: 18.0 MIN: 17 MAX: 27 STD: 4.49691252108
+reduced ACTION MEAN: 13.3333333333 MEDIAN: 15.0 MIN: 9 MAX: 16 STD: 3.09120616517
 normalized LENGTH MEAN: 7.0 MEDIAN: 7.0 MIN: 7 MAX: 7 STD: 0.0
 normalized ACTION MEAN: 6.0 MEDIAN: 6.0 MIN: 6 MAX: 6 STD: 0.0
-**************************************************
-full 64 reduced 64 normalized 16 : RuntimeError('maximum recursion depth exceeded while calling a Python object',)
-full LENGTH MEAN: 40.390625 MEDIAN: 33.0 MIN: 6 MAX: 100 STD: 25.7909972104
-full ACTION MEAN: 19.53125 MEDIAN: 19.5 MIN: 5 MAX: 36 STD: 7.88386158158
-reduced LENGTH MEAN: 9.21875 MEDIAN: 8.0 MIN: 5 MAX: 21 STD: 3.07951269481
-reduced ACTION MEAN: 8.0 MEDIAN: 7.0 MIN: 5 MAX: 13 STD: 2.22906931252
-normalized LENGTH MEAN: 5.0 MEDIAN: 5.0 MIN: 4 MAX: 6 STD: 0.559016994375
-normalized ACTION MEAN: 4.96875 MEDIAN: 5.0 MIN: 4 MAX: 6 STD: 0.558142846859
-**************************************************
-full 6 reduced 6 normalized 6 : AttributeError("'NaN' object has no attribute '_mpf_'",)
-full LENGTH MEAN: 68.3333333333 MEDIAN: 76.5 MIN: 20 MAX: 100 STD: 27.0719206723
-full ACTION MEAN: 27.1666666667 MEDIAN: 28.0 MIN: 14 MAX: 35 STD: 6.76798016808
-reduced LENGTH MEAN: 15.0 MEDIAN: 14.0 MIN: 10 MAX: 21 STD: 4.58257569496
-reduced ACTION MEAN: 10.1666666667 MEDIAN: 10.5 MIN: 7 MAX: 13 STD: 2.26691175146
-normalized LENGTH MEAN: 7.0 MEDIAN: 7.5 MIN: 5 MAX: 8 STD: 1.15470053838
-normalized ACTION MEAN: 6.16666666667 MEDIAN: 6.0 MIN: 5 MAX: 7 STD: 0.687184270936
 **************************************************
 full 1 reduced 1 normalized 1 : ValueError('gamma function pole',)
 full LENGTH: 24.0 ACTION: 16.0    reduced LENGTH: 7.0 ACTION: 7.0    normalized LENGTH: 7.0 ACTION: 7.0   
 NO MEAN REDUCTION IN LENGTH
 NO MEAN REDUCTION IN ACTIONS
 **************************************************
-full 4 reduced 4 normalized 3 : TypeError('Invalid NaN comparison',)
-full LENGTH MEAN: 67.25 MEDIAN: 61.0 MIN: 51 MAX: 96 STD: 18.2397231339
-full ACTION MEAN: 24.5 MEDIAN: 25.0 MIN: 19 MAX: 29 STD: 4.15331193146
-reduced LENGTH MEAN: 10.25 MEDIAN: 10.5 MIN: 8 MAX: 12 STD: 1.47901994577
-reduced ACTION MEAN: 8.25 MEDIAN: 7.5 MIN: 7 MAX: 11 STD: 1.63935963108
-normalized LENGTH MEAN: 5.5 MEDIAN: 5.5 MIN: 5 MAX: 6 STD: 0.5
-normalized ACTION MEAN: 5.5 MEDIAN: 5.5 MIN: 5 MAX: 6 STD: 0.5
+full 1 reduced 1 normalized 1 : TypeError("'tan' object is not callable",)
+full LENGTH: 14.0 ACTION: 11.0    reduced LENGTH: 4.0 ACTION: 4.0    normalized LENGTH: 4.0 ACTION: 4.0   
+NO MEAN REDUCTION IN LENGTH
+NO MEAN REDUCTION IN ACTIONS
+**************************************************
+full 116 reduced 116 normalized 19 : RuntimeError('maximum recursion depth exceeded while calling a Python object',)
+full LENGTH MEAN: 38.1206896552 MEDIAN: 31.5 MIN: 6 MAX: 100 STD: 25.6854833456
+full ACTION MEAN: 18.8103448276 MEDIAN: 19.0 MIN: 5 MAX: 36 STD: 7.60774763113
+reduced LENGTH MEAN: 9.12931034483 MEDIAN: 8.0 MIN: 5 MAX: 21 STD: 2.90222914449
+reduced ACTION MEAN: 7.84482758621 MEDIAN: 7.0 MIN: 5 MAX: 13 STD: 2.04097444727
+normalized LENGTH MEAN: 5.00862068966 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.579769419909
+normalized ACTION MEAN: 4.96551724138 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.540291021241
+**************************************************
+full 12 reduced 12 normalized 11 : AttributeError("'NaN' object has no attribute '_mpf_'",)
+full LENGTH MEAN: 64.6666666667 MEDIAN: 74.0 MIN: 20 MAX: 100 STD: 23.5100451344
+full ACTION MEAN: 26.5 MEDIAN: 28.0 MIN: 14 MAX: 35 STD: 6.10327780787
+reduced LENGTH MEAN: 15.6666666667 MEDIAN: 14.5 MIN: 10 MAX: 21 STD: 4.04831926716
+reduced ACTION MEAN: 11.0833333333 MEDIAN: 12.0 MIN: 7 MAX: 14 STD: 2.05986784905
+normalized LENGTH MEAN: 7.0 MEDIAN: 7.0 MIN: 5 MAX: 9 STD: 1.15470053838
+normalized ACTION MEAN: 6.25 MEDIAN: 6.0 MIN: 5 MAX: 8 STD: 0.829156197589
+**************************************************
+full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((l, 10, 1), (l, 10, 10)),)',)
+full LENGTH: 38.0 ACTION: 18.0    reduced LENGTH: 13.0 ACTION: 8.0    normalized LENGTH: 9.0 ACTION: 6.0   
+**************************************************
+full 1 reduced 1 normalized 1 : ZeroDivisionError()
+full LENGTH: 83.0 ACTION: 34.0    reduced LENGTH: 19.0 ACTION: 12.0    normalized LENGTH: 7.0 ACTION: 6.0   
+**************************************************
+full 7 reduced 7 normalized 3 : TypeError('Invalid NaN comparison',)
+full LENGTH MEAN: 58.8571428571 MEDIAN: 52.0 MIN: 23 MAX: 96 STD: 23.2466806935
+full ACTION MEAN: 23.7142857143 MEDIAN: 23.0 MIN: 14 MAX: 31 STD: 5.59883369779
+reduced LENGTH MEAN: 10.4285714286 MEDIAN: 11.0 MIN: 7 MAX: 14 STD: 2.19461307082
+reduced ACTION MEAN: 8.71428571429 MEDIAN: 8.0 MIN: 7 MAX: 11 STD: 1.74963553056
+normalized LENGTH MEAN: 5.57142857143 MEDIAN: 6.0 MIN: 5 MAX: 6 STD: 0.494871659305
+normalized ACTION MEAN: 5.57142857143 MEDIAN: 6.0 MIN: 5 MAX: 6 STD: 0.494871659305
 **************************************************
 full 1 reduced 1 normalized 1 : AssertionError()
 full LENGTH: 28.0 ACTION: 19.0    reduced LENGTH: 9.0 ACTION: 7.0    normalized LENGTH: 5.0 ACTION: 4.0   
+**************************************************
+full 1 reduced 1 normalized 1 : NotAlgebraic("Product(Sum(0, (g, 4, 8)), (g, 4, 7), (g, 7, 0)) doesn't seem to be an algebraic element",)
+full LENGTH: 55.0 ACTION: 25.0    reduced LENGTH: 20.0 ACTION: 11.0    normalized LENGTH: 13.0 ACTION: 8.0   
 **************************************************
 full 1 reduced 1 normalized 1 : NotAlgebraic("Sum(0, (l, 0, 6), (i, 10, 0)) doesn't seem to be an algebraic element",)
 full LENGTH: 43.0 ACTION: 22.0    reduced LENGTH: 17.0 ACTION: 10.0    normalized LENGTH: 11.0 ACTION: 7.0   
@@ -87,16 +104,31 @@ full LENGTH: 73.0 ACTION: 28.0    reduced LENGTH: 12.0 ACTION: 7.0    normalized
 full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((d, 2, 2), (i, 7, 7), (d, 2, 7)),)',)
 full LENGTH: 58.0 ACTION: 23.0    reduced LENGTH: 15.0 ACTION: 9.0    normalized LENGTH: 11.0 ACTION: 7.0   
 **************************************************
+full 1 reduced 1 normalized 1 : NotAlgebraic("Product(0, (h, 5, 5)) doesn't seem to be an algebraic element",)
+full LENGTH: 97.0 ACTION: 33.0    reduced LENGTH: 16.0 ACTION: 14.0    normalized LENGTH: 7.0 ACTION: 7.0   
+**************************************************
+full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((y, 10, 0), (y, 6, 5)),)',)
+full LENGTH: 26.0 ACTION: 13.0    reduced LENGTH: 12.0 ACTION: 7.0    normalized LENGTH: 10.0 ACTION: 6.0   
+**************************************************
 full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((k, 4, 4), (d, 6, 4)),)',)
 full LENGTH: 63.0 ACTION: 28.0    reduced LENGTH: 13.0 ACTION: 9.0    normalized LENGTH: 9.0 ACTION: 6.0   
 **************************************************
-full 6 reduced 6 normalized 6 : ZeroDivisionError('integer division or modulo by zero',)
-full LENGTH MEAN: 71.0 MEDIAN: 80.5 MIN: 19 MAX: 99 STD: 27.3922130054
-full ACTION MEAN: 25.6666666667 MEDIAN: 28.5 MIN: 12 MAX: 33 STD: 7.29535620941
-reduced LENGTH MEAN: 16.0 MEDIAN: 16.0 MIN: 11 MAX: 22 STD: 3.36650164612
-reduced ACTION MEAN: 11.5 MEDIAN: 11.0 MIN: 9 MAX: 14 STD: 1.8929694486
-normalized LENGTH MEAN: 6.16666666667 MEDIAN: 6.0 MIN: 5 MAX: 8 STD: 1.06718737291
-normalized ACTION MEAN: 6.0 MEDIAN: 6.0 MIN: 5 MAX: 7 STD: 0.816496580928
+full 10 reduced 10 normalized 9 : ZeroDivisionError('integer division or modulo by zero',)
+full LENGTH MEAN: 73.6 MEDIAN: 80.5 MIN: 19 MAX: 99 STD: 25.0247877114
+full ACTION MEAN: 26.7 MEDIAN: 28.5 MIN: 12 MAX: 34 STD: 6.48151216924
+reduced LENGTH MEAN: 17.2 MEDIAN: 17.0 MIN: 11 MAX: 23 STD: 3.7894590643
+reduced ACTION MEAN: 12.3 MEDIAN: 12.0 MIN: 9 MAX: 16 STD: 2.2825424421
+normalized LENGTH MEAN: 6.5 MEDIAN: 6.5 MIN: 5 MAX: 8 STD: 1.0246950766
+normalized ACTION MEAN: 6.2 MEDIAN: 6.0 MIN: 5 MAX: 7 STD: 0.748331477355
+**************************************************
+full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((x, 9, 9), (x, 4, 4), (a, 9, 10)),)',)
+full LENGTH: 94.0 ACTION: 36.0    reduced LENGTH: 20.0 ACTION: 14.0    normalized LENGTH: 12.0 ACTION: 7.0   
+**************************************************
+full 1 reduced 1 normalized 1 : TypeError('Invalid comparison of complex zoo',)
+full LENGTH: 50.0 ACTION: 24.0    reduced LENGTH: 16.0 ACTION: 11.0    normalized LENGTH: 9.0 ACTION: 6.0   
+**************************************************
+full 1 reduced 1 normalized 1 : TypeError("'sin' object is not callable",)
+full LENGTH: 62.0 ACTION: 27.0    reduced LENGTH: 10.0 ACTION: 9.0    normalized LENGTH: 5.0 ACTION: 5.0   
 **************************************************
 full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((y, 0, 10), (f, 9, 9)),)',)
 full LENGTH: 51.0 ACTION: 24.0    reduced LENGTH: 14.0 ACTION: 9.0    normalized LENGTH: 10.0 ACTION: 6.0   
@@ -109,24 +141,32 @@ reduced ACTION MEAN: 7.66666666667 MEDIAN: 7.5 MIN: 5 MAX: 11 STD: 1.45841836487
 normalized LENGTH MEAN: 5.09523809524 MEDIAN: 5.0 MIN: 4 MAX: 6 STD: 0.478565505768
 normalized ACTION MEAN: 5.09523809524 MEDIAN: 5.0 MIN: 4 MAX: 6 STD: 0.478565505768
 **************************************************
-full 2 reduced 2 normalized 2 : TypeError("'mpf' object is not iterable",)
-full LENGTH MEAN: 62.5 MEDIAN: 62.5 MIN: 49 MAX: 76 STD: 13.5
-full ACTION MEAN: 26.0 MEDIAN: 26.0 MIN: 23 MAX: 29 STD: 3.0
-reduced LENGTH MEAN: 11.0 MEDIAN: 11.0 MIN: 9 MAX: 13 STD: 2.0
-reduced ACTION MEAN: 8.0 MEDIAN: 8.0 MIN: 8 MAX: 8 STD: 0.0
+full 4 reduced 4 normalized 3 : TypeError("'mpf' object is not iterable",)
+full LENGTH MEAN: 45.25 MEDIAN: 40.0 MIN: 25 MAX: 76 STD: 19.8289560996
+full ACTION MEAN: 21.25 MEDIAN: 20.0 MIN: 16 MAX: 29 STD: 5.21416340365
+reduced LENGTH MEAN: 11.75 MEDIAN: 12.5 MIN: 9 MAX: 13 STD: 1.63935963108
+reduced ACTION MEAN: 8.75 MEDIAN: 8.0 MIN: 8 MAX: 11 STD: 1.29903810568
 normalized LENGTH MEAN: 6.5 MEDIAN: 6.5 MIN: 6 MAX: 7 STD: 0.5
 normalized ACTION MEAN: 6.5 MEDIAN: 6.5 MIN: 6 MAX: 7 STD: 0.5
 **************************************************
-full 1 reduced 1 normalized 1 : NotAlgebraic("pi doesn't seem to be an algebraic element",)
-full LENGTH: 17.0 ACTION: 15.0    reduced LENGTH: 8.0 ACTION: 8.0    normalized LENGTH: 4.0 ACTION: 4.0   
+full 3 reduced 3 normalized 1 : NotAlgebraic("pi doesn't seem to be an algebraic element",)
+full LENGTH MEAN: 20.0 MEDIAN: 17.0 MIN: 12 MAX: 31 STD: 8.04155872121
+full ACTION MEAN: 15.0 MEDIAN: 15.0 MIN: 9 MAX: 21 STD: 4.89897948557
+reduced LENGTH MEAN: 7.0 MEDIAN: 7.0 MIN: 6 MAX: 8 STD: 0.816496580928
+reduced ACTION MEAN: 6.33333333333 MEDIAN: 7.0 MIN: 4 MAX: 8 STD: 1.6996731712
+normalized LENGTH MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
+normalized ACTION MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
 **************************************************
-full 100 reduced 100 normalized 19 : RuntimeError('maximum recursion depth exceeded',)
-full LENGTH MEAN: 48.22 MEDIAN: 45.5 MIN: 9 MAX: 99 STD: 22.7180897084
-full ACTION MEAN: 21.93 MEDIAN: 22.0 MIN: 6 MAX: 35 STD: 6.4718698998
-reduced LENGTH MEAN: 9.62 MEDIAN: 9.0 MIN: 5 MAX: 19 STD: 2.6749953271
-reduced ACTION MEAN: 7.87 MEDIAN: 8.0 MIN: 5 MAX: 16 STD: 2.02314112212
-normalized LENGTH MEAN: 5.34 MEDIAN: 5.0 MIN: 5 MAX: 8 STD: 0.6666333325
-normalized ACTION MEAN: 5.27 MEDIAN: 5.0 MIN: 5 MAX: 7 STD: 0.545068802996
+full 236 reduced 236 normalized 25 : RuntimeError('maximum recursion depth exceeded',)
+full LENGTH MEAN: 45.0974576271 MEDIAN: 43.0 MIN: 8 MAX: 99 STD: 22.3207320284
+full ACTION MEAN: 21.0254237288 MEDIAN: 21.0 MIN: 6 MAX: 35 STD: 6.34457176822
+reduced LENGTH MEAN: 9.66101694915 MEDIAN: 9.0 MIN: 5 MAX: 24 STD: 2.75318102301
+reduced ACTION MEAN: 7.86440677966 MEDIAN: 8.0 MIN: 5 MAX: 16 STD: 1.88173763115
+normalized LENGTH MEAN: 5.36440677966 MEDIAN: 5.0 MIN: 4 MAX: 8 STD: 0.626603086292
+normalized ACTION MEAN: 5.31779661017 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.571814144858
+**************************************************
+full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((x, 3, 1), (h, 3, 3)),)',)
+full LENGTH: 53.0 ACTION: 25.0    reduced LENGTH: 12.0 ACTION: 8.0    normalized LENGTH: 9.0 ACTION: 6.0   
 **************************************************
 full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((a, 5, 5), (j, 5, 5)),)',)
 full LENGTH: 97.0 ACTION: 32.0    reduced LENGTH: 10.0 ACTION: 7.0    normalized LENGTH: 9.0 ACTION: 7.0   
@@ -141,26 +181,43 @@ full LENGTH: 47.0 ACTION: 25.0    reduced LENGTH: 18.0 ACTION: 12.0    normalize
 full 1 reduced 1 normalized 1 : NotAlgebraic("Product(0, (y, 3, 3)) doesn't seem to be an algebraic element",)
 full LENGTH: 31.0 ACTION: 12.0    reduced LENGTH: 14.0 ACTION: 10.0    normalized LENGTH: 7.0 ACTION: 7.0   
 **************************************************
-full 5 reduced 5 normalized 2 : TypeError("'exp' object is not callable",)
-full LENGTH MEAN: 10.4 MEDIAN: 11.0 MIN: 7 MAX: 12 STD: 1.8547236991
-full ACTION MEAN: 8.4 MEDIAN: 9.0 MIN: 6 MAX: 11 STD: 1.74355957742
-reduced LENGTH MEAN: 5.4 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 1.01980390272
-reduced ACTION MEAN: 5.0 MEDIAN: 5.0 MIN: 4 MAX: 6 STD: 0.632455532034
-normalized LENGTH MEAN: 3.2 MEDIAN: 3.0 MIN: 3 MAX: 4 STD: 0.4
+full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((j, 4, 7), (x, 7, 5)),)',)
+full LENGTH: 46.0 ACTION: 21.0    reduced LENGTH: 11.0 ACTION: 7.0    normalized LENGTH: 10.0 ACTION: 7.0   
+NO MEAN REDUCTION IN ACTIONS
+**************************************************
+full 6 reduced 6 normalized 2 : TypeError("'exp' object is not callable",)
+full LENGTH MEAN: 10.6666666667 MEDIAN: 11.5 MIN: 7 MAX: 12 STD: 1.79505493571
+full ACTION MEAN: 8.66666666667 MEDIAN: 9.0 MIN: 6 MAX: 11 STD: 1.6996731712
+reduced LENGTH MEAN: 5.66666666667 MEDIAN: 5.5 MIN: 4 MAX: 7 STD: 1.10554159679
+reduced ACTION MEAN: 5.0 MEDIAN: 5.0 MIN: 4 MAX: 6 STD: 0.57735026919
+normalized LENGTH MEAN: 3.16666666667 MEDIAN: 3.0 MIN: 3 MAX: 4 STD: 0.37267799625
 normalized ACTION MEAN: 3.0 MEDIAN: 3.0 MIN: 3 MAX: 3 STD: 0.0
 **************************************************
 full 1 reduced 1 normalized 1 : NotAlgebraic("Sum(0, (e, 2, 2)) doesn't seem to be an algebraic element",)
 full LENGTH: 64.0 ACTION: 26.0    reduced LENGTH: 13.0 ACTION: 10.0    normalized LENGTH: 7.0 ACTION: 7.0   
+**************************************************
+full 2 reduced 2 normalized 2 : NotAlgebraic("0 doesn't seem to be an algebraic element",)
+full LENGTH MEAN: 40.5 MEDIAN: 40.5 MIN: 40 MAX: 41 STD: 0.5
+full ACTION MEAN: 23.5 MEDIAN: 23.5 MIN: 23 MAX: 24 STD: 0.5
+reduced LENGTH MEAN: 11.0 MEDIAN: 11.0 MIN: 11 MAX: 11 STD: 0.0
+reduced ACTION MEAN: 11.0 MEDIAN: 11.0 MIN: 11 MAX: 11 STD: 0.0
+normalized LENGTH MEAN: 5.0 MEDIAN: 5.0 MIN: 5 MAX: 5 STD: 0.0
+normalized ACTION MEAN: 5.0 MEDIAN: 5.0 MIN: 5 MAX: 5 STD: 0.0
+==================================================
+
+468 FULL TESTS
+468 REDUCED TESTS
+106 NORMALIZED TESTS
 ==================================================
 
 50 ACTIONS IN FULL TESTS
-46 ACTIONS IN REDUCED TESTS
-31 ACTIONS IN NORMALIZED TESTS
+50 ACTIONS IN REDUCED TESTS
+32 ACTIONS IN NORMALIZED TESTS
 ==================================================
 REMOVED FROM FULL TO REDUCED:
-[[ <term> := <c> * <v> ** <c>  ]] [[ <poly> := <term>  ]] [[ <poly> := <term> + <term>  ]] [[ <expr> := <poly>  ]]
+
 
 ==================================================
 REMOVED FROM REDUCED TO NORMALIZED
-[[ <expr> := collect(<expr>,<expr>)  ]] [[ <expr> := expand(<expr>,force=True)  ]] [[ <expr> := expand_power_exp(<expr>)  ]] [[ <expr> := sqrt(<expr>)  ]] [[ <expr> := expand_trig(<expr>)  ]] [[ <expr> := cancel(<expr>)  ]] [[ <expr> := expand_log(<expr>)  ]] [[ <expr> := trigsimp(<expr>)  ]] [[ <expr> := logcombine(<expr>)  ]] [[ <expr> := powsimp(<expr>)  ]] [[ <expr> := powdenest(<expr>)  ]] [[ <expr> := expand_power_base(<expr>)  ]] [[ <expr> := expand(<expr>)  ]] [[ {ValueError} <expr> := factor(<expr>)  ]] [[ <expr> := expand_func(<expr>)  ]]
+[[ <expr> := expand_func(<expr>)  ]] [[ <expr> := expand_power_base(<expr>)  ]] [[ <expr> := logcombine(<expr>)  ]] [[ <expr> := expand(<expr>,force=True)  ]] [[ <expr> := collect(<expr>,<expr>)  ]] [[ <expr> := powdenest(<expr>)  ]] [[ <expr> := expand_trig(<expr>)  ]] [[ <expr> := expand_power_exp(<expr>)  ]] [[ <expr> := cancel(<expr>)  ]] [[ <expr> := expand(<expr>)  ]] [[ <expr> := expand_log(<expr>)  ]] [[ <expr> := trigsimp(<expr>)  ]] [[ <term> := <c> * <v> ** <c>  ]] [[ <poly> := <term>  ]] [[ <expr> := <poly>  ]] [[ <expr> := powsimp(<expr>)  ]] [[ {ValueError} <expr> := factor(<expr>)  ]] [[ <poly> := <term> + <term>  ]]
 
