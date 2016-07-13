@@ -1,28 +1,28 @@
-495 TESTS
+500 TESTS
 ==================================================
 LENGTH
-reduced MEAN: 9.98383838384 MEDIAN: 9.0 SDEV: 3.46406391427
-normalized MEAN: 5.48484848485 MEDIAN: 5.0 SDEV: 1.21741269252
-normalized VS reduced WilcoxonResult(statistic=0.0, pvalue=6.863002509885304e-80)
-full MEAN: 44.6121212121 MEDIAN: 40.0 SDEV: 25.1978645589
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=1.1898508306758705e-82)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=8.1946233418916041e-83)
+reduced MEAN: 9.984 MEDIAN: 9.0 SDEV: 3.46059879212
+normalized MEAN: 5.48 MEDIAN: 5.0 SDEV: 1.21227059686
+normalized VS reduced WilcoxonResult(statistic=0.0, pvalue=1.0382568473899508e-80)
+full MEAN: 44.664 MEDIAN: 40.5 SDEV: 25.1123695417
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=1.8154549043005952e-83)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=1.2502621884081135e-83)
 ==================================================
 ACTIONS
-reduced MEAN: 8.10707070707 MEDIAN: 8.0 SDEV: 2.18411401843
-normalized MEAN: 5.28686868687 MEDIAN: 5.0 SDEV: 0.76708110862
-normalized VS reduced WilcoxonResult(statistic=49.0, pvalue=1.6434983239835455e-76)
-full MEAN: 20.698989899 MEDIAN: 21.0 SDEV: 7.18361624908
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=4.9565755290768026e-82)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=1.1117886592939886e-82)
+reduced MEAN: 8.116 MEDIAN: 8.0 SDEV: 2.1960291437
+normalized MEAN: 5.282 MEDIAN: 5.0 SDEV: 0.765817210567
+normalized VS reduced WilcoxonResult(statistic=49.0, pvalue=3.6539473492449989e-77)
+full MEAN: 20.722 MEDIAN: 21.0 SDEV: 7.17277603164
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=7.5547007511221855e-83)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=1.6952001459771916e-83)
 ==================================================
 TIME
-reduced MEAN: 105.172965538 MEDIAN: 19.5062270164 SDEV: 256.399142474
-normalized MEAN: 586.743247125 MEDIAN: 260.890130043 SDEV: 916.727453686
-normalized VS reduced WilcoxonResult(statistic=8790.0, pvalue=2.7729114412351338e-61)
+reduced MEAN: 104.459861679 MEDIAN: 19.7027801275 SDEV: 255.218278
+normalized MEAN: 594.009837465 MEDIAN: 260.214793563 SDEV: 937.7798763
+normalized VS reduced WilcoxonResult(statistic=8867.0, pvalue=4.1309518906641145e-62)
 full MEAN: 0.0 MEDIAN: 0.0 SDEV: 0.0
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=8.2883044293017025e-83)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=8.2883044293017025e-83)
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=1.2647189486921487e-83)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=1.2647189486921487e-83)
 ==================================================
 
 40 FAILURES
@@ -59,21 +59,21 @@ reduced ACTION MEAN: 5.5 MEDIAN: 5.5 MIN: 4 MAX: 7 STD: 1.5
 normalized LENGTH MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
 normalized ACTION MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
 **************************************************
-full 124 reduced 124 normalized 19 : RuntimeError('maximum recursion depth exceeded while calling a Python object',)
-full LENGTH MEAN: 38.7096774194 MEDIAN: 32.0 MIN: 6 MAX: 100 STD: 26.1554824308
-full ACTION MEAN: 19.0322580645 MEDIAN: 19.0 MIN: 5 MAX: 36 STD: 7.61570478795
-reduced LENGTH MEAN: 9.12903225806 MEDIAN: 8.0 MIN: 5 MAX: 21 STD: 2.84255604517
-reduced ACTION MEAN: 7.85483870968 MEDIAN: 7.0 MIN: 5 MAX: 13 STD: 1.99472509379
-normalized LENGTH MEAN: 4.99193548387 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.574960976824
-normalized ACTION MEAN: 4.95161290323 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.536638863213
+full 125 reduced 125 normalized 19 : RuntimeError('maximum recursion depth exceeded while calling a Python object',)
+full LENGTH MEAN: 38.896 MEDIAN: 32.0 MIN: 6 MAX: 100 STD: 26.1331434007
+full ACTION MEAN: 19.032 MEDIAN: 19.0 MIN: 5 MAX: 36 STD: 7.58518134259
+reduced LENGTH MEAN: 9.112 MEDIAN: 8.0 MIN: 5 MAX: 21 STD: 2.83750876651
+reduced ACTION MEAN: 7.832 MEDIAN: 7.0 MIN: 5 MAX: 13 STD: 2.0029418364
+normalized LENGTH MEAN: 4.992 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.572656965382
+normalized ACTION MEAN: 4.952 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.534505378832
 **************************************************
-full 14 reduced 14 normalized 13 : AttributeError("'NaN' object has no attribute '_mpf_'",)
-full LENGTH MEAN: 60.2142857143 MEDIAN: 69.5 MIN: 20 MAX: 100 STD: 24.3521151074
-full ACTION MEAN: 25.3571428571 MEDIAN: 26.5 MIN: 14 MAX: 35 STD: 6.37637540185
-reduced LENGTH MEAN: 14.9285714286 MEDIAN: 14.5 MIN: 6 MAX: 21 STD: 4.49546256502
-reduced ACTION MEAN: 10.6428571429 MEDIAN: 11.5 MIN: 6 MAX: 14 STD: 2.31785439137
-normalized LENGTH MEAN: 6.85714285714 MEDIAN: 7.0 MIN: 5 MAX: 9 STD: 1.18666055185
-normalized ACTION MEAN: 6.14285714286 MEDIAN: 6.0 MIN: 5 MAX: 8 STD: 0.832993127835
+full 15 reduced 15 normalized 14 : AttributeError("'NaN' object has no attribute '_mpf_'",)
+full LENGTH MEAN: 60.0666666667 MEDIAN: 66.0 MIN: 20 MAX: 100 STD: 23.5328611851
+full ACTION MEAN: 25.6 MEDIAN: 28.0 MIN: 14 MAX: 35 STD: 6.22682369538
+reduced LENGTH MEAN: 14.9333333333 MEDIAN: 15.0 MIN: 6 MAX: 21 STD: 4.34306599331
+reduced ACTION MEAN: 10.8666666667 MEDIAN: 12.0 MIN: 6 MAX: 14 STD: 2.39072281027
+normalized LENGTH MEAN: 6.73333333333 MEDIAN: 7.0 MIN: 5 MAX: 9 STD: 1.23648246607
+normalized ACTION MEAN: 6.0 MEDIAN: 6.0 MIN: 4 MAX: 8 STD: 0.966091783079
 **************************************************
 full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((l, 10, 1), (l, 10, 10)),)',)
 full LENGTH: 38.0 ACTION: 18.0    reduced LENGTH: 13.0 ACTION: 8.0    normalized LENGTH: 9.0 ACTION: 6.0   
@@ -169,13 +169,13 @@ reduced ACTION MEAN: 6.33333333333 MEDIAN: 7.0 MIN: 4 MAX: 8 STD: 1.6996731712
 normalized LENGTH MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
 normalized ACTION MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
 **************************************************
-full 249 reduced 249 normalized 27 : RuntimeError('maximum recursion depth exceeded',)
-full LENGTH MEAN: 45.0 MEDIAN: 42.0 MIN: 8 MAX: 99 STD: 22.7221739443
-full ACTION MEAN: 20.9919678715 MEDIAN: 21.0 MIN: 6 MAX: 37 STD: 6.50917916458
-reduced LENGTH MEAN: 9.61445783133 MEDIAN: 9.0 MIN: 5 MAX: 24 STD: 2.79915933436
-reduced ACTION MEAN: 7.84738955823 MEDIAN: 8.0 MIN: 5 MAX: 16 STD: 1.88866924019
-normalized LENGTH MEAN: 5.35742971888 MEDIAN: 5.0 MIN: 4 MAX: 8 STD: 0.624752979362
-normalized ACTION MEAN: 5.30923694779 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.563938940484
+full 252 reduced 252 normalized 27 : RuntimeError('maximum recursion depth exceeded',)
+full LENGTH MEAN: 44.9761904762 MEDIAN: 42.5 MIN: 8 MAX: 99 STD: 22.6345936551
+full ACTION MEAN: 21.0079365079 MEDIAN: 21.0 MIN: 6 MAX: 37 STD: 6.50274182923
+reduced LENGTH MEAN: 9.61111111111 MEDIAN: 9.0 MIN: 5 MAX: 24 STD: 2.79163211698
+reduced ACTION MEAN: 7.85714285714 MEDIAN: 8.0 MIN: 5 MAX: 16 STD: 1.8844151369
+normalized LENGTH MEAN: 5.35317460317 MEDIAN: 5.0 MIN: 4 MAX: 8 STD: 0.62223183909
+normalized ACTION MEAN: 5.30555555556 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.561574537528
 **************************************************
 full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((x, 3, 1), (h, 3, 3)),)',)
 full LENGTH: 53.0 ACTION: 25.0    reduced LENGTH: 12.0 ACTION: 8.0    normalized LENGTH: 9.0 ACTION: 6.0   
@@ -220,16 +220,16 @@ normalized LENGTH MEAN: 5.0 MEDIAN: 5.0 MIN: 5 MAX: 5 STD: 0.0
 normalized ACTION MEAN: 5.0 MEDIAN: 5.0 MIN: 5 MAX: 5 STD: 0.0
 ==================================================
 
-full #FAILURES MEAN: 12.375 MEDIAN: 1.0 MAX: 249
-reduced #FAILURES MEAN: 12.375 MEDIAN: 1.0 MAX: 249
-normalized #FAILURES MEAN: 3.125 MEDIAN: 1.0 MAX: 27
+full #FAILURES MEAN: 12.5 MEDIAN: 1.0 MAX: 252
+reduced #FAILURES MEAN: 12.5 MEDIAN: 1.0 MAX: 252
+normalized #FAILURES MEAN: 3.15 MEDIAN: 1.0 MAX: 27
 normalized VS. full WilcoxonResult(statistic=0.0, pvalue=0.0030270033812974401)
 normalized VS. reduced WilcoxonResult(statistic=0.0, pvalue=0.0030270033812974401)
 ==================================================
 
-495 TOTAL FULL TESTS
-495 TOTAL REDUCED TESTS
-113 TOTAL NORMALIZED TESTS
+500 TOTAL FULL TESTS
+500 TOTAL REDUCED TESTS
+114 TOTAL NORMALIZED TESTS
 ==================================================
 
 50 ACTIONS IN FULL TESTS
