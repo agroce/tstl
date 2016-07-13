@@ -1,28 +1,28 @@
-468 TESTS
+471 TESTS
 ==================================================
 LENGTH
-reduced MEAN: 10.0128205128 MEDIAN: 9.0 SDEV: 3.47331803879
-normalized MEAN: 5.48290598291 MEDIAN: 5.0 SDEV: 1.19905879031
-normalized VS reduced WilcoxonResult(statistic=0.0, pvalue=8.6544176745819438e-76)
-full MEAN: 44.6260683761 MEDIAN: 40.0 SDEV: 25.0110044996
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=3.0578683766753491e-78)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=2.1042202939739624e-78)
+reduced MEAN: 10.0063694268 MEDIAN: 9.0 SDEV: 3.46378929615
+normalized MEAN: 5.47558386412 MEDIAN: 5.0 SDEV: 1.19931793641
+normalized VS reduced WilcoxonResult(statistic=0.0, pvalue=2.7616684546802361e-76)
+full MEAN: 44.4968152866 MEDIAN: 40.0 SDEV: 24.9963795775
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=9.8935298694876085e-79)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=6.8083022128817918e-79)
 ==================================================
 ACTIONS
-reduced MEAN: 8.11324786325 MEDIAN: 8.0 SDEV: 2.19118175549
-normalized MEAN: 5.2905982906 MEDIAN: 5.0 SDEV: 0.765828182063
-normalized VS reduced WilcoxonResult(statistic=47.0, pvalue=1.4919927429025678e-72)
-full MEAN: 20.6901709402 MEDIAN: 21.0 SDEV: 7.14323461924
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=1.2754053127172734e-77)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=2.860561747555675e-78)
+reduced MEAN: 8.11040339703 MEDIAN: 8.0 SDEV: 2.184805191
+normalized MEAN: 5.28450106157 MEDIAN: 5.0 SDEV: 0.768096411353
+normalized VS reduced WilcoxonResult(statistic=47.0, pvalue=4.776649066555758e-73)
+full MEAN: 20.6518046709 MEDIAN: 21.0 SDEV: 7.14735649112
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=4.1270061093148856e-78)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=9.2575192252333219e-79)
 ==================================================
 TIME
-reduced MEAN: 101.717089359 MEDIAN: 19.4155540466 SDEV: 240.61149275
-normalized MEAN: 591.428269987 MEDIAN: 264.094912529 SDEV: 917.961786679
-normalized VS reduced WilcoxonResult(statistic=7099.0, pvalue=7.1226379806686227e-60)
+reduced MEAN: 101.140195791 MEDIAN: 19.3248810768 SDEV: 239.953462318
+normalized MEAN: 590.043042437 MEDIAN: 263.103282928 SDEV: 915.816635087
+normalized VS reduced WilcoxonResult(statistic=7148.0, pvalue=2.3931065583379562e-60)
 full MEAN: 0.0 MEDIAN: 0.0 SDEV: 0.0
-full VS reduced WilcoxonResult(statistic=0.0, pvalue=2.1271723596927644e-78)
-full VS normalized WilcoxonResult(statistic=0.0, pvalue=2.1271723596927644e-78)
+full VS reduced WilcoxonResult(statistic=0.0, pvalue=6.8840265551153382e-79)
+full VS normalized WilcoxonResult(statistic=0.0, pvalue=6.8840265551153382e-79)
 ==================================================
 
 38 FAILURES
@@ -51,18 +51,21 @@ full LENGTH: 24.0 ACTION: 16.0    reduced LENGTH: 7.0 ACTION: 7.0    normalized 
 NO MEAN REDUCTION IN LENGTH
 NO MEAN REDUCTION IN ACTIONS
 **************************************************
-full 1 reduced 1 normalized 1 : TypeError("'tan' object is not callable",)
-full LENGTH: 14.0 ACTION: 11.0    reduced LENGTH: 4.0 ACTION: 4.0    normalized LENGTH: 4.0 ACTION: 4.0   
-NO MEAN REDUCTION IN LENGTH
-NO MEAN REDUCTION IN ACTIONS
+full 2 reduced 2 normalized 1 : TypeError("'tan' object is not callable",)
+full LENGTH MEAN: 14.0 MEDIAN: 14.0 MIN: 14 MAX: 14 STD: 0.0
+full ACTION MEAN: 10.0 MEDIAN: 10.0 MIN: 9 MAX: 11 STD: 1.0
+reduced LENGTH MEAN: 6.0 MEDIAN: 6.0 MIN: 4 MAX: 8 STD: 2.0
+reduced ACTION MEAN: 5.5 MEDIAN: 5.5 MIN: 4 MAX: 7 STD: 1.5
+normalized LENGTH MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
+normalized ACTION MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
 **************************************************
-full 116 reduced 116 normalized 19 : RuntimeError('maximum recursion depth exceeded while calling a Python object',)
-full LENGTH MEAN: 38.1206896552 MEDIAN: 31.5 MIN: 6 MAX: 100 STD: 25.6854833456
-full ACTION MEAN: 18.8103448276 MEDIAN: 19.0 MIN: 5 MAX: 36 STD: 7.60774763113
-reduced LENGTH MEAN: 9.12931034483 MEDIAN: 8.0 MIN: 5 MAX: 21 STD: 2.90222914449
-reduced ACTION MEAN: 7.84482758621 MEDIAN: 7.0 MIN: 5 MAX: 13 STD: 2.04097444727
-normalized LENGTH MEAN: 5.00862068966 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.579769419909
-normalized ACTION MEAN: 4.96551724138 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.540291021241
+full 117 reduced 117 normalized 19 : RuntimeError('maximum recursion depth exceeded while calling a Python object',)
+full LENGTH MEAN: 38.1196581197 MEDIAN: 32.0 MIN: 6 MAX: 100 STD: 25.5754831832
+full ACTION MEAN: 18.8290598291 MEDIAN: 19.0 MIN: 5 MAX: 36 STD: 7.57784737976
+reduced LENGTH MEAN: 9.13675213675 MEDIAN: 8.0 MIN: 5 MAX: 21 STD: 2.89091114169
+reduced ACTION MEAN: 7.84615384615 MEDIAN: 7.0 MIN: 5 MAX: 13 STD: 2.03228381748
+normalized LENGTH MEAN: 5.0 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.584705346205
+normalized ACTION MEAN: 4.95726495726 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.545269672059
 **************************************************
 full 12 reduced 12 normalized 11 : AttributeError("'NaN' object has no attribute '_mpf_'",)
 full LENGTH MEAN: 64.6666666667 MEDIAN: 74.0 MIN: 20 MAX: 100 STD: 23.5100451344
@@ -157,13 +160,13 @@ reduced ACTION MEAN: 6.33333333333 MEDIAN: 7.0 MIN: 4 MAX: 8 STD: 1.6996731712
 normalized LENGTH MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
 normalized ACTION MEAN: 4.0 MEDIAN: 4.0 MIN: 4 MAX: 4 STD: 0.0
 **************************************************
-full 236 reduced 236 normalized 25 : RuntimeError('maximum recursion depth exceeded',)
-full LENGTH MEAN: 45.0974576271 MEDIAN: 43.0 MIN: 8 MAX: 99 STD: 22.3207320284
-full ACTION MEAN: 21.0254237288 MEDIAN: 21.0 MIN: 6 MAX: 35 STD: 6.34457176822
-reduced LENGTH MEAN: 9.66101694915 MEDIAN: 9.0 MIN: 5 MAX: 24 STD: 2.75318102301
-reduced ACTION MEAN: 7.86440677966 MEDIAN: 8.0 MIN: 5 MAX: 16 STD: 1.88173763115
-normalized LENGTH MEAN: 5.36440677966 MEDIAN: 5.0 MIN: 4 MAX: 8 STD: 0.626603086292
-normalized ACTION MEAN: 5.31779661017 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.571814144858
+full 237 reduced 237 normalized 25 : RuntimeError('maximum recursion depth exceeded',)
+full LENGTH MEAN: 44.9957805907 MEDIAN: 43.0 MIN: 8 MAX: 99 STD: 22.3282942656
+full ACTION MEAN: 20.9957805907 MEDIAN: 21.0 MIN: 6 MAX: 35 STD: 6.34752876615
+reduced LENGTH MEAN: 9.6582278481 MEDIAN: 9.0 MIN: 5 MAX: 24 STD: 2.74770057737
+reduced ACTION MEAN: 7.86497890295 MEDIAN: 8.0 MIN: 5 MAX: 16 STD: 1.87778409324
+normalized LENGTH MEAN: 5.36286919831 MEDIAN: 5.0 MIN: 4 MAX: 8 STD: 0.625725735423
+normalized ACTION MEAN: 5.3164556962 MEDIAN: 5.0 MIN: 4 MAX: 7 STD: 0.570978221908
 **************************************************
 full 1 reduced 1 normalized 1 : ValueError('Invalid limits given: (((x, 3, 1), (h, 3, 3)),)',)
 full LENGTH: 53.0 ACTION: 25.0    reduced LENGTH: 12.0 ACTION: 8.0    normalized LENGTH: 9.0 ACTION: 6.0   
@@ -205,9 +208,16 @@ normalized LENGTH MEAN: 5.0 MEDIAN: 5.0 MIN: 5 MAX: 5 STD: 0.0
 normalized ACTION MEAN: 5.0 MEDIAN: 5.0 MIN: 5 MAX: 5 STD: 0.0
 ==================================================
 
-468 FULL TESTS
-468 REDUCED TESTS
-106 NORMALIZED TESTS
+full #FAILURES MEAN: 12.3947368421 MEDIAN: 1.0 MAX: 237
+reduced #FAILURES MEAN: 12.3947368421 MEDIAN: 1.0 MAX: 237
+normalized #FAILURES MEAN: 3.10526315789 MEDIAN: 1.0 MAX: 25
+normalized VS. full WilcoxonResult(statistic=0.0, pvalue=0.0030270033812974401)
+normalized VS. reduced WilcoxonResult(statistic=0.0, pvalue=0.0030270033812974401)
+==================================================
+
+471 TOTAL FULL TESTS
+471 TOTAL REDUCED TESTS
+106 TOTAL NORMALIZED TESTS
 ==================================================
 
 50 ACTIONS IN FULL TESTS
