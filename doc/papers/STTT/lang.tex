@@ -32,7 +32,11 @@ the usual reasons of abstraction and readability.
 
 In TSTL, tests usually consist of assignments to value pools and
 function calls making use of those values.  These are the most common
-types of actions.  However, the notion of an action in TSTL is
+types of actions.  Value pools are
+meta-variables in the target language, and support the complete set of
+types of the underlying language.  A pool can contain simple types
+such as integers, more complex types such as functions, or even TSTL
+testing objects (to support testing TSTL itself).    The notion of an action in TSTL is
 completely general:  \emph{any fragment of code in the host language can be
 an action}.  Usually, it is most convenient to encapsulate complex
 actions by defining functions that perform the desired behavior, and
@@ -65,7 +69,12 @@ pool has not been initialized.  For the most part, we can think of the
 {\tt val} pool as two Python variables {\tt val0} and {\tt val1}.  Another
 way to think about a pool is as a kind of informal ``named type,''
 with a limited set of variables that can contain the ``type'' and all
-possible action sequences that assign to its pool values serving as its specification.
+possible action sequences that assign to its pool values serving as
+its specification.  In Python it is not necessary to specify the
+actual type
+of a value pool, though an optional {\tt : type} notation enables TSTL
+to perform runtime type-checking and ensure pools never contain
+incorrect types.
 
 In this simple example, the only actions are initialization of a {\tt
   val} and incrementing a {\tt val}.  Again, we emphasize that an
@@ -243,7 +252,7 @@ Finally, if any string matches a regular expression in a {\tt
 action are compared with those for the reference version.  In the
 ArcPy case, if our {\tt copyFCName} is correctly defined, we can even
 check that behavior is equivalent for different underlying data file
-format for feature classes.
+formats for feature classes.
 
 \subsection{How to Build a TSTL Harness}
 
@@ -283,3 +292,4 @@ major exceptions being the implementation of a method allowing users
 to provide their own GIS data as a basis for testing, and efforts to
 improve the TSTL tool infrastructure to support testing a complex
 application in a Windows environment.
+

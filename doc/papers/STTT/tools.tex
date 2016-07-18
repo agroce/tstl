@@ -1,4 +1,5 @@
 \section{TSTL Tools}
+\label{sec:tools}
 
 The following tools are provided in the TSTL distribution on github \cite{tstl}.  Installing the TSTL module allows the compiler, called {\tt tstl}, to be used at the command line.  Other tools are included in the {\tt generators} and {\tt utilities} directories of the distribution as Python scripts.
 
@@ -69,6 +70,59 @@ print sut.report('coverage.txt'),'\% STATEMENTS COVERED'
 
 However, use of these tools is often not required.  Figure \ref{fig:regress} shows a simple, but complete, Python script for running regression tests generated using TSTL for a system.  This script examines the {\tt regressions} directory, replays each test in the directory, and reports on failing tests and code coverage.  Such a script can easily be customized to provide different tests for different budgets (e.g., prioritized by time, coverage, or to execute coverage-based 'quick tests').
 
+\subsubsection{ArcPy Regression Generation}
+
+One difficulty for ArcPy users is ensuring that their existing scripts
+and tools work on new versions of ArcGIS.  Each recent major release
+(10.2 and 10.3) after ArcPy's introduction has potentially included some changes
+in the behavior of API calls.  Detecting when such changes cause a
+script to break is difficult.  A first step would be an automatic way
+to find when the return values for calls differ between ArcPy
+versions.
+Because installing multiple versions of ArcGIS on the same system is
+difficult or impossible, our method for finding differences relies on
+choosing a reference version (10.3 in our current efforts), and
+generating a set of standalone tests that 1) cover a large amount of
+ArcPy functionality, including invalid inputs to functions and 2)
+record the return values and exceptions raised by calls.  These tests
+can be run on any ArcPy version, and will report differences between
+the tests and version 10.3.  Performing this kind of differential
+testing \cite{Differential} on old or new major releases, or across 64
+bit and 32 bit versions, is easy.  In the long run, we also want to
+enable TSTL to produce Python 3.0+ code, for use with ArcGIS Pro,
+which uses Python 3.4 instead of 2.7.  This has motivated a branch to
+TSTL to support Python 3.0 (unfortunately, Python 3.0 is not fully
+backwards compatible with earlier versions, and Python 2.7 is still
+the most widely used Python, and non-pro versions of ArcPy only work
+with 2.7).
+
+We generate regression tests using an approach called \emph{quick
+  testing} \cite{icst14,stvrcausereduce}, which takes a set of tests
+produced by random testing, and applies a test case reduction
+algorithm \cite{DD} to produce smaller tests that have the same code
+coverage as the very large, highly redundant, original set of test
+cases.  Automatic quick-testing was added to TSTL's random test
+generator to support ArcPy testing.  Combined with standalone test
+generation, this allows us to produce test cases that can be run on
+any version of ArcPy, and explore a large variety of behavior of the
+code.  With ArcPy, coverage alone, unlike previous quick testing
+efforts, is insufficient to ensure a useful regression test.  Because
+coverage only considers the Python behavior of ArcPy (since we do not
+have access to the source for the ArcGIS engine), it may group
+behaviors that are not similar together.  We added the ability to
+combine coverage preservation with preservation of all ArcPy messages
+indicating a successful GIS engine operation, after abstracting away
+such details as the runtime of the operation, and so forth.
+
+However, just producing these coverage-and-engine-behavior preserving
+standalone tests is not sufficient for good version comparison, since
+standalone test cases as produced only check for properties defined in TSTL.  An
+additional option was added to the standalone test generator, allowing
+it to record the actual return values of all calls, the set of
+exceptions thrown, the success/failure messages from the ArcPy engine, and so forth to more precisely record a test's
+behavior on an ArcPy version.
+
+
 \subsection{Visualization of Action Spaces}
 
 \begin{figure}
@@ -79,7 +133,8 @@ However, use of these tools is often not required.  Figure \ref{fig:regress} sho
 
 Understanding the structure of the action graph produced by even a relatively simple TSTL harness can be difficult.  The structure is often infinite, and even in cases where there is a finite state space (perhaps introduced by abstraction) the graph is usually far too large for a convenient display.  However, we have found that a visual representation of typical trajectories through the system can be very helpful for understanding a complex test system.  The {\tt makegraph} utility takes as input a number of traces to produce, a starting depth, additional depth, and a test width.  It then produces in pdf form a number of graphs for traces like the one shown in Figure \ref{fig:actions}.  These trace graphs show, in bold, the actual action sequence chosen by a pure random tester, starting after a number of actions not shown (represented by the ``...'' node) and continuing up to the depth limit.  In addition to the actions taken, the graph also shows a random subset of additional enabled actions, with each step showing a number of actions equal to the width.  Because many actions are extremely similar, the graphing utility also summarizes actions that are the same, except for pool choice or integer constant, using the {\tt <[i..j]>} notation of TSTL.
 
-\section{Building Your Own Testing Tools in TSTL}
+\subsection{Building Your Own Testing Tools in TSTL}
+\label{sec:build}
 
 Describing the full interface provided by TSTL for use in testing tools is beyond the scope of this paper.  However, examining the source code of the included testers can provide a good starting point.  Implementing new test case manipulations usually involves understanding TSTL internal structures and how tests are stored.  Implementing novel test generation algorithms can often rely on just a handful of methods, shown in Figure \ref{methods} (there are many more methods for e..g, code coverage, but this minimal set can implement many test generation algorithms).
 
@@ -142,3 +197,6 @@ The implementation is trivial, relying only on the TSTL API and some very simple
 \caption{Comparing branch coverage for 10 minute runs of two test generation methods.}
 \label{fig:compare}
 \end{figure}
+
+\section{TSTL as a Language Extension}
+\label{sec:langext}

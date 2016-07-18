@@ -1,4 +1,5 @@
 \section{Related Work}
+\label{sec:related}
 
 There is a vast amount of previous work on automated generation of
 tests for (API-based) software systems
@@ -32,32 +33,34 @@ harnesses \cite{woda12}.  Earlier publications on TSTL itself \cite{NFM15,ISSTA1
 language considerably more limited in functionality and with a more
 difficult-to-read syntax.  These publications omitted details of the tools provided in the TSTL distribution for
 off-the-shelf testing \cite{tstl}, and provided little practical
-guidance to potential users of TSTL.  However, some interesting
+guidance to potential users of TSTL.  More critically, these papers
+did not descirbe the long-term core concept of TSTL as primarily
+making testing and explicit-state verification
+a first-class, library-supported activity for any programming
+language.  Some technical
 details of the current TSTL implementation were presented in the NASA
 Formal Methods paper \cite{NFM15} that we omit in
 the interest of space (and because implementation details are subject
 to change).
 
 There exist various testing tools and languages of a somewhat
-different flavor: e.g. Korat \cite{Korat}, which has a much more fixed
-input domain specification, or the tools built to support the Next
+different flavor.   Korat \cite{Korat}, has a much more fixed
+input domain specification, as do the tools built to support the Next
 Generation Air Transportation System (NextGen) software
-\cite{TameInputs}, or the model-based TestStories approach of Felderer et
-al. \cite{TestStories}.  Utting et al. survey the wide variety of
+\cite{TameInputs}. The model-based TestStories approach of Felderer et
+al. \cite{TestStories}, the software-as-a-service oriented approach of
+Santiago et al. \cite{Santiago}, and the use-case-based DSL for extracting tests
+proposed by Im et al. \cite{AutoDSL} similarly aim at a fairly
+restricted (and simply different) goal of turning certain inputs (in a DSL tied to a model or
+documentation) into tests or test skeletons.  Utting et al. survey the wide variety of
 specifically model-based testing approaches, including many tools
 \cite{Taxonomy}; while TSTL is not specifically model-based, it can be
 used to facilitate model-based testing in theory.
 Behavior-driven-development (BDD) \cite{BDD} is often supported by extracting
 formally meaningful parts of a specification document to (partially)
-instantiate a test.
+instantiate a test.  
 
-The primary difference between such systems and TSTL is that TSTL is
-meant to be much more general, without focusing on a particular system
-model or specification method.  
-TSTL, unlike any other system of which we are
-aware, aims to make test cases first-class objects, and provides tools
-for development of code that manipulates, executes, and analyzes test
-cases.  
+
 
 
 Perhaps the most similar system is the UDITA language
@@ -75,7 +78,6 @@ stand-alone simple interface to a test space, as with TSTL.  Building
 TSTL.  UDITA supports many fewer constructs to assist harness
 development.
 
-
 The design of the SPIN model checker \cite{SPIN} and its model-driven
 extension to include native C code \cite{ModelDriven} inspired the
 flavor of TSTL's domain-specific language, though our approach is more
@@ -87,6 +89,25 @@ Python-based declarative language useful in testing.  The pool
 approach to test case construction is derived from work on canonical
 forms and enumeration of unit tests \cite{AndrewsTR}, and common to
 some other test generators \cite{Pacheco}.
+
+A primary difference between all such systems and TSTL is that TSTL is
+meant to be much more general, without focusing on a particular system
+model or specification method.  
+TSTL, unlike any other system of which we are
+aware, aims to make test cases first-class objects, and provides tools
+for development of code that manipulates, executes, and analyzes test
+cases.  In a sense, TSTL is less a tool for creating tests than a
+method for generating a language extension (custom to each SUT, but
+with a common interface) that makes test activities as well supported
+as, e.g., ArcPy makes GIS operations, or NumPy makes numeric
+operations.  Because testing is intimately tied to a particular SUT,
+this process is more involved than in typical libraries, requiring the
+step of compiling a TSTL model, but the end-goal is similar.  No such
+language-based interface is possible in more traditional testing or
+model checking tools, to our knowledge.  Extending even a highly
+extensible system such as Java PathFinder \cite{JPF2} is much more
+like extending an existing complex software system than simply using a
+library API.
 
 Some recent work on automated test generation has given more attention
 to practical, rather than primarily algorithmic, issues than in the

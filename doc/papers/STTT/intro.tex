@@ -142,9 +142,87 @@ declarative harness, but often \emph{needs} to program critical details of a
 harness, and build understanding of the system by performing harness development in
 small, incremental steps.
 
-%\vspace{-0.2in}
+\subsection{Contributions}
 
-\subsection{Domain Specific Languages for Testing}
+In this paper we describe a complete, Domain Specific Language (DSL)-based approach that combines
+a simple means to produce a declarative harness with the full power of
+a complete programming language.  The TSTL (Template Scripting Testing
+Language) compiles a declarative description of system state and
+actions into a library in the language of the System Under Test
+(SUT).  This library allows the creation of objects providing an API
+for testing the SUT, including support for state comparison,
+abstraction, backtracking, automatic test case reduction, code coverage, and support
+for sophisticated regression testing.
+
+Using an ongoing case study,
+we show how to apply TSTL and its tool suite to a large, real-world software
+library used in critical applications.  The test effort has been driven and directed not by a
+software testing researcher (as is the usual case), but by a domain
+expert in the Geographic Information Systems (GIS) SUT.  In the
+course of this effort, multiple faults and undocumented restrictions of the library
+under test have been discovered, and the TSTL language and tool suite have
+been transformed from a research prototype into a complete system for
+software testing.
+
+This paper presents the most complete presentation of the TSTL
+language and tools, and we hope that it satisfies three critical goals:
+
+\begin{itemize}
+\item First, would-be users wanting to take advantage of automated
+  test generation should be able to base their own testing
+  efforts using TSTL on the example code in this paper (and that available
+  in the TSTL github repository \cite{tstl}).
+  This paper thus completely describes the concepts behind TSTL, the
+  semantics of the language, and the tools available in TSTL.
+  Previous papers on TSTL \cite{NFM15,ISSTA15} reported a much less full-featured version of the
+  language using a difficult-to-read syntax.
+
+\item Second, researchers should be able to use the information in this paper to
+  extend existing TSTL tools or build their own tools to explore novel
+  test generation strategies, automated debugging methods, and other
+  research prototypes.  TSTL enables easy comparison of
+  methods in a framework reducing the burden of implementation
+  and avoiding irrelevant differences in performance due to underlying
+  infrastructure.  The growing set of SUTs
+  included in the TSTL distribution, which includes large and widely
+  used Python libraries, can provide benchmarks for
+  experimental efforts.  
+
+\item Finally, unlike previous publications on TSTL, this paper
+  emphasizes the fact that TSTL, unlike other testing DSLs or tools,
+  at heart transforms a definition of valid tests (and properties) for
+  a System Under Test into a \emph{programming language interface} for testing
+  that system.  Tests in TSTL are not inaccessible entities internal to
+  a tool,
+  or only represented as unit tests (e.g., programs) that cannot be
+  easily manipulated and analyzed, but first-class objects in the
+  language of the System Under Test.  To our knowledge, this approach
+  to testing has not been previously explored, and it was not
+  emphasized (or even clearly presented) in earlier publications on TSTL.
+\end{itemize}
+
+
+The organization of this paper is as follows.  In Section
+\ref{sec:dsltest} we present the basic idea of a DSL for testing, and
+distinguish TSTL from other testing DSLs.  Section \ref{sec:arcpy} 
+provides background on the ArcPy GIS case study used throughout the
+paper.  Section \ref{sec:lang} provides a full description, with
+examples, of the core TSTL language and semantics.  Section
+\ref{sec:tools} describes the tools included with TSTL, and
+Section \ref{sec:build} describes how researchers and developers can
+build their own TSTL-based testing tools to support additional
+testing, debugging, or regression strategies.  Section
+\ref{sec:langext} introduces the novel TSTL concept of making testing
+a first-class activity in a programming language, similar to how other
+libraries make GIS (ArcPy), numeric analysis (NumPy) or bioinformatics
+(BioPython) activities simple to use in either a scripted or
+interactive manner.  Faults discovered
+in TSTL, in ArcPy and other systems, are described briefly in Section
+\ref{sec:bugs}.  We survey the most closely related work in Section
+\ref{sec:related}, and summarize our conclusions in Section \ref{sec:conclusion}.
+
+\section{Domain Specific Languages for Testing}
+\label{sec:dsltest}
 
 The nature of test harness construction suggests the use of a
 \emph{domain-specific language} (DSL) for testing \cite{ISOLA12}.  DSLs
@@ -193,9 +271,9 @@ at an interactive command prompt in the language of the SUT, creating,
 saving, and modifying tests on-the-fly.  TSTL tools are simply
 scripted formalizations of this mode of use, automating repetitive
 tasks.  Such an approach is not possible with any other tool of which we
-are aware.  Many tasks that are constrainted to the features provided
-by the tools in other systems (e.g., replay of regression tests) in
-TSTL are made very simple by this approach.
+are aware.  Many tasks that are constrained to the functionality provided
+by  tools included in other systems (e.g., replay of regression tests) in
+TSTL are simplified and made flexible by this approach.
 
 \subsection{TSTL: The Template Scripting Testing Language}
 
@@ -222,7 +300,7 @@ users to pick up as a popular scripting language.  TSTL
 works best when the SUT language is very
 concise, like most scripting languages, making ``one-liners'' of action
 definition possible; our initial implementation \cite{tstl} is therefore for
-Python\footnote{We also have developed a beta version of TSTL for Java, to show
+Python\footnote{We also have released a beta version of TSTL for Java \cite{TSTLJava}, to show
  that testing code in non-scripting languages is also possible.}.
 
 \begin{figure}
@@ -307,63 +385,18 @@ additional TSTL-specific post-processing that further reduces the size
 and complexity of test cases for debugging.  The brevity of the test
 generator, no matter how complex the SUT, is made possible by the
 common functionality of all TSTL-generated testing interfaces.  The
-TSTL compiler produces a Python (or other target language, in future
-implementations) class that allows a test generation or manipulation
+TSTL compiler produces a Python (or other target language) class that allows a test generation or manipulation
 tool to view a testing problem as exploration of a (possibly infinite)
 graph of states.  Transitions in the graph are the available test actions, executed in the underlying language, and are guarded by both TSTL
 restrictions on the semantics of valid tests and user-defined guards
 on system behavior.  States include both the (possibly unknown) state
 of the SUT and the TSTL state, including pools of values to be used in actions.
 
-\subsection{Contributions}
 
-We describe the TSTL approach and tools using an ongoing case study,
-applying TSTL and its tool suite to a large, real-world software
-library used in critical applications.  The test effort has been driven and directed not by a
-software testing researcher (as is the usual case), but by a domain
-expert in the Geographic Information Systems (GIS) SUT.  In the
-course of this effort, multiple faults and undocumented restrictions of the library
-under test have been discovered, and the TSTL language and tool suite have
-been improved.
-
-This paper presents the most complete presentation of the TSTL
-language and tools, and we hope that it satisfies three critical goals:
-
-\begin{itemize}
-\item First, would-be users wanting to take advantage of automated
-  test generation should be able to base their own testing
-  efforts using TSTL on the example code in this paper (and that available
-  in the TSTL github repository \cite{tstl}).
-  This paper thus completely describes the concepts behind TSTL, the
-  semantics of the language, and the tools available in TSTL.
-
-\item Second, researchers should be able to use the information in this paper to
-  extend existing TSTL tools or build their own tools to explore novel
-  test generation strategies, automated debugging methods, and other
-  research prototypes.  TSTL enables easy comparison of
-  methods in a framework reducing the burden of implementation
-  and avoiding irrelevant differences in performance due to underlying
-  infrastructure.  The growing set of SUTs
-  included in the TSTL distribution, which includes large and widely
-  used Python libraries, can provide benchmarks for
-  experimental efforts.  
-
-\item Finally, unlike previous publications on TSTL, this paper
-  emphasizes the fact that TSTL, unlike other testing DSLs or tools,
-  at heart transforms a definition of valid tests (and properties) for
-  a System Under Test into a programming language library for testing
-  that system.  Tests in TSTL are not inaccessible objects internal to
-  a tool,
-  or only represented as unit tests (e.g., programs) that cannot be
-  easily manipulated and analyzed, but first-class entities in the
-  language of the System Under Test.  To our knowledge, this approach
-  to testing has not been previously explored, and it was not
-  emphasized (or even clearly presented) in earlier publications on TSTL.
-\end{itemize}
 
 
 \section{Motivating Case Study: Esri ArcPy}
-
+\label{sec:arcpy}
 
 Esri is the single largest GIS software vendor, with about 40\% of
 global market share.  Esri's ArcGIS tools are extremely widely used
@@ -423,7 +456,7 @@ this is a less difficult scenario than spreadsheets
 or visual forms, in that the testing is directed by an individual used
 to writing and thinking about code.  The concepts in
 automated software testing are most easily understood by those
-who are also familiar a conventional
+who are also familiar with a conventional
 programming language.  On the other hand, ArcPy is
 not a small user-developed program but a large, complex system.
 ArcPy was also not written by the end-user, or by any of the authors

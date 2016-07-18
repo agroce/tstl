@@ -18,11 +18,24 @@ interface for testing, making generic
 test generation and manipulation tools that apply to any SUT possible.  TSTL includes a
 compiler to Python as well as a suite of tools for generating, manipulating,
 and analyzing test cases.  These include simple but easily extensible explicit-state model
-checkers.  This paper showcases the features of TSTL by focusing on
+checkers.  This paper presents the features of TSTL by focusing on
 one large-scale testing effort, directed by an end-user, to find
 faults in the most widely used Geographic Information Systems (GIS) tool,
 Esri's ArcGIS, using its ArcPy scripting interface.  We also
-demonstrate TSTL's power for prototyping novel test generation algorithms.
+demonstrate TSTL's power for prototyping novel test generation
+algorithms.  
+
+More generally, this paper introduces TSTL's approach to automated
+testing and testing tools, where, rather than focus on developing a
+monolithic tool that must be extended, the aim is to convert a test
+harness into a generic interface accessed via a library API providing
+common functionality for testing.  This approach makes testing not a
+separate activity to be performed using esoteric tools, but as natural
+to users of the language of the system under test as is the use of
+domain-specific libraries such as ArcPy, NumPy, for their domains.
+TSTL is a language, but is also a way to bring testing activities
+under the control of an existing programming language in a simple,
+natural way.
 
 
 
