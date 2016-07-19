@@ -32,15 +32,16 @@ the usual reasons of abstraction and readability.
 
 In TSTL, tests usually consist of assignments to value pools and
 function calls making use of those values.  These are the most common
-types of actions.  Value pools are
-meta-variables in the target language, and support the complete set of
-types of the underlying language.  A pool can contain simple types
-such as integers, more complex types such as functions, or even TSTL
-testing objects (to support testing TSTL itself).    The notion of an action in TSTL is
-completely general:  \emph{any fragment of code in the host language can be
-an action}.  Usually, it is most convenient to encapsulate complex
-actions by defining functions that perform the desired behavior, and
-making the action a call to such a function, but this is not required.
+forms of actions.  Value pools are meta-variables in the target
+language, and support the complete set of types of the underlying
+language.  A pool can contain simple types such as integers, or more
+complex types such as functions, container classes, file handlers, or
+even TSTL testing objects (to support testing TSTL itself).  The
+notion of an action in TSTL is similiarly completely general:
+\emph{any fragment of code in the host language can be an action}.
+Usually, it is most convenient to encapsulate complex actions by
+defining functions that perform the desired behavior, and making the
+action a call to such a function, but this is not required.
 
 In order to make the core ideas clear,
 consider part of the harness shown in Figure \ref{fig:MakeFeatureLayer}, defining how to
@@ -292,4 +293,17 @@ major exceptions being the implementation of a method allowing users
 to provide their own GIS data as a basis for testing, and efforts to
 improve the TSTL tool infrastructure to support testing a complex
 application in a Windows environment.
+
+%\subsection{Defining Complex Properties}
+
+Note that because TSTL defines the structure of a potentially infinite
+number of tests, users are expected to define correctness of a system
+via \emph{property-based testing} \cite{ClaessenH00}.  As in
+model checking, the correctness of the system is not specified via users
+determining the specific output for each test sequence, but by
+defining general properties over all executions.  TSTL includes
+idiomatic support for common forms of property-based specification,
+including invariants, post-conditions on actions, and comparison with
+the outputs of a reference implementation \cite{Differential}.
+
 

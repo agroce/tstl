@@ -19,14 +19,24 @@ or recent software testing research in general \cite{orsofuse}.
 %little or no work on allowing non-traditional software developers to apply
 %automated (random) test generation to APIs.
 
-%TSTL is a domain-specific language (DSL) \cite{Fow10} for testing, in
-%the spirit of the famous QuickCheck tool for Haskell
-%\cite{ClaessenH00}; other DSLs for testing exist \cite{UDITA}, but
-%these are more limited in scope and function.  
+TSTL is a domain-specific-language (DSL) \cite{Fow10} for testing, in
+the spirit of the famous QuickCheck tool for Haskell
+\cite{ClaessenH00} that inspired much current interest in
+property-based testing.  To our knowledge, there has been no previous
+proposal of a concise DSL like TSTL, to assist users in building test
+harnesses for API-call sequences, and to make test generation and
+manipulation first-class activities in a language.  QuickCheck itself
+produces tests that are simpy values input to functions, not sequences
+of actions.  Some QuickCheck-like tools, such as ScalaCheck
+\cite{ScalaCheck} or the excellent Python tool Hypothesis
+\cite{hypothesis} include limited, and rather cumbersome to use,
+state-machine-based tools for generating call-sequence tests.  These
+tools are also generally limited to the included methods for
+generating such tests, and make building novel sequence generation
+algorithms based on state-exploration and backtracking (model checking
+methods) or feedback from coverage difficult at best.
 
-To our knowledge, there has been no previous proposal of a concise
-domain-specific-language \cite{Fow10} like TSTL, to assist users in building test
-harnesses.  There is limited previous work on
+There is limited previous work on
 building common frameworks for random testing and model checking
 \cite{woda08}, or proposing common terminology for imperative
 harnesses \cite{woda12}.  Earlier publications on TSTL itself \cite{NFM15,ISSTA15} presented a
