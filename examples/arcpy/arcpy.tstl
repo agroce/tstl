@@ -127,6 +127,8 @@ actions:
 #len(<layerfilelist,1>) >= 1 -> <layerfile> := <layerfilelist> [0]
 #<layerfilelist> = <layerfilelist> [1:]
 
+<hascursor> == None -> <hascursor> := {}
+
 <gdbfilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.gdb"))
 len(<gdbfilelist,1>) >= 1 -> <gdbfile> := <gdbfilelist> [0]
 <gdbfilelist> = <gdbfilelist> [1:]
@@ -155,7 +157,7 @@ len(<transformlist,1>) >= 1 -> <transform> := <transformlist> [0]
 <newlayer> := "l2"
 <newlayer> := "l3"
 
-#{IOError} <description> := arcpy.Describe(<layerfile>)
+{IOError} <description> := arcpy.Describe(<layerfile>)
 
 <spatialref> := <description>.spatialReference
 <spatialref> := arcpy.SpatialReference(<prjfile>)
