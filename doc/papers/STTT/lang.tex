@@ -306,4 +306,25 @@ idiomatic support for common forms of property-based specification,
 including invariants, post-conditions on actions, and comparison with
 the outputs of a reference implementation \cite{Differential}.
 
+\subsection{TSTL and Other Languages}
+
+At heart, the TSTL ``language'' consists of the syntax for pools,
+nondeterministic choice\footnote{Nondeterministic choice \cite{EWD:Discipline,McCarthy,Floyd,woda12} is both
+  inherent in the notion of a TSTL action, and represented more
+  concretely by the
+  syntactic sugar of the {\tt <[...]>} notations.  Arguably, building
+  the language and semantics around nondeterministic choice to
+  represent a transition system/state space is the core idea of TSTL.},
+guards, pre-conditions, pre- values, and a few other elements on top of
+an existing language:  the abstract basis of TSTL has a conceptually
+small footprint.
+
+While the implementation effort to compile to an SUT interface in a
+different language is considerable, there is no difficulty (beyond
+engineering effort) in mapping TSTL to languages other than Python.
+In one summer, an advanced high school student was able to produce a
+working version for Java \cite{TSTLJava}.  Implementing TSTL for
+Scala, Ruby, or even C/C++ would require effort but no research
+breakthroughs.  The ideas behind TSTL are abstract and generally
+applicable, even if the current implementation is built for Python.
 
