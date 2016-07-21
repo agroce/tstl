@@ -119,7 +119,8 @@ inits:
    cleanupFiles()
    <hascursor> = {}
 
-log: 1 arcpy.GetMessages()
+logs:
+   1 arcpy.GetMessages()
 
 actions:
 
