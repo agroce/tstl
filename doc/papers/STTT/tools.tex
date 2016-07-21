@@ -9,7 +9,7 @@ Given a harness file defined in the language discussed above, the TSTL compiler 
 
 \subsection{Test Generators}
 
-TSTL comes with a complex, highly configurable, pure random tester (supporting numerous command-line options), and simple depth-first-search and breadth-first-search based backtracking model checkers.  The included random tester provides a number of useful options, of which a subset are shown in Figure \ref{tab:rt}.  One of these, the {\tt stutter} option, is a (to our knowledge) novel idea in random testing, where any action enabled in a step has a fixed probability of being repeated.  TSTL makes implementing novel test generation methods simple, as discussed below.
+TSTL comes with a complex, highly configurable, pure random tester (supporting numerous command-line options).  The included random tester provides a number of useful options, of which a subset are shown in Figure \ref{tab:rt}.   
 
 \begin{figure}
 {\scriptsize
@@ -18,20 +18,43 @@ TSTL comes with a complex, highly configurable, pure random tester (supporting n
 \item {\tt timeout <int>}: Determines the maximum time spent generating tests, in seconds.
 \item {\tt seed <int>}: Determines the random seed for testing.
 \item {\tt maxTests <int>}: Determines the maximum number of tests to be generated.
-\item {\tt stutter <float P>}: If this option is provided, the random tester will repeat any still-enabled actions with probability P.
 \item {\tt running}: Produce on-the-fly, time-stamped code coverage information, for analyzing performance of testing algorithms. 
 \item {\tt replayable}: Produce a log of the current test, so even it crashes Python the test can be reproduced, delta-debugged, made stand-alone, or otherwise analyzed.
 \item {\tt total}: Produce a total log of all test activity, including across resets, for systems where reset is not complete (so tests across resets can be delta-debugged).
 \item {\tt quickTests}:  Produce ``quick test'' files \cite{icst14}, each containing a minimal test to cover a set of branches of the SUT. 
 \item {\tt normalize}: Apply additional, custom term-rewriting based simplifications of test cases that often further minimize delta-debugged test cases. 
 \item {\tt generalize}: Apply generalization that elaborates each failing test with annotations showing similar tests that also fail. 
+\item {\tt swarm:}  Apply swarm testing \cite{ISSTA12} to test generation.
 \end{itemize}
 }
 \caption{Some options for the TSTL random test generator.}
 \label{tab:rt}
 \end{figure}
 
-TSTL can (unlike SPIN or most explicit-state model checkers) apply BFS or DFS search even to systems without support for backtracking (e.g., where Python's {\tt deepcopy} fails because some object state is handled by a Python C extension), using replay-based state storage and retrieval.  The model checkers take some of the same command-line options as the random tester, but are considerably less full-featured, since exhaustive generation is applicable to fewer Python libraries (for instance, it is possible but impractical for the ArcPy implementation, due to the overhead of backtracking via replay).  TSTL also supports custom abstraction of pools:  if a pool is declared with an {\tt ABSTRACT} annotation, the function after the {\tt ABSTRACT} keyword is used to abstract all values for state-matching purposes during exhaustive exploration methods.  
+To our knowledge, TSTL's random tester is the first general-purpose random testing tool to incorporate the powerful swarm testing \cite{ISSTA12} algorithm, which has previously been used to test compilers \cite{ISSTA13,ZhendongPLDI14} and file systems.  TSTL's version of swarm testing is more sophisticated than previously published versions, in that it analyzed the dependency graph of TSTL actions to avoid producing degenerate test configurations, improving performance over traditional swarm testing.  In addition to these stable, commonly used operations, the random tester includes novel experimental options, such as the ability to guide random testing by a user supplied Markov model or operational profile \cite{Hamlet94}.  TSTL makes implementing novel test generation methods simple, as discussed below.
+
+The base TSTL tools also use the TSTL interface to support explicit-state model-checking \cite{ModelChecking,SPIN}, using either Depth-First-Search (DFS) or Breadth-First-Search (BFS) strategies.  TSTL uses Python's {\tt deepcopy} tools to provide a simple, easy to use interface for automatically storing and restoring pool states, making these algorithms trivial to implement.  There is no fundamental technical difference between performing (theoretically exhaustive) systematic searches of a well-defined transition system or random exploration.  Using the same transition system definition for both purposes has considerable advantages, as pointed out in previous work \cite{woda08}, especially for effectively infinite-state systems where random walks will never saturate and exhaustive searches will never complete.
+TSTL can (unlike SPIN or most explicit-state model checkers) apply BFS or DFS search even to systems without support for backtracking.  TSTL's abstract interface to an SUT (transition system) can be configured to provide replay-based simulation of state storage and retrieval.  This is required when, for example, a library uses a C extension and so Python's {\tt deepcopy} does not allow full copying of the state of pool objects, or when the system has hidden global state that cannot be captured in a pool value.  While state storage and backtracking is usually faster than replay, we find that for some systems the opposite is true, particularly for shallow search depths (which are typical for BFS of a complex system).
+
+TSTL also supports custom abstraction of pools.  If a pool is declared with an {\tt ABSTRACT} annotation, the function after the {\tt ABSTRACT} keyword can be used to abstract all values for state-matching purposes during exhaustive exploration methods.  The {\tt state} method returns the concrete state of the system, and applying the {\tt abstract} function to this state returns an abstract version of the state to be used in state matching.  The core of a BFS, for example, can be expressed quite simply, irrespective of whether the system is using state storage and backtracking or replay (or has an abstraction or not) as:
+
+{\scriptsize 
+\begin{code}
+old = sut.state()
+for act in sut.enabled():
+   sut.safely(act)
+   new = sut.state()
+   \# repr produces a hashable string representation
+   absNew = repr(sut.abstract(new))
+   if absNew not in visited:
+      queue.append(new)
+      visited[absNew] = True
+      ...
+   sut.backtrack(old)
+\end{code}
+}
+
+This loop iterates through all enabled actions from the current state, and adds any not previously visited to the search queue.  Similar code works as the core of a DFS.  While not required for any of our testing efforts thus far, encoding temporal logic checking is also simple.  A B\"uchi automata can be encoded in Python, querying the SUT state and action choices to determine transitions.  Composing this with the SUT state is trivial.  We managed to implement the well-known nested DFS algorithm \cite{DoubleDFS} in less than 40 lines of code, taking the property automata as a tuple input {\tt(initial, trans, accept)}, where {\tt trans: (state, action, sut state) -> state}.
 
 \subsection{Utilities for Test Case Manipulation}
 
@@ -201,4 +224,4 @@ The implementation is trivial, relying only on the TSTL API and some very simple
 \section{TSTL as a Testing Library Generator}
 \label{sec:langext}
 
-While TSTL is easily used as ``just another tool'' that allows testing of an SUT, TSTL can also be understood as a tool for generating custom libraries for testing.
+While TSTL is easily used as ``just another tool'' that allows testing of an SUT, and a construction kit to build your own testing tools, TSTL can also be understood as a generator of libraries.  ArcPy is a site package that makes it easy to perform GIS tasks using Python.  NumPy \cite{NumPy} and SciPy \cite{SciPy} are libraries that make performing scientific computing tasks easy with Python.  QIIME \cite{QIIME}, Biopython \cite{biopython}, and scikit-bio \cite{scikitbio} are libraries that make performing bioinformatics tasks easy using Python.  

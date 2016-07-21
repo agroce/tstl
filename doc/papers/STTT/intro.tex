@@ -76,7 +76,8 @@ The construction of a harness becomes even more complex in realistic
 cases, where the tested behaviors involve building up complex types as
 inputs to method calls, rather than simple integer choices. For
 example, consider the problem of testing a complex Python library.  Figure
-\ref{fig:MakeFeatureLayer} shows a portion of the Python documentation for one function in the ArcPy site
+\ref{fig:MakeFeatureLayer} shows a portion of the Python documentation
+for one function in the ArcPy \cite{ArcPy} site
 package for Geographic Information Systems (GIS) automation.  Rather than taking a single integer, this
 function call requires complex inputs --- a feature class or
 layer, an SQL expression, and other complex types that we can assume
@@ -214,8 +215,9 @@ build their own TSTL-based testing tools to support additional
 testing, debugging, or regression strategies.  Section
 \ref{sec:langext} introduces the novel TSTL concept of making testing
 a first-class activity in a programming language, similar to how other
-libraries make GIS (ArcPy), numeric analysis (NumPy) or bioinformatics
-(BioPython) activities simple to use in either a scripted or
+libraries make GIS (ArcPy), scientific computing (NumPy \cite{NumPy},
+SciPy \cite{SciPy}) or bioinformatics
+(QIIME \cite{QIIME}, Biopython \cite{biopython}, scikit-bio \cite{scikitbio}) activities simple to use in either a scripted or
 interactive manner.  Faults discovered
 in TSTL, in ArcPy and other systems, are described briefly in Section
 \ref{sec:bugs}.  We survey the most closely related work in Section
