@@ -293,6 +293,21 @@ def randomEnabledPred(self,rgen,n,pred):
         acts = acts[:p] + acts[p+1:]
     return lastSafe
 
+def makeTest(self,size,rgen=None,generator=None,stopFail=True,checkProp=True):
+    if generator != None:
+        genF = generator
+    else:
+        genF = lambda x: self.randomEnabled(rgen)
+    self.restart()
+    for i in xrange(0,size):
+        ok = self.safely(genF(i))
+        if not ok:
+            return (self.test(), False)
+        if checkProp:
+            if not self.check():
+                return (self.test(), False)
+    return (list(self.test()), True)
+
 def features(self):
     return self.__features
 
@@ -463,7 +478,7 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
                 return False
     return (self.__failure == None)
 
-def replayUntil(self, test, pred, catchUncaught = False, checkProp=False):
+def replayUntil(self, test, pred, catchUncaught = False, checkProp=False, stopFail = True):
     self.restart()
     newt = []
     if pred():
@@ -480,6 +495,8 @@ def replayUntil(self, test, pred, catchUncaught = False, checkProp=False):
                     raise e                    
                 except:
                     self.__failure = sys.exc_info()
+                    if stopFail:
+                        return False
                     pass
             else:
                 act()
@@ -509,7 +526,7 @@ def failsCheck(self, test, verbose=False, failure=None):
 
 def fails(self, test, verbose=False, failure=None):
     try:
-        return not self.replay(test, verbose=verbose)
+        return not self.replay(test, verbose=verbose, catchUncaught=True)
     except KeyboardInterrupt as e:
         raise e    
     except:
@@ -521,7 +538,7 @@ def fails(self, test, verbose=False, failure=None):
 
 def failsAny(self, test, verbose=False, failure=None):
     try:
-        r = self.replay(test, checkProp=True, verbose=verbose)
+        r = self.replay(test, checkProp=True, verbose=verbose,catchUncaught=True)
     except KeyboardInterrupt as e:
         raise e        
     except:
@@ -530,7 +547,7 @@ def failsAny(self, test, verbose=False, failure=None):
             return True                
         return False
     if r == False:
-        self.__failure = sys.exc_info()
+        #self.__failure = sys.exc_info()
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True                
         return False        
