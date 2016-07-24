@@ -159,7 +159,7 @@ Understanding the structure of the action graph produced by even a relatively si
 \subsection{Building Your Own Testing Tools in TSTL}
 \label{sec:build}
 
-Describing the full interface provided by TSTL for use in testing tools is beyond the scope of this paper.  However, examining the source code of the included testers can provide a good starting point.  Implementing new test case manipulations usually involves understanding TSTL internal structures and how tests are stored.  Implementing novel test generation algorithms can often rely on just a handful of methods, shown in Figure \ref{methods} (there are many more methods for e..g, code coverage, but this minimal set can implement many test generation algorithms).
+Describing the full interface provided by TSTL for use in testing tools is beyond the scope of this paper.  However, examining the source code of the included testers can provide a good starting point.  Implementing new test case manipulations usually involves understanding TSTL internal structures and how tests are stored.  Implementing novel test generation algorithms can often rely on just a handful of methods, shown in Figure \ref{methods} (TSTL provides nearly 100 methods for generating and manipulating tests, but this minimal set can implement many test generation algorithms).
 
 \begin{figure}
 {\scriptsize
@@ -174,6 +174,7 @@ Describing the full interface provided by TSTL for use in testing tools is beyon
 \item {\bf error():} returns either {\tt None} (no error for the last action or {\tt check}), or a Python object representing an uncaught exception or failed property's backtrace.
 \item {\bf state():} returns the current SUT state, as a set of values for all pools; for systems where state cannot be restored by pool values, or {\tt deepcopy} does not work, returns the current test.
 \item {\bf backtrack(state):} takes a state or test produced by {\tt state} and restores the system to it.
+\item {\bf reduce(test,predicate):} takes a test and a predicate (function from test -> boolean), and returns a (possibly smaller) test also satisfying the predicate).
 \item {\bf allBranches():} returns the set of branches covered during all testing.
 \item {\bf newBranches():} returns the set of branches covered during the last action executed that had not previously been covered.
 \item {\bf currBranches():} returns the set of branches covered during the current test.
@@ -227,3 +228,36 @@ The implementation is trivial, relying only on the TSTL API and some very simple
 While TSTL is easily used as ``just another tool'' that allows testing of an SUT, plus a ``construction kit'' to build your own testing tools, TSTL can also be understood as a generator of libraries.  ArcPy is a site package that makes it easy to perform GIS tasks using Python.  NumPy \cite{NumPy} and SciPy \cite{SciPy} are libraries that make performing scientific computing tasks easy with Python.  QIIME \cite{QIIME}, Biopython \cite{biopython}, and scikit-bio \cite{scikitbio} are libraries that make performing bioinformatics tasks easy using Python.  Such libraries can be of great importance in their subject domains:  ArcPy is extremely widely used, and the subject of university courses in many GIS programs, and the Nature Methods paper introducing QIIME has been cited more than 5,000 times to date, according to Google Scholar.  TSTL, also, can be seen as a tool that generates a library making it easy to perform testing tasks \emph{for a specific SUT}, using Python. 
 
 ArcPy, NumPy, QIIME and the other libraries can be seen as introducing the entities essential to their respective tasks as first-class, easily manipulable objects in the Python language.  TSTL makes tests (for a specific SUT, but using a common interface across all SUTs) first-class, easily manipulable objects.  TSTL does for tests, SUT state, and code coverage what ArcPy does for feature classes, spatial references, and other GIS concepts, what NumPy does for efficiently represented arrays and matrices, and what QIIME does for protein sequences.
+
+The key to understanding TSTL as a library generator is the idea of a test.  A TSTL test is a list of actions\footnote{We expect this type to be the same for any TSTL version for any language:  a list is the simplest way to express pure sequence, which is the essence of a test.}.  The individuals of the action type are dependent on the SUT.  TSTL allows the user to generate, manipulate, and inspect tests in the same way NumPy lets a user explore the behavior of arrays.  This means that TSTL can also be used interactively, as the following example shows:
+
+{\scriptsize
+\begin{code}
+ >>> import sut, random
+ >>> sut = sut.sut()
+ >>> r = random.Random()
+ >>> (t1, ok) = sut.makeTest(100,r)
+ >>> print ok
+ True
+ >>> sut.prettyPrintTest(t1)
+ fieldname1 = "newf1"                                                      \# STEP 0
+ polytable0 = arcpy.env.workspace + "\\polyneig.dbf"                        \# STEP 1
+...
+ arcpy.Erase\_analysis(classorlayer0,classorlayer1,featureclass0); report() \# STEP 98
+ arcpy.Buffer\_analysis(classorlayer3,featureclass0,dist1); report()        \# STEP 99
+ >>> t1[1] = sut.playable(t1[1][0].replace("newf1","newf2"))
+ >>> (t2,ok) = sut.makeTest(100,r)
+ >>> print ok
+ True
+ >>> t3 = t1 + t2
+ >>> sut.replay(t3)
+ >>> bc = sut.currBranches()
+ >>> t4 = sut.reduce(t3, sut.coversBranches(bc))
+ >>> len(t4)
+ 78
+...
+\end{code}
+}
+
+Here, a user generates two length 100 random tests of arcpy, printing one, and slightly modifying it.  She then composes the tests into a single test, and uses delta-debugging to reduce that test to one with the same branch coverage as the composition of the tests, but fewer steps than either original test.  The user is causing ArcGIS to perform GIS operations, but without specifying those operations; the GIS tasks are conceptually reduced to the actions of an arbitrary SUT.  We do not believe such a workflow is natural in other settings (in fact, the very idea of test case composition may seem strange to users of either model checking tools or conventional unit tests).  This ease-of-use for exploratory testing is a primary reason TSTL was first implemented for Python, rather than a compiled language such as Java or C (hence the ``Scripting'' part of ``Template Scripting Testing Language'').  A Swift, Ruby, or Scala version would also provide a way to interact with tests in a simple, immediate way.
+
