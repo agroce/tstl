@@ -26,7 +26,7 @@ property-based testing.  To our knowledge, there has been no previous
 proposal of a concise DSL like TSTL, to assist users in building test
 harnesses for API-call sequences, and to make test generation and
 manipulation first-class activities in a language.  QuickCheck itself
-produces tests that are simpy values input to functions, not sequences
+produces tests that are simply values input to functions, not sequences
 of actions.  Some QuickCheck-like tools, such as ScalaCheck
 \cite{ScalaCheck} or the excellent Python tool Hypothesis
 \cite{hypothesis} include limited, and rather cumbersome to use,
@@ -54,7 +54,8 @@ the interest of space (and because implementation details are subject
 to change).
 
 There exist various testing tools and languages of a somewhat
-different flavor.   Korat \cite{Korat}, has a much more fixed
+different flavor than TSTL that address the problem of helping
+users generate tests.   Korat \cite{Korat}, for example, has a much more fixed
 input domain specification, as do the tools built to support the Next
 Generation Air Transportation System (NextGen) software
 \cite{TameInputs}. The model-based TestStories approach of Felderer et
@@ -73,10 +74,10 @@ instantiate a test.
 
 
 
-Perhaps the most similar system is the UDITA language
+Perhaps the most similar system to TSTL is the UDITA language
 \cite{UDITA}, an extension of Java with non-deterministic choice
 operators and {\tt assume}, which yields a very different language
-that shares our goal of making it easy to define the set of valid
+but shares our goal of making it easy to define the set of valid
 tests for a system.  TSTL aims more at the \emph{generation} of
 tests than the \emph{filtering} of tests (as defined in the UDITA
 paper), while UDITA supports both approaches.  This goal of UDITA (and
@@ -86,7 +87,9 @@ install/use) tool, JPF \cite{JPF2}, rather than generating a
 stand-alone simple interface to a test space, as with TSTL.  Building
 ``UDITA'' for a new language is far more challenging than porting
 TSTL.  UDITA supports many fewer constructs to assist harness
-development.
+development.  It is impossible to ``interact'' with a UDITA test
+harness in a simple way, as with TSTL; UDITA \emph{is} a tool, while TSTL has
+tools that are built on top of a common library interface.
 
 The design of the SPIN model checker \cite{SPIN} and its model-driven
 extension to include native C code \cite{ModelDriven} inspired the

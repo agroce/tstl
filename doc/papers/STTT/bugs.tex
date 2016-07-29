@@ -97,17 +97,17 @@ minimal assistance, discovered faults in some real-world systems.  Not
 all of these are confirmed and reported yet.
 
 First, TSTL testing revealed a fault in either the widely-used {\tt
-  PyOpenCL} library, the even more widely-used {\tt OpenCL}
-infrastructure, or (possibly) the NVIDIA hardware being used.  We are
+  PyOpenCL} library \cite{PyOpenCL}, the even more widely-used {\tt OpenCL}
+infrastructure \cite{OpenCL}, or (possibly) the NVIDIA hardware being used.  We are
 still investigating this problem, but it appears to be a genuine
 fault, though debugging and assigning blame is complex due to the
-layers of software involved.  Second, TSTL testing found cases where distance metrics that were supposed to
-be symmetric in the popular fuzzy-string-matching library FuzzyWuzzy
+layers of software and hardware involved.  Second, TSTL testing found cases where distance metrics that were supposed to
+be symmetric in the popular fuzzy-string-matching library FuzzyWuzzy \cite{FuzzyWuzzy}
 were asymmetric, if the default Python string match library was used
 instead of a Levenshtein-distance library.
 Third, TSTL testing revealed numerous problems with the {\tt
   astropy.table} module of the AstroPy
-library, used by many professional astronomers and astrophysicists.
+library \cite{AstroPy}, used by many professional astronomers and astrophysicists.
 TSTL has also been used to discover faults in the TSTL API itself.
 
 Most significantly, TSTL was able to discover at least 15
