@@ -3,6 +3,7 @@
 
 The TSTL compiler takes as input a harness template file, and produces
 as output a Python class file that implements an interface other tools
+(or even users working interactively)
 can use to perform testing on the SUT via an SUT-independent interface.
 
 The harness in Figure \ref{fig:MakeFeatureLayer} shows many of the
@@ -142,7 +143,10 @@ pool (a clearly useless action sequence).
 The example TSTL harness in Figure \ref{fig:MakeFeatureLayer} shows a
 few other important core elements of TSTL.  First, choice templates
 are not limited to integer ranges, but can include arbitrary items in
-a list, e.g, {\tt <fc> := <["d1.shp", "d2.shp", "d3.shp"]>}.
+a list, e.g, {\tt <fc> := <["d1.shp", "d2.shp", "d3.shp"]>}.  Note
+that while in the example these items are (string) constants, they can
+be arbitrary expressions to be computed at runtime, or even incomplete
+code fragments that are only valid when combined with the rest of the action.
 Second, when an action raises an uncaught exception, this is normally
 considered a test failure.  Prefixing an action with a set of
 exception names in curly braces (e.g., {\tt \{IOError\}}) indicates
