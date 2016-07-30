@@ -42,7 +42,12 @@ notion of an action in TSTL is similiarly completely general:
 \emph{any fragment of code in the host language can be an action}.
 Usually, it is most convenient to encapsulate complex actions by
 defining functions that perform the desired behavior, and making the
-action a call to such a function, but this is not required.
+action a call to such a function, but this is not required.  As
+Andrews et al. have shown \cite{AndrewsTR}, this pool-and-action approach is
+sufficient to express the full generality of unit tests, in any
+language\footnote{In fact, TSTL tests are somewhat more general than
+  this already very general and expressive form, in that we do not
+  disallow loops and conditions in actions.}.
 
 In order to make the core ideas clear,
 consider part of the harness shown in Figure \ref{fig:MakeFeatureLayer}, defining how to
@@ -164,7 +169,8 @@ tests won't try to extract names from an empty field list:  {\tt
 The {\tt <fieldlist,1>} construct, which can also be used outside of a
 guard, indicates that this pool value should not be produced using
 normal template expansion (instantiated as both {\tt fieldname0} and
-{\tt fieldname1}) but rather than it should copy the comma indexed
+{\tt fieldname1}) but rather that it should copy (textually, not a
+copy of the object but the same variable use) the comma indexed
 appearance of that pool in each expansion (indexing starts from 1).  This makes sure the guard
 is over the same pool value that is used in the action.
 
@@ -312,7 +318,7 @@ the outputs of a reference implementation \cite{Differential}.
 
 \subsection{TSTL and Other Languages}
 
-At heart, the TSTL ``language'' consists of the syntax for pools,
+At heart, the TSTL ``language'' consists of the syntax and semantics for pools,
 nondeterministic choice\footnote{Nondeterministic choice \cite{EWD:Discipline,McCarthy,Floyd,woda12} is both
   inherent in the notion of a TSTL action, and represented more
   concretely by the
@@ -329,6 +335,13 @@ engineering effort) in mapping TSTL to languages other than Python.
 In one summer, an advanced high school student was able to produce a
 working version for Java \cite{TSTLJava}.  Implementing TSTL for
 Scala, Ruby, or even C/C++ would require effort but no research
-breakthroughs.  The ideas behind TSTL are abstract and generally
+breakthroughs.  As with the Python and Java TSTL implementations,
+there is no need (due to the intentional template structure) to even
+parse the underlying language.  The primary development effort is
+translating the TSTL ``runtime'' of utility functions to a new
+language.  For Scala, Ruby, or Swift we believe this would be quite
+trivial.  For C/C++ the relative lack of functional language features
+would be frustrating, but certainly not a blocking difficult.
+The ideas behind TSTL are abstract and generally
 applicable, even if the current implementation is built for Python.
 
