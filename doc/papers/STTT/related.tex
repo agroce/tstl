@@ -120,16 +120,23 @@ language-based interface is possible in more traditional testing or
 model checking tools, to our knowledge.  Extending even a highly
 extensible system such as Java PathFinder \cite{JPF2} is much more
 like extending an existing complex software system than simply using a
-library API.
+library API. 
 
-Some recent work on automated test generation has given more attention
-to practical, rather than primarily algorithmic, issues than in the
-past; we suspect this shows a growing technological maturity for
+A second aspect of TSTL is that while it is intended to be useful to
+researchers in software testing and model checking, and help prototype
+new algorithms, it is primarily designed to be a practical tool and
+language extension for
+users.
+Some other recent work on automated test generation has given more attention
+to practical, rather than primarily algorithmic or ``pure'' research, issues than in the
+past.  We suspect this shows a growing technological maturity for
 automated test case generation.  E.g., the papers by the NASA/JPL
 group on testing the Curiosity rover's file system
 \cite{ICSEDiff,CFV08,AMAI} have a largely practical focus, and the
 work of Lei and Andrews \cite{MinUnit} emphasizes the need for
-delta-debugging in realistic random testing.  We found that test case
+delta-debugging in realistic random testing.  Pike's SmartCheck
+\cite{SmartCheck} is not intended to increase fault detection so much
+as to improve the usability of test cases produced by QuickCheck. We found that test case
 readability was important in our efforts, and recent academic work
 \cite{Readable,Guava} has introduced principled methods for improving
 the readability of test cases for humans, even though this does not

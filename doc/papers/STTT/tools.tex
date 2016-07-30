@@ -216,13 +216,14 @@ while (time.time() - startTime <= TIMEOUT):
 \label{fig:keepgood}
 \end{figure}
 
-The implementation is trivial, relying only on the TSTL API and some very simple Python tools (sorting with automatic lexical ordering, time library, etc.).  We omit handling of failed tests, assuming the goal of this algorithm is simply to improve code coverage in fault-free systems for experimental evaluation.  This simple tool can be applied to any TSTL harness and will produce output showing when, in time, new branches were covered by the system.  This data can be used to produce Average-Percent-Branches-Detected (APBD) values and discovery curves \cite{issta14,Rothermel1999,rothermel01oct}. Comparison with simple random testing is easy, since setting {\tt MEMORY} to 0 gives pure memoryless random testing (alternatively, to avoid the overhead of the comparisons with 0, a dedicated version for random testing can be written).  A major threat to validity in many comparisons of testing or explicit-state model checking algorithms is that different underlying infrastructure for different algorithms may end up outweighing even moderately sized effects due to the underlying algorithms.  With TSTL, fair comparisons are much easier, since the TSTL interface does most of the computational work that is common to multiple algorithms, with the same overhead.  Evaluating an algorithm can be as simple as finding a large number of suitable programs without failures (or where failures don't make coverage values invalid) and performing enough trials to establish statistical validity for comparisons with APBD values for known algorithms.  Evaluation in terms of discovered faults or time-until-discovery of a fault is nearly as simple.  This algorithm is of some interest, in that while it requires backtracking, the frequency of backtracking is low enough to be potentially applicable even to systems like ArcPy where backtracking is only possible via expensive test replay.  While a mature version of this method would require many SUTs and experiments, as well as investigation of suitable values for {\tt MEMORY} and {\tt PEXTEND}, Figure \ref{fig:compare} shows that average branch discovery curves for ArcPy can sometimes be improved, even using the  arbitrarily chosen parameters of a size 5 memory and a 20\% probability of using a ``good'' test as a starting point.  The simplicity of the Python implementation makes performing automatic experiments with different parameters and test lengths trivial.  Experiments can also take advantage of Python libraries for automatic statistical analysis and plotting of results.
-
 \begin{figure}
 \includegraphics[width=\columnwidth]{memory}
 \caption{Comparing branch coverage for 10 minute runs of two test generation methods.}
 \label{fig:compare}
 \end{figure}
+
+The implementation is trivial, relying only on the TSTL API and some very simple Python tools (sorting with automatic lexical ordering, time library, etc.).  We omit handling of failed tests, assuming the goal of this algorithm is simply to improve code coverage in fault-free systems for experimental evaluation.  This simple tool can be applied to any TSTL harness and will produce output showing when, in time, new branches were covered by the system.  This data can be used to produce Average-Percent-Branches-Detected (APBD) values and discovery curves \cite{issta14,Rothermel1999,rothermel01oct}. Comparison with simple random testing is easy, since setting {\tt MEMORY} to 0 gives pure memoryless random testing (alternatively, to avoid the overhead of the comparisons with 0, a dedicated version for random testing can be written).  A major threat to validity in many comparisons of testing or explicit-state model checking algorithms is that different underlying infrastructure for different algorithms may end up outweighing even moderately sized effects due to the underlying algorithms.  With TSTL, fair comparisons are much easier, since the TSTL interface does most of the computational work that is common to multiple algorithms, with the same overhead.  Evaluating an algorithm can be as simple as finding a large number of suitable programs without failures (or where failures don't make coverage values invalid) and performing enough trials to establish statistical validity for comparisons with APBD values for known algorithms.  Evaluation in terms of discovered faults or time-until-discovery of a fault is nearly as simple.  This algorithm is of some interest, in that while it requires backtracking, the frequency of backtracking is low enough to be potentially applicable even to systems like ArcPy where backtracking is only possible via expensive test replay.  While a mature version of this method would require many SUTs and experiments, as well as investigation of suitable values for {\tt MEMORY} and {\tt PEXTEND}, Figure \ref{fig:compare} shows that average branch discovery curves for ArcPy can sometimes be improved, even using the  arbitrarily chosen parameters of a size 5 memory and a 20\% probability of using a ``good'' test as a starting point.  The simplicity of the Python implementation makes performing automatic experiments with different parameters and test lengths trivial.  Experiments can also take advantage of Python libraries for automatic statistical analysis and plotting of results.
+
 
 \section{TSTL as a Testing Library Generator}
 \label{sec:langext}
@@ -247,6 +248,13 @@ The key to understanding TSTL as a library generator is the idea of a test.  A T
 ...
  arcpy.Erase\_analysis(classorlayer0,classorlayer1,featureclass0); report() \# STEP 98
  arcpy.Buffer\_analysis(classorlayer3,featureclass0,dist1); report()        \# STEP 99
+\end{code}
+}
+
+Here, a user generates a length 100 test for ArcPy, and then prints it.  The user can also modify the test slightly, using standard Python list modification, generate another test, produce a third test that is the \emph{composition} of the first two tests, and reduce that third test to remove any redundant (with respect to code coverage) steps in it.
+
+{\scriptsize
+\begin{code}
  >>> t1[1] = sut.playable(t1[1][0].replace("newf1","newf2"))
  >>> (t2,ok) = sut.makeTest(100,r)
  >>> print ok
@@ -261,5 +269,26 @@ The key to understanding TSTL as a library generator is the idea of a test.  A T
 \end{code}
 }
 
-Here, a user generates two length 100 random tests of arcpy, printing one, and slightly modifying it.  She then composes the tests into a single test, and uses delta-debugging to reduce that test to one with the same branch coverage as the composition of the tests, but fewer steps than either original test.  The user is causing ArcGIS to perform GIS operations, but without specifying those operations; the GIS tasks are conceptually reduced to the actions of an arbitrary SUT.  We do not believe such a workflow is natural in other settings (in fact, the very idea of test case composition may seem strange to users of either model checking tools or conventional unit tests).  This ease-of-use for exploratory testing is a primary reason TSTL was first implemented for Python, rather than a compiled language such as Java or C (hence the ``Scripting'' part of ``Template Scripting Testing Language'').  A Swift, Ruby, or Scala version would also provide a way to interact with tests in a simple, immediate way.
+The user is causing ArcGIS to perform GIS operations, but without specifying those operations; the GIS tasks are conceptually reduced to the actions of an arbitrary SUT, but the printed test makes it clear what is going on at the SUT level.  While this example shows the {\tt makeTest} interface being used with the default generator (pure random testing), a user can supply a more complex generator as a function.  For example, to implement testing such that if the last action resulted in any new coverage, it is repeated, a user could first
+define a generator function (assume that {\tt r} is a random number generator defined globally, as above):
+
+{\scriptsize
+\begin{code}
+def repeatGen(lastAction,sut):
+   if (lastAction != None) and (len(sut.newBranches()) > 0) and (lastAction[1]()):
+      return (lastAction, lastAction)
+   newAction = sut.randomEnabled(r)
+   return (newAction, newAction)
+\end{code}
+}
+and then generate a length 100 test using this strategy easily:
+{\scriptsize
+\begin{code}
+ >>> (t5, ok) = sut.makeTest(100, sgenerator=repeatGen)
+\end{code}
+}
+
+The function {\tt repeatGen} takes a state (initially {\tt None} to indicate a new test) consisting of a single action --- the last action executed.  It then, if there is a{\tt lastAction}, and the last step of testing increased branch coverage, and the action is still enabled, returns that action as both the next action to perform and the new state of the generator.  Otherwise, it generates a random action, and returns that as the state and the action.
+
+We do not believe such an interactive approach to testing is natural with most other tools that generate either model checking traces or method-call sequence tests.  In fact, the very idea of test case composition as shown in the first interactive code fragment may seem quite strange to users of either model checking or conventional unit tests. for generating API-call sequen.  Although TSTL tests are sequences of actions --- essentially small, deterministic programs with no inputs --- they can be interacted with and generated like tests in QuickCheck \cite{ClaessenH00} or Hypothesis \cite{hypothesis}, where tests are usually just function inputs (lists, data structures, etc.). This ease-of-use for exploratory testing is a primary reason TSTL was first implemented for Python, rather than a compiled language such as Java or C (hence the ``Scripting'' part of ``Template Scripting Testing Language'').  A Swift, Ruby, or Scala version would also provide a way to interact with tests in a simple, immediate, and basically ``functional'' way.
 

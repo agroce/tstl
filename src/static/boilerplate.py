@@ -293,20 +293,47 @@ def randomEnabledPred(self,rgen,n,pred):
         acts = acts[:p] + acts[p+1:]
     return lastSafe
 
-def makeTest(self,size,rgen=None,generator=None,stopFail=True,checkProp=True):
+def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,checkProp=True,initial=None,timeout=None):
+    '''
+    Allows generation of fixed length tests using either a default generator (pure random testing), or using a simple
+    generator that only takes the current test step as input (generator) or a complex stateful generator (sgenerator).
+    An sgenerator must take as input both a state and an interface to the SUT (to query for coverage, etc.) and return
+    an (action, new state) tuple.  User can also control whether to stop on failure, whether to check properties, and
+    supply a timeout in seconds.
+    
+    '''
+    
+    if timeout != None:
+        stime = time.time()
+
+    noFailure = True
+        
     if generator != None:
         genF = generator
     else:
         genF = lambda x: self.randomEnabled(rgen)
+    if sgenerator != None:
+        state = initial
     self.restart()
     for i in xrange(0,size):
-        ok = self.safely(genF(i))
+        if sgenerator = None:
+            ok = self.safely(genF(i))
+        else:
+            (action, state) = sgenerator(state,self)
+            ok = self.safely(action)
         if not ok:
-            return (self.test(), False)
-        if checkProp:
-            if not self.check():
+            noFailure = False
+            if stopFail:
                 return (self.test(), False)
-    return (list(self.test()), True)
+        if checkProp:
+            noFailure = False
+            if not self.check():
+                if stopFail:
+                    return (self.test(), False)
+        if timeout != None:
+            if (time.time() - stime) > timeout:
+                return (self.test(), noFailure)
+    return (list(self.test()), noFailure)
 
 def features(self):
     return self.__features
