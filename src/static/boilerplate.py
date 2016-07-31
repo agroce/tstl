@@ -316,7 +316,7 @@ def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,ch
         state = initial
     self.restart()
     for i in xrange(0,size):
-        if sgenerator = None:
+        if sgenerator == None:
             ok = self.safely(genF(i))
         else:
             (action, state) = sgenerator(state,self)
