@@ -8,6 +8,7 @@ outFile = sys.argv[3]
 checkProps = "--check" in sys.argv
 checkRefs = "--refs" in sys.argv
 makeRegression = "--regression" in sys.argv
+onlyInAction = "--inActon" in sys.argv
 
 t = SUT.sut()
 
@@ -90,7 +91,6 @@ for l in open(testFile):
             outf.write(t.prettyName(p) + "\n")
     if makeRegression:
         t.safely(t.playable(name))
-        outf.write("print 'ACTION:',''' " + name + " '''\n")
     if t.getOkExceptions(name) == "":
         outf.write(t.prettyName(name) + "\n")
     else:
@@ -109,11 +109,15 @@ for l in open(testFile):
     if makeRegression:
         v = t.shallowState()
         for (p,vals) in v:
+            if t.prettyName(p) not in name:
+                continue
+            if p in t.opaque():
+                continue
             for i in vals:
                 if vals[i] != None:
                     pname = t.prettyName(p + "[" + str(i) + "]")
-                    outf.write("print (repr("+pname+"))\n")
-                    outf.write("assert (repr("+pname+') == ("' + repr(vals[i]) + '"))\n')
+                    #outf.write("print (repr("+pname+"))\n")
+                    outf.write("assert (repr("+pname+') == (' + repr(repr(vals[i])) + '))\n')
 
 
 outf.write('\n\nprint "TEST COMPLETED SUCCESSFULLY"\n')
