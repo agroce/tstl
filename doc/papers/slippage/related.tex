@@ -14,3 +14,8 @@ additional requirements beyond those of delta debugging itself
  to cases such as {\tt jsfunfuzz} where each component is not a
 method call but essentially an arbitrary string, without significant
 user effort to define abstractions of components.
+
+There are also approaches that sidestep slippage by initially
+producing short test sequences (e.g. recent work by Mao et
+al. \cite{Mao}).  However, for many generation algorithms
+longer sequences are essential for good fault detection \cite{ASE08,LongBetter}.

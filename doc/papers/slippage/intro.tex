@@ -4,11 +4,11 @@ Automated testing often goes hand in hand with
 test reduction or minimization \cite{DD,MinUnit,TCminim,ICSEDiff,CReduce}.
 Such reduction is
 now standard practice in industrial testing tools such as Mozilla's
-{\tt jsfunfuzz} \cite{jsfunfuzz,jsfunfuzz2,lithium}.  Many automated
+{\tt jsfunfuzz} \cite{jsfunfuzz2}.  Many automated
 test generation methods, especially those based on random testing,
 produce long tests with many irrelevant components.  Such tests are
 hard to understand for debugging and slow to execute.  Delta debugging
-and related algorithms automatically reduce the size of such tests,
+automatically reduces the size of such tests,
 producing a smaller test that still fails.
 
 Unfortunately, the consequences of reducing a test are not always
@@ -27,7 +27,7 @@ ending in the same step are due to the same fault \cite{ICSEDiff}.  In
 some cases, such as system invariant violations or compiler wrong-code
 bugs \cite{PLDI13}, such methods do not work well.  The extent to
 which slippage is a practically important problem in real-world
-testing is unknown, since most slippage is unobserved.
+testing is unknown.
 
 However, all slippage is not
 harmful.  Even when a fault is lost, the new fault may be more
@@ -52,7 +52,7 @@ version of Hildebrandt and Zeller \cite{DD}.  The contributions of this paper ar
 \item A formal definition of slippage, and the notion that slippage
   may be either harmful or beneficial.
 \item A proposal to avoid and make use of slippage by producing more
-  than one reduced test per unreduced failing test.
+  than one reduced test per failing test.
 \item Two novel approaches to slippage mitigation.
 \item Some preliminary experimental results showing the basic effectiveness of these
   methods for a very large set of mutant-simulated faults in a Python
@@ -61,11 +61,8 @@ version of Hildebrandt and Zeller \cite{DD}.  The contributions of this paper ar
 %\item Further data on the prevalence of  and factors determining slippage.
 \end{enumerate}
 
-Our results show that not only do our methods reduce harmful slippage,
-they result in detection of additional faults.  Slippage reduction
-based on using combinations of components of reduced tests seems to be
-both more effective and less expensive than adding non-determinism to
-the {\tt ddmin} algorithm and running it multiple times.
+Both of our proposed methods reduce harmful slippage and result in
+detection of more faults.
 
 \section{Slippage Mitigation Approaches}
 
@@ -123,10 +120,8 @@ small $s$ for reduced tests.
 \begin{algorithmic}[1]
 \Require{failing test $t$, reduced failing test $r$, search depth
   $d$, max combinations to consider $m$}
-\State {reductions = \{$r$\}}
-\State {handled = $\emptyset$}
-\State {notfailed = $\emptyset$}
-\State {count = 0}
+\State {reductions = \{$r$\}; count = 0;}
+\State {handled, notfailed = $\emptyset$;}
 \While {$d$ > 0}
 \State{new = $\emptyset$}
 \For {$s$ = 1 to total components in reductions}
@@ -152,7 +147,7 @@ small $s$ for reduced tests.
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Randomized Multiple-Run Delta Debugging}
+\subsection{Randomized Multiple-Run ddmin}
 
 Our second mitigation approach simply notes that slippage in {\tt ddmin} is
 deterministic only because of the fixed order in which possible
@@ -160,11 +155,11 @@ reductions of a test  are considered.  However, if we randomize
 the order of checks on smaller tests in {\tt ddmin}, it can produce different
 reduced tests when executed with a different random seed.  This means
 we can try to avoid slippage by simply running {\tt ddmin} multiple
-times with different seeds.  The advantage of this {\tt multi-ddmin} approach is its
-simplicity, and that it will work even when no test removing
-components of the original test is failing.  The non-existence of such
-failing tests does not mean
-there is no alternative reduction; it does mean that finding it will
-require removing more than a simple combination of components.
-The disadvantage is that we lose {\tt comb-block}'s directed search
-for dissimilar reductions, and must modify the internals of {\tt ddmin}.
+times with different seeds.  The advantage of this {\tt multi-ddmin}
+approach is that is can work even when no test removing
+components of the original reduction fails.  The non-existence of such
+tests does not mean
+there is no alternative reduction, but that finding it must
+require a different starting path for {\tt ddmin}.
+This approach lacks {\tt comb-block}'s directed search
+for dissimilar reductions and modifies the internals of {\tt ddmin}.
