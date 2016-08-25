@@ -45,20 +45,21 @@ def actionClass(self,action):
 
 def dependencies(self,actClass):
     return self.__dependencies[actClass]
-    
+
+def abstraction(self, pool):
+    if pool not in self.__abstraction:
+        return None
+    return self.__abstraction[pool]
+
 def prettyName(self, name):
     newName = name
     for p in self.__pools:
         pfind = newName.find(p+"[")
         while pfind != -1:
             closePos = newName.find("]",pfind)
-            findRef = newName.find("_REF",pfind)
             index = newName[newName.find("[",pfind)+1:closePos]
             access = newName[pfind:newName.find("]",pfind)+1]
-            if (findRef != -1) and (findRef < closePos):
-                newAccess = p.replace(self.__poolPrefix,"") + "_REF" + index                
-            else:
-                newAccess = p.replace(self.__poolPrefix,"") + index
+            newAccess = p.replace(self.__poolPrefix,"") + index                
             newName = newName.replace(access, newAccess)
             pfind = newName.find(p+"[")
     return newName

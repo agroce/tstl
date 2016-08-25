@@ -15,4 +15,4 @@ for f in sys.argv[1:]:
     print time.time()-stime,"ELAPSED"
     print "STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches())
 
-sut.internalReport()
+

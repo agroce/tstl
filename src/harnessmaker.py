@@ -261,6 +261,13 @@ def expandRange(original,trackOriginal=False):
 
     return newVersion
 
+def replaceRefs(str):
+    newStr = str
+    for p in poolSet:
+        if p in refSet:
+            pRaw = poolPrefix + p.replace("%","")
+            newStr = newStr.replace("REF:" + pRaw, pRaw+"_REF")
+    return newStr
 
 actCount = 0
 def genAct():
@@ -288,6 +295,7 @@ def genInitialization():
     genCode.append(baseIndent + "self.__psize = {}\n")    
     genCode.append(baseIndent + "self.__consts = []\n")
     genCode.append(baseIndent + "self.__opaque = []\n")
+    genCode.append(baseIndent + "self.__abstraction = {}\n")    
     genCode.append(baseIndent + "self.__failure = None\n")
     genCode.append(baseIndent + "self.__warning = None\n")        
     for p in poolSet:
@@ -311,7 +319,11 @@ def genInitialization():
         if p in opaqueSet:
             s = baseIndent
             s += 'self.__opaque.append("' + poolPrefix + p.replace("%","") + '")'
-            genCode.append(s + "\n")                        
+            genCode.append(s + "\n")
+        if p in absSet:
+            s = baseIndent
+            s += 'self.__abstraction["' + poolPrefix + p.replace("%","") + '] = "' + absSet[p] + '"'
+            genCode.append(s + "\n")
         for x in xrange(0,poolSet[p]+1):
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "[" + str(x) + "] = None"
@@ -341,6 +353,7 @@ def main():
     global import_froms
     global ignoredExcepts
     global poolSet
+    global refSet
     global poolType
     global initSet
     global constSet
@@ -1190,7 +1203,7 @@ def main():
                 pr += ": # CHECK POOL INIT\n"
                 genCode.append(pr)
                 
-                genCode.append(baseIndent + baseIndent + baseIndent + "assert " + p + "\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "assert " + replaceRefs(p) + "\n")
             else:
                 genCode.append (baseIndent + baseIndent + "assert " + p + "\n")
         genCode.append(baseIndent + baseIndent + "# END CHECK CODE\n")
