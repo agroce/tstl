@@ -18,7 +18,7 @@ log: 1 <val>
 {OverflowError} <val,3> >= 0 -> <val> = <val> << <val>
 {OverflowError} <val,3> >= 0 -> <val> = <val> >> <val>
 
-{ValueError} <val,3> > 0 -> <val> = <val> ** <val>
+{ValueError} (<val,2> > 0) and (<val,3> > 0) -> <val> = <val> ** <val>
 
 <val> = abs(<val>)
 <val> = -(<val>)
