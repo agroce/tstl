@@ -1,0 +1,29 @@
+@import gmpy2
+@from gmpy2 import mpz,mpq,mpfr,mpc
+
+pool: <val> 10 REF
+
+log: 1 <val>
+
+<val> := mpz(<[0..9]>)
+<val> = <val> + <val>
+<val> = <val> - <val>
+<val> = <val> * <val>
+<val,3> != 0 -> <val> = <val> / <val>
+<val,3> != 0 -> <val> = <val> % <val>
+
+<val> = <val> | <val>
+<val> = <val> & <val>
+<val> = <val> ^ <val>
+{OverflowError} <val,3> >= 0 -> <val> = <val> << <val>
+{OverflowError} <val,3> >= 0 -> <val> = <val> >> <val>
+
+{ValueError} <val,3> > 0 -> <val> = <val> ** <val>
+
+<val> = abs(<val>)
+<val> = -(<val>)
+
+reference: mpz ==> int
+
+property: str(<val>) == str(REF:<val,1>)
+property: <val>.bit_length() == REF:<val,1>.bit_length()
