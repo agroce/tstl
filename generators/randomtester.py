@@ -6,6 +6,7 @@ import time
 import traceback
 import argparse
 import glob
+import datetime
 from collections import namedtuple
 
 # Appending current working directory to sys.path
@@ -61,6 +62,8 @@ def parse_args():
                         help="Profile actions.")    
     parser.add_argument('-w', '--swarm', action='store_true',
                         help="Turn on standard swarm testing.")
+    parser.add_argument('--progress', action='store_true',
+                        help="Turn on progress report.")
     parser.add_argument('--swarmP', type=float, default=0.5,
                         help="Swarm inclusion probability.")    
     parser.add_argument('--highLowSwarm', type=float, default=None,
@@ -209,6 +212,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             test = sut.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noreassign)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
+            sut.saveTest(test,config.output+".normalized")                    
         if (config.gendepth != None) and (test not in map(lambda x:x[0],failures)) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print "GENERATING GENERALIZATION CLOUD"
@@ -487,6 +491,9 @@ def main():
         sys.stdout.flush()
         
     while (config.maxtests == -1) or (ntests < config.maxtests):
+        if config.progress:
+            print "TEST #",ntests,(datetime.datetime.now()).ctime()
+            sys.stdout.flush()
         if config.verbose:
             print "STARTING TEST",ntests
             sys.stdout.flush()
@@ -561,6 +568,7 @@ def main():
                         a = sut.randomEnabledClassProbs(R,mprobs[prefix])
                         
             if a == None:
+                #sut.prettyPrintTest(sut.test())
                 print "WARNING: DEADLOCK (NO ENABLED ACTIONS)"
                 
             guardTime += time.time()-startGuard
