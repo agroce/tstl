@@ -6,9 +6,20 @@ rout = open("replay.out",'w')
 
 file = sys.argv[1]
 nocheck = "--nocheck" in sys.argv
+verbose = "--verbose" in sys.argv
+logLevel = None
+if "--logging" in sys.argv:
+    lastWasLogging = False
+    for l in sys.argv:
+        if lastWasLogging:
+            logLevel = int(l)
+        if l == "--logging":
+            lastWasLogging = True
 
 t = SUT.sut()
 t.restart()
+if logLevel != None:
+    t.setLog(logLevel)
 i = 0
 for l in open(file):
     name = l[:-1]
@@ -17,7 +28,8 @@ for l in open(file):
         rout.write("RESTART\n")
         t.restart()
     else:
-        #print "STEP",i,t.prettyName(name)
+        if verbose:
+            print "STEP",i,t.prettyName(name)
         rout.write("STEP " + str(i) + name + "\n")
         action = t.playable(name)
         if action[1](): # check the guard
