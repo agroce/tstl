@@ -1,27 +1,83 @@
 @import gmpy2
 @from gmpy2 import mpz,mpq,mpfr,mpc
 
+<@
+# Use naming to "dispatch" right function via reference transformation;
+# easier than mapping method calls to functions, until TSTL sugar is improved
+
+def mpz_set_bit(value, bit):
+    return value.bit_set(bit)
+
+def mpz_clear_bit(value, bit):
+    return value.bit_clear(bit)
+
+def int_set_bit(value, bit):
+    return value | (1<<bit)
+
+def int_clear_bit(value, bit):
+    return value & ~(1<<bit)
+@>
+
 pool: <val> 10 REF
+pool: <pval> 10
 
 log: 1 <val>
 
+<pval> := <[0..9]>
+<pval> := long(<val>)
+
 <val> := mpz(<[0..9]>)
+
 <val> = <val> + <val>
 <val> = <val> - <val>
 <val> = <val> * <val>
 <val,3> != 0 -> <val> = <val> / <val>
 <val,3> != 0 -> <val> = <val> % <val>
 
+<val> = <val> + <pval>
+<val> = <val> - <pval>
+<val> = <val> * <pval>
+<pval,1> != 0 -> <val> = <val> / <pval>
+<pval,1> != 0 -> <val> = <val> % <pval>
+
+<val> = <pval> + <val>
+<val> = <pval> - <val>
+<val> = <pval> * <val>
+<val,2> != 0 -> <val> = <pval> / <val>
+<val,2> != 0 -> <val> = <pval> % <val>
+
 <val> = <val> | <val>
 <val> = <val> & <val>
 <val> = <val> ^ <val>
-{OverflowError} <val,3> >= 0 -> <val> = <val> << <val>
-{OverflowError} <val,3> >= 0 -> <val> = <val> >> <val>
+{OverflowError, ValueError} (<val,2> != 0) and (<val,3> >= 0) -> <val> = <val> << <val>
+{OverflowError, ValueError} (<val,2> != 0) and (<val,3> >= 0) -> <val> = <val> >> <val>
 
-{ValueError} (<val,2> > 0) and (<val,3> > 0) -> <val> = <val> ** <val>
+<val> = <pval> | <val>
+<val> = <pval> & <val>
+<val> = <pval> ^ <val>
+{OverflowError, ValueError} (<pval,1> != 0) and (<val,2> >= 0) -> <val> = <pval> << <val>
+{OverflowError, ValueError} (<pval,1> != 0) and (<val,2> >= 0) -> <val> = <pval> >> <val>
+
+<val> = <val> | <pval>
+<val> = <val> & <pval>
+<val> = <val> ^ <pval>
+{OverflowError, ValueError} (<val,2> != 0) and (<pval,1> >= 0) -> <val> = <val> << <pval>
+{OverflowError, ValueError} (<val,2> != 0) and (<pval,1> >= 0) -> <val> = <val> >> <pval>
+
+# For now, avoid -1, 1, 0, since special case code not in place, mpz raises exception
+{ValueError} (<val,2> > 1) and (<val,3> > 0) -> <val> = <val> ** <val>
+
+{ValueError} (<pval,1> > 1) and (<val,2> > 0) -> <val> = <pval> ** <val>
+
+{ValueError} (<val,2> > 1) and (<pval,1> > 0) -> <val> = <val> ** <pval>
 
 <val> = abs(<val>)
 <val> = -(<val>)
+<val> = ~(<val>)
+
+# mpz type requires that bit to set fit in an integer (if requires long, raises exception)
+(<val,3> >= 0) and (type(int(<val,3>)) == int) -> <val> = mpz_set_bit(<val>,<val>)
+(<val,3> >= 0) and (type(int(<val,3>)) == int) -> <val> = mpz_clear_bit(<val>,<val>)
 
 reference: mpz ==> int
 
