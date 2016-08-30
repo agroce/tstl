@@ -125,10 +125,16 @@ isCircular(<structure,1>) -> <structure> = None
 #not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, use_decimal=False)
 #not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, tuple_as_array=False)
 #not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, iterable_as_array=True)
+
+# The above is nice and easy to read, but doesn't combine optional arguments, so...
+# we replace it with the Lovecraftian nightmare below, which does all possible combinations
+# using nondeterministic choice trickery
+
 not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure><,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
 
 json.loads(<jsonstring>)
 json.loads(<jsonstring>,use_decimal=True)
 
+# Don't check round-trip property for every possible option, but basic sanity check is a good idea
+
 property: isCircular(<structure,1>) or (json.loads(json.dumps(<structure>)) == <structure,1>), "STRUCT: **" + str(<structure,1>) + "** JSON: **" + str(json.dumps(<structure,1>)) + "**"
-property: isCircular(<structure,1>) or (json.loads(json.dumps(<structure>,sort_keys=True)) == <structure,1>), "STRUCT: **" + str(<structure,1>) + "** JSON: **" + str(json.dumps(<structure,1>)) + "**"
