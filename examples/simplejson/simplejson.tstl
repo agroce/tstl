@@ -72,34 +72,30 @@ pool: <jsonstring> 5
 <int> = <int> + <int>
 
 <string> := ""
-<string> += "a"
-<string> += "b"
+<string> += <["a","b"," ",":","\\","/","[","]","{","}"]>
 <string> += ","
-<string> += ":"
-<string> += "\\"
-<string> += "/"
-<string> += " "
-<string> += ","
-<string> += "["
-<string> += "]"
-<string> += "{"
-<string> += "}"
 <string> += chr(9) #tab
 <string> += chr(13) #return
 <string> += chr(34) #double quote
 <string> += chr(39) #single quote
 
+
 <float> := float(<int>)
 {ZeroDivisionError} <float> = <float> / <float>
+<float> := float("Inf")
+<float> := float("-Inf")
+<float> := float("NaN")
 
 <bool> := True
 <bool> := False
-    
+
+# Ciruclar structures cannot be handled, so avoid them
+
 <list> := []
-not isCircular(<structure,1>) -> ~<list>.append(~<structure>)
+(not isCircular(<list,1>)) and (not isCircular(<structure,1>)) -> ~<list>.append(~<structure>)
 
 <dict> := {}
-not isCircular(<structure,1>) -> ~<dict> [<string>] = ~<structure>
+(not isCircular(<dict,1>)) and (not isCircular(<structure,1>)) -> ~<dict> [<string>] = ~<structure>
 
 # if we build a circular structure, ok to get rid of it and start over
 isCircular(<structure,1>) -> <structure> = None
@@ -136,5 +132,11 @@ json.loads(<jsonstring>)
 json.loads(<jsonstring>,use_decimal=True)
 
 # Don't check round-trip property for every possible option, but basic sanity check is a good idea
+# Round trip fails for NaN because NaN != NaN
 
-property: isCircular(<structure,1>) or (json.loads(json.dumps(<structure>)) == <structure,1>), "STRUCT: **" + str(<structure,1>) + "** JSON: **" + str(json.dumps(<structure,1>)) + "**"
+property: ("nan" in str(<structure,1>)) or (isCircular(<structure,1>)) or (json.loads(json.dumps(<structure>)) == <structure,1>), "STRUCT: **" + str(<structure,1>) + "** JSON: **" + str(json.loads(json.dumps(<structure,1>))) + "**"
+
+# Have to check string equality if there is a NaN in the house
+# Have to replace u' with ' due to string representation issues (JSON always has unicode)
+
+property: ("nan" not in str(<structure,1>)) or (isCircular(<structure,1>)) or (str(json.loads(json.dumps(<structure>))).replace("u'","'") == str(<structure,1>)), "STRUCT: **" + str(<structure,1>) + "** JSON: **" + str(json.loads(json.dumps(<structure,1>))) + "**"
