@@ -73,7 +73,7 @@ pool: <list> 5
 pool: <dict> 5
 pool: <tuple> 5
 
-pool: <structure> 5
+pool: <structure> 3
 
 pool: <istring> 3
 pool: <ilevel> 3
@@ -139,6 +139,7 @@ isCircular(<structure,1>) -> <structure> = None
 # using nondeterministic choice trickery
 
 not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure><,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,ignore_nan=True,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
+
 {ValueError} not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>,allow_nan=False<,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,ignore_nan=True,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
 
 json.loads(<jsonstring>)
