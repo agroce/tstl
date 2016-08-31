@@ -67,9 +67,9 @@ def ignoreNans(s):
         else:
             return s
     if type(s) == list:
-        return map(stringifyNans, s)
+        return map(ignoreNans, s)
     if type(s) == dict:
-        return {k: stringifyNans(v) for k, v in s.items()}
+        return {k: ignoreNans(v) for k, v in s.items()}
     return s
 
 def replaceNones(s):
