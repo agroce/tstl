@@ -166,10 +166,10 @@ def coversStatements(self, statements, catchUncaught=False):
         return True
     return coverPred
 
-def coversAll(self, statements, branches, catchUncaught=False):
+def coversAll(self, statements, branches, catchUncaught=False, checkProp=False):
     def coverPred(test):
         try:
-            self.replay(test, catchUncaught)
+            self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except:
             pass
         cs = self.currStatements()

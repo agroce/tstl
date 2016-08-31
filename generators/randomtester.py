@@ -24,6 +24,8 @@ def parse_args():
                         help='Timeout in seconds (3600 default).')
     parser.add_argument('-s', '--seed', type=int, default=None,
                         help='Random seed (default = None).')
+    parser.add_argument('--showActions', action='store_true',
+                        help="Show actions as they run")
     parser.add_argument('-m', '--maxtests', type=int, default=-1,
                         help='Maximum #tests to run (-1 = infinite default).')
     parser.add_argument('-u', '--uncaught', action='store_true',
@@ -187,7 +189,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             else:
                 failProp = lambda x: sut.failsCheck(x,failure=f)
         if newCov:
-            failProp = sut.coversAll(snew,bnew)
+            failProp = sut.coversAll(snew,bnew,catchUncaught=True,checkProp=(not config.ignoreprops))
         print "REDUCING..."
         startReduce = time.time()
         original = test
@@ -501,7 +503,8 @@ def main():
 
         if config.swarm:
             sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
-            #print "CONFIG:",(sut.swarmConfig())
+            if config.progress:
+                print "CONFIG:",(sut.swarmConfig())
 
         if config.highLowSwarm != None:
             classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)
@@ -595,6 +598,8 @@ def main():
             startOp = time.time()
             if config.quickAnalysis:
                 quickClassCounts[sut.actionClass(a)] += 1
+            if config.showActions:
+                print "STEP #"+str(s),sut.prettyName(a[0])
             stepOk = sut.safely(a)
             thisOpTime = time.time()-startOp
             nops += 1

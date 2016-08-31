@@ -124,7 +124,7 @@ isCircular(<structure,1>) -> <structure> = None
 <istring> += chr(9) # tab
 <istring> += chr(13) # return
 
-<ilevel> := <[0..10]>
+<ilevel> := <[0..80]>
 
 #not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>)
 #not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, sort_keys=True)
