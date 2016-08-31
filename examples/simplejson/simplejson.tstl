@@ -1,4 +1,5 @@
 @import simplejson as json
+@import math
 
 source: /usr/local/lib/python2.7/site-packages/simplejson/__init__.py
 source: /usr/local/lib/python2.7/site-packages/simplejson/encoder.py
@@ -49,6 +50,18 @@ def isCircular(s,depth=0,seen = []):
             if isCircular(v,depth+1,newSeen):
                 return True
     return False
+
+def stringifyNans(s):
+    if type(s) == float:
+        if math.isnan(s):
+            return "!NaN!"
+        else:
+            return s
+    if type(s) == list:
+        return map(stringifyNans, s)
+    if type(s) == dict:
+        return {k: stringifyNans(v) for k, v in s.items()}
+    return s
 @>
 
 pool: <int> 3
@@ -78,7 +91,6 @@ pool: <jsonstring> 5
 <string> += chr(13) #return
 <string> += chr(34) #double quote
 <string> += chr(39) #single quote
-
 
 <float> := float(<int>)
 {ZeroDivisionError} <float> = <float> / <float>
@@ -126,17 +138,13 @@ isCircular(<structure,1>) -> <structure> = None
 # we replace it with the Lovecraftian nightmare below, which does all possible combinations
 # using nondeterministic choice trickery
 
-not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure><,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
+not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure><,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,ignore_nan=True,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
+{ValueError} not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>,allow_nan=False<,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,ignore_nan=True,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
 
 json.loads(<jsonstring>)
 json.loads(<jsonstring>,use_decimal=True)
 
 # Don't check round-trip property for every possible option, but basic sanity check is a good idea
-# Round trip fails for NaN because NaN != NaN
+# Round trip fails for NaN because NaN != NaN, so have to recursively change all NaNs into a string representation -- AFTER loads
 
-property: ("nan" in str(<structure,1>)) or (isCircular(<structure,1>)) or (json.loads(json.dumps(<structure>)) == <structure,1>), "STRUCT: **" + str(<structure,1>) + "** JSON: **" + str(json.loads(json.dumps(<structure,1>))) + "**"
-
-# Have to check string equality if there is a NaN in the house
-# Have to replace u' with ' due to string representation issues (JSON always has unicode)
-
-property: ("nan" not in str(<structure,1>)) or (isCircular(<structure,1>)) or (str(json.loads(json.dumps(<structure>))).replace("u'","'") == str(<structure,1>)), "STRUCT: **" + str(<structure,1>) + "** JSON: **" + str(json.loads(json.dumps(<structure,1>))) + "**"
+property: isCircular(<structure,1>) or (stringifyNans(json.loads(json.dumps(<structure>))) == stringifyNans(<structure,1>))
