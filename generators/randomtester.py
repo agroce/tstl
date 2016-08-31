@@ -569,6 +569,8 @@ def main():
                         a = sut.randomEnabled(R)
                     else:
                         a = sut.randomEnabledClassProbs(R,mprobs[prefix])
+                        if a == None:
+                            a = sut.randomEnabled(R)
                         
             if a == None:
                 #sut.prettyPrintTest(sut.test())
