@@ -101,6 +101,8 @@ pool: <rsep> 1
 
 pool: <jsonpair> 5
 
+pool: <circularjson> 1
+
 <int> := <[0..9]>
 <int> = <int> * 10
 <int> = <int> + <int>
@@ -114,7 +116,7 @@ pool: <jsonpair> 5
 <string> += chr(39) #single quote
 
 <float> := float(<int>)
-{ZeroDivisionError} <float> = <float> / <float>
+#{ZeroDivisionError} <float> = <float> / <float> # Removed due to float round issues
 <float> := float("Inf")
 <float> := float("-Inf")
 <float> := float("NaN")
@@ -157,7 +159,13 @@ isCircular(<structure,1>) -> <structure> = None
 ~<rsep> = <istring> + ~<rsep>
 
 {ValueError} not isCircular(<structure,1>) -> <jsonpair> := (json.dumps(replaceNones(<structure>),allow_nan=False), copy.deepcopy(replaceNones(<structure,1>)))
+# Lets us get rid of these, since they don't have any actions to use them
 <jsonpair> = None
+
+# only for circular, so should never actually work
+{ValueError} isCircular(<structure,1>) -> <circularjson> := json.dumps(replaceNones(<structure>))
+# property asserts we never have a circularjson
+property: <circularjson> == None
 
 # If you did a possibly failing (no NaNs) dumps, check round trip; we know there are no NaNs!
 property: json.loads(<jsonpair> [0]) == <jsonpair,1> [1]
