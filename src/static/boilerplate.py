@@ -581,6 +581,9 @@ def failsAny(self, test, verbose=False, failure=None):
         return False        
     return False    
 
+def verbose(self, bool):
+    self.__verboseActions = bool
+
 def logOff(self):
     self.__log = None
 

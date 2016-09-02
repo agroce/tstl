@@ -21,6 +21,8 @@ t.restart()
 if logLevel != None:
     t.setLog(logLevel)
 i = 0
+if verbose:
+    sut.verbose(True)
 for l in open(file):
     name = l[:-1]
     if name == "<<RESTART>>":

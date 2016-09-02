@@ -42,6 +42,10 @@ def parse_args():
                         help="Determine essential elements in failing test.")
     parser.add_argument('-G', '--generalize', action='store_true',
                         help="Generalize tests.")
+    parser.add_argument('--verboseActions', action='store_true',
+                        help="Make test actions verbose.")
+    parser.add_argument('--silentFail', action='store_true',
+                        help="Don't make failure replays verbose.")        
     parser.add_argument('-D', '--gendepth', type=int, default=None,
                         help = "Generalization depth for cloud overlap comparisons (default = None).")
     parser.add_argument('-e', '--speed', type=str, default="FAST",
@@ -262,6 +266,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
         sut.setLog(config.failedLogging)
     print
     print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
+    if not config.silentFail:
+        sut.verbose(True)
     i = 0
     sut.restart()
     for s in test:
@@ -273,6 +279,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
         i += 1
         if outf != None:
             outf.write(sut.serializable(s)+"\n")
+    if not config.verboseActions:
+        sut.verbose(False)
     if not newCov:
         if config.localize:
             for s in sut.currStatements():
@@ -396,6 +404,9 @@ def main():
     if config.relax:
         sut.relax()
 
+    if config.verboseActions:
+        sut.verbose(True)
+        
     if config.readQuick:
         print "REPLAYING QUICK TESTS"
         sqrtime = time.time()

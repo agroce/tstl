@@ -5,6 +5,7 @@ import time
 sut = sut.sut()
 
 nocover = False
+verbose = False
 lastWasHtml = False
 files = []
 htmlOut = None
@@ -19,7 +20,12 @@ for f in sys.argv[1:]:
 
 if "--nocover" in sys.argv:
     nocover = True
+if "--verbose" in sys.argv:
+    verbose = True
 
+if verbose:
+    sut.verbose(True)
+    
 stime = time.time()
 for f in files:
     print "RUNNING TEST",f
