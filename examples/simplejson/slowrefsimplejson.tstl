@@ -89,7 +89,6 @@ pool: <bool> 2
 
 pool: <list> 5
 pool: <dict> 5
-pool: <tuple> 5
 
 pool: <structure> 4
 
@@ -163,7 +162,9 @@ isCircular(<structure,1>) -> <structure> = None
 <jsonpair> = None
 
 # only for circular, so should never actually work
-{ValueError} isCircular(<structure,1>) -> <circularjson> := json.dumps(replaceNones(<structure>))
+# can't replace Nones, since the list is circular
+{ValueError} isCircular(<structure,1>) -> <circularjson> := json.dumps(<structure>)
+<circularjson> = None
 # property asserts we never have a circularjson
 property: <circularjson> == None
 
