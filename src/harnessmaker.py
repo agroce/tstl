@@ -907,7 +907,8 @@ def main():
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
             genCode.append(baseIndent + "try: test_before_each(self)\n")
             genCode.append(baseIndent + "except: pass\n")
-        genCode.append(baseIndent + "self.__warning = None\n")            
+        if warnExcepts != "":
+            genCode.append(baseIndent + "self.__warning = None\n")            
         genCode.append(baseIndent + "try:\n")
         if preSet != []:
             for p in preSet:
