@@ -745,6 +745,8 @@ def main():
     actDefs = []
     nind = 0
 
+    allNames = {}
+    
     for corig in code:
         act = genAct()
         guard = genGuard()
@@ -823,9 +825,11 @@ def main():
         newC = newC.replace(":=","=")
         newC = newC.replace("~"+poolPrefix,poolPrefix)
 
+        newCguard = ""
         if newC.find(" -> ") > -1:
             inlineGuardSplit = newC.split(" -> ")
             guardConds.append(inlineGuardSplit[0])
+            newCguard = inlineGuardSplit[0]
             newC = inlineGuardSplit[1]
 
         postCode = None
@@ -977,6 +981,14 @@ def main():
 
         genCode.append("\n")
 
+        if newC[:-1] in allNames:
+            if allNames[newC[:-1]] != newCguard:
+                print "ERROR: TSTL does not allow two instances of the same action with different guards:"
+                print "action:",newC[:-1],"guard:",newCguard
+                sys.exit(1)
+        else:
+            allNames[newC[:-1]] = newCguard
+        
         d = "self.__actions.append(("
         d += "'''" + newC[:-1] +" ''',"
         d += "self." + guard + ","
