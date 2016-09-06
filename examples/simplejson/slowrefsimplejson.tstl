@@ -111,7 +111,8 @@ pool: <jsonpair> 5
 <string> += chr(13) #return
 <string> += chr(34) #double quote
 <string> += chr(39) #single quote
-<string> += unicode(chr(<[0..255]>),encoding="latin-1")
+# If you want very slow but all-chars testing, try adding this and using a long test length
+#<string> += unicode(chr(<[0..255]>),encoding="latin-1")
 
 <float> := float(<int>)
 #{ZeroDivisionError} <float> = <float> / <float> # Removed due to float round issues
@@ -134,11 +135,6 @@ pool: <jsonpair> 5
 isCircular(<structure,1>) -> <structure> = None
 
 <structure> := <int>
-<structure> := <string>
-<structure> := <string>
-<structure> := <string>
-<structure> := <string>
-<structure> := <string>
 <structure> := <string>
 <structure> := <float>
 <structure> := <bool>
