@@ -832,11 +832,14 @@ def main():
             newCguard = inlineGuardSplit[0]
             newC = inlineGuardSplit[1]
 
+        checkRaised = False
         postCode = None
         if newC.find(" => ") > -1:
             postCodeSplit = newC.split(" => ")
             newC = postCodeSplit[0] + "\n"
             postCode = postCodeSplit[1].rstrip('\n')
+            if "raised" in postCode:
+                checkRaised = True
 
         preSet = []
         if postCode:
@@ -899,6 +902,8 @@ def main():
         genCode.append(baseIndent + d)
         if logSet != []:
             genCode.append(baseIndent + "self.log('''" + newC[:-1] + "''')\n")
+        if checkRaised:
+            genCode.append(baseIndent + "raised = None\n");
         genCode.append(baseIndent + "if self.__verboseActions:\n")
         genCode.append(baseIndent + baseIndent + "print 'ACTION:',self.prettyName('''" + newC[:-1] + " ''')\n")
         for p in forVerbose:
@@ -920,7 +925,7 @@ def main():
         if expectCode:
             genCode.append(baseIndent + baseIndent + "__before_res = " + beforeSig + "\n")
         genCode.append(baseIndent + baseIndent + newC)
-        if postCode:
+        if postCode and not checkRaised:
             genCode.append(baseIndent + baseIndent + "assert " + postCode + "\n")
         if expectCode:
             genCode.append(baseIndent + baseIndent + "__after_res = " + afterSig + "\n")
@@ -928,19 +933,21 @@ def main():
             genCode.append(baseIndent + baseIndent + "assert __check_res == True, \" check of (%s) for before and after values (%s) and (%s) failed\" % (\"" + expectCode + "\", __before_res, __after_res)\n")
 
         if okExcepts != "":
-            genCode.append(baseIndent + "except (" + okExcepts + ") as e:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED EXPECTED EXCEPTION:',type(e),e\n")
+            genCode.append(baseIndent + "except (" + okExcepts + ") as raised:\n")
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED EXPECTED EXCEPTION:',type(raised),raised\n")
             
         if warnExcepts != "":
-            genCode.append(baseIndent + "except (" + warnExcepts + ") as warnE:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED WARNING EXCEPTION:',type(warnE),warnE\n")            
-            genCode.append(baseIndent + baseIndent + "self.__warning = warnE\n")            
+            genCode.append(baseIndent + "except (" + warnExcepts + ") as raised:\n")
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED WARNING EXCEPTION:',type(raised),raised\n")            
+            genCode.append(baseIndent + baseIndent + "self.__warning = raised\n")            
 
-        genCode.append(baseIndent + "except e:\n")
-        genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED EXCEPTION:',type(e),e\n")            
+        genCode.append(baseIndent + "except Exception as raised:\n")
+        genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED EXCEPTION:',type(raised),raised\n")            
         genCode.append(baseIndent + baseIndent + "raise\n")                    
             
         genCode.append(baseIndent + "finally:\n")
+        if postCode and checkRaised:
+            genCode.append(baseIndent + baseIndent + "assert " + postCode + "\n")
         genCode.append(baseIndent + baseIndent + "try: test_after_each(self)\n")
         genCode.append(baseIndent + baseIndent + "except: pass\n")
         genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
