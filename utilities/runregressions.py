@@ -30,10 +30,14 @@ stime = time.time()
 for f in files:
     print "RUNNING TEST",f
     t = sut.loadTest(f)
-    ok = sut.replay(t, checkProp=True)
+    ok = False
+    try:
+        ok = sut.replay(t, checkProp=True)
+    except Exception as e:
+        print "EXCEPTION RAISED:",e
     if not ok:
         print "TEST",f,"FAILED:"
-        print sut.error()
+        print sut.failure()
     print time.time()-stime,"ELAPSED"
     if not nocover:
         print "STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches())

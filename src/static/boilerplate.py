@@ -929,7 +929,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
                     continue
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if (self.numReassigns(testC) <= reassignCount) and pred(testC):
-                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast)
+                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast, verbose=verbose)
                     if len(rtestC) < len(test):
                         if verbose:
                             print "NORMALIZER: RULE ReduceAction: STEP",i,name1,"-->",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
@@ -1208,6 +1208,40 @@ def swapPools(self,test,p1,p2,after=0):
     newTest = map(lambda x: x.replace("!!P1NEW!!",p2new), newTest)
     newTest = map(lambda x: self.__names[x], newTest)
     return tPrefix+newTest
+
+def alphaConvert(self, test):
+    """
+    This ONLY performs renaming of pools to lowest values possible; it CAN in theory cause worse normalization.
+    """
+    count = {}
+    changed = True
+    while changed:
+        changed = False
+        for p in self.__pools:
+            count[p] = 0
+        for s in test:
+            lhs = s[0].split(" = ")[0]
+            lhsp = self.poolUses(lhs)
+            for (p,n) in lhsp:
+                basep = p.split("[")[0]
+                if count[basep] < int(n):
+                    p1new = p
+                    p2new = p.replace(n,str(count[basep]))
+                    print "REPLACING",p1new,"WITH",p2new
+                    newTest = map(lambda x: x[0].replace(p1new,"!!P1NEW!!"), test)
+                    newTest = map(lambda x: x.replace(p2new,p1new), newTest)
+                    newTest = map(lambda x: x.replace("!!P1NEW!!",p2new), newTest)
+                    newTest = map(lambda x: self.__names[x], newTest)
+                    test = newTest
+                    #self.prettyPrintTest(test)
+                    count[basep] += 1
+                    changed = True
+                    break
+                else:
+                    count[basep] += 1
+            if changed:
+                break
+    return test
     
 def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
               noReassigns = False):
@@ -1279,7 +1313,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
             (changed, test) = s(test, pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit)
             if changed:
                 if reduceOnChange:
-                    test = self.reduce(test, pred, pruneGuards, keepLast)
+                    test = self.reduce(test, pred, pruneGuards, keepLast, verbose=verbose)
                 if verbose:
                     self.prettyPrintTest(test)
                 stest = self.captureReplay(test)

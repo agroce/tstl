@@ -655,9 +655,10 @@ def main():
             pPerc = "%" + pSub + "%"
             pPercComma = "%" + pSub + ","            
             if (pAngle in rhs) or (pComma in rhs) or (pPerc in rhs) or (pPercComma in rhs):
-                fc = filter(lambda x:x != c, classDefs[pSub])
-                if fc != []:
-                    dependencies[c].append(fc)
+                if pSub in classDefs:
+                    fc = filter(lambda x:x != c, classDefs[pSub])
+                    if fc != []:
+                        dependencies[c].append(fc)
                 
     if config.debug:
         print("-------- :code: --------")
