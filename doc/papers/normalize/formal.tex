@@ -130,9 +130,9 @@ also most natural in TSTL.
 
 \subsection{Normalization}
 
-A test-case normalization algorithm has a simple goal:  we ideally aim to
+A test normalization algorithm has a simple goal:  we ideally aim to
 produce a function $f : t \rightarrow t$ (a function that takes a test
-case and returns a test) such that: (1) if $t$ fails, $f(t)$ fails\footnote{Normalization can
+and returns a test) such that: (1) if $t$ fails, $f(t)$ fails\footnote{Normalization can
     be generalized to apply to any predicate over tests, not just
     failure \cite{icst2014}; a passing test can be normalized, though
     without some more interesting predicate, such as preservation of
@@ -151,8 +151,7 @@ case and returns a test) such that: (1) if $t$ fails, $f(t)$ fails\footnote{Norm
 \end{enumerate}
 \end{comment}
 
-Such a function would define a true \emph{canonical form} for test
-cases, where each underlying fault is uniquely represented by a single
+Such a function would define a true \emph{canonical form} for tests, where each underlying fault is uniquely represented by a single
 test.  In general, it seems clear that defining such a function
 $f$ is (at least) as difficult as automatic fault localization and
 repair, and thus undecidable.  Therefore, we aim at approximating the
@@ -425,8 +424,7 @@ satisfies {\tt pred}, that rule should be moved to the end of the
 ordering of rewrites, since once a rule fails once to produce any
 valid rewrites, it frequently produces no further reductions.  This
 simple change typically halves the time required for normalization.
-When test execution is very expensive, the set of candidate test
-cases can be further restricted: limiting action replacements to cases
+When test execution is very expensive, the set of candidate tests can be further restricted: limiting action replacements to cases
 where Levenshtein \cite{Lev} distance (text edit distance) between the
 code for actions is bounded to a small value was effective in
 reducing runtime, and often had little impact on final results.
@@ -468,8 +466,7 @@ of a test, and summarizes the results.  We
 can define a finite set of simple variations on a test, and summarize which
 variations maintain a predicate of interest. In the typical case of
 failure, generalization simply presents the user with \emph{all}
-``very similar'' test
-cases that also fail. Formally
+``very similar'' tests that also fail. Formally
 speaking, a generalization algorithm produces as output \emph{a set of
   rewrites} of a test $t$ satisfying {\tt pred} such that each rewrite
 also satisfies {\tt pred}.  Presenting a generalization to a user is just

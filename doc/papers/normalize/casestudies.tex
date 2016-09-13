@@ -42,8 +42,7 @@ Figure \ref{normeffect} shows the reduction in number of distinct
 failing tests produced by normalization and reduction
 (vs. reduction only) for a set of 82 mutants \cite{mutant} of AVLTree
 \cite{Hunter:2007} ({\bf RQ1}).  Of the 228 mutants produced by MutPy
-\cite{mutpy}, only these 82 produced at least 1 failure in 1,000 test
-cases (other mutants were equivalent or caused failure at a lower
+\cite{mutpy}, only these 82 produced at least 1 failure in 1,000 tests (other mutants were equivalent or caused failure at a lower
 rate).  Using reduction only, the mean number of distinct failures for
 each mutant (obviously a single fault) was 498.4 (median 485).  Using normalization, the mean
 was 3.1 failures (median 2).  For 38 of the 82 mutants,
@@ -349,11 +348,10 @@ arrays.  For almost all tests, the average time to reduce tests
 is about 4-5 seconds, and the time for normalization is between 712
 and 774 seconds.  The average time to discover a failing test,
 for comparison, is just over 400 seconds.  Generalization takes
-between 52 and 59 seconds in these cases.  The exception was a test
-case of 45,206 steps (!)  leading to a memory exhaustion error and
+between 52 and 59 seconds in these cases.  The exception was a test of 45,206 steps (!)  leading to a memory exhaustion error and
 crash.  This was reduced (over a period of nearly a day) to a test
 case with 10 steps, which then normalized (in only 2 hours) to a test
-case with 8 steps.  The normalized test involved no operations other than array
+with 8 steps.  The normalized test involved no operations other than array
 initialization, array flattening, and array
 addition.  The reduced test required larger dimensions, array
 multiplication, and array subtraction, as well.  
