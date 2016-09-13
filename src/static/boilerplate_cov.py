@@ -182,3 +182,7 @@ def coversAll(self, statements, branches, catchUncaught=False, checkProp=False):
                 return False
         return True
     return coverPred
+
+def coversSame(self, test, catchUncaught=False, checkProp=False):
+    self.replay(test,catchUncaught=catchUncaught,checkProp=checkProp)
+    return self.coversAll(self.currStatements(), self.currBranches(), catchUncaught=catchUncaught, checkProp=checkProp)

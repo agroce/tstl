@@ -32,7 +32,7 @@ def parse_args():
                         help='Allow uncaught exceptions in actions.')
     parser.add_argument('--throughput', action='store_true',
                         help='Measure action throughput.')
-    parser.add_argument('-i', '--ignoreprops', action='store_true',
+    parser.add_argument('-i', '--ignoreProps', action='store_true',
                         help='Ignore properties.')
     parser.add_argument('-f', '--full', action='store_true',
                         help="Don't reduce -- report full failing test.")
@@ -160,7 +160,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         bnew = sut.newCurrBranches()
         for b in bnew:
             print "NEW BRANCH",b
-        trep = sut.replay(test,catchUncaught=True,checkProp=(not config.ignoreprops))
+        trep = sut.replay(test,catchUncaught=True,checkProp=(not config.ignoreProps))
         sremove = []
         scov = sut.currStatements()
         for s in snew:
@@ -193,7 +193,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             else:
                 failProp = lambda x: sut.failsCheck(x,failure=f)
         if newCov:
-            failProp = sut.coversAll(snew,bnew,catchUncaught=True,checkProp=(not config.ignoreprops))
+            failProp = sut.coversAll(snew,bnew,catchUncaught=True,checkProp=(not config.ignoreProps))
         print "REDUCING..."
         startReduce = time.time()
         original = test
@@ -415,7 +415,7 @@ def main():
             if fn >= quickCount:
                 quickCount = fn + 1
             t = sut.loadTest(f)
-            sut.replay(t,catchUncaught=True,checkProp=(not config.ignoreprops))
+            sut.replay(t,catchUncaught=True,checkProp=(not config.ignoreProps))
         print "EXECUTION TIME:",time.time()-sqrtime
         print "BRANCH COVERAGE:",len(sut.allBranches())
         print "STATEMENT COVERAGE:",len(sut.allStatements())        
@@ -624,7 +624,7 @@ def main():
                 print "SUT WARNING:",sut.warning()            
             if tryStutter:
                 print "DONE STUTTERING"
-            if (stepOk or config.uncaught) and config.ignoreprops and (config.exploit != None):
+            if (stepOk or config.uncaught) and config.ignoreProps and (config.exploit != None):
                 collectExploitable()                
             if (not config.uncaught) and (not stepOk):
                 testFailed = True
@@ -634,7 +634,7 @@ def main():
                 break
             
             startCheck = time.time()
-            if not config.ignoreprops:
+            if not config.ignoreProps:
                 checkResult = sut.check()
                 checkTime += time.time()-startCheck
                 if checkResult and (stepOk or config.uncaught) and (config.exploit != None):
@@ -902,7 +902,7 @@ def main():
     print nops, "TOTAL TEST OPERATIONS"
     print opTime, "TIME SPENT EXECUTING TEST OPERATIONS"
     print guardTime, "TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS"
-    if not config.ignoreprops:
+    if not config.ignoreProps:
         print checkTime, "TIME SPENT CHECKING PROPERTIES"
         print (opTime + checkTime), "TOTAL TIME SPENT RUNNING SUT"
     print restartTime, "TIME SPENT RESTARTING"

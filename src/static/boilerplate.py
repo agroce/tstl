@@ -1244,7 +1244,7 @@ def alphaConvert(self, test):
     return test
     
 def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
-              noReassigns = False):
+              noReassigns = False, useCache = True):
     """
     Attempts to produce a normalized test case
     """
@@ -1260,7 +1260,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     
     # Check the cache
     stest = self.captureReplay(test)
-    if stest in self.__simplifyCache:
+    if useCache and (stest in self.__simplifyCache):
         if verbose:
             print "NORMALIZER: FOUND TEST IN CACHED RESULTS"
         return self.__simplifyCache[stest]
@@ -1317,7 +1317,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
                 if verbose:
                     self.prettyPrintTest(test)
                 stest = self.captureReplay(test)
-                if stest in self.__simplifyCache:
+                if useCache and (stest in self.__simplifyCache):
                     if verbose:
                         print "NORMALIZER: FOUND TEST IN CACHED RESULTS"
                     result = self.__simplifyCache[stest]
@@ -1343,8 +1343,9 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
     # restore normal TSTL semantics!
 
     # Update the simplification cache and return
-    for t in history:
-        self.__simplifyCache[t] = test    
+    if useCache:
+        for t in history:
+            self.__simplifyCache[t] = test    
     return test
 
 def freshSimpleVariants(self, name, previous, replacements):

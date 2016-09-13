@@ -6,6 +6,7 @@ sut = sut.sut()
 
 nocover = False
 verbose = False
+ignoreProps = False
 lastWasHtml = False
 files = []
 htmlOut = None
@@ -22,6 +23,8 @@ if "--nocover" in sys.argv:
     nocover = True
 if "--verbose" in sys.argv:
     verbose = True
+if "--ignoreProps" in sys.argv:
+    ignoreProps = True
 
 if verbose:
     sut.verbose(True)
@@ -32,7 +35,7 @@ for f in files:
     t = sut.loadTest(f)
     ok = False
     try:
-        ok = sut.replay(t, checkProp=True)
+        ok = sut.replay(t, checkProp=(not ignoreProps))
     except Exception as e:
         print "EXCEPTION RAISED:",e
     if not ok:
