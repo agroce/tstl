@@ -4,19 +4,19 @@ This work builds on the idea behind delta-debugging \cite{DD}: test
 cases should not contain extraneous information that is not needed to
 reproduce failure (or some other behavior \cite{icst2014,stvrcausereduce}).  Delta-debugging and slicing
 \cite{TCminim} are limited, generally, to producing subsets of the
-original test case, not modifying parts of the test to obtain further
+original test, not modifying parts of the test to obtain further
 simplicity.  We extend this concept by also allowing modification or
 re-ordering of actions in a test.  In some cases these changes
-allows further reduction of the length of the test case as well.  Some
+allows further reduction of the length of the test as well.  Some
 earlier work in bounded model checking modified counterexamples to use
 numerically smaller values \cite{MakeMost} but otherwise did not aim
 to simplify or normalize failures.
 
 Normalization is in part motivated by the fuzzer taming \cite{PLDI13}
 problem: determining how many distinct faults are present in a large
-set of failing test cases.  This is a key problem in practical
+set of failing tests.  This is a key problem in practical
 application of automated testing.  Previous work on fuzzer taming
-\cite{PLDI13} used delta-debugging to reduce some test cases to
+\cite{PLDI13} used delta-debugging to reduce some tests to
 syntactic duplicates.
 
 Zhang \cite{SaiSimple} proposed an alternative approach to semantic
@@ -46,7 +46,7 @@ generalized tests modified for readability.
 The most closely related work to our generalization efforts is Pike's
 SmartCheck \cite{SmartCheck}.  SmartCheck targets algebraic data in
 Haskell, and offers an interesting alternative approach to reduction
-and generalization.  Test case generalization is also akin to dynamic invariant generation,
+and generalization.  Test generalization is also akin to dynamic invariant generation,
 in that it informs the user of invariants over a series of test
 executions \cite{Daikon}.  The only other work we are aware of that is
 similar to generalization concerns essential and accidental aspects of

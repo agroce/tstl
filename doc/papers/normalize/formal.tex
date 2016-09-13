@@ -48,8 +48,8 @@ avl1.delete(int2)
 }
 
 TSTL \cite{NFM15,ISSTA15} is a language for defining the structure of
-test cases (usually API-call sequences, but also grammar-based tests), and a set of tools for use in generating,
-manipulating, and understanding those test cases.  Figure
+tests (usually API-call sequences, but also grammar-based tests), and a set of tools for use in generating,
+manipulating, and understanding those tests.  Figure
 \ref{fig:example} shows a simplified portion of a TSTL definition
 (called a harness) of
 tests for an AVL tree class, in the latest syntax for TSTL.
@@ -78,16 +78,16 @@ inclusive, setting the value of an {\tt avl} pool to a newly
 constructed AVL tree, and calling {\tt insert}, {\tt
   delete}, {\tt find} and {\tt inorder} with chosen pools.  Figure
 \ref{threetests} in the introduction shows three
-valid test cases produced by running a random test generator on
+valid tests produced by running a random test generator on
 the TSTL-compiled interface produced by this definition.  TSTL handles
 ensuring that tests are well-formed. No pool instance
 (such as {\tt avl1}) can appear in an action until it has been assigned
 a value.  No pool instance that has been assigned a value can be
 assigned a different value until it has been used in an action, to
 avoid degenerate sequences such as {\tt int3 = 10} followed by {\tt
-  int3 = 4}.  Each action in a test case is called a ``step'' --- the
-first step of the first test case in Figure \ref{threetests} is storing a new AVL tree in {\tt
-  avl0}, for example.  A test case is just an ordered sequence of
+  int3 = 4}.  Each action in a test is called a ``step'' --- the
+first step of the first test in Figure \ref{threetests} is storing a new AVL tree in {\tt
+  avl0}, for example.  A test is just an ordered sequence of
 actions, which is equivalent to a set of numbered steps.  Because our
 normalization is defined in terms of actions, steps, and pools, it is
 language agnostic.
@@ -112,7 +112,7 @@ properties of test-generation algorithms
 \cite{AndrewsTR}.
 
 The ordering of actions also allows us to concisely define a
-practical method for normalizing test cases, by
+practical method for normalizing tests, by
 simple syntactic means, by considering an action ``simpler'' than another
 action if it has a lower index.  One intuitive concern with normalization
 based on action ordering is that a user may not place actions
@@ -132,7 +132,7 @@ also most natural in TSTL.
 
 A test-case normalization algorithm has a simple goal:  we ideally aim to
 produce a function $f : t \rightarrow t$ (a function that takes a test
-case and returns a test case) such that: (1) if $t$ fails, $f(t)$ fails\footnote{Normalization can
+case and returns a test) such that: (1) if $t$ fails, $f(t)$ fails\footnote{Normalization can
     be generalized to apply to any predicate over tests, not just
     failure \cite{icst2014}; a passing test can be normalized, though
     without some more interesting predicate, such as preservation of
@@ -153,7 +153,7 @@ case and returns a test case) such that: (1) if $t$ fails, $f(t)$ fails\footnote
 
 Such a function would define a true \emph{canonical form} for test
 cases, where each underlying fault is uniquely represented by a single
-test case.  In general, it seems clear that defining such a function
+test.  In general, it seems clear that defining such a function
 $f$ is (at least) as difficult as automatic fault localization and
 repair, and thus undecidable.  Therefore, we aim at approximating the
 goal, by providing a set of simple transformations such that: (1) $f$
@@ -168,7 +168,7 @@ simplifications of $t$, where each $t'$ is the result of applying some
 rewrite rule to $t$.  The notion of simplicity is defined by a
 restriction on the rewriting rules.  For any rewrite $t \Rightarrow t'$, we require that $|C(t')| < |C(t)|$.  Such
 a rewrite system is necessarily \emph{strongly normalizing}: any
-sequence of rewrites chosen will eventually end in a term (test case)
+sequence of rewrites chosen will eventually end in a term (test)
 that cannot be further rewritten, since the total length of a rewrite
 sequence is bounded by the initial $|C(t)|$ \cite{term1}.
 
@@ -180,21 +180,21 @@ rewrites for each candidate must be smaller than the number of
 possible rewrites for $b$.  This implies further restrictions, e.g., no
 rewrite can ever reverse another rewrite's effects.  Such a rewrite
 system is \emph{strongly normalizing}:  any sequence of rewrites
-chosen will eventually end in a term (test case) that cannot be
+chosen will eventually end in a term (test) that cannot be
 further rewritten.}
 
 In the setting of TSTL, where test actions have a defined total
 order, two simple principles can be applied to produce useful
 rewrite rules.  All rewrites reduce the sum of the
-indices of the actions in the test case, make the test case's
+indices of the actions in the test, make the test's
 actions more ordered by index, or reduce test length.  This guarantees that the rewrites are
 strongly normalizing.
 The second principle that determines the rewrite rules is that each
-rule ought to be unlikely to change the underlying cause for test case
+rule ought to be unlikely to change the underlying cause for test
 failure.  To that end, the rules for normalization always either change at most
 one action (possibly in multiple steps, but in a uniform way) or make
 \emph{no} changes to the actions performed, only to the pools used or the
-positions of actions in the test case.  We cannot guarantee
+positions of actions in the test.  We cannot guarantee
 normalization does not change the underlying fault in a test; however,
 the limited scope of rewrites should at least make the likelihood of
 fault change (known as ``slippage'' \cite{PLDI13}) like that of
@@ -204,7 +204,7 @@ delta-debugging, which is accepted as a reasonable tradeoff.
 
 In order to formally define normalization, some additional notation is required.
 A \emph{step} is an action paired with an index indicating its
-position in a test case,
+position in a test,
 where the first action is step 0, etc.; e.g., $(2: a)$ indicates the
 third step of the test is action $a$ (indexing is from 0). 
 $\Delta(t,t')$ is the set of all steps in $t$ such that $t(i) \not= t'(i)$.
@@ -291,7 +291,7 @@ held for the original test $t$.  In most cases, this predicate will be
 ``the test fails'' but we also have preserved
 code coverage for regression suites \cite{icst2014}.  Notice that
 after applying each rewrite rule, we perform delta-debugging on the
-new base test case, since often a rewrite makes other steps irrelevant.
+new base test, since often a rewrite makes other steps irrelevant.
 
 \begin{algorithm}
 \caption{Basic algorithm for normalization}
@@ -314,7 +314,7 @@ new base test case, since often a rewrite makes other steps irrelevant.
 
 \begin{figure}
 {\scriptsize
-{\bf Original test case:}\hspace{0.83in}{\bf Normalized:}
+{\bf Original test:}\hspace{0.83in}{\bf Normalized:}
 \begin{verbatim}
   0: int0 = 10                            0: int0 = 1
   1: int2 = 7                             1: int1 = 2
@@ -355,16 +355,16 @@ are roughly equal to the original number of steps, is frequently seen across SUT
 The worst-case complexity of normalization can be given an upper bound by recalling our
 rule that each rewrite must lower the number of possible rewrites by
 at least one.  This means if there are $n$ possible rewrites of a
-test case, there can be at most $n$ predicate checks for the current test case,
-then at most $n-1$ checks for the rewritten test case, and so on, for
+test, there can be at most $n$ predicate checks for the current test,
+then at most $n-1$ checks for the rewritten test, and so on, for
 a total of $\frac{n(n+1)}{2}$ predicate checks, where $n$ is the
-number of possible rewrites of the test case $t$ being normalized, e.g.,
-$n = |C(t)|$.  Test case execution to check the predicate can be
-assumed to have a constant cost since the length of the test case does
+number of possible rewrites of the test $t$ being normalized, e.g.,
+$n = |C(t)|$.  Test execution to check the predicate can be
+assumed to have a constant cost since the length of the test does
 not usually change by more than a few steps during normalization. 
 
-How many rewrites can a test case $t$ have?  Assume there are $k$
-steps in the test case and $\alpha$ possible actions.  The action
+How many rewrites can a test $t$ have?  Assume there are $k$
+steps in the test and $\alpha$ possible actions.  The action
 replacement rewrites ({\bf SimplifyAll}, {\bf SimplifySingle}, and
 {\bf ReduceAction}) allow for at most $k (\alpha-1)$ rewrites each.  There
 are $\leq k^2$ possible {\bf SwapAction} rewrites, and $\leq k^2(\alpha-1)$
@@ -382,10 +382,10 @@ Substituting this expression into the expression $\frac{n(n+1)}{2}$
 above, we see that the worst-case cost for normalization is
 $O(k^4\alpha^2)$.  While this is
 worse than the quadratic cost of delta-debugging, this algorithm is
-applied to already 1-minimal test cases, unlike delta-debugging. The $k$ in our quartic complexity
-is therefore, for random test cases, typically an order of magnitude smaller
+applied to already 1-minimal tests, unlike delta-debugging. The $k$ in our quartic complexity
+is therefore, for random tests, typically an order of magnitude smaller
 than the $k$ in delta-debugging \cite{ICSEDiff,icst2014,MinUnit},
-which can partly balance the additional cost for test cases whose
+which can partly balance the additional cost for tests whose
 unreduced length is less than 100.
 
 \mycomment{
@@ -407,10 +407,10 @@ k^2 + k$ executions for the outer loop, and a total runtime that is
 $O(k^4n)$.}
 
 We believe that if normalization can decrease human effort in
-examining large numbers of redundant test cases, this price is more
+examining large numbers of redundant tests, this price is more
 than reasonable.  In practice, most actions are not enabled at most
 steps, and the rules are applied in an order that quickly converges on
-a normal form for many test cases.  In our experiments, normalization
+a normal form for many tests.  In our experiments, normalization
 was only very expensive when delta-debugging was also costly, and
 appeared to be worse than delta-debugging by a constant factor,
 somewhere in the range of 2-10x, usually closer to 10x.  With multiple
@@ -425,7 +425,7 @@ satisfies {\tt pred}, that rule should be moved to the end of the
 ordering of rewrites, since once a rule fails once to produce any
 valid rewrites, it frequently produces no further reductions.  This
 simple change typically halves the time required for normalization.
-When test case execution is very expensive, the set of candidate test
+When test execution is very expensive, the set of candidate test
 cases can be further restricted: limiting action replacements to cases
 where Levenshtein \cite{Lev} distance (text edit distance) between the
 code for actions is bounded to a small value was effective in
@@ -434,7 +434,7 @@ A further useful optimization when normalizing large numbers of tests
 is to cache results across tests (since the algorithm is deterministic).   For very large
 numbers of tests, this is the most important optimization.
 For systems with
-expensive replay, delta-debugging of each new base test case
+expensive replay, delta-debugging of each new base test
 can be omitted: the {\bf ReduceAction} rewrite will
 eventually remove extraneous steps.  
 It is also trivial to parallelize normalization by
@@ -456,16 +456,16 @@ when no candidate that would be checked earlier is in the work queue.
 
 The core idea of generalization is to use methods similar to those
 involved in normalization to provide a user with information about
-changeable aspects of a test case.  Some values and orderings of steps
-in a test case are \emph{essential} to the failure: when changed, they
-cause the test case to no longer fail.  Many others, however, are
-\emph{accidental} --- any concrete test case has to choose \emph{some}
+changeable aspects of a test.  Some values and orderings of steps
+in a test are \emph{essential} to the failure: when changed, they
+cause the test to no longer fail.  Many others, however, are
+\emph{accidental} --- any concrete test has to choose \emph{some}
 values and step ordering (enforced by the normalization
 process) but many such choices are arbitrary, or at least allow
 variance, with respect to the cause of failure.  Generalization
 automatically performs experiments to distinguish essential and accidental aspects
-of a test case, and summarizes the results.  We
-can define a finite set of simple variations on a test case, and summarize which
+of a test, and summarizes the results.  We
+can define a finite set of simple variations on a test, and summarize which
 variations maintain a predicate of interest. In the typical case of
 failure, generalization simply presents the user with \emph{all}
 ``very similar'' test
@@ -507,37 +507,37 @@ rewrites:
 This algorithm collects all steps that can be replaced with other
 actions or swapped with other steps, and returns the set to be
 reported to the user.  This version assumes the test has already been
-normalized, but can be extended to any test case by removing the
+normalized, but can be extended to any test by removing the
 restrictions that $a > a'$ and $(j : b) > (i : a)$.  The complexity of
 generalization is simpler to determine than that of normalization.  If
 we assume all actions are enabled at each step, and there are $\alpha$
 actions and $k$ steps, checking for replacements requires $k (\alpha-1)$
-test case executions, when every action is the lowest-indexed action.
+test executions, when every action is the lowest-indexed action.
 In that worst case, no swaps are possible.  The complexity of checking
 for swaps in the worst case is quadratic in $k$.  In practice, most
-actions are not enabled at most steps, and most actions in a test case
+actions are not enabled at most steps, and most actions in a test
 are not the lowest-indexed action.  Basic generalization is trivial to
 parallelize.
 
 
-\subsubsection{Fresh Values and Misleading Test Cases}
+\subsubsection{Fresh Values and Misleading Tests}
 \label{freshgen}
 
 A side-effect of delta-debugging and normalization is reduction of the
-number of variables in a test case.  While usually helpful, this can
-sometimes result in misleading test cases.  In a stateful system,
+number of variables in a test.  While usually helpful, this can
+sometimes result in misleading tests.  In a stateful system,
 putting the system into a bad state may require building a complex
 object.  Once system state is corrupted, however, the complex object
 is irrelevant, and its appearance in the call leading to failure can
 be misleading.  In previous work at NASA, we observed that sometimes a
-delta-debugged file system test case \cite{ICSEDiff,AMAI} would use an
+delta-debugged file system test \cite{ICSEDiff,AMAI} would use an
 open file descriptor in a call, leading to the suspicion that the file
 had been corrupted, when in fact the file system's state was damaged,
 and the same operation on any file would produce the problem.  We
 therefore present a more aggressive generalization than replacement or
 swap: replacing a pool use with a \emph{fresh value}.
 
-Consider the test case in Figure \ref{fig:mislead}, produced by a
+Consider the test in Figure \ref{fig:mislead}, produced by a
 TSTL harness for  TSTL itself\footnote{Since Python TSTL
   provides a Python API, that API can be used as the SUT in testing.}.  The
 problem involves an invalid cache, produced by normalizing a test with
