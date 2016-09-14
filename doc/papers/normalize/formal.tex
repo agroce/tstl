@@ -53,9 +53,10 @@ manipulating, and understanding those tests.  Figure
 \ref{fig:example} shows a simplified portion of a TSTL definition
 (called a harness) of
 tests for an AVL tree class, in the latest syntax for TSTL.
-TSTL provides numerous features not shown in this small example,
-including automatic differential testing, customizable logging, support for
-complex guards, and use of pre- and post- values.  Given a harness
+%TSTL provides features not shown in this small example,
+%including differential testing, customizable logging, support for
+%complex guards, and use of pre- and post- values.  
+Given a harness
 like the one in Figure \ref{fig:example}, TSTL compiles it into a
 class file defining an interface for testing that provides features
 such as querying the set of available testing actions, restarting a
@@ -195,13 +196,13 @@ one action (possibly in multiple steps, but in a uniform way) or make
 \emph{no} changes to the actions performed, only to the pools used or the
 positions of actions in the test.  We cannot guarantee
 normalization does not change the underlying fault in a test; however,
-the limited scope of rewrites should at least make the likelihood of
-fault change (known as ``slippage'' \cite{PLDI13}) like that of
-delta-debugging, which is accepted as a reasonable tradeoff.
+the limited scope of rewrites should minimize the chance of fault
+change (known as ``slippage'' \cite{PLDI13,slippage}).
 
-\subsubsection{Definitions and Notation}
+\subsubsection{Rewrite Rules}
 
-In order to formally define normalization, some additional notation is required.
+Figure \ref{fig:rewrite} shows the rewrite rules used in TSTL normalization.
+The notation in the rules is relatively simple.
 A \emph{step} is an action paired with an index indicating its
 position in a test,
 where the first action is step 0, etc.; e.g., $(2: a)$ indicates the
@@ -227,9 +228,11 @@ containing $x$ that are before step $i$ moved to step $i$, preserving
 their previous order, shifting steps at $i$ and after $i$ to make room for
 the moved steps, again preserving order.
 
-\subsubsection{Rewrite Rules}
+%\subsubsection{Rewrite Rules}
 
-\begin{enumerate}
+\begin{figure}[t]
+{\scriptsize
+\begin{itemize}
 \item {\bf SimplifyAll:}
 $t \Rightarrow t[a \mapsto a']$\\
 \-\ \ \ \emph{where} $a' < a$\\
@@ -259,7 +262,7 @@ $t \Rightarrow t(i,j)[p \Leftrightarrow p']$\\
 \-\ \ \ and $0 \leq i < j < |t|$\\
 \-\ \ \ and $p < p'$\\
 Covers the case where swapping two pool instances (within a range of steps) reduces
-the minimal action index of the modified steps.
+the minimum action index of the steps.
 \item {\bf SwapAction:}
 $t \Rightarrow t[(i: a) \mapsto (i: b), (j: b) \mapsto (j: a)]$\\
 \-\ \ \ \emph{where} $i < j$ and
@@ -269,9 +272,12 @@ lower-indexed action appearing first.
 \item {\bf ReduceAction:}
 $t \Rightarrow t[(i: a) \mapsto (i: a')]$\\
 \-\ \ \ \emph{where} $|ddmin(t')| < |t|$\\
-Covers the case where an action can be replaced by any action (not just lower-indexed
-actions) and this enables further delta-debugging.
-\end{enumerate}
+Covers the case where an action can be replaced by any action, enabling further delta-debugging.
+\end{itemize}
+}
+\caption{Rewrite rules for normalization.}
+\label{fig:rewrite}
+\end{figure}
 
 \subsubsection{Normalization Algorithm}
 \label{formalexample}

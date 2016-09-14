@@ -184,7 +184,10 @@ a total of 3,929 normalizations.
 As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own
 API interface (the compiler is about 1,600 LOC; a compiled SUT is
 often $>$ 30KLOC).  We discovered one fault while testing
-the latest version of TSTL, the cache-related problem shown in Figure \ref{fig:mislead}.
+the latest version of TSTL, the cache-related problem shown in Figure
+\ref{fig:mislead}\footnote{We note that normalizing a test with
+  respect to the predicate that it does not normalize (by a different
+  predicate) may produce a headache in the TSTL user.}.
 Generating and reducing 100 tests for it required 1,090 seconds
 and produced 90 failures.  Normalization and generalization
 increased total runtime to 3,690 seconds, and produced just 2
@@ -209,9 +212,9 @@ While we expect that this is an over-approximation of the actual
 number of distinct faults, inspection of the tests and the covered
 code suggests it is not far from the actual number.  Because we used a
 (we believe)
-non-lossy fault identification method (exact failure symptom), our
-SymPy results are relatively useless for {\bf RQ2}, but they are the
-most complete for {\bf RQ1}, {\bf RQ3}, and {\bf RQ4}.
+non-lossy fault identification method (the exact failure symptom), our
+SymPy results are relatively useless for {\bf RQ2}, but they answer {\bf RQ1}, {\bf RQ3}, and {\bf RQ4} for a large, realistic
+system and real faults.
 
 We generated a set of 570 tests,producing tests until every fault
 signature we had ever detected had at least one associated test.  We
@@ -224,20 +227,23 @@ reduced, and reduced and normalized tests includes only the 500 tests
 that both reduced and normalized without termination problems (this
 set still represented all 40 fault signatures).
 
-{\bf RQ1:} reduction did not reduce the number of failing tests at
+{\bf RQ1:} Reduction alone did not reduce the number of failing tests at
 all:  each of the 500 tests in the set produced a different reduced
 test.  Normalization, however, reduced the total number of distinct
 failing tests to only 114.  Considering results by fault, there were
 12.5 mean different failing tests, per fault, for both unreduced and
 reduced tests, and only 3.15 mean failing tests per fault for
 normalized tests.  This difference was significant, with $p=0.003$.
+Of the 13 non-singleton faults (faults with more than one
+corresponding failure), normalization reduced the number of tests to
+examine for 11; in 2 cases, the normalization was perfect (one failure).
 
-{\bf RQ3:} the mean time for reduction was 104.45 seconds, with a
+{\bf RQ3:} The mean time for reduction was 104.45 seconds, with a
 median of 19.70 seconds.  The mean time for normalization was a mean of
 594 additional seconds, with a median of 260.214 seconds.  The
 difference was significant, with $p<1\time10^{-80}$.
 
-{\bf RQ4:} the mean length of unreduced tests was 44.664 steps, with a median
+{\bf RQ4:} The mean length of unreduced tests was 44.664 steps, with a median
 length of 40.5 steps.  For reduced tests, this shrank to a mean of
 9.984 and a median of 9.0 steps.  Normalized tests had mean length of
 5.48 steps and median length of 5.0 steps.  SymPy failures also show
