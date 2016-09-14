@@ -4,7 +4,7 @@ Automated testing often goes hand in hand with
 test reduction or minimization \cite{DD,MinUnit,TCminim,ICSEDiff,CReduce}.
 Such reduction is
 now standard practice in industrial testing tools such as Mozilla's
-{\tt jsfunfuzz} \cite{jsfunfuzz2}.  Many automated
+{\tt jsfunfuzz} \cite{jsfunfuzz}.  Many automated
 test generation methods, especially those based on random testing,
 produce long tests with many irrelevant components.  Such tests are
 hard to understand for debugging and slow to execute.  Delta debugging
@@ -86,7 +86,7 @@ The intuition is that to find a reduced failing test that exhibits a
 different fault than $r$, we want to run delta debugging in such a way
 as to produce a test as different as possible from $r$; ideally we
 would like a reduced test sharing no components with $r$.  However,
-$r$ will likely contain components that must appear in any failing
+$r$ will likely contain components/features \cite{ISSRE13} that \emph{must} appear in any failing
 test: for example, calls to {\tt mount} appear in all useful file
 system tests, and interesting XML files seldom lack the {\tt <}
 character.  Therefore, rather than only trying to block all components of $r$,
@@ -104,7 +104,7 @@ reduced tests found at each stage.  To block all previously discovered
 reductions, it is necessary to compute combinations that include at
 least one component from each reduced test produced thus far.
 
- Algorithm \ref{comb-block} shows
+Algorithm \ref{comb-block} shows
 the formal definition of the {\tt comb-block} algorithm.  This algorithm depends on a
 function {\tt block-all ($T$,$s$)}, which given a set of tests $T$ and
 a combination size $s$,  returns all size $s$ combinations of components of tests $t
@@ -115,8 +115,6 @@ filters invalid combinations, which works well with the typically
 small $s$ for reduced tests.
 
 \begin{algorithm}
-\caption{}
-\label{comb-block}
 \begin{algorithmic}[1]
 \Require{failing test $t$, reduced failing test $r$, search depth
   $d$, max combinations to consider $m$}
@@ -125,7 +123,7 @@ small $s$ for reduced tests.
 \While {$d$ > 0}
 \State{new = $\emptyset$}
 \For {$s$ = 1 to total components in reductions}
-\For {$c \in$ {\tt block-all}(reductions-handled, $s$)}
+\For {$c \in$ ({\tt block-all}(reductions, $s$)-handled)}
 \State {count = count + 1}
 \If {count > $m$}
 \Return {reductions}
@@ -145,6 +143,8 @@ small $s$ for reduced tests.
 \EndWhile
 \State {return reductions}
 \end{algorithmic}
+\caption{Combination-blocking algorithm}
+\label{comb-block}
 \end{algorithm}
 
 \subsection{Randomized Multiple-Run ddmin}
