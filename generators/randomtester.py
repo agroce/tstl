@@ -71,7 +71,9 @@ def parse_args():
     parser.add_argument('--progress', action='store_true',
                         help="Turn on progress report.")
     parser.add_argument('--swarmP', type=float, default=0.5,
-                        help="Swarm inclusion probability.")    
+                        help="Swarm inclusion probability.")
+    parser.add_argument('--computeFeatureStats', action="store_true",
+                        help="When using swarm testing, compute coverage triggers and suppressors")
     parser.add_argument('--highLowSwarm', type=float, default=None,
                         help="Apply high/low probability swarm testing with high portion of action being P.")
     parser.add_argument('-P', '--swarmProbs', type=str, default=None,
@@ -480,6 +482,11 @@ def main():
         localizeBFail = {}
         localizeBPass = {}
         testsPassed = 0
+
+    if config.computeFeatureStats:
+        featureStatsB = {}                
+        featureStatsS = {}
+        featureStatsA = {}
         
     if config.quickAnalysis:
         quickcf = open("quick.corpus",'w')
@@ -695,6 +702,33 @@ def main():
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
 
+        if (config.computeFeatureStats):
+            for act in sut.swarmConfig():
+                if act in featureStatsA:
+                    featureStatsA[act] += 1
+                else:
+                    featureStatsA[act] = 1
+            for b in sut.currBranches():
+                if b not in featureStatsB:
+                    featureStatsB[b] = [1,{}]
+                else:
+                    featureStatsB[b][0] += 1
+                for act in sut.swarmConfig():
+                    if act not in featureStatsB[b][1]:
+                        featureStatsB[b][1][act] = 1
+                    else:
+                        featureStatsB[b][1][act] += 1
+            for s in sut.currStatements():
+                if s not in featureStatsS:
+                    featureStatsS[s] = [1,{}]
+                else:
+                    featureStatsS[s][0] += 1
+                for act in sut.swarmConfig():
+                    if act not in featureStatsS[s][1]:
+                        featureStatsS[s][1][act] = 1
+                    else:
+                        featureStatsS[s][1][act] += 1
+            
         if (config.exploit != None) and (not config.quickAnalysis):
             for b in sut.currBranches():
                 if b not in branchCoverageCount:
@@ -833,7 +867,26 @@ def main():
 
     if config.uniqueValuesAnalysis:
         uniquef.close()
-            
+
+    if config.computeFeatureStats:
+        fstatsf = open ("feature.stats."+str(os.getpid()),'w')
+        fstatsf.write("TESTS:"+str(ntests)+"\n")
+        for act in featureStatsA:
+            fstatsf.write(act + " %%ACTCOUNT%% " + str(featureStatsA[act]) + "\n")
+        for b in sut.allBranches():
+            fstatsf.write("BRANCH:" + str(b) + "\n")
+            count = featureStatsB[b][0]
+            fstatsf.write("COUNT:" + str(count) + "\n")
+            for act in featureStatsB[b][1]:
+                fstatsf.write(act + " %%%% " + str(featureStatsB[b][1][act]) + "\n")
+        for s in sut.allStatements():
+            fstatsf.write("STATEMENT:" + str(s) + "\n")
+            count = featureStatsS[s][0]
+            fstatsf.write("COUNT:" + str(count) + "\n")
+            for act in featureStatsS[s][1]:
+                fstatsf.write(act + " %%%% " + str(featureStatsS[s][1][act]) + "\n")
+        fstatsf.close()
+        
     if config.quickAnalysis:
         quickcf.close()
         print "*" * 70        
