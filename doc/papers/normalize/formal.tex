@@ -301,6 +301,7 @@ new base test, since often a rewrite makes other steps irrelevant.
 \begin{algorithm}
 \caption{Basic algorithm for normalization}
 \label{simpalg}
+{\scriptsize
 \begin{algorithmic}[1]
 \State {modified = True}
 \While {modified}
@@ -315,6 +316,7 @@ new base test, since often a rewrite makes other steps irrelevant.
 \EndWhile 
 \State return $t$
 \end{algorithmic}
+}
 \end{algorithm}
 
 \begin{figure}
@@ -488,6 +490,7 @@ rewrites:
 \begin{algorithm}
 \caption{Basic algorithm for generalization}
 \label{genalg}
+{\scriptsize
 \begin{algorithmic}[1]
 \State {swap = $\emptyset$}
 \State {replace = $\emptyset$}
@@ -505,6 +508,7 @@ rewrites:
 \EndFor
 \State {return (swap, replace)}
 \end{algorithmic}
+}
 \end{algorithm}
 
 This algorithm collects all steps that can be replaced with other
@@ -589,6 +593,7 @@ position one higher.
 \begin{algorithm}
 \caption{Basic algorithm for fresh object generalization}
 \label{freshalg}
+{\scriptsize
 \begin{algorithmic}[1]
 \State {fresh = $\emptyset$}
 \For {$(i, a) \in t$}
@@ -602,6 +607,7 @@ position one higher.
 \EndFor
 \State {return fresh}
 \end{algorithmic}
+}
 \end{algorithm}
 
 In practice, the {\tt fresh} set returned should be pruned to avoid

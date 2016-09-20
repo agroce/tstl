@@ -195,6 +195,12 @@ failures.
 
 \subsection{SymPy}
 
+\begin{figure}
+\includegraphics[width=\columnwidth]{sympyd}
+\caption{Effects of normalization on SymPy tests.}
+\label{lengthandactions}
+\end{figure}
+
 SymPy \cite{SymPy} is a widely used open source pure Python library
 for symbolic mathematics.  SymPy is used by several other projects,
 has over 400 contributors, over 25,000 commits to date, and over
@@ -216,27 +222,24 @@ non-lossy fault identification method (the exact failure symptom), our
 SymPy results are relatively useless for {\bf RQ2}, but they answer {\bf RQ1}, {\bf RQ3}, and {\bf RQ4} for a large, realistic
 system and real faults.
 
-We generated a set of 570 tests,producing tests until every fault
-signature we had ever detected had at least one associated test.  We
-then reduced and normalized these tests.  Some SymPy faults (not
-included in our count of 40 tests) produce non-termination, and
-reduction or normalization can transform a terminating test into a
-non-termination one.  Of these 570 tests, 549 produced a reduced test,
+We generated, normalized, and reduced tests until each fault
+signature had at least one associated test, producing 570 tests.  Some SymPy faults (not
+included in our count of 40 tests) cause infinite loops, and
+reduction or normalization sometimes becomes stuck on a
+non-terminating test.  Of the 570 tests, 549 produced a reduced test,
 and 500 produced a normalized test.  Our comparison of unreduced,
 reduced, and reduced and normalized tests includes only the 500 tests
-that both reduced and normalized without termination problems (this
-set still represented all 40 fault signatures).
+that both reduced and normalized (this
+set still exhibits all 40 signatures).
 
-{\bf RQ1:} Reduction alone did not reduce the number of failing tests at
-all:  each of the 500 tests in the set produced a different reduced
-test.  Normalization, however, reduced the total number of distinct
-failing tests to only 114.  Considering results by fault, there were
+{\bf RQ1:} Reduction alone did not reduce the number of distinct failing tests at
+all.  Normalization reduced the total number of distinct
+failing tests to 114.  There were
 12.5 mean different failing tests, per fault, for both unreduced and
 reduced tests, and only 3.15 mean failing tests per fault for
 normalized tests.  This difference was significant, with $p=0.003$.
-Of the 13 non-singleton faults (faults with more than one
-corresponding failure), normalization reduced the number of tests to
-examine for 11; in 2 cases, the normalization was perfect (one failure).
+Normalization reduced the number of tests to
+examine for 11 of the 13 faults with more than one associated failure; in 2 cases, the normalization was perfect (one failure).
 
 {\bf RQ3:} The mean time for reduction was 104.45 seconds, with a
 median of 19.70 seconds.  The mean time for normalization was a mean of
@@ -244,20 +247,30 @@ median of 19.70 seconds.  The mean time for normalization was a mean of
 difference was significant, with $p<1\time10^{-80}$.
 
 {\bf RQ4:} The mean length of unreduced tests was 44.664 steps, with a median
-length of 40.5 steps.  For reduced tests, this shrank to a mean of
+of 40.5 steps.  For reduced tests, this shrank to a mean of
 9.984 and a median of 9.0 steps.  Normalized tests had mean length of
-5.48 steps and median length of 5.0 steps.  SymPy failures also show
+5.48 steps and median of 5.0 steps.  SymPy failures show
 that normalization reduces not only the length of tests, but the number of
 actions that must be considered for debugging:  reduced tests included
-a mean of 8.116 different actions, but normalized tests only 5.282
+8.116 mean different actions, but normalized tests only 5.282
 mean different actions.  These differences were all statistically
-significant with $p$-values below $p=1\times10^{-76}$.  Finally,
-normalization made it possible to completely ignore a large number of
+significant with $p$-values below $p=1\times10^{-76}$.  
+Normalization made it possible to completely ignore a large number of
 SymPy functions for debugging purposes.  The unreduced and reduced
 tests included all 50 SymPy functions tested.  The normalized tests,
 however, included only 32 of these, and enabled us to ignore such
-complex functions as the trigonometric expansion and simplification, power expansion,
-logarithmic combination, and even generalized expansion.
+complex code as trigonometric expansion and simplification, power expansion,
+logarithmic combination, and even generalized expansion.  Figure
+\ref{lengthandactions} graphically shows the impact of normalization
+on length and number of functions covered by reduced tests.  The lower
+pat of the figure shows changes in test length, and the upper part
+shows, for the same fault, the change in number of different actions.
+The green boxplots show reduced tests, while the emphasized blue
+boxplots show normalized tests.  It is clear that normalization not
+only has a significant effect on averages, but has a large benefit for
+most individual faults.  The reduction in tests to examine
+is also shown, indirectly, by the fact that the ``boxes'' for
+normalized data are often compressed in that the tests are similar or identical.
 
 \subsection{NumPy}
 
@@ -320,8 +333,8 @@ Our final two case studies provide little information on {\bf RQ1} and
 reduction runtimes high enough that each failure is usually dealt with
 one-by-one.  However, the value of normalization and generalization
 for further reduction ({\bf RQ4}) and aiding in understanding tests ({\bf
-  RQ5}) is best shown by these complex programs.  They also provide
-results for {\bf RQ3} when even simple test reduction is expensive.
+  RQ5}) is effectively shown by these complex programs.  They also provide
+results for {\bf RQ3} when even test reduction is expensive.
 NumPy \cite{NumPy} is a widely used Python library that
 supports large, multi-dimensional matrices and provides a huge library
 of mathematical functions.  The SciPy library for scientific
