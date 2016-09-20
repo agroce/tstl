@@ -112,11 +112,11 @@ cases\footnote{It is possible to detect both faults with a single test
   present.}.  The improvement due to normalization was
 statistically significant by Wilcoxon test with $p=1\times10^{-80}$.
 A second way to examine reduction in a multi-fault setting is to
-consider the average number of tests a user must examine before seeing
+consider the mean number of tests a user must examine before seeing
 all faults \cite{PLDI13}.  For the AVL mutant pairs, a user must
-examine almost 20 tests on average before encountering at least
-one instance of both faults.  With normalization, this average drops
-to just 2 tests.  The difference is significant by Wilcoxon
+examine almost 20 tests (on average) before encountering at least
+one instance of both faults.  With normalization, this  drops
+to a mean of just 2 tests.  The difference is significant by Wilcoxon
 test, with $p=1.4\times10^{-6}$.
 
 AVLTree also provided basic results for {\bf RQ3}. The mean cost to reduce a
@@ -135,7 +135,7 @@ evident.  Out of 60,226 normalizations performed in our full AVLTree mutant
 experiments, 59,972 (99.6\%) resulted in a cache hit (most of these
 after a small number of normalization steps).  In fact, the total
 number of rewrites performed during the experiments was only 145,780,
-for an average of only 2.4 non-cache-hit rewrites of each test.  Note
+for a mean of only 2.4 non-cache-hit rewrites of each test.  Note
 that this is with the cache starting empty for each of the 82 mutants.
 
 \subsection{XML Parser}
@@ -157,7 +157,7 @@ In addition to these realistic faults, we performed the same
 mutation-based analysis as with AVLTree (Figure \ref{normeffect}). In
 this case, a weaker specification (no reference implementation)
 resulted in fault detection for only 5 of 357 mutants.  For these
-mutants, reduction alone produced an average of 107.6 failures (median
+mutants, reduction alone produced a mean of 107.6 failures (median
 27); normalization reduced that to only 6.2 failures (median 7) ({\bf
   RQ1}).  The difference was significant at the 95\% confidence level,
 by Wilcoxon test, with $p=0.042$.  With mutant pairs, these numbers
@@ -267,7 +267,7 @@ pat of the figure shows changes in test length, and the upper part
 shows, for the same fault, the change in number of different actions.
 The green boxplots show reduced tests, while the emphasized blue
 boxplots show normalized tests.  It is clear that normalization not
-only has a significant effect on averages, but has a large benefit for
+only has a significant effect on average, but has a large benefit for
 most individual faults.  The reduction in tests to examine
 is also shown, indirectly, by the fact that the ``boxes'' for
 normalized data are often simply lines because the tests are similar or identical.
@@ -363,16 +363,16 @@ normalization is useful for additional test length reduction for
 NumPy, and that generalization makes any surprising restrictions on
 test values clear.  For NumPy tests, normalization takes much longer
 than reduction, in part due to the expense of operations on large
-arrays.  For almost all tests, the average time to reduce tests
+arrays.  For almost all tests, the mean time to reduce tests
 is about 4-5 seconds, and the time for normalization is between 712
-and 774 seconds.  The average time to discover a failing test,
+and 774 seconds.  The mean time to discover a failing test,
 for comparison, is just over 400 seconds.  Generalization takes
 between 52 and 59 seconds in these cases.  The exception was a test of 45,206 steps (!)  leading to a memory exhaustion error and
 crash.  This was reduced (over a period of nearly a day) to a test
 case with 10 steps, which then normalized (in only 2 hours) to a test
 with 8 steps.  The normalized test involved no operations other than array
 initialization, array flattening, and array
-addition.  The reduced test required larger dimensions, array
+addition.  The reduced test involved larger array dimensions, array
 multiplication, and array subtraction, as well.  
 %This is the only case in
 %which we have seen normalization time lower than reduction time,
@@ -479,7 +479,9 @@ developers, we are preparing a test suite that covers as much as
 possible of the Python source in the latest version of ArcPy
 and records the values returned.  For future versions of ArcPy, a ``semantic diff'' based on these calls
 can be produced.  The tests in the suite are
-normalized and generalized to help users understand API usage consequences, since Esri examples are limited to simple parameter combinations.
+normalized and generalized to help users understand API usage
+consequences, since Esri examples are limited to simple parameter
+combinations, and many illegal combinations are not specified.
 
 \begin{figure}[t]
 {\scriptsize 
