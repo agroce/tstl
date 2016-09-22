@@ -869,7 +869,7 @@ def main():
         uniquef.close()
 
     if config.computeFeatureStats:
-        fstatsf = open ("feature.stats."+str(os.getpid()),'w')
+        fstatsf = open ("feature.stats."+str(os.getpid())+str(R.randrange(1,10000)),'w')
         fstatsf.write("TESTS:"+str(ntests)+"\n")
         for act in featureStatsA:
             fstatsf.write(act + " %%ACTCOUNT%% " + str(featureStatsA[act]) + "\n")
