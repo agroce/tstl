@@ -834,6 +834,7 @@ def main():
             newC = inlineGuardSplit[1]
 
         checkRaised = False
+        checkRefRaised = False
         postCode = None
         if newC.find(" => ") > -1:
             postCodeSplit = newC.split(" => ")
@@ -841,6 +842,8 @@ def main():
             postCode = postCodeSplit[1].rstrip('\n')
             if "raised" in postCode:
                 checkRaised = True
+            if "refRaised" in postCode:
+                checkRefRaised = True
 
         preSet = []
         if postCode:
@@ -926,7 +929,7 @@ def main():
         if expectCode:
             genCode.append(baseIndent + baseIndent + "__before_res = " + beforeSig + "\n")
         genCode.append(baseIndent + baseIndent + newC)
-        if postCode and not checkRaised:
+        if postCode and (not checkRaised) and (not checkRefRaised):
             genCode.append(baseIndent + baseIndent + "assert " + postCode + "\n")
         if expectCode:
             genCode.append(baseIndent + baseIndent + "__after_res = " + afterSig + "\n")
@@ -947,7 +950,7 @@ def main():
         genCode.append(baseIndent + baseIndent + "raise\n")                    
             
         genCode.append(baseIndent + "finally:\n")
-        if postCode and checkRaised:
+        if postCode and checkRaised and not (checkRefRaised):
             genCode.append(baseIndent + baseIndent + "assert " + postCode + "\n")
         genCode.append(baseIndent + baseIndent + "try: test_after_each(self)\n")
         genCode.append(baseIndent + baseIndent + "except: pass\n")
@@ -959,17 +962,23 @@ def main():
         if not config.nocover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov: self.__cov.stop(); self.__updateCov()\n")
 
+        if checkRefRaised:
+            genCode.append(baseIndent + "refRaised = None\n")
+        
         if refC != newC:
             genCode.append(baseIndent + "try:\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION:',self.prettyName('''"+refC[:-1]+"''')\n")            
             genCode.append(baseIndent + baseIndent + refC)
+            genCode.append(baseIndent + "except KeyboardInterrupt:\n")
+            genCode.append(baseIndent + baseIndent + "raise\n")            
             genCode.append(baseIndent + "except Exception as refRaised:\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised\n")                        
-            genCode.append(baseIndent + "finally:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
+            genCode.append(baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
-                genCode.append(baseIndent + baseIndent + baseIndent + "try: print 'AFTER',self.prettyName('''" + p + "''') + ' =',repr(" + p + "), ':',type(" + p + ")\n")            
-                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
+                genCode.append(baseIndent + baseIndent + "try: print 'AFTER',self.prettyName('''" + p + "''') + ' =',repr(" + p + "), ':',type(" + p + ")\n")            
+                genCode.append(baseIndent + baseIndent + "except: pass\n")
+            if checkRefRaised:
+                genCode.append(baseIndent + "assert " + postCode + "\n")
             if comparing:
                 genCode.append(baseIndent + "assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
         genCode.append(baseIndent + "if self.__verboseActions: print '='*50\n")                                      
