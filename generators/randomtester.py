@@ -153,7 +153,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         print "ERROR:",f
         print "TRACEBACK:"
         traceback.print_tb(f[2])
-        sut.saveTest(test,config.output+".full")
+        sut.saveTest(test,config.output.replace(".test",".full.test"))
     else:
         print "Handling new coverage for quick testing"
         snew = sut.newCurrStatements()
@@ -201,7 +201,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         original = test
         test = sut.reduce(test, failProp, True, config.keep)
         if not newCov:
-            sut.saveTest(test,config.output+".reduced")        
+            sut.saveTest(test,config.output.replace(".test",".reduced.test"))        
         print "Reduced test has",len(test),"steps"
         print "REDUCED IN",time.time()-startReduce,"SECONDS"
         sut.prettyPrintTest(test)
@@ -220,7 +220,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             test = sut.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noreassign)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
-            sut.saveTest(test,config.output+".normalized")                    
+            sut.saveTest(test,config.output.replace(".test",".normalized.test"))
         if (config.gendepth != None) and (test not in map(lambda x:x[0],failures)) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print "GENERATING GENERALIZATION CLOUD"
@@ -260,7 +260,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             for b in sut.allBranches():
                 if b not in beforeReduceB:
                     print "NEW BRANCH FROM REDUCTION",b
-            outname = "quicktest." + str(quickCount)
+            outname = "quick" + str(quickCount) + ".test"
             quickCount += 1
         if outname != None:
             outf = open(outname,'w')
@@ -412,8 +412,8 @@ def main():
     if config.readQuick:
         print "REPLAYING QUICK TESTS"
         sqrtime = time.time()
-        for f in glob.glob("quicktest.*"):
-            fn = int(f.split("quicktest.")[1])
+        for f in glob.glob("quick*.test"):
+            fn = int(f.split("quick")[1].split(".")[0])
             if fn >= quickCount:
                 quickCount = fn + 1
             t = sut.loadTest(f)

@@ -963,8 +963,8 @@ def main():
             genCode.append(baseIndent + "try:\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION:',self.prettyName('''"+refC[:-1]+"''')\n")            
             genCode.append(baseIndent + baseIndent + refC)
-            genCode.append(baseIndent + "except e:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION RAISED EXCEPTION:',type(e),e\n")                        
+            genCode.append(baseIndent + "except Exception as refRaised:\n")
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised\n")                        
             genCode.append(baseIndent + "finally:\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
