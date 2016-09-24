@@ -1,3 +1,9 @@
+# A simple (somewhat silly) variation of Parnas' KWIC problem
+# Main point is to show that coverage for this kind of lambda-heavy, data-as-code
+# code is far less effective than mutation analysis.  Interesting Pareto-ish result:
+# the coverage tests (in coverage subfolder) kill 80% of the mutants.  But the remainder
+# require the much greater testing in the mutkill folder (which also has 100% coverage)
+
 @import kwic as yourkwic
 @import mykwic
 
