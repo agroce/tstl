@@ -1,0 +1,51 @@
+@import kwic as yourkwic
+@import mykwic
+
+source: kwic.py
+source: mykwic.py
+
+pool: <word> 5
+pool: <string> 5
+pool: <ignore> 5
+
+<word> := <['a','z','A','Z']>
+~<word> += "a"
+~<word> += "z"
+~<word> += "A"
+~<word> += "Z"
+~<word> += "{"
+~<word> += "`"
+~<word> += ","
+~<word> += "?"
+~<word> += "!"
+~<word> += ":"
+
+<string> := ""
+~<string> += <['a','z']>
+~<string> += <['A','Z']>
+~<string> += "{"
+~<string> += "`"
+~<string> += ","
+~<string> += "?"
+~<string> += "!"
+~<string> += ":"
+~<string> += "."
+~<string> += ". "
+~<string> += " "
+~<string> += chr(9)
+~<string> += chr(10)
+~<string> += ~<string>
+
+~<string> += " " + <word> + " "
+~<string> += " " + <word> + ". "
+~<string> += " " + <word> + chr(10)
+
+<ignore> := <string>.split()
+<ignore>.append(<string>)
+
+assert yourkwic.kwic(<string>) == mykwic.kwic(<string,1>)
+assert yourkwic.kwic(<string>, listPairs=True) == mykwic.kwic(<string,1>, listPairs=True)
+assert yourkwic.kwic(<string>, ignoreWords = <ignore>) == mykwic.kwic(<string,1>, ignoreWords = <ignore,1>)
+assert yourkwic.kwic(<string>, periodsToBreaks=True) == mykwic.kwic(<string,1>, periodsToBreaks=True)
+assert yourkwic.kwic(<string>, periodsToBreaks=True, listPairs=True) == mykwic.kwic(<string,1>, periodsToBreaks=True, listPairs=True)
+assert yourkwic.kwic(<string>, periodsToBreaks=True, listPairs=True, ignoreWords = <ignore>) == mykwic.kwic(<string,1>, periodsToBreaks=True, listPairs=True, ignoreWords = <ignore,1>)

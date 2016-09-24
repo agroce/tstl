@@ -1,0 +1,9 @@
+self.p_word[0] = 'z' 
+self.p_string[0] = "" 
+self.p_string[0] += 'z' 
+self.p_string[0] += " " + self.p_word[0] + " " 
+self.p_string[0] += 'a' 
+self.p_string[0] += self.p_string[0] 
+self.p_string[0] += ". " 
+self.p_string[0] += self.p_string[0] 
+assert yourkwic.kwic(self.p_string[0], periodsToBreaks=True, listPairs=True) == mykwic.kwic(self.p_string[0], periodsToBreaks=True, listPairs=True) 

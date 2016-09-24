@@ -1,0 +1,4 @@
+self.p_string[0] = "" 
+self.p_string[0] += "?" 
+self.p_ignore[0] = self.p_string[0].split() 
+assert yourkwic.kwic(self.p_string[0], ignoreWords = self.p_ignore[0]) == mykwic.kwic(self.p_string[0], ignoreWords = self.p_ignore[0]) 
