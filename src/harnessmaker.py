@@ -908,10 +908,10 @@ def main():
         genCode.append(baseIndent + "if self.__verboseActions:\n")
         genCode.append(baseIndent + baseIndent + "print 'ACTION:',self.prettyName('''" + newC[:-1] + " ''')\n")
         for p in forVerbose:
-            genCode.append(baseIndent + baseIndent + "try: print 'BEFORE',self.prettyName('''" + p + "''') + ' ='," + p + ", ':',type(" + p + ")\n")
+            genCode.append(baseIndent + baseIndent + "try: print 'BEFORE',self.prettyName('''" + p + "''') + ' =', repr(" + p + "), ':',type(" + p + ")\n")
             genCode.append(baseIndent + baseIndent + "except: pass\n")
         for p in verboseRef:
-            genCode.append(baseIndent + baseIndent + "try: print 'BEFORE',self.prettyName('''" + p + "''') + ' ='," + p + ", ':',type(" + p + ")\n")
+            genCode.append(baseIndent + baseIndent + "try: print 'BEFORE',self.prettyName('''" + p + "''') + ' =', repr(" + p + "), ':',type(" + p + ")\n")
             genCode.append(baseIndent + baseIndent + "except: pass\n")            
         if not config.nocover:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
@@ -953,7 +953,7 @@ def main():
         genCode.append(baseIndent + baseIndent + "except: pass\n")
         genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
         for p in forVerbose:
-            genCode.append(baseIndent + baseIndent + baseIndent + "try: print 'AFTER',self.prettyName('''" + p + "''') + ' ='," + p + ", ':',type(" + p + ")\n")            
+            genCode.append(baseIndent + baseIndent + baseIndent + "try: print 'AFTER',self.prettyName('''" + p + "''') + ' =',repr(" + p + "), ':',type(" + p + ")\n")            
             genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
   
         if not config.nocover:
@@ -968,7 +968,7 @@ def main():
             genCode.append(baseIndent + "finally:\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
-                genCode.append(baseIndent + baseIndent + baseIndent + "try: print 'AFTER',self.prettyName('''" + p + "''') + ' ='," + p + ", ':',type(" + p + ")\n")            
+                genCode.append(baseIndent + baseIndent + baseIndent + "try: print 'AFTER',self.prettyName('''" + p + "''') + ' =',repr(" + p + "), ':',type(" + p + ")\n")            
                 genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
             if comparing:
                 genCode.append(baseIndent + "assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
