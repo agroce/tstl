@@ -909,12 +909,13 @@ def main():
         if checkRaised:
             genCode.append(baseIndent + "raised = None\n");
         genCode.append(baseIndent + "if self.__verboseActions:\n")
+        genCode.append(baseIndent + baseIndent + "__bV = {}\n")        
         genCode.append(baseIndent + baseIndent + "print 'ACTION:',self.prettyName('''" + newC[:-1] + " ''')\n")
         for p in forVerbose:
-            genCode.append(baseIndent + baseIndent + "try: print 'BEFORE',self.prettyName('''" + p + "''') + ' =', repr(" + p + "), ':',type(" + p + ")\n")
+            genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + ")\n")
             genCode.append(baseIndent + baseIndent + "except: pass\n")
         for p in verboseRef:
-            genCode.append(baseIndent + baseIndent + "try: print 'BEFORE',self.prettyName('''" + p + "''') + ' =', repr(" + p + "), ':',type(" + p + ")\n")
+            genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + ")\n")
             genCode.append(baseIndent + baseIndent + "except: pass\n")            
         if not config.nocover:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
@@ -956,7 +957,9 @@ def main():
         genCode.append(baseIndent + baseIndent + "except: pass\n")
         genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
         for p in forVerbose:
-            genCode.append(baseIndent + baseIndent + baseIndent + "try: print 'AFTER',self.prettyName('''" + p + "''') + ' =',repr(" + p + "), ':',type(" + p + ")\n")            
+            genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print '=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + ")\n")                        
             genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
   
         if not config.nocover:
@@ -975,7 +978,9 @@ def main():
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised\n")                        
             genCode.append(baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
-                genCode.append(baseIndent + baseIndent + "try: print 'AFTER',self.prettyName('''" + p + "''') + ' =',repr(" + p + "), ':',type(" + p + ")\n")            
+                genCode.append(baseIndent + baseIndent + "try:\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print '=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + ")\n") 
                 genCode.append(baseIndent + baseIndent + "except: pass\n")
             if checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
