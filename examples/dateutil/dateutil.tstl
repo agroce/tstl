@@ -1,0 +1,30 @@
+@from dateutil.rrule import *
+@from dateutil.parser import *
+@from datetime import *
+
+pool: <freq> 3
+pool: <dt> 2
+pool: <count> 5
+pool: <int> 5
+pool: <bysetpos> 5
+
+<freq> := YEARLY
+<freq> := MONTHLY
+<freq> := DAILY
+<freq> := HOURLY
+<freq> := MINUTELY
+<freq> := SECONDLY
+
+<dt> := parse("19970902T090000")
+<dt> := parse("19971224T000000")
+
+<int> := <[0..10]>
+<count> := <[0..100]>
+#<bysetpos> := <[-10..-1]>
+#<bysetpos> := <[1..10]>
+#<bysetpos> := []
+#type(<bysetpos,1>) == list -> <bysetpos>.append(<[-10..-1]>)
+#type(<bysetpos,1>) == list -> <bysetpos>.append(<[1..10]>)
+
+assert list(rrule(<freq>,count=<count>,interval=<int>,dtstart=<dt>,until=<dt>,bysetpos=<bysetpos>,cache=True)) == list(rrule(<freq,1>,count=<count,1>,interval=<int,1>,dtstart=<dt,1>,until=<dt,2>,bysetpos=<bysetpos,1>,cache=False))
+assert list(rrule(<freq>,count=<count>,interval=<int>,dtstart=<dt>,until=<dt>,cache=True)) == list(rrule(<freq,1>,count=<count,1>,interval=<int,1>,dtstart=<dt,1>,until=<dt,2>,cache=False))
