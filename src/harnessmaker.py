@@ -1254,6 +1254,25 @@ def main():
             genCode.append(baseIndent+ baseIndent + baseIndent + baseIndent + "assert (" + pname + "[__pind] == None) or (type("+pname+"[__pind]) == " + poolType[p] + ")\n")
             
         for (p, u) in propSet:
+            okExcepts = ""
+            for e in ignoredExcepts:
+                okExcepts += e[:-1] + ","
+            porig = p
+            if porig[0] == "{":
+                p = porig[porig.find("}")+1:]
+                while p[0] == " ":
+                    p = p[1:]
+                for e in porig[1:porig.find("}")].split(","):
+                    okExcepts += e + ","
+                okExcepts = okExcepts[:-1]
+            else:
+                p = porig
+                if len(ignoredExcepts) > 0:
+                    okExcepts = okExcepts[:-1]
+            if (okExcepts != ""):
+                tryPrefix = "try: "
+            else:
+                tryPrefix = ""
             if u != []:
                 pr = baseIndent + baseIndent + "if True"
                 for use in u:
@@ -1263,10 +1282,16 @@ def main():
                         checkGlobals.append(use)
                 pr += ": # CHECK POOL INIT\n"
                 genCode.append(pr)
-                
-                genCode.append(baseIndent + baseIndent + baseIndent + "assert " + replaceRefs(p) + "\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p) + "\n")
+                if okExcepts != "":
+                    genCode.append(baseIndent + baseIndent + baseIndent + "except (" + okExcepts + ") as raised:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print 'PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised\n")                
             else:
-                genCode.append (baseIndent + baseIndent + "assert " + p + "\n")
+                genCode.append (baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p) + "\n")
+                if okExcepts != "":
+                    genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as raised:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print 'PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised\n")                
+                
         genCode.append(baseIndent + baseIndent + "# END CHECK CODE\n")
         genCode.append(baseIndent + "except KeyboardInterrupt as e:\n")
         genCode.append(baseIndent + baseIndent + "raise e\n")
