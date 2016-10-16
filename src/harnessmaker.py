@@ -1282,12 +1282,12 @@ def main():
                         checkGlobals.append(use)
                 pr += ": # CHECK POOL INIT\n"
                 genCode.append(pr)
-                genCode.append(baseIndent + baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p) + "\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p))
                 if okExcepts != "":
                     genCode.append(baseIndent + baseIndent + baseIndent + "except (" + okExcepts + ") as raised:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print 'PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised\n")                
             else:
-                genCode.append (baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p) + "\n")
+                genCode.append (baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p))
                 if okExcepts != "":
                     genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as raised:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print 'PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised\n")                
