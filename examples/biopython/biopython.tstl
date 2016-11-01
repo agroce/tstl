@@ -31,7 +31,7 @@ pool: <alignments> 3
 <seq,1>.alphabet != IUPAC.protein -> <seq>.reverse_complement()
 
 <alignments> := pairwise2.align.globalxx(<seq>,<seq>)
-print "ALIGNMENTS:",<alignments>
+<alignments>
 
 <bool> := <[True,False]>
 
@@ -40,5 +40,5 @@ print "ALIGNMENTS:",<alignments>
 <table> := <[21..24]>
 <table> := "Vertebrate Mitochondrial"
 
-<seq,1>.alphabet != IUPAC.protein -> print "TRANSLATE:",<seq,1>,"=",<seq>.translate(to_stop=<bool>)
-<seq,1>.alphabet != IUPAC.protein -> print "TRANSLATE:",<seq,1>,"=",<seq>.translate(to_stop=<bool>,table=<table>)
+<seq,1>.alphabet != IUPAC.protein -> <seq>.translate(to_stop=<bool>)
+<seq,1>.alphabet != IUPAC.protein -> <seq>.translate(to_stop=<bool>,table=<table>)
