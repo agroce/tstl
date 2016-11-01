@@ -143,7 +143,8 @@ sequences like  {\tt val0 = 3; val0 = val0 + 1; val1 = 4; val1 = val0
 either use an uninitialized pool value, or re-initialize an unused
 pool (a clearly useless action sequence).
 
-\subsection{Other Core Language Features}
+\subsection{Guards, Post-Conditions, and Properties}
+\label{sec:property}
 
 The example TSTL harness in Figure \ref{fig:MakeFeatureLayer} shows a
 few other important core elements of TSTL.  First, choice templates
@@ -213,17 +214,36 @@ included in the preamble.  To check field names we would write {\tt
   [<fc,1>]}.
 
 This property checks all feature classes, not just those whose
-whose fields are extracted.  The advantage is that the property will
+fields are extracted.  The advantage is that the property will
 catch problems even if we never construct a {\tt fieldlist}; the
 disadvantage is that testing slows to check all field names for all
 feature classes, after every action.
+
+\subsection{Differential Testing Support}
+\label{sec:differential}
 
 Another useful feature of TSTL is the ability to create
 \emph{reference} pools, where every action on pool values is mirrored
 by an action on a reference version of that pool.  This makes it
 possible to perform differential testing \cite{Differential} on a
 per-pool basis, rather than at the whole-system level, allowing
-complex partial specifications.  For example, in ArcPy we may want to
+complex partial specifications.  The idea is that the behavior of some
+pool (which could be the entire SUT state, in the extreme) can be
+compared to a reference implementation that provides the same
+observable behavior.  The classic example is the idea of testing a C
+compiler by checking that the output of running a deterministic, well-defined
+C program compiled under two different compilers (or optimization
+levels) is the same.  If the systems differ, one must be incorrect.  A
+simpler example is checking a set-like data structure against a
+well-tested reference implementation.  The TSTL distribution includes
+an example where an AVL tree implementation is checked against the
+Python set implementation.
+
+Differential testing can also be useful for applications other than
+testing complete systems against each other; the SUT may provide
+different implementations of essentially the same functionality,
+serving as a reference for itself (compilers are often tested against
+theiw own code, with optimization turned off). In ArcPy we may want to
 ensure that operations are deterministic: no GIS operations produce
 different results, given the same underlying starting feature class
 data.  Assuming in raw Python in the preamble we have defined {\tt
@@ -254,16 +274,28 @@ compares:
 }
 
 When instantiating the action templates, TSTL always produces a copy
-of every action containing any reference pool values.  First, the pool
-values are replaced with their reference copies; second, all the
+of every action containing any reference pool values.  First, the pools
+are replaced with their reference copies; second, all the
 syntactic transformations (which can include arbitrary Python regular
-expressions) in the {\tt references} declaration are applied.
+expressions) in the {\tt references} declaration are applied, to
+produce the appropriate Python expression to evaluate to perform the
+action using the reference implementation.
 Finally, if any string matches a regular expression in a {\tt
   compares} declaration, the return values or assigned values in the
-action are compared with those for the reference version.  In the
+action are compared with those for the reference version, and a fault
+is raised if the results are not equivalent.  In the
 ArcPy case, if our {\tt copyFCName} is correctly defined, we can even
 check that behavior is equivalent for different underlying data file
-formats for feature classes.
+formats for feature classes, by treating, e.g., shapefiles as a
+reference for a personal geodatabase.  In addition to such simple (and
+modular) reference checking, TSTL allows properties to use the value
+of a reference pool, with syntax like:
+
+{\scriptsize
+\begin{code}
+property:  str(<expr>) == str(REF:<expr,1>)
+\end{code}
+}
 
 \subsection{How to Build a TSTL Harness}
 

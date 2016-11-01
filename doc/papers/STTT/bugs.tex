@@ -91,30 +91,19 @@ cause unexplained crashes when violated) are not documented.
 
 \subsection{Faults in Other Systems}
 
-TSTL  is only slightly over a year old.  However, students using
-TSTL in graduate classes on software testing have already, with
-minimal assistance, discovered faults in some real-world systems.  Not
-all of these are confirmed and reported yet.
+TSTL  is only slightly less than two years old, and a stable, mature,
+non-prototype version has only existed for about a year.   However,
+TSTL has already been used to find important bugs in real systems.
 
-First, TSTL testing revealed a fault in either the widely-used {\tt
-  PyOpenCL} library \cite{PyOpenCL}, the even more widely-used {\tt OpenCL}
-infrastructure \cite{OpenCL}, or (possibly) the NVIDIA hardware being used.  We are
-still investigating this problem, but it appears to be a genuine
-fault, though debugging and assigning blame is complex due to the
-layers of software and hardware involved.  Second, TSTL testing found cases where distance metrics that were supposed to
-be symmetric in the popular fuzzy-string-matching library FuzzyWuzzy \cite{FuzzyWuzzy}
-were asymmetric, if the default Python string match library was used
-instead of a Levenshtein-distance library.
-Third, TSTL testing revealed numerous problems with the {\tt
-  astropy.table} module of the AstroPy
-library \cite{AstroPy}, used by many professional astronomers and astrophysicists.
-TSTL has also been used to discover faults in the TSTL API itself.
+Using TSTL's support for differential testing, we were able to 
+quickly find 
+and report issues with the widely-used {\tt gmpy2} interface to the GMP (GNU 
+Multiple Precision \cite{gmp} arithmetic library), as well as 
+(surprisingly) in the core CPython bignum implementation
+\cite{gmpy2bugs,cpythonbug}. 
 
-The github repository for the graduate class in question
-(\url{https://github.com/agroce/cs562w16}) contains the TSTL code for
-testing these systems (and many other student projects).  
 
-Most significantly, TSTL was able to discover at least 15
+TSTL was also able to discover at least 15
 previously undiscovered faults in the widely used SymPy library for
 symbolic mathematics in Python \cite{sympy}.  We have reported these
 faults, and hope to collaborate with the SymPy team to provide
@@ -125,3 +114,24 @@ day, due to the much higher ease-of-use for the post-ArcPy version of
 TSTL used.  For a straightforward testing task like SymPy, building a
 TSTL harness is now quite simple, largely a matter of thinking about
 what the user wishes to test.
+
+Students using TSTL in graduate classes on software testing have
+already, with minimal assistance, discovered faults in some real-world
+systems.  Not all of these are confirmed and reported yet.  TSTL
+testing revealed a fault in either the widely-used {\tt PyOpenCL}
+library \cite{PyOpenCL}, the even more widely-used {\tt OpenCL}
+infrastructure \cite{OpenCL}, or (possibly) the NVIDIA hardware being
+used.  We are still investigating this problem, but it appears to be a
+genuine fault, though debugging and assigning blame is complex due to
+the layers of software and hardware involved.  Second, TSTL testing
+found cases where distance metrics that were supposed to be symmetric
+in the popular fuzzy-string-matching library FuzzyWuzzy
+\cite{FuzzyWuzzy} were asymmetric, if the default Python string match
+library was used instead of a Levenshtein-distance library.  Third,
+TSTL testing revealed numerous problems with the {\tt astropy.table}
+module of the AstroPy library \cite{AstroPy}, used by many
+professional astronomers and astrophysicists.  TSTL has also been used
+to discover faults in the TSTL API itself.  The github repository for
+the graduate class in question
+(\url{https://github.com/agroce/cs562w16}) contains the TSTL code for
+testing these systems (and many other student projects).

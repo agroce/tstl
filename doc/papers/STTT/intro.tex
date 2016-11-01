@@ -394,8 +394,19 @@ restrictions on the semantics of valid tests and user-defined guards
 on system behavior.  States include both the (possibly unknown) state
 of the SUT and the TSTL state, including pools of values to be used in actions.
 
-
-
+In this simple example, the only ``oracle'' is the implicit property
+that the system should neither crash nor raise an unexpected
+exception.  For testing many systems, this is sufficient: we have
+discovered real bugs in many Python libraries with only this level of
+checking, similar to most of what a tool such as Randoop
+\cite{Pacheco} or JCrasher \cite{CsallnerS04} checks.  TSTL also
+checks arbitrary assertions/invariants defined in the language of the
+SUT, supporting tradtional property-based testing
+\cite{ClaessenH00,hypothesis} (described in Section \ref{sec:property}).  Finally, TSTL includes sophisticated
+support for differential testing \cite{Differential,ICSEDiff}, where a
+system is tested with respect to the behavior of a reference library.
+TSTL makes it easy to wrap a reference system to account for expected
+differences, and supports partial reference testing (see Section \ref{sec:differential}).
 
 \section{Motivating Case Study: Esri ArcPy}
 \label{sec:arcpy}
