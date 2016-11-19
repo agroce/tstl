@@ -1,0 +1,482 @@
+\section{The ArcPy TSTL Test Harness}
+\label{harness}
+
+\begin{figure}
+{\scriptsize
+\begin{code}
+@import shutil, os, glob, arcpy, exceptions, gc
+@from arcpy import ExecuteError
+<@
+def cleanupFiles():
+    gc.collect() \# Get rid of cursors
+    for l in ["l1","l2","l3"]:
+    	arcpy.Delete\_management(l)
+    
+    for f in glob.glob("C:\\Arctmp\\*"):
+        try:
+            shutil.rmtree(f)
+        except:
+            print "UNABLE TO REMOVE:",f
+    for i in xrange(0,1000000): \# Find a workspace without a lock
+        new\_workspace = "C:\\Arctmp\\workspace." + str(i)
+        if not os.path.exists(new\_workspace):
+            break             
+    shutil.copytree("C:\\Arcbase",new\_workspace)
+    arcpy.env.workspace = new\_workspace
+    print sorted(glob.glob(arcpy.env.workspace + "\\*.shp")),
+    print sorted(glob.glob(arcpy.env.workspace + "\\*.lyr")),
+    print sorted(glob.glob(arcpy.env.workspace + "\\*.gdb"))
+
+
+def fcsInGdb(gdb):
+    old\_workspace = arcpy.env.workspace
+    arcpy.env.workspace = gdb
+    fcs = []
+    for fds in arcpy.ListDatasets('','feature') + ['']:
+        for fc in arcpy.ListFeatureClasses('','',fds):
+            fcs.append(os.path.join(gdb,fds,fc))
+    arcpy.env.workspace = old\_workspace
+    return fcs
+
+def report():
+    print arcpy.GetMessages()
+@>
+
+pool: <shapefilelist> 2
+pool: <shapefile> 2 CONST
+
+pool: <gdbfilelist> 2
+pool: <gdbfile> 2 CONST
+
+pool: <gdbfeatureclasslist> 2
+
+pool: <featureclass> 4 CONST
+pool: <classorlayer> 4 CONST
+
+pool: <classorlayerlist> 2
+
+pool: <spatialref> 2
+
+pool: <prjfilelist> 2
+pool: <prjfile> 2 CONST
+
+pool: <transformlist> 2
+pool: <transform> 2 CONST
+
+pool: <newlayer> 2 CONST
+
+pool: <layerlist> 2
+pool: <layer> 2
+
+pool: <fieldname> 2 CONST
+pool: <fieldtype> 2 CONST
+pool: <fieldlist> 2
+pool: <fieldnamelist> 2
+
+pool: <stattype> 2 CONST
+pool: <statfields> 2
+
+pool: <dist> 2 CONST
+
+pool: <sorttype> 2 CONST
+pool: <spatialsort> 2 CONST
+
+pool: <sort> 1
+pool: <sortlist> 2
+
+pool: <joinattributes> 2
+
+pool: <overlaptype> 2 CONST
+pool: <selectiontype> 2 CONST
+pool: <op> 2 CONST
+pool: <val> 2 CONST
+pool: <whereclause> 2 CONST
+
+pool: <errtable> 1 CONST
+pool: <polytable> 1 CONST
+pool: <stattable> 1 CONST
+
+pool: <insertcursor> 3
+pool: <searchcursor> 3
+pool: <updatecursor> 3
+
+pool: <irow> 3
+pool: <srow> 3
+pool: <urow> 3
+
+init: cleanupFiles()
+
+log: 1 arcpy.GetMessages()
+\end{code}
+}
+\caption{ArcPy TSTL test harness definition preamble (pools, functions, logging).}
+\label{preamble}
+\end{figure}
+
+\begin{figure}
+{\scriptsize
+\begin{code}
+<gdbfilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.gdb"))
+len(<gdbfilelist,1>) >= 1 -> <gdbfile> := <gdbfilelist> [0]
+<gdbfilelist> = <gdbfilelist> [1:]
+
+<shapefilelist> := sorted(glob.glob(arcpy.env.workspace + "\\*.shp"))
+len(<shapefilelist,1>) >= 1 -> <shapefile> := <shapefilelist> [0]
+<shapefilelist> = <shapefilelist> [1:]
+
+<layerfile> := arcpy.env.workspace + <["\\new1.lyr", "\\new2.lyr", "\\new3.lyr"]>
+
+<shapefile> := arcpy.env.workspace + <["\\new1.shp", "\\new2.shp", "\\new3.shp"]>
+
+<prjfilelist> := sorted(glob.glob
+   ("C:\\Program Files (x86)\\ArcGIS\\Desktop10.3\\Reference Systems\\*.prj"))
+len(<prjfilelist,1>) >= 1 -> <prjfile> := <prjfilelist> [0]
+<prjfilelist> = <prjfilelist> [1:]
+
+<transformlist> := arcpy.ListTransformations(<spatialref>,<spatialref>)
+<transformlist> = <transformlist> [1:]
+len(<transformlist,1>) >= 1 -> <transform> := <transformlist> [0]
+
+<newlayer> := <["l1", "l2", "l3"]>
+
+<spatialref> := arcpy.SpatialReference(<prjfile>)
+
+<gdbfeatureclasslist> := fcsInGdb(<gdbfile>)
+<gdbfeatureclasslist> = <gdbfeatureclasslist>[1:]
+
+<featureclass> := <shapefile>
+len(<gdbfeatureclasslist,1>) >= 1 -> <featureclass> := <gdbfeatureclasslist>[0]
+
+<classorlayer> := <featureclass>
+<classorlayer> := <newlayer>
+
+<classorlayerlist> := []
+<classorlayerlist>.append(<classorlayer>)
+
+<fieldtype> := <["TEXT", "FLOAT", "DOUBLE", "SHORT", "LONG", "DATE"]>
+
+<fieldname> := <["newf1", "newf2", "newf3"]>
+
+<dist> := <["100 Feet", "500 Feet", "1000 Feet", "1 Mile", "2 Miles">]
+
+<joinattributes> := <["ALL", "NO\_FID", "ONLY\_FID"]>
+
+<overlaptype> := <["INTERSECT", "CONTAINS", "COMPLETELY\_CONTAINS", "WITHIN",
+   "SHARE\_A\_LINE\_SEGMENT\_WITH", "CROSSED\_BY\_THE\_OUTLINE\_OF"]>
+
+<selectiontype> := <["NEW\_SELECTION", "ADD\_TO\_SELECTION", "REMOVE\_FROM\_SELECTION",
+   "SUBSET\_SELECTION", "SWITCH\_SELECTION", "CLEAR\_SELECTION"]>
+
+<sorttype> := <["ASCENDING", "DESCENDING">]
+
+<spatialsort> := <["UR", "UL", "LR", "LL", "PEANO"]>
+
+<sort> := [<fieldname>,<sorttype>]
+<sortlist> := []
+<sortlist>.append(<sort>)
+
+\{IOError\} <insertcursor> := arcpy.InsertCursor(<classorlayer>)
+\{IOError\} <insertcursor> := arcpy.InsertCursor(<classorlayer>,<spatialref>)
+\{IOError\} <searchcursor> := arcpy.SearchCursor(<classorlayer>)
+\{IOError,exceptions.RuntimeError\} <searchcursor> := arcpy.SearchCursor
+   (<classorlayer>,<whereclause>)
+\{IOError,exceptions.RuntimeError\} <searchcursor> := arcpy.SearchCursor
+   (<classorlayer>,<whereclause>,<spatialref>)
+\{IOError\} <updatecursor> := arcpy.UpdateCursor(<classorlayer>)
+\{IOError\} <updatecursor> := arcpy.UpdateCursor(<classorlayer>,<spatialref>)
+
+<irow> := <insertcursor>.newRow()
+\{exceptions.RuntimeError\} <insertcursor>.insertRow(<irow>)
+
+<irow> := <insertcursor>.next()
+<urow> := <updatecursor>.next()
+<srow> := <searchcursor>.next()
+
+\{exceptions.RuntimeError\} <val> := <irow>.getValue(<fieldname>)
+\{exceptions.RuntimeError\} <val> := <srow>.getValue(<fieldname>)
+\{exceptions.RuntimeError\} <val> := <urow>.getValue(<fieldname>)
+
+\{exceptions.RuntimeError\} <irow>.setValue(<fieldname>,<val>)
+
+\{exceptions.RuntimeError\} <urow>.setNull(<fieldname>)
+\{exceptions.RuntimeError\} <urow>.setValue(<fieldname>,<val>)
+\{exceptions.RuntimeError\} <updatecursor>.deleteRow(<urow>)
+\{exceptions.RuntimeError\} <updatecursor>.updateRow(<urow>)
+
+<op> := <[">", "<", "<=", ">=", "=", "!=">]  
+
+<val> := <["10", "20", "30", "100", "1000">]
+
+<whereclause> := '"' + <fieldname> + '" ' + <op> + str(<val>)
+
+<whereclause> := <whereclause> + ' AND ' + <whereclause>
+
+<whereclause> := <whereclause> + ' OR ' +  <whereclause>
+
+<whereclause> := 'NOT' + <whereclause>
+
+<errtable> := arcpy.env.workspace + "\\geomerr.dbf"
+
+<polytable> := arcpy.env.workspace + "\\polyneig.dbf"
+
+<stattable> := arcpy.env.workspace + "\\stats.dbf"
+
+\{IOError\} <fieldlist> := arcpy.ListFields(<classorlayer>)
+len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
+<fieldlist> = <fieldlist> [1:]
+
+<fieldnamelist> := []
+<fieldnamelist>.append(<fieldname>)
+
+<stattype> := <["SUM", "MEAN", "MIN", "MAX", "RANGE", "STD", "COUNT", "FIRST", "LAST"]>
+
+<statfields> := []
+<statfields>.append([<fieldname>,<stattype>])
+\end{code}
+}
+\caption{ArcPy TSTL test harness actions, part 1.}
+\label{actions1}
+\end{figure}
+
+\begin{figure}
+{\scriptsize
+\begin{code}
+\{ExecuteError\} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>); report()
+
+\{ExecuteError\} arcpy.MakeFeatureLayer\_management(<featureclass>,<newlayer>,
+   where\_clause=<whereclause>); report()
+
+\{ExecuteError\} arcpy.Project\_management(<featureclass>,<featureclass>,<spatialref>,
+   <transform>); report()
+
+\{ExecuteError\} arcpy.AddField\_management(<featureclass>,<fieldname>,<fieldtype>);
+   report()
+
+\{ExecuteError\} arcpy.DeleteField\_management(<featureclass>,<fieldname>); report()
+
+\{ExecuteError\} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>); report()
+
+\{ExecuteError\} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>,
+   dissolve\_option="ALL"); report()
+
+\{ExecuteError\} arcpy.Buffer\_analysis(<classorlayer>,<featureclass>,<dist>,
+   dissolve\_option="LIST",dissolve\_field=<fieldnamelist>); report()
+
+\{ExecuteError\} arcpy.Erase\_analysis(<classorlayer>,<classorlayer>,<featureclass>);
+   report()
+
+\{ExecuteError\} arcpy.Erase\_analysis(<classorlayer>,<classorlayer>,<featureclass>,
+   cluster\_tolerance=<dist>); report()
+
+\{ExecuteError\} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>); report()
+
+\{ExecuteError\} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,
+   join\_attributes=<joinattributes>); report()
+
+\{ExecuteError\} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,
+   cluster\_tolerance=<dist>); report()
+
+\{ExecuteError\} arcpy.Intersect\_analysis(<classorlayerlist>,<featureclass>,
+   join\_attributes=<joinattributes>,cluster\_tolerance=<dist>); report()
+
+\{ExecuteError\} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>); report()
+
+\{ExecuteError\} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,
+   join\_attributes=<joinattributes>); report()
+
+\{ExecuteError\} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,
+   cluster\_tolerance=<dist>); report()
+
+\{ExecuteError\} arcpy.Union\_analysis(<classorlayerlist>,<featureclass>,
+   join\_attributes=<joinattributes>,cluster\_tolerance=<dist>); report()
+
+\{ExecuteError\} arcpy.SpatialJoin\_analysis(<classorlayer>,<classorlayer>,
+   <featureclass>); report()
+
+\{ExecuteError\} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>);
+   report()
+
+\{ExecuteError\} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>,
+   join\_attributes=<joinattributes>); report()
+
+\{ExecuteError\} arcpy.SymDiff\_analysis(<classorlayer>,<classorlayer>,<featureclass>,
+   join\_attributes=<joinattributes>,cluster\_tolerance=<dist>); report()
+
+\{ExecuteError\} arcpy.PolygonNeighbors\_analysis(<classorlayer>,~<polytable>); report()
+
+\{ExecuteError\} arcpy.Statistics\_analysis(<classorlayer>,~<stattable>,<statfields>);
+   report()
+
+\{ExecuteError\} arcpy.SelectLayerByLocation\_management(<newlayer>,
+   select\_features=<newlayer>,overlap\_type=<overlaptype>)
+
+\{ExecuteError\} arcpy.SelectLayerByLocation\_management(<newlayer>,
+   select\_features=<newlayer>,overlap\_type=<overlaptype>,search\_distance=<dist>)
+
+\{ExecuteError\} arcpy.SelectLayerByLocation\_management(<newlayer>,
+   select\_features=<newlayer>,overlap\_type=<overlaptype>,search\_distance=<dist>,
+   selection\_type=<selectiontype>)
+
+\{ExecuteError\} arcpy.SelectLayerByAttribute\_management(<newlayer>,
+   selection\_type=<selectiontype>,where\_clause=<whereclause>)
+
+\{ExecuteError\} arcpy.Select\_analysis(<classorlayer>,<featureclass>,
+   where\_clause=<whereclause>)
+
+\{ExecuteError\} arcpy.CopyFeatures\_management(<featureclass>,<featureclass>); report()
+
+\{ExecuteError\} arcpy.Sort\_management(<featureclass>,<featureclass>,<sortlist>);
+   report()
+
+\{ExecuteError\} arcpy.Sort\_management(<featureclass>,<featureclass>,<sortlist>,
+   <spatialsort>); report()
+
+\{ExecuteError\} arcpy.Sort\_management(<featureclass>,<featureclass>,
+   [["Shape",<sorttype>]],<spatialsort>); report()
+
+\{ExecuteError\} arcpy.CheckGeometry\_management(<classorlayer>,~<errtable>); report()
+
+\{ExecuteError\} arcpy.CheckGeometry\_management(<classorlayerlist>,~<errtable>); report()
+
+\{ExecuteError\} arcpy.Delete\_management(<featureclass>); report()
+\end{code}
+}
+\caption{ArcPy TSTL test harness definition actions, part 2.}
+\label{actions2}
+\end{figure}
+
+
+
+Figures \ref{preamble}-\ref{actions2} show a
+version of the actual ArcPy test harness.  This version can reproduce the faults
+described in this paper, though in practice some faults are easier to
+detect than others, and for practical testing it is best to disable,
+e.g., the various {\tt Delete} calls and to use guards to prevent all modifications of
+layers or classes on which cursors are active.  Compiled to Python,
+this harness defines nearly 2,000 actions, and the standalone
+interface is nearly 60KLOC.  Using the harness involves first
+compiling it to a Python class, then loading a test case generator
+such as the random tester provided with TSTL into a Python environment
+that has access to ArcPy.  For our experiments, we compiled the TSTL
+using the Cygwin Python installation (for easy command-line access) but ran
+tests in the IDLE environment installed with ArcGIS.
+Running tests involves no complications beyond modifying parameters of
+the random tester, if desired (setting a time limit for testing, the
+length of test cases \cite{ASE08}, and whether to search for failures or produce
+coverage regression tests, for example).  In most cases, the random tester
+eventually terminates abnormally, and the test case causing the crash
+is stored in a file in the ArcPy harness directory.  For regression
+generation, the tool produces files of the same format to obtain
+coverage of ArcPy code.
+
+Figure \ref{preamble} contains the small amount of code needed to
+prepare a temporary workspace for each test sequence.  This code
+handles deleting any live cursors (the pool variables are guaranteed
+to be deleted before each test, and garbage collection ensures the
+cursors are deactivated), removing any layers created on feature
+classes, and then setting the environment.  The system will scan for a
+``free'' environment location, to handle cases where locks prevent
+re-using an old directory\footnote{The problem of locked directories
+  seldom surfaces, now that layers are deleted before each test, but
+  may be needed when saving states.}.  The other utility functions
+allow discovering the feature classes in a geodatabase and produce a
+report on screen when a complex ArcGIS operation completes
+successfully.
+
+Figure \ref{actions1} shows the actions that create
+input parameters for ArcGIS engine calls, primarily.  Many of these
+simply pick some numeric or string constant (and the sets of constants
+could be expanded, at the cost of more expensive normalization and
+generalization).  Others, such as SQL query generation, are more
+complex, with recursive expansion to theoretically unlimited query
+length.  
+
+Finally, Figure \ref{actions2} shows the TSTL for the actual
+ArcGIS toolbox calls.  So far, this includes only a small subset of
+the functions defined in the Management and Analysis toolboxes.  Note
+that after each call there is a call to {\tt report}.  In pure random
+testing, successful calls are infrequent enough that it is useful
+for the user to see the ArcGIS messages produced by successful calls.
+By turning on logging, the user can also see unsuccessful call
+messages, but this tends to produce an overwhelming amount of output.
+
+One critical design decision taken early in the development of this
+harness was that there is no explicit definition of the starting data
+used for testing.  Any data stored in the {\tt Arcbase} directory can
+be used, and the harness supports both shapefiles and file geodatabases.
+This has two purposes:  first, testing can be customized to use any
+starting data, including a user's own shapefiles.  Second, this makes
+it easy to implement deep state testing, since no assumptions are made
+about the structure or number of data files used.  The lack of
+dependence on specific files is implemented by having the test harness
+use Python's {\tt glob} function to collect all files of a given
+extension in a directory in a list, then chose an item from the list.
+In order to make sure that behavior is deterministic (up to the choice
+of actual data files), the glob results are sorted.  This approach
+does bias random testing to using files earlier in alphabetical order,
+but we do not expect base testing data to include a large number of
+files.
+
+The key driving requirements for this harness design are given in the
+title of this paper:  the test harness must be \emph{extensible} and
+it must be \emph{usable}.
+
+Because ArcPy is large and complex, the effort to produce a
+complete test harness and more effective specification of correctness
+is a long-term effort, and may be carried out by other users:  the
+harness therefore must be \emph{extensible}.  The
+harness should also be suitable for use by ArcPy developers testing
+how their own extensions to ArcPy interact with the base ArcPy API.
+Adding new API calls to the harness should be easy:  we have defined
+the pools for basic ArcPy object types and provided tools that should
+handle much more complex test cases.  The decision discussed above to
+make the test harness independent of specific data files is a good
+example of our emphasis on extensibility.
+
+The idea that other ArcPy developers, testing researchers, and perhaps
+(end-user) software developers in other fields looking for a large
+scale example of how to test systems with TSTL, will need to read and
+modify the code also drives our emphasis on a truly usable system.
+Usability has a more direct impact on the modifications to the TSTL
+language and tools than on the test harness itself, but the test
+harness is developed in the context of the improvements to the TSTL
+ecosystem, such as standalone tests and normalization and
+generalization.  However, some usability choices are decisions about
+how to write the harness.  Consider the calls to {\tt
+  SelectLayerByLocation\_management} shown in Figure \ref{actions2}.
+The three lines of code could be more concisely expressed in one line using the {\tt <,[} construct:
+
+\begin{code}
+\{ExecuteError\} arcpy.SelectLayerByLocation\_management(
+   <newlayer>,select\_features=<newlayer>,overlap\_type=
+   <overlaptype><,[,search\_distance=<dist>,,],>
+   <,[,selection\_type=<selectiontype>,,],>)
+\end{code}
+
+However, this is difficult to read, even for the TSTL developer, and
+seems likely to discourage GIS developers trying to understand and
+extend the harness.  There is a tension between, on the one hand, concise, abstracted
+expression of all possible test actions and, on the other hand,
+concrete readable connection between test actions and the lines of code that
+appear in real ArcPy scripts.  We aim to stay closer to concrete
+forms, even at some cost in increased length for the harness.  An
+interesting observation is that this preference on the one hand makes
+changing the harness more difficult --- to change the name of an API
+call requires multiple edits if multiple parameter arities are used;
+on the other hand, changing the code using {\tt <,[} requires
+understanding the meaning of the code, each time, which resembles the
+difficulty of altering a complex regular expression \cite{RegExp}.  In
+this case, the best solution might be to add a specialized construct
+to TSTL to handle optional elements of an action --- despite the fact
+that the {\tt <,[} construct can express optional elements easily.
+Even with such an option, it may be easier for developers to read and
+understand the implications of individual calls, however, if they are
+written out in the harness, rather than combinatorally generated by
+the TSTL compiler.
+
+In the long run, these issues are as complex as the questions of
+abstraction vs. ease-of-understanding that have concerned designers
+and users of programming languages since early in the history of
+computer science.  As test definition comes closer to a specialized
+kind of declarative programming, our understanding of the tradeoffs
+will likely improve.

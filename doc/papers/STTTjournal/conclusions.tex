@@ -1,0 +1,45 @@
+\section{Conclusions}
+\label{sec:conclusion}
+
+This paper presents the latest version of the TSTL
+\cite{NFM15,ISSTA15,tstl} domain-specific language for testing, which
+enables a declarative style of test harness development, where the
+focus is on defining the actions in valid tests, not determining
+exactly how tests are generated.  Because TSTL, inspired by the SPIN
+model checker, produces a software-under-test-independent interface
+for testing, TSTL makes it possible for users to easily apply
+different test generation methods to the same system without undue
+effort.  The same approach makes it possible for researchers to rapidly prototype novel test generation
+methods, and evaluate them in a context where differences in test
+infrastructure not relevant to the algorithms at hand can be minimized.
+
+TSTL has, in the year since its initial introduction,
+already been used to discover previously unknown (to our knowledge)
+faults in multiple Python libraries, including the very widely-used
+ArcPy site package for GIS scripting. 
+As future work, we plan to continue to use TSTL to explore novel
+testing algorithms, investigate the relative strengths of systematic,
+stochastic, and directed test generation methods, and apply TSTL to
+look for faults in widely used libraries.  Finally, we plan to
+port TSTL to additional
+programming languages beyond Python and Java, and add automatic
+support for new properties, including
+information-flow based security checks.
+
+More generally, TSTL takes the approach to GIS embodied in ArcPy, or
+to biology embodied in QIIME \cite{QIIME}, and applies it to testing:  TSTL
+makes it possible for users to create, manipulate, and execute test
+cases in the context of an easily learned programming language.  Just
+as ArcPy makes the automation of GIS tasks easier, TSTL aims to make
+the automation of all testing tasks easier, by supporting the
+functionality common to most testing tasks.  The choice of System
+Under Test in TSTL is analogous to the choice of using GIS to analyze
+epidemiological data or urban traffic routes using ArcPy; ArcPy
+provides features that are common across all such applications.  TSTL
+provides the same functionality with respect to software testing.
+
+{\bf Acknowledgments:} The authors would like to thank John Regehr,
+David R. MacIver, Klaus Havelund, our anonymous reviewers, and
+students in CS362, CS562, and CS569, for discussions related to this work.
+A portion of this work was funded by NSF grants CCF-1054786 and
+CCF-1217824.

@@ -1,0 +1,137 @@
+%%%%%%%%%%%%%%%%%%%%%%% file template.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a general template file for the LaTeX package SVJour3
+% for Springer journals.          Springer Heidelberg 2010/09/16
+%
+% Copy it to a new file with a new name and use it as the basis
+% for your article. Delete % signs as needed.
+%
+% This template includes a few options for different layouts and
+% content for various journals. Please consult a previous issue of
+% your journal as needed.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% First comes an example EPS file -- just ignore it and
+% proceed on the \documentclass line
+% your LaTeX will extract the file if required
+\begin{filecontents*}{example.eps}
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 19 19 221 221
+%%CreationDate: Mon Sep 29 1997
+%%Creator: programmed by hand (JK)
+%%EndComments
+gsave
+newpath
+  20 20 moveto
+  20 220 lineto
+  220 220 lineto
+  220 20 lineto
+closepath
+2 setlinewidth
+gsave
+  .4 setgray fill
+grestore
+stroke
+grestore
+\end{filecontents*}
+%
+\RequirePackage{fix-cm}
+%
+%\documentclass{svjour3}                     % onecolumn (standard format)
+%\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
+\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+%\documentclass[twocolumn]{svjour3}          % twocolumn
+%
+\smartqed  % flush right qed marks, e.g. at end of proof
+%
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{code}
+\usepackage{tabularx}
+%
+% \usepackage{mathptmx}      % use Times fonts if available on your TeX system
+%
+% insert here the call for the packages your document requires
+%\usepackage{latexsym}
+% etc.
+%
+% please place your own definitions here and don't use \def but
+% \newcommand{}{}
+%
+% Insert the name of "your journal" with
+\journalname{International Journal on Software Tools for Technology Transfer}
+%
+\begin{document}
+
+\title{TSTL: The Template Scripting Testing Language}
+
+%\subtitle{Do you have a subtitle?\\ If so, write it here}
+
+%\titlerunning{Short form of title}        % if too long for running head
+
+\author{Josie Holmes \and
+Alex Groce \and
+Jervis Pinto \and
+Pranjal Mittal \and
+Pooria Azimi \and
+Kevin Kellar \and
+James O'Brien
+}
+
+\institute{          Josie Holmes \at
+             Department of Geography\\
+             Pennsylvania State University\\
+           \email{jdh396@psu.edu}
+           \and
+              Alex Groce, Jervis Pinto, Pranjal Mittal, Pooria Azimi,
+              Kevin Kellar \at
+              School of Electrical Engineering and Computer Science\\
+              Oregon State University\\
+              \email{agroce@gmail.com}           %  \\
+%             \emph{Present address:} of F. Author  %  if needed
+           \and
+           James O'Brien \at
+          Risk Frontiers\\
+           Macquarie University\\
+          \email{James.OBrien@mq.edu.au}
+}
+
+
+\date{Received: date / Accepted: date}
+% The correct dates will be entered by the editor
+
+
+\maketitle
+
+\begin{abstract}
+\input{abstract}
+\keywords{Software testing \and Domain-specific languages \and
+  Explicit-state model checking \and End-user testing \and
+  Geographic Information Systems}
+% \PACS{PACS code1 \and PACS code2 \and more}
+% \subclass{MSC code1 \and MSC code2 \and more}
+\end{abstract}
+
+\input{intro}
+
+\input{lang}
+
+\input{tools}
+
+\input{bugs}
+
+\input{related}
+
+\input{conclusions}
+
+\bibliographystyle{spmpsci}      % mathematics and physical sciences
+%\bibliographystyle{spphys}       % APS-like style for physics
+\bibliography{bibliography}   % name your BibTeX data base
+
+
+
+\end{document}
+% end of file template.tex
+

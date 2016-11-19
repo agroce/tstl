@@ -1,0 +1,190 @@
+\section{Related Work}
+\label{sec:related}
+
+There is a vast amount of previous work on automated generation of
+tests for (API-based) software systems
+\cite{Pacheco,FA11,GodefroidKS05} and random testing in particular
+\cite{ICSEDiff,Pacheco,AMFL11,ARTChen,ISSTAART,FASE,HamletOnly,Hamlet94,ClaessenH00,CiupaLOM07,RandFormal,woda08,andrews-etal-rute-rt,ASE08,evalrand},
+some dating back to the early 1980s. It is far beyond the scope of
+this paper to explore that literature in detail.  The interested
+reader is directed to the cited papers, as well as general surveys of
+automated test generation in particular \cite{anand2013orchestrated}
+or recent software testing research in general \cite{orsofuse}.  
+
+%This paper relies primarily on past
+%results showing that random testing \cite{Hamlet94,Fuzz} can be highly effective for
+%finding software faults in large libraries
+%\cite{Pacheco,ICSEDiff,RandFormal,CFV08,AMAI}.  To our knowledge, there is almost
+%no work on automated/random test generation for GIS in particular, and
+%little or no work on allowing non-traditional software developers to apply
+%automated (random) test generation to APIs.
+
+TSTL is a domain-specific-language (DSL) \cite{Fow10} for testing, in
+the spirit of the famous QuickCheck tool for Haskell
+\cite{ClaessenH00} that inspired much current interest in
+property-based testing.  To our knowledge, there has been no previous
+proposal of a concise DSL like TSTL, to assist users in building test
+harnesses for API-call sequences, and to make test generation and
+manipulation first-class activities in a language.  QuickCheck itself
+produces tests that are simply values input to functions, not sequences
+of actions.  Some QuickCheck-like tools, such as ScalaCheck
+\cite{ScalaCheck} or the excellent Python tool Hypothesis
+\cite{hypothesis} include limited, and rather cumbersome to use,
+state-machine-based tools for generating call-sequence tests.  These
+tools are also generally limited to the included methods for
+generating such tests, and make building novel sequence generation
+algorithms based on state-exploration and backtracking (model checking
+methods) or feedback from coverage difficult at best.
+
+There is limited previous work on
+building common frameworks for random testing and model checking
+\cite{woda08}, or proposing common terminology for imperative
+harnesses \cite{woda12}.  Earlier publications on TSTL itself \cite{NFM15,ISSTA15} presented a
+language considerably more limited in functionality and with a more
+difficult-to-read syntax.  These publications omitted details of the tools provided in the TSTL distribution for
+off-the-shelf testing \cite{tstl}, and provided little practical
+guidance to potential users of TSTL.  More critically, these papers
+did not describe the long-term core concept of TSTL as primarily
+making testing and explicit-state verification
+a first-class, library-supported activity for any programming
+language.  Some technical
+details of the current TSTL implementation were presented in the NASA
+Formal Methods paper \cite{NFM15} that we omit in
+the interest of space (and because implementation details are subject
+to change).
+
+There exist various testing tools and languages of a somewhat
+different flavor than TSTL that address the problem of helping
+users generate tests.   Korat \cite{Korat}, for example, has a much more fixed
+input domain specification, as do the tools built to support the Next
+Generation Air Transportation System (NextGen) software
+\cite{TameInputs}. The model-based TestStories approach of Felderer et
+al. \cite{TestStories}, the software-as-a-service oriented approach of
+Santiago et al. \cite{Santiago}, and the use-case-based DSL for extracting tests
+proposed by Im et al. \cite{AutoDSL} similarly aim at a fairly
+restricted (and simply different) goal of turning certain inputs (in a DSL tied to a model or
+documentation) into tests or test skeletons.  Utting et al. survey the wide variety of
+specifically model-based testing approaches, including many tools
+\cite{Taxonomy}; while TSTL is not specifically model-based, it can be
+used to facilitate model-based testing in theory.
+Behavior-driven-development (BDD) \cite{BDD} is often supported by extracting
+formally meaningful parts of a specification document to (partially)
+instantiate a test.  
+
+
+
+
+Perhaps the most similar system to TSTL is the UDITA language
+\cite{UDITA}, an extension of Java with non-deterministic choice
+operators and {\tt assume}, which yields a very different language
+but shares our goal of making it easy to define the set of valid
+tests for a system.  TSTL aims more at the \emph{generation} of
+tests than the \emph{filtering} of tests (as defined in the UDITA
+paper), while UDITA supports both approaches.  This goal of UDITA (and
+resulting need for first-class {\tt assume} statements) means that it
+must be hosted inside a complex (and sometimes non-trivial to
+install/use) tool, JPF \cite{JPF2}, rather than generating a
+stand-alone simple interface to a test space, as with TSTL.  Building
+``UDITA'' for a new language is far more challenging than porting
+TSTL.  UDITA supports many fewer constructs to assist harness
+development.  It is impossible to ``interact'' with a UDITA test
+harness in a simple way, as with TSTL; UDITA \emph{is} a tool, while TSTL has
+tools that are built on top of a common library interface.
+
+The design of the SPIN model checker \cite{SPIN} and its model-driven
+extension to include native C code \cite{ModelDriven} inspired the
+flavor of TSTL's domain-specific language, though our approach is more
+declarative than the ``imperative'' model checker produced by SPIN,
+and our system less tied to a particular method of exploration.
+Work at JPL on languages for analyzing spacecraft telemetry
+logs in testing \cite{scriptstospecs} provided a working example of a
+Python-based declarative language useful in testing.  The pool
+approach to test case construction is derived from work on canonical
+forms and enumeration of unit tests \cite{AndrewsTR}, and common to
+some other test generators \cite{Pacheco}.
+
+A primary difference between all such systems and TSTL is that TSTL is
+meant to be much more general, without focusing on a particular system
+model or specification method.  
+TSTL, unlike any other system of which we are
+aware, aims to make test cases first-class objects, and provides tools
+for development of code that manipulates, executes, and analyzes test
+cases.  In a sense, TSTL is less a tool for creating tests than a
+method for generating a language extension (custom to each SUT, but
+with a common interface) that makes test activities as well supported
+as, e.g., ArcPy makes GIS operations, or NumPy makes numeric
+operations.  Because testing is intimately tied to a particular SUT,
+this process is more involved than in typical libraries, requiring the
+step of compiling a TSTL model, but the end-goal is similar.  No such
+language-based interface is possible in more traditional testing or
+model checking tools, to our knowledge.  Extending even a highly
+extensible system such as Java PathFinder \cite{JPF2} is much more
+like extending an existing complex software system than simply using a
+library API. 
+
+A second aspect of TSTL is that while it is intended to be useful to
+researchers in software testing and model checking, and help prototype
+new algorithms, it is primarily designed to be a practical tool and
+language extension for
+users.
+Some other recent work on automated test generation has given more attention
+to practical, rather than primarily algorithmic or ``pure'' research, issues than in the
+past.  We suspect this shows a growing technological maturity for
+automated test case generation.  E.g., the papers by the NASA/JPL
+group on testing the Curiosity rover's file system
+\cite{ICSEDiff,CFV08,AMAI} have a largely practical focus, and the
+work of Lei and Andrews \cite{MinUnit} emphasizes the need for
+delta-debugging in realistic random testing.  Pike's SmartCheck
+\cite{SmartCheck} is not intended to increase fault detection so much
+as to improve the usability of test cases produced by QuickCheck. We found that test case
+readability was important in our efforts, and recent academic work
+\cite{Readable,Guava} has introduced principled methods for improving
+the readability of test cases for humans, even though this does not
+improve fault detection, coverage, or other traditional measures of
+test effectiveness.
+
+The literature on testing GIS (Geographic Information Systems) software
+in particular seems to consist of one paper proposing a very limited
+application of automated testing to assist GIS users, primarily in
+model development \cite{GISTest}.  That work does not target the
+reliability or correctness of the underlying GIS engine, or GIS
+libraries.  There is also some discussion of automated testing for GIS
+in various blog posts and discussion groups (e.g.,
+\cite{gisblog1,gisblog2}), but no formal academic case studies.  These
+discussions also tend to focus on application testing or GUI testing,
+rather than testing of library code used across GIS applications.
+There is a simple extension to Python unit testing modules for the
+GRASS open source GIS system \cite{GRASSunit}, but this does not
+provide any automated test generation.
+
+There is a significant body of work on end-user testing of software,
+part of the larger field of end-user software engineering
+\cite{burnettEUSE,Silos}.  End-user software engineering examines how
+software can best be produced by developers who do not have a
+traditional computer science background, and are often primarily
+interested in an application of programming, rather than software
+development as a profession.  GIS developers are (we believe) a
+typical example \cite{Segal07}:  they are technically skilled  individuals whose
+primary expertise is not in software development, but who, in order to
+pursue their goals, must develop, maintain, and test significant
+software systems.
+
+The earliest work focusing on software testing for
+end-user software engineers explored how to test spreadsheets
+\cite{rothermelTOSEM,rothermel2000wysiwyt}.  Other work has focused on
+errors end-users make in specifying systems \cite{Phalgune}, and how
+end-users of machine learning systems (who may be machine learning
+experts, or individuals with no programming knowledge at all) can test
+such systems \cite{OnlyOracle,kulesza-eud11,shinsel-vlhcc}.  To our
+knowledge, no previous work considers function call sequence testing for
+end-users.  Previous work on such testing has often been performed
+only by software testing researchers, not even including traditional developers.
+
+%Chen et al. propose metamorphic testing
+%\cite{MetaTest,isstamorph,metamorph,chentest} as a possible solution
+%to the oracle problem (defining correct behavior of a software system)
+%for end-user programmers \cite{MetamorphEndUser}.  In metamorphic
+%testing, while the correct output of a program is not known, the
+%effect of certain modifications to an input is known (e.g., increasing
+%a certain input should increase a certain output), allowing faults to
+%be detected even without a definition of the correct result.  

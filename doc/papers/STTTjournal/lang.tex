@@ -1,0 +1,379 @@
+\section{The TSTL Harness Language}
+\label{sec:lang}
+
+The TSTL compiler takes as input a harness template file, and produces
+as output a Python class file that implements an interface other tools
+(or even users working interactively)
+can use to perform testing on the SUT via an SUT-independent interface.
+
+The harness in Figure \ref{fig:MakeFeatureLayer} shows many of the
+basic features of TSTL.  The basic structure of a TSTL harness
+consists of three parts, usually written in order.  First, harness
+code prefixed by an {\tt @} or enclosed in {\tt <@ @>} is treated as
+raw Python code, and essentially not interpreted by the TSTL
+compiler.  This code is reproduced almost literally in the output
+file\footnote{TSTL does have to scan {\tt import}s to re-load modules, and also pre-processes function
+  definitions to support
+pre- and post-conditions.}.  Second, there is a preamble that almost
+always defines a set of \emph{value pools} for use in testing, but
+also may include information on logging, correctness properties,
+source code locations for code coverage analysis, and other basic
+information that applies to the entire harness.  Finally, the bulk of
+a TSTL harness (and the only non-optional element) is a set of
+\emph{action definitions}.  Actions are the possible steps to be taken in
+testing, and define the set of possible tests.
+
+The original version of TSTL \cite{NFM15} required cumbersome use of Python
+functions to implement many simple operations, including guards.  Current TSTL extends
+the language to make it possible to define very complex test spaces
+using only pools and actions, with helper functions only required for
+the usual reasons of abstraction and readability.
+
+\subsection{The Essentials of Pools and Actions}
+
+In TSTL, tests usually consist of assignments to value pools and
+function calls making use of those values.  These are the most common
+forms of actions.  Value pools are meta-variables in the target
+language, and support the complete set of types of the underlying
+language.  A pool can contain simple types such as integers, or more
+complex types such as functions, container classes, file handlers, or
+even TSTL testing objects (to support testing TSTL itself).  The
+notion of an action in TSTL is similarly completely general:
+\emph{any fragment of code in the host language can be an action}.
+Usually, it is most convenient to encapsulate complex actions by
+defining functions that perform the desired behavior, and making the
+action a call to such a function, but this is not required.  As
+Andrews et al. have shown \cite{AndrewsTR}, this pool-and-action approach is
+sufficient to express the full generality of unit tests, in any
+language\footnote{In fact, TSTL tests are somewhat more general than
+  this already very general and expressive form, in that we do not
+  disallow loops and conditions in actions.}.
+
+In order to make the core ideas clear,
+consider part of the harness shown in Figure \ref{fig:MakeFeatureLayer}, defining how to
+generate values used in SQL where clauses.  The following, by itself,
+is a valid TSTL harness (albeit one that cannot discover any
+faults, since it performs no actions beyond simple integer addition):
+
+{\scriptsize
+\begin{code}
+pools:
+  <val> 2 CONST
+\vspace{0.05in}
+actions:
+\vspace{0.05in}
+<val> := <1..10>
+<val> = <val> + 1
+\end{code}
+}
+
+There is only one pool, named {\tt val} (optionally labeled as {\tt CONST} to
+indicate that its value does not change unless it appears on the left
+hand side of an assignment).  The pool has room to store
+two values.  The state of the SUT is defined by the state of all
+pools.  Initially, all pools are set to a special value ({\tt None}) indicating the
+pool has not been initialized.  For the most part, we can think of the
+{\tt val} pool as two Python variables {\tt val0} and {\tt val1}.  Another
+way to think about a pool is as a kind of informal ``named type,''
+with a limited set of variables that can contain the ``type'' and all
+possible action sequences that assign to its pool values serving as
+its specification.  In Python it is not necessary to specify the
+actual type
+of a value pool, though an optional {\tt : type} notation enables TSTL
+to perform runtime type-checking and ensure pools never contain
+incorrect types.
+
+In this simple example, the only actions are initialization of a {\tt
+  val} and incrementing a {\tt val}.  Again, we emphasize that an
+action can in general be an arbitrary Python statement.  Actions that
+include the {\tt :=} form of assignment (a TSTL, not Python,
+operation) initialize pool values.  When {\tt <val>} appears in an
+action, that represents all possible pool values with that name: for
+our simple example, either {\tt val0} or {\tt val1}.  An integer range
+is represented by {\tt <i..j>}, and TSTL expands such ranges to
+produce an action with each possible choice. The first line in the
+actions section of this harness translates to 20 different possible
+actions:
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{states}
+\caption{Constraints on actions in a test, based on pool states}
+\label{fig:poolacts}
+\end{figure}
+
+{\scriptsize
+\begin{code}
+val0 = 1
+val0 = 2 ...
+val0 = 10
+val1 = 1 ...
+val1 = 10
+\end{code}
+}
+
+From the initial state of the system, only these 20 actions are
+\emph{enabled}.  \emph{Enabled} actions are those that can be executed in the
+current state; the complete set of actions defined by a TSTL harness is always
+finite, and the enabled set is always a subset of that finite set.  The first concept that is essential to understanding
+TSTL semantics is that at any state of the
+system, the only actions that are enabled are those that do not
+\emph{use} any non-initialized pool values.  Any appearance of a pool
+value is considered a \emph{use}, with the single exception of the left-hand-side of a
+{\tt :=} initialization (not normal assignment)\footnote{The definition of
+use is the only distinction between {\tt :=} and normal Python
+assignment; {\tt :=} is implemented as Python assignment, and appears
+as such when test cases are printed.}.  The second concept is that a
+value that has been initialized
+cannot be initialized (appear on the lhs of {\tt :=}) until after at
+least one action
+that uses it has been executed.  Figure \ref{fig:poolacts} shows the
+consequences of these rules for the simple value assignment harness
+above.  The nodes in the graph are labeled with {(\tt state(val0),
+  state(val1))}, where state is
+either {\tt None} (uninitialized), {\tt Unused} (initialized
+but never used) or {\tt Used} (initialized and used at least once).
+Starting from the initial state {\tt (None, None)}, a valid test is any path
+through the graph. 
+
+Tests that can be produced by this harness include, therefore,
+sequences like  {\tt val0 = 3; val0 = val0 + 1; val1 = 4; val1 = val0
+  + 2} and {\tt val1 = 10; val0 = 6; val0 = val1 + 1; val0 = 2; val1 =
+  15}.  However, {\tt val0 = val0 + 1; val0 = 2} and
+{\tt val0 = 1; val1 = 1; val1 = 4} are not valid tests, because they
+either use an uninitialized pool value, or re-initialize an unused
+pool (a clearly useless action sequence).
+
+\subsection{Guards, Post-Conditions, and Properties}
+\label{sec:property}
+
+The example TSTL harness in Figure \ref{fig:MakeFeatureLayer} shows a
+few other important core elements of TSTL.  First, choice templates
+are not limited to integer ranges, but can include arbitrary items in
+a list, e.g, {\tt <fc> := <["d1.shp", "d2.shp", "d3.shp"]>}.  Note
+that while in the example these items are (string) constants, they can
+be arbitrary expressions to be computed at runtime, or even incomplete
+code fragments that are only valid when combined with the rest of the action.
+Second, when an action raises an uncaught exception, this is normally
+considered a test failure.  Prefixing an action with a set of
+exception names in curly braces (e.g., {\tt \{IOError\}}) indicates
+that some exceptions are expected, and do not indicate a failure.
+
+More critically, actions can also be prefixed by arbitrary guards, using
+the syntax {\tt guard -> action}.  The simple ArcPy harness chooses
+field names for SQL by first extracting a list of all fields in some
+feature class.  It then allows a field name to be chosen by taking the
+name of the first field in the list.  However, since the harness also
+allows the list of fields to be stepped through by discarding the
+initial element, the name extraction has to be guarded to ensure that
+tests won't try to extract names from an empty field list:  {\tt
+  len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name}.
+The {\tt <fieldlist,1>} construct, which can also be used outside of a
+guard, indicates that this pool value should not be produced using
+normal template expansion (instantiated as both {\tt fieldname0} and
+{\tt fieldname1}) but rather that it should copy (textually, not a
+copy of the object but the same variable use) the comma indexed
+appearance of that pool in each expansion (indexing starts from 1).  This makes sure the guard
+is over the same pool value that is used in the action.
+
+TSTL also supports post-conditions on actions, in the form {\tt action
+  => post-condition}, where the post-condition is checked after the
+action is performed.  For example, because some known ArcPy bugs
+involve addition of incorrect characters to field names in a database,
+we could add code to check that field names in feature classes never
+change from their initial values.  We can make sure that a library
+call to add a field to a feature class adds it to a database of all
+field names collected at the start of testing, and collect the set of
+fields in each feature class file at the beginning of each test,
+storing these in a dictionary.  This example code shows two more
+features of TSTL: TSTL supports {\tt init:} code in the preamble,
+which is called before each test starts.  Ending a line in a backslash
+indicates the action continues on the next line of the file.
+
+{\scriptsize
+\begin{code}
+init: <fieldnames> = getAllFieldNames(getFeatureClasses())
+
+\{ExecuteError\} not (<fc,1> in <hascursor>) -> \\
+   AddField\_management(<fc>,<fieldname>,<fieldtype>); \\
+   <fieldnames> [<fc,1>].add([<fieldname,1>])
+
+\{IOError\} <fieldlist> := ListFields(<fc>) \\
+  => sorted(<fieldlist,1>) == sorted(list(<fieldnames> [<fc,1>]))
+\end{code}
+}
+
+Note the additional guard on adding fields --- we have discovered that
+adding a field to a feature class that has any database cursors active
+tends to crash ArcPy.  For more complicated post-conditions, the construct {\tt
+  pre<(expr)>} allows access to values of expressions from before the
+action was executed, as a further convenience for expressing properties.
+
+When an assertion is an invariant on all post-action states, it can be
+included in the preamble.  To check field names we would write {\tt
+  property: sorted(ListFields(<fc>))==sorted(list(<fieldnames>
+  [<fc,1>]}.
+
+This property checks all feature classes, not just those whose
+fields are extracted.  The advantage is that the property will
+catch problems even if we never construct a {\tt fieldlist}; the
+disadvantage is that testing slows to check all field names for all
+feature classes, after every action.
+
+\subsection{Differential Testing Support}
+\label{sec:differential}
+
+Another useful feature of TSTL is the ability to create
+\emph{reference} pools, where every action on pool values is mirrored
+by an action on a reference version of that pool.  This makes it
+possible to perform differential testing \cite{Differential} on a
+per-pool basis, rather than at the whole-system level, allowing
+complex partial specifications.  The idea is that the behavior of some
+pool (which could be the entire SUT state, in the extreme) can be
+compared to a reference implementation that provides the same
+observable behavior.  The classic example is the idea of testing a C
+compiler by checking that the output of running a deterministic, well-defined
+C program compiled under two different compilers (or optimization
+levels) is the same.  If the systems differ, one must be incorrect.  A
+simpler example is checking a set-like data structure against a
+well-tested reference implementation.  The TSTL distribution includes
+an example where an AVL tree implementation is checked against the
+Python set implementation.
+
+Differential testing can also be useful for applications other than
+testing complete systems against each other; the SUT may provide
+different implementations of essentially the same functionality,
+serving as a reference for itself (compilers are often tested against
+their own code, with optimization turned off). In ArcPy we may want to
+ensure that operations are deterministic: no GIS operations produce
+different results, given the same underlying starting feature class
+data.  Assuming in raw Python in the preamble we have defined {\tt
+  identityFunction} as an identity function and {\tt copyFCName} as a
+function that takes a feature class name and transforms it into a
+generated name for a reference copy of the feature class, the
+following mirrors all actions on feature classes on a reference copy,
+and checks that the feature class and its reference always have the
+same fields.
+
+{\scriptsize
+\begin{code}
+pools:
+  <basefc> 2 CONST
+  <fc> 2 CONST REF
+
+<basefc> := <[``d1.shp'', ``d2.shp'', ``d3.shp'']>; \\
+  CopyFeatures\_management(<basefc,1>,copyFCName(<basefc,1>)
+<fc> := identityFunction(<basefc>)
+\{IOError\} <fieldlist> := ListFields(<fc>)
+
+references:
+  identityFunction ==> copyFCName
+
+compares:
+  ListFields
+\end{code}
+}
+
+When instantiating the action templates, TSTL always produces a copy
+of every action containing any reference pool values.  First, the pools
+are replaced with their reference copies; second, all the
+syntactic transformations (which can include arbitrary Python regular
+expressions) in the {\tt references} declaration are applied, to
+produce the appropriate Python expression to evaluate to perform the
+action using the reference implementation.
+Finally, if any string matches a regular expression in a {\tt
+  compares} declaration, the return values or assigned values in the
+action are compared with those for the reference version, and a fault
+is raised if the results are not equivalent.  In the
+ArcPy case, if our {\tt copyFCName} is correctly defined, we can even
+check that behavior is equivalent for different underlying data file
+formats for feature classes, by treating, e.g., shapefiles as a
+reference for a personal geodatabase.  In addition to such simple (and
+modular) reference checking, TSTL allows properties to use the value
+of a reference pool, with syntax like:
+
+{\scriptsize
+\begin{code}
+property:  str(<expr>) == str(REF:<expr,1>)
+\end{code}
+}
+
+\subsection{How to Build a TSTL Harness}
+
+In the introduction, we noted that one problem with automatic
+extraction of harnesses by testing tools is that in order to effectively test
+complex systems, it is important to incrementally build testing
+capability.  Often, as with software development, understanding the
+effort as it slowly increases in scope is essential.  TSTL
+naturally supports this methodology.  The ArcPy harness, though
+complex, was developed by starting with a small number of ArcPy
+functions, and determining their parameters.  These functions were
+chosen because they were involved in unusual or problematic behavior
+experienced by the authors of the paper.  Once
+functions have been chosen, and their parameters are known,
+developing a harness can often be a clean, iterative process:
+
+\begin{enumerate}
+\item Choose a new function (or set of related functions) to include
+  in the harness.
+\item Determine all parameter types for these functions.
+\item If there is no pool that can produce these types, determine how
+  to produce these types, and add pools and pool initialization actions for
+  those pools.  This may require adding some additional
+  functions (in which case, go to step 1 and start with those
+  functions, recursively).
+\item Add an action to call the function(s) being added.  If relevant,
+  allow any expected exceptions, guards, and post-conditions to check.
+\item Run testing, examine code coverage and failures to evaluate the
+  added harness features, and repeat from step 1.
+\end{enumerate}
+
+These steps, combined with occasional refactoring or generalization of
+parts of the harness, can effectively test even a large library, while
+maintaining tester understanding and control.   In the ArcPy test
+harness development, most of the effort was spent in this cycle, with
+major exceptions being the implementation of a method allowing users
+to provide their own GIS data as a basis for testing, and efforts to
+improve the TSTL tool infrastructure to support testing a complex
+application in a Windows environment.
+
+%\subsection{Defining Complex Properties}
+
+Note that because TSTL defines the structure of a potentially infinite
+number of tests, users are expected to define correctness of a system
+via \emph{property-based testing} \cite{ClaessenH00}.  As in
+model checking, the correctness of the system is not specified via users
+determining the specific output for each test sequence, but by
+defining general properties over all executions.  TSTL includes
+idiomatic support for common forms of property-based specification,
+including invariants, post-conditions on actions, and comparison with
+the outputs of a reference implementation \cite{Differential}.
+
+\subsection{TSTL and Other Languages}
+
+At heart, the TSTL ``language'' consists of the syntax and semantics for pools,
+nondeterministic choice\footnote{Nondeterministic choice \cite{EWD:Discipline,McCarthy,Floyd,woda12} is both
+  inherent in the notion of a TSTL action, and represented more
+  concretely by the
+  syntactic sugar of the {\tt <[...]>} notations.  Arguably, building
+  the language and semantics around nondeterministic choice to
+  represent a transition system/state space is the core idea of TSTL.},
+guards, pre-conditions, pre- values, and a few other elements on top of
+an existing language:  the abstract basis of TSTL has a conceptually
+small footprint.
+
+While the implementation effort to compile to an SUT interface in a
+different language is considerable, there is no difficulty (beyond
+engineering effort) in mapping TSTL to languages other than Python.
+In one summer, an advanced high school student was able to produce a
+working version for Java \cite{TSTLJava}.  Implementing TSTL for
+Scala, Ruby, or even C/C++ would require effort but no research
+breakthroughs.  As with the Python and Java TSTL implementations,
+there is no need (due to the intentional template structure) to even
+parse the underlying language.  The primary development effort is
+translating the TSTL ``runtime'' of utility functions to a new
+language.  For Scala, Ruby, or Swift we believe this would be quite
+trivial.  For C/C++ the relative lack of functional language features
+would be frustrating, but certainly not a blocking difficult.
+The ideas behind TSTL are abstract and generally
+applicable, even if the current implementation is built for Python.
+

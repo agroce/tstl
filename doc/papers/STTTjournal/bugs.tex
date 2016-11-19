@@ -1,0 +1,137 @@
+\section{Faults Discovered Using TSTL}
+\label{sec:bugs}
+
+\subsection{ArcPy Faults}
+
+\begin{figure}
+{\scriptsize 
+\begin{code}
+shapefilelist0 = glob.glob("C:\\Arctmp\\*.shp")                             \textcolor{black!60}{\# STEP 0}
+\textcolor{black!60}{\#[}
+shapefile0 = shapefilelist0 [0]                                           \textcolor{black!60}{\# STEP 1}
+newlayer0 = "l1"                                                          \textcolor{black!60}{\# STEP 2}
+\textcolor{black!60}{\#  or newlayer0 = "l2" }
+\textcolor{black!60}{\#  or newlayer0 = "l3" }
+\textcolor{black!60}{\#  swaps with steps 3 4 5 6 7}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+\textcolor{black!60}{\#[}
+featureclass0 = shapefile0                                                \textcolor{black!60}{\# STEP 3}
+\textcolor{black!60}{\#  swaps with step 2}
+fieldname0 = "newf1"                                                      \textcolor{black!60}{\# STEP 4}
+\textcolor{black!60}{\#  or fieldname0 = "newf2" }
+\textcolor{black!60}{\#  or fieldname0 = "newf3" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+selectiontype0 = "SWITCH\_SELECTION"                                       \textcolor{black!60}{\# STEP 5}
+\textcolor{black!60}{\#  or selectiontype0 = "NEW\_SELECTION" }
+\textcolor{black!60}{\#  or selectiontype0 = "ADD\_TO\_SELECTION" }
+\textcolor{black!60}{\#  or selectiontype0 = "REMOVE\_FROM\_SELECTION"}
+\textcolor{black!60}{\#  or selectiontype0 = "SUBSET\_SELECTION"}
+\textcolor{black!60}{\#  or selectiontype0 = "CLEAR\_SELECTION"   }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+op0 = ">"                                                                 \textcolor{black!60}{\# STEP 6}
+\textcolor{black!60}{\#  or op0 = "<" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+val0 = "100"                                                              \textcolor{black!60}{\# STEP 7}
+\textcolor{black!60}{\#  or val0 = "1000" }
+\textcolor{black!60}{\#  swaps with steps 2 8}
+\textcolor{black!60}{\#] (steps in [] can be in any order)}
+arcpy.MakeFeatureLayer\_management(featureclass0, newlayer0)               \textcolor{black!60}{\# STEP 8}
+\textcolor{black!60}{\#  swaps with steps 4 5 6 7}
+arcpy.SelectLayerByAttribute\_management(newlayer0,selectiontype0,
+   ' "'+fieldname0+'" '+op0+val0)                                         \textcolor{black!60}{\# STEP 9}
+arcpy.Delete\_management(featureclass0)                                    \textcolor{black!60}{\# STEP 10}
+arcpy.SelectLayerByAttribute\_management(newlayer0,selectiontype0,
+   ' "'+ fieldname0+'" '+op0+val0)                                        \textcolor{black!60}{\# STEP 11}
+\end{code}
+}
+\caption{Deleting a feature class does not invalidate or delete layers that depend on it.}
+\label{fault1}
+\end{figure}
+
+In the process of testing ArcPy with TSTL, we discovered at least five
+distinct faults
+(thus far) that can cause an ArcPy script to crash.  While we have (as
+discussed in Section \ref{sec:lang}) some properties that check for
+data corruption and determinism of GIS analysis, we are not focusing
+on these until we have a reliable way to avoid system crashes.   In
+order to give an idea of what TSTL test cases look like, we discuss
+briefly one of these ArcPy crashes.
+
+ArcPy crashes when the feature class from which a layer is produced is
+deleted, and the layer is used in a {\tt SelectLayer} call (this
+version shows an attribute-based selection, but location selection
+will cause the same problem): (Figure \ref{fault1}).  The underlying issue seems to be that
+while operations on a deleted feature class properly notify a user the
+feature class does not exist, ArcPy or ArcGIS does not track that
+layers produced from a feature class should also be deleted/invalidated
+when the feature class is deleted.  Layers are not copies
+of a feature class, but essentially new \emph{views} of a feature class.
+This means that when the underlying feature class is modified or
+deleted, the view needs to be updated to reflect that change, and this
+is not correctly implemented.  Figure \ref{fault1} shows part of an
+annotated, reduced, normalized, and generalized test stand-alone test
+case (with the boilerplate, function definitions, and imports
+removed) for this fault.  The final line of code crashes ArcPy and the
+Python interpreter.  Comments indicate alternative similar tests that
+also fail.  In this case, TSTL's additional reduction steps (based on
+term rewriting in the action language) remove almost half the steps in
+the original, delta-debugged test case.
+
+Other faults (or documentation lapses) in ArcPy we have discovered include crashes when computing
+statistics over database fields of a layer using a deleted field and
+crashes due to seemingly reasonable modifications of feature classes
+while a database cursor is active.  In order to deal with the latter,
+which seems more in the line of an undocumented behavioral restriction
+than a ``bug,'' we now drastically limit database modification when a
+cursor is active.  We have reported these problems to Esri, but have
+not received a response.  The problems discovered may be previously
+known to Esri, but are not generally known to the ArcPy user
+community, and those that could be considered API limitations (that
+cause unexplained crashes when violated) are not documented.
+
+\subsection{Faults in Other Systems}
+
+TSTL  is only slightly less than two years old, and a stable, mature,
+non-prototype version has only existed for about a year.   However,
+TSTL has already been used to find important bugs in real systems.
+
+Using TSTL's support for differential testing, we were able to 
+quickly find 
+and report issues with the widely-used {\tt gmpy2} interface to the GMP (GNU 
+Multiple Precision \cite{gmp} arithmetic library), as well as 
+(surprisingly) in the core CPython bignum implementation
+\cite{gmpy2bugs,cpythonbug}. 
+
+
+TSTL was also able to discover at least 15
+previously undiscovered faults in the widely used SymPy library for
+symbolic mathematics in Python \cite{sympy}.  We have reported these
+faults, and hope to collaborate with the SymPy team to provide
+assistance in localizing and fixing them using TSTL.  The SymPy
+effort was able to move from
+decision-to-test to first discovered fault in the course of a single
+day, due to the much higher ease-of-use for the post-ArcPy version of
+TSTL used.  For a straightforward testing task like SymPy, building a
+TSTL harness is now quite simple, largely a matter of thinking about
+what the user wishes to test.
+
+Students using TSTL in graduate classes on software testing have
+already, with minimal assistance, discovered faults in some real-world
+systems.  Not all of these are confirmed and reported yet.  TSTL
+testing revealed a fault in either the widely-used {\tt PyOpenCL}
+library \cite{PyOpenCL}, the even more widely-used {\tt OpenCL}
+infrastructure \cite{OpenCL}, or (possibly) the NVIDIA hardware being
+used.  We are still investigating this problem, but it appears to be a
+genuine fault, though debugging and assigning blame is complex due to
+the layers of software and hardware involved.  Second, TSTL testing
+found cases where distance metrics that were supposed to be symmetric
+in the popular fuzzy-string-matching library FuzzyWuzzy
+\cite{FuzzyWuzzy} were asymmetric, if the default Python string match
+library was used instead of a Levenshtein-distance library.  Third,
+TSTL testing revealed numerous problems with the {\tt astropy.table}
+module of the AstroPy library \cite{AstroPy}, used by many
+professional astronomers and astrophysicists.  TSTL has also been used
+to discover faults in the TSTL API itself.  The github repository for
+the graduate class in question
+(\url{https://github.com/agroce/cs562w16}) contains the TSTL code for
+testing these systems (and many other student projects).
