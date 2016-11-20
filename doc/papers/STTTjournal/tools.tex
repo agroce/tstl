@@ -176,7 +176,7 @@ Describing the full interface provided by TSTL for use in testing tools is beyon
 \item {\bf error():} returns either {\tt None} (no error for the last action or {\tt check}), or a Python object representing an uncaught exception or failed property's backtrace.
 \item {\bf state():} returns the current SUT state, as a set of values for all pools; for systems where state cannot be restored by pool values, or {\tt deepcopy} does not work, returns the current test.
 \item {\bf backtrack(state):} takes a state or test produced by {\tt state} and restores the system to it.
-\item {\bf reduce(test,predicate):} takes a test and a predicate (function from test -> boolean), and returns a (possibly smaller) test also satisfying the predicate).
+\item {\bf reduce(test,predicate):} takes a test and a predicate (function from test to boolean), and returns a (possibly smaller) test also satisfying the predicate.
 \item {\bf allBranches():} returns the set of branches covered during all testing.
 \item {\bf newBranches():} returns the set of branches covered during the last action executed that had not previously been covered.
 \item {\bf currBranches():} returns the set of branches covered during the current test.
@@ -228,7 +228,7 @@ The implementation is trivial, relying only on the TSTL API and some very simple
 \section{TSTL as a Testing Library Generator}
 \label{sec:langext}
 
-While TSTL is easily used as ``just another tool'' that allows testing of an SUT, plus a ``construction kit'' to build your own testing tools, TSTL can also be understood as a generator of libraries.  ArcPy is a site package that makes it easy to perform GIS tasks using Python.  NumPy \cite{NumPy} and SciPy \cite{SciPy} are libraries that make performing scientific computing tasks easy with Python.  QIIME \cite{QIIME}, Biopython \cite{biopython}, and scikit-bio \cite{scikitbio} are libraries that make performing bioinformatics tasks easy using Python.  Such libraries can be of great importance in their subject domains:  ArcPy is extremely widely used, and the subject of university courses in many GIS programs, and the Nature Methods paper introducing QIIME has been cited more than 5,000 times to date, according to Google Scholar.  TSTL, also, can be seen as a tool that generates a library making it easy to perform testing tasks \emph{for a specific SUT}, using Python. 
+While TSTL is easily used as ``just another tool'' that allows testing of an SUT, plus a ``construction kit'' to build your own testing tools, TSTL can also be understood as a generator of libraries.  ArcPy is a site package that makes it easy to perform GIS tasks using Python.  NumPy \cite{NumPy} and SciPy \cite{SciPy} are libraries that make performing scientific computing tasks easy with Python.  QIIME \cite{QIIME}, Biopython \cite{biopython}, and scikit-bio \cite{scikitbio} are libraries that make performing bioinformatics tasks easy using Python.  Such libraries can be of great importance in their subject domains:  ArcPy is extremely widely used, and the subject of university courses in many GIS programs; the Nature Methods paper introducing QIIME has been cited more than 5,000 times to date, according to Google Scholar.  TSTL, also, can be seen as a tool that generates a library making it easy to perform testing tasks \emph{for a specific SUT}, using Python. 
 
 ArcPy, NumPy, QIIME and the other libraries can be seen as introducing the entities essential to their respective tasks as first-class, easily manipulable objects in the Python language.  TSTL makes tests (for a specific SUT, but using a common interface across all SUTs) first-class, easily manipulable objects.  TSTL does for tests, SUT state, and code coverage what ArcPy does for feature classes, spatial references, and other GIS concepts, what NumPy does for efficiently represented arrays and matrices, and what QIIME does for protein sequences.
 
@@ -274,21 +274,22 @@ define a generator function (assume that {\tt r} is a random number generator de
 
 {\scriptsize
 \begin{code}
-def repeatGen(lastAction,sut):
+def repeatGen(state,sut):
+   (lastAction, r) = state
    if (lastAction != None) and (len(sut.newBranches()) > 0) and (lastAction[1]()):
       return (lastAction, lastAction)
    newAction = sut.randomEnabled(r)
-   return (newAction, newAction)
+   return ((newAction, r), newAction)
 \end{code}
 }
 and then generate a length 100 test using this strategy easily:
 {\scriptsize
 \begin{code}
- >>> (t5, ok) = sut.makeTest(100, sgenerator=repeatGen)
+ >>> (t5, ok) = sut.makeTest(100, sgenerator=repeatGen, initial=(None,r))
 \end{code}
 }
 
-The function {\tt repeatGen} takes a state (initially {\tt None} to indicate a new test) consisting of a single action --- the last action executed.  It then, if there is a{\tt lastAction}, and the last step of testing increased branch coverage, and the action is still enabled, returns that action as both the next action to perform and the new state of the generator.  Otherwise, it generates a random action, and returns that as the state and the action.
+The function {\tt repeatGen} takes a state consisting of a single action (or {\tt None} initially) and a random number generator.  It then, if there is a {\tt lastAction}, and the last step of testing increased branch coverage, and the action is still enabled, returns that action as both the next action to perform and the new state of the generator.  Otherwise, it generates a random action, and returns that as the state and the action.
 
 We do not believe such an interactive approach to testing is natural with most other tools that generate either model checking traces or method-call sequence tests.  In fact, the very idea of test case composition as shown in the first interactive code fragment may seem quite strange to users of either model checking or conventional unit tests.  Although TSTL tests are sequences of actions --- essentially small, deterministic programs with no inputs --- they can be interacted with and generated like tests in QuickCheck \cite{ClaessenH00} or Hypothesis \cite{hypothesis}, where tests are usually just function inputs (lists, data structures, etc.). This ease-of-use for exploratory testing is a primary reason TSTL was first implemented for Python, rather than a compiled language such as Java or C (hence the ``Scripting'' part of ``Template Scripting Testing Language'').  A Swift, Ruby, or Scala version would also provide a way to interact with tests in a simple, immediate, and basically ``functional'' way.
 
