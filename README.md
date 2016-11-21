@@ -38,7 +38,7 @@ International Symposium on Software Testing and Analsysis (ISSTA) 2015
 papers at http://www.cs.cmu.edu/~agroce/nfm15.pdf and
 http://www.cs.cmu.edu/~agroce/issta15.pdf.  There is also a draft
 journal paper,
-https://github.com/agroce/tstl/blob/master/doc/papers/STTT/maintstl.pdf,
+https://github.com/agroce/tstl/blob/master/doc/papers/STTTjournal/maintstl.pdf,
 that has a more up-to-date semantics and usage for TSTL, and may be
 the ideal place to start.
 
