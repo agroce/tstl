@@ -33,16 +33,17 @@ calls and assignments that more resembles a traditional
 do-some-stuff-and-then-check-it unit test) and assert general
 properties about the behavior of a system under valid input.
 
-For more details on TSTL, see the NASA Formal Methods (NFM) and
-International Symposium on Software Testing and Analsysis (ISSTA) 2015
-papers at http://www.cs.cmu.edu/~agroce/nfm15.pdf and
-http://www.cs.cmu.edu/~agroce/issta15.pdf.  There is also a draft
-journal paper,
-https://github.com/agroce/tstl/blob/master/doc/papers/STTTjournal/maintstl.pdf,
-that has a more up-to-date semantics and usage for TSTL, and may be
-the ideal place to start.
+For more details on TSTL, the best starting point is a comprehensive
+journal paper in STTT:
+https://github.com/agroce/tstl/blob/master/doc/papers/STTTjournal/maintstl.pdf.
+There are also NASA Formal Methods (NFM) and International Symposium
+on Software Testing and Analsysis (ISSTA) 2015 papers at
+http://www.cs.cmu.edu/~agroce/nfm15.pdf and
+http://www.cs.cmu.edu/~agroce/issta15.pdf, with some implementation
+details or concepts that are not present in the more up-to-date and
+complete paper.
 
-The published papers use an early version of TSTL syntax, which marks
+The NFM and ISSTA papers use an early version of TSTL syntax, which marks
 pools and TSTL constructs with % signs.  "Modern" TSTL uses <> by
 default, though if for some reason you need <> in your code (and to
 prepare for a future C++ version) this can be turned off and only % supported.
