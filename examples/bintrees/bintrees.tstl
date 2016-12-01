@@ -40,7 +40,7 @@ not <tree,1>.is_empty() -> max(<tree>)
 <tree>.get(<val>,None)
 <tree>.pop(<val>,None)
 
-not <tree,1>.is_empty() -> <tree>.pop_item()
+#not <tree,1>.is_empty() -> <tree>.pop_item()
 
 # replace AVLTree with the tree type from bintrees you want to use as a reference
 # BinaryTree is very simple and likely to be correct; however, it doesn't force much
