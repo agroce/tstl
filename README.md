@@ -9,8 +9,8 @@ TSTL produces a simple, universal interface for test generators to use
 -- it essentially turns a definition of valid tests into a graph with
 transitions, backtrack, replay, automatic reduction, and code coverage support.
 
-Some of you may be asking: "How does TSTL differ from Hypothesis
-(https://hypothesis.readthedocs.io/en/latest/)?"  There are a few
+Some of you may be asking: "How does TSTL differ from the Hypothesis
+https://hypothesis.readthedocs.io/en/latest/ testing tool?"  There are a few
 answers.  First, TSTL is probably much less polished than Hypothesis,
 right now!  More importantly, however, Hypothesis and TSTL both
 generate tests, but they are primarily intended to generate different
