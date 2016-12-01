@@ -1,13 +1,18 @@
 @from bintrees import *
 
+pool: <testedTree> 1
+pool: <referenceTree> 1
 pool: <tree> 5 REF
 pool: <slice> 5 REF
 pool: <val> 10
 
 <val> := <[1..20]>
 
-# replace FastRBTree with the tree type from bintrees you want to test
-<tree> := FastRBTree()
+# replace these as needed
+init: <testedTree> = FastRBTree
+init: <referenceTree> = AVLTree
+
+<tree> := <testedTree>()
 
 not <tree,2>.is_empty() -> <tree> := <tree>.copy()
 
@@ -40,13 +45,11 @@ not <tree,1>.is_empty() -> max(<tree>)
 <tree>.get(<val>,None)
 <tree>.pop(<val>,None)
 
+# can't test pop_item since different trees return different values
 #not <tree,1>.is_empty() -> <tree>.pop_item()
 
-# replace AVLTree with the tree type from bintrees you want to use as a reference
-# BinaryTree is very simple and likely to be correct; however, it doesn't force much
-# coverage if you are testing against a C-implemented Fast tree
 
-reference: FastRBTree ==> AVLTree
+reference: testedTree ==> referenceTree
 compare: len
 compare: is_empty
 compare: in\
