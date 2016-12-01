@@ -38,6 +38,8 @@ def parse_args():
                         help="Don't reduce -- report full failing test.")
     parser.add_argument('-N', '--normalize', action='store_true',
                         help="Normalize/simplify after reduction.")
+    parser.add_argument('--alphaConvert', action='store_true',
+                        help="Alpha convert tests.")    
     parser.add_argument('-E', '--essentials', action='store_true',
                         help="Determine essential elements in failing test.")
     parser.add_argument('-G', '--generalize', action='store_true',
@@ -204,6 +206,9 @@ def handle_failure(test, msg, checkFail, newCov = False):
             sut.saveTest(test,config.output.replace(".test",".reduced.test"))        
         print "Reduced test has",len(test),"steps"
         print "REDUCED IN",time.time()-startReduce,"SECONDS"
+        if config.alphaConvert:
+            print "Alpha converting test..."
+            test = sut.alphaConvert(test)
         sut.prettyPrintTest(test)
         if config.essentials:
             print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
