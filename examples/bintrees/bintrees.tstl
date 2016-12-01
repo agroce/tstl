@@ -6,8 +6,8 @@ pool: <val> 10
 
 <val> := <[1..20]>
 
-# replace FastAVLTree with the tree type from bintrees you want to test
-<tree> := FastAVLTree()
+# replace FastRBTree with the tree type from bintrees you want to test
+<tree> := FastRBTree()
 
 not <tree,2>.is_empty() -> <tree> := <tree>.copy()
 
@@ -46,7 +46,7 @@ not <tree,1>.is_empty() -> max(<tree>)
 # BinaryTree is very simple and likely to be correct; however, it doesn't force much
 # coverage if you are testing against a C-implemented Fast tree
 
-reference: FastAVLTree() ==> RBTree
+reference: FastRBTree ==> AVLTree
 compare: len
 compare: is_empty
 compare: in\
