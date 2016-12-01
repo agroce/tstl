@@ -1,0 +1,56 @@
+@from bintrees import *
+
+pool: <tree> 5 REF
+pool: <slice> 5 REF
+pool: <val> 10
+
+<val> := <[1..20]>
+
+# replace FastAVLTree with the tree type from bintrees you want to test
+<tree> := FastAVLTree()
+
+not <tree,2>.is_empty() -> <tree> := <tree>.copy()
+
+<tree>.clear()
+
+len(<tree>)
+<tree>.is_empty()
+
+repr(<tree>)
+
+<tree>.insert(<val>,<val>)
+<tree> [<val>] = <val>
+
+<tree>.discard(<val>)
+
+<val> in <tree>
+
+<val,1> in <tree,1> -> <tree> [<val>]
+<val,1> in <tree,1> -> del <tree> [<val>]
+del <tree> [<val> : <val>]
+
+<slice> := <tree> [<val> : <val>]
+
+<val,1> in <slice,1> -> <slice> [<val>]
+<val> in <slice>
+
+not <tree,1>.is_empty() -> min(<tree>)
+not <tree,1>.is_empty() -> max(<tree>)
+
+<tree>.get(<val>,None)
+<tree>.pop(<val>,None)
+
+not <tree,1>.is_empty() -> <tree>.pop_item()
+
+# replace AVLTree with the tree type from bintrees you want to use as a reference
+# BinaryTree is very simple and likely to be correct; however, it doesn't force much
+# coverage if you are testing against a C-implemented Fast tree
+
+reference: FastAVLTree() ==> RBTree
+compare: len
+compare: is_empty
+compare: in\
+compare: min
+compare: max
+compare: get
+compare: pop\(
