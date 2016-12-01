@@ -217,7 +217,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if config.normalize:
             startSimplify = time.time()
             print "NORMALIZING..."
-            test = sut.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noreassign)
+            test = sut.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noreassign, useCache=False)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
             sut.saveTest(test,config.output.replace(".test",".normalized.test"))
