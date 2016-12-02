@@ -1,0 +1,56 @@
+@from bintrees import *
+@from sortedcontainers import *
+
+pool: <tested> 1
+pool: <reference> 1
+pool: <dict> 5 REF
+pool: <val> 10
+pool: <ival> 10
+pool: <sval> 10
+
+<ival> := <[1..20]>
+<ival> := <ival> + <ival>
+<ival> := <ival> * <ival>
+<ival> := <ival> - <ival>
+<sval> := <['a'..'z']>
+<sval> := <['A'..'Z']>
+<sval> := <sval> + <sval>
+<val> := <ival>
+<val> := <sval>
+<val> := None
+
+# replace these as needed
+init: <tested> = SortedDict
+init: <reference> = AVLTree
+
+<dict> := <tested>()
+
+<dict> == <dict>
+<dict> != <dict>
+
+len(<dict,2>) > 1 -> <dict> := <dict>.copy()
+
+<dict>.clear()
+
+len(<dict>)
+
+repr(<dict>)
+
+<dict> [<val>] = <val>
+
+<val> in <dict>
+
+<val,1> in <dict,1> -> <dict> [<val>]
+<val,1> in <dict,1> -> del <dict> [<val>]
+
+<dict>.get(<val>,None)
+<dict>.pop(<val>,None)
+
+reference: tested\(\) ==> {}
+compare: len
+compare: in\
+compare: get
+compare: pop\(
+compare: ==
+compare: !=
+
