@@ -13,9 +13,14 @@ def sortListAppend(l,i):
 def sortListAdd(l,i):
     l.append(i)
     l.sort()
+
+def sortListMultiply(l,v):
+    l *= v
+    l.sort()
 @>
 
 pool: <list> 5 REF
+pool: <plist> 5
 pool: <dict> 5 REF
 pool: <set> 5 REF
 
@@ -44,6 +49,11 @@ pool: <sval> 10
 <list> < <list>
 <list> >= <list>
 <list> <= <list>
+
+{OverflowError} <list> *= <ival>
+
+<plist> := <list> [<ival> : <ival>]
+<list> := SortedList(<plist>)
 
 <dict> == <dict>
 <dict> != <dict>
@@ -90,11 +100,13 @@ repr(<set>)
 <set>.discard(<val>)
 
 reference: SortedList\(\) ==> []
+reference: SortedList\((\S+)\) ==> list(\1)
 reference: SortedDict\(\) ==> {}
 reference: SortedSet\(\) ==> set([])
 
 reference: (\S+list\S+)\.append\((\S+)\) ==> sortListAppend(\1,\2)
 reference: (\S+list\S+)\.add\((\S+)\) ==> sortListAdd(\1,\2)
+reference: (\S+list\S+) \*= (\S+) ==> sortListMultiply(\1,\2)
 
 compare: len
 compare: in\
