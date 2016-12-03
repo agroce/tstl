@@ -1,9 +1,24 @@
-@from bintrees import *
 @from sortedcontainers import *
 
-pool: <tested> 1
-pool: <reference> 1
+<@
+def sortListAppend(l,i):
+    if len(l) == 0:
+        l.append(i)
+    else:
+        if i >= l[-1]:
+            l.append(i)
+        else:
+            raise ValueError("would not be sorted")
+
+def sortListAdd(l,i):
+    l.append(i)
+    l.sort()
+@>
+
+pool: <list> 5 REF
 pool: <dict> 5 REF
+pool: <set> 5 REF
+
 pool: <val> 10
 pool: <ival> 10
 pool: <sval> 10
@@ -19,38 +34,77 @@ pool: <sval> 10
 <val> := <sval>
 <val> := None
 
-# replace these as needed
-init: <tested> = SortedDict
-init: <reference> = AVLTree
+<list> := SortedList()
+<dict> := SortedDict()
+<set> := SortedSet()
 
-<dict> := <tested>()
+<list> == <list>
+<list> != <list>
+<list> > <list>
+<list> < <list>
+<list> >= <list>
+<list> <= <list>
 
 <dict> == <dict>
 <dict> != <dict>
 
-len(<dict,2>) > 1 -> <dict> := <dict>.copy()
+<set> == <set>
+<set> != <set>
+
+<dict> := <dict>.copy()
+<set> := <set>.copy()
 
 <dict>.clear()
+<set>.clear()
 
+len(<list>)
 len(<dict>)
+len(<set>)
 
+repr(<list>)
 repr(<dict>)
+repr(<set>)
+
+{ValueError} <list>.append(<val>)
+{ValueError} <list>.add(<val>)
 
 <dict> [<val>] = <val>
 
-<val> in <dict>
+<set>.add(<val>)
 
-<val,1> in <dict,1> -> <dict> [<val>]
-<val,1> in <dict,1> -> del <dict> [<val>]
+<val> in <list>
+<val> in <dict>
+<val> in <set>
+
+{KeyError} <dict> [<val>]
+{KeyError} del <dict> [<val>]
 
 <dict>.get(<val>,None)
 <dict>.pop(<val>,None)
 
-reference: tested\(\) ==> {}
+{IndexError} <list>.pop(<ival>)
+{ValueError} <list>.remove(<val>)
+{ValueError} <list>.index(<val>)
+
+{KeyError} <set>.remove(<val>)
+<set>.discard(<val>)
+
+reference: SortedList\(\) ==> []
+reference: SortedDict\(\) ==> {}
+reference: SortedSet\(\) ==> set([])
+
+reference: (\S+list\S+)\.append\((\S+)\) ==> sortListAppend(\1,\2)
+reference: (\S+list\S+)\.add\((\S+)\) ==> sortListAdd(\1,\2)
+
 compare: len
 compare: in\
 compare: get
 compare: pop\(
+compare: index
 compare: ==
 compare: !=
+#compare: \ <\ 
+#compare: \ >\
+#compare: \ <=\
+#compare: \ >=\ 
 
