@@ -778,28 +778,67 @@ def main():
                 okExcepts = okExcepts[:-1]
 
         newC = c
-        eqPos = c.find(":=")
-        if eqPos == -1:
-            eqPos = 0
             
         forVerbose = []
-        rhsUse = []
+
+        cParts = c.split("; ")
 
         for p in poolSet:
             newC = newC.replace(p + " ", poolPrefix + p.replace("%",""))
             newC = newC.replace(p, poolPrefix + p.replace("%",""))
             plhs = []
             prhs = []
-            found = c.find(p)
-            while (found != -1):
-                use = c[found:c.find("]", found)+1]
-                twiddle = (found > 0) and (c[found-1]=='~')
-                if (found >= eqPos):
-                    prhs.append((use,twiddle))
-                else:
-                    plhs.append(use)
-                found = c.find(p,found+1)
+            drhs = []
+            earlylhs = []
+            for subC in cParts:
+                newEarly = []
+                eqPos = subC.find(":=")
+                if eqPos == -1:
+                    eqPos = 0
+                found = subC.find(p)
+                while (found != -1):
+                    use = subC[found:subC.find("]", found)+1]
+                    twiddle = (found > 0) and (subC[found-1]=='~')
+                    if (found >= eqPos):
+                        if use not in earlylhs:
+                            prhs.append((use,twiddle))
+                        else:
+                            drhs.append((use,twiddle))
+                    else:
+                        plhs.append(use)
+                    found = subC.find(p,found+1)
+                earlylhs.extend(newEarly)
+            hrhs = []
+            for (used,twiddle) in prhs:
+                if (used,twiddle) in hrhs:
+                    continue
+                hrhs.append((used,twiddle))
+                g = used
+                g = g.replace("%","")
+                g = poolPrefix + g
+                g = g.replace(" ","")
+                if g not in forVerbose:
+                    forVerbose.append(g)
+                    changes.append(g.replace("[","_used[") + "=True")
+                g += " != None"
+                guardConds.append(g)
+            for (used,twiddle) in drhs:
+                if (used,twiddle) in hrhs:
+                    continue
+                hrhs.append((used,twiddle))
+                g = used
+                g = g.replace("%","")
+                g = poolPrefix + g
+                g = g.replace(" ","")
+                if g not in forVerbose:
+                    forVerbose.append(g)
+                if (not twiddle):
+                    changes.append(g.replace("[","_used[") + "=True")
+            hlhs = []
             for assign in plhs:
+                if assign in hlhs:
+                    continue
+                hlhs.append(assign)
                 g = assign
                 g = g.replace("%","")
                 g = poolPrefix + g
@@ -810,18 +849,7 @@ def main():
                 g = g.replace("[", "_used[")
                 gguard = "((" + g + ") or (" + gval + " == None) or (self.__relaxUsedRestriction))"
                 guardConds.append(gguard)
-                changes.append(g + "=False")
-            for (used,twiddle) in prhs:
-                g = used
-                g = g.replace("%","")
-                g = poolPrefix + g
-                g = g.replace(" ","")
-                if g not in forVerbose:
-                    forVerbose.append(g)
-                if (not twiddle):
-                    changes.append(g.replace("[","_used[") + "=True")
-                g += " != None"
-                guardConds.append(g)
+                changes.append(g + "=False")                    
 
         newC = newC.replace(":=","=")
         newC = newC.replace("~"+poolPrefix,poolPrefix)
@@ -893,7 +921,7 @@ def main():
                     comparing = True
         if comparing:
             checkRaised = True
-            checkRefRasied = True
+            checkRefRaised = True
 
         beforeSig = afterSig = checkSig = ""
         if expectCode:
@@ -985,7 +1013,7 @@ def main():
                 genCode.append(baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
                 genCode.append(baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print '=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + ")\n") 
                 genCode.append(baseIndent + baseIndent + "except: pass\n")
-            if checkRefRaised:
+            if postCode and checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
             if comparing:
                 genCode.append(baseIndent + "assert (raised == None) == (refRaised == None)\n")
