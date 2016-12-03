@@ -891,6 +891,9 @@ def main():
                         newC = newC[:-1] + " ; " + "result = " + newC.split(" = ")[0] + "\n"
                         refC = refC[:-1] + " ; " + "result_REF = " + refC.split(" = ")[0] + "\n"
                     comparing = True
+        if comparing:
+            checkRaised = True
+            checkRefRasied = True
 
         beforeSig = afterSig = checkSig = ""
         if expectCode:
@@ -985,6 +988,7 @@ def main():
             if checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
             if comparing:
+                genCode.append(baseIndent + "assert (raised == None) == (refRaised == None)\n")
                 genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
         genCode.append(baseIndent + "if self.__verboseActions: print '='*50\n")                                      
