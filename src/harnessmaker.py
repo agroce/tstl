@@ -985,7 +985,8 @@ def main():
             if checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
             if comparing:
-                genCode.append(baseIndent + "assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
+                genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
+                genCode.append(baseIndent + "except UnboundLocalError: pass\n")
         genCode.append(baseIndent + "if self.__verboseActions: print '='*50\n")                                      
         if logSet != []:
             genCode.append(baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
