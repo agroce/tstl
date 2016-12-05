@@ -11,7 +11,8 @@ def sortListAppend(l,i):
             raise ValueError("would not be sorted")
 
 def sortListExtend(l,el):
-    lcopy = l.copy().extend(el)
+    lcopy = list(l)
+    lcopy.extend(el)
     for i in xrange(0,len(lcopy)-1):
         if lcopy[i] > lcopy[i+1]:
             raise ValueError("would not be sorted")
@@ -70,6 +71,21 @@ pool: <sval> 10
 <set> == <set>
 <set> != <set>
 
+<set> := <set> & <set>
+<set> := <set> | <set>
+<set> := <set> ^ <set>
+<set> := <set> - <set>
+<set> := <set>.union(<set>)
+
+<set> &= <set>
+<set> |= <set>
+<set> -= <set>
+<set> ^= <set>
+
+<set>.isdisjoint(<set>)
+<set>.issuperset(<set>)
+<set>.issubset(<set>)
+
 <dict> := <dict>.copy()
 <set> := <set>.copy()
 
@@ -85,12 +101,22 @@ repr(<dict>)
 repr(<set>)
 
 {ValueError} <list>.append(<val>)
-{ValueError} <list>.extend(<list>)
+{ValueError} len(<list,2>) > 0 -> <list>.extend(<list>)
 <list>.add(<val>)
 
 <dict> [<val>] = <val>
 
 <set>.add(<val>)
+
+sorted(list(<dict>.keys()))
+sorted(list(<dict>.values()))
+sorted(list(<dict>.items()))
+len(<dict>.keys())
+len(<dict>.values())
+len(<dict>.items())
+(<dict>.keys()).count(<val>)
+(<dict>.values()).count(<val>)
+(<dict>.items()).count(<val>)
 
 <val> in <list>
 <val> in <dict>
@@ -127,8 +153,11 @@ compare: index
 compare: ==
 compare: !=
 compare: count
-#compare: \ <\ 
-#compare: \ >\
-#compare: \ <=\
-#compare: \ >=\ 
+compare: keys
+compare: values
+compare: items
+compare: isdisjoint
+compare: issuperset
+compare: issubset
+
 

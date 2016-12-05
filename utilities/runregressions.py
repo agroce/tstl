@@ -6,6 +6,7 @@ sut = sut.sut()
 
 nocover = False
 verbose = False
+running = False
 ignoreProps = False
 lastWasHtml = False
 files = []
@@ -25,6 +26,8 @@ if "--verbose" in sys.argv:
     verbose = True
 if "--ignoreProps" in sys.argv:
     ignoreProps = True
+if "--running" in sys.argv:
+    running = True
 
 if verbose:
     sut.verbose(True)
@@ -38,6 +41,13 @@ for f in files:
         ok = sut.replay(t, checkProp=(not ignoreProps))
     except Exception as e:
         print "EXCEPTION RAISED:",e
+    if running:
+        if sut.newBranches() != set([]):
+            for b in sut.newBranches():
+                print "New branch:",b
+        if sut.newStatements() != set([]):
+            for s in sut.newStatements():
+                print "New statement:",s
     if not ok:
         print "TEST",f,"FAILED:"
         print sut.failure()
@@ -46,7 +56,8 @@ for f in files:
         print "STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches())
 
 if not nocover:
-    sut.report("coverage.out")
+    sut.internalReport()
+    print sut.report("coverage.out"),"PERCENT COVERED"    
 
 if htmlOut != None:
     sut.htmlReport(htmlOut)
