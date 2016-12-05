@@ -101,7 +101,7 @@ repr(<dict>)
 repr(<set>)
 
 {ValueError} <list>.append(<val>)
-{ValueError} len(<list,2>) > 0 -> <list>.extend(<list>)
+{ValueError} <list>.extend(<list>)
 <list>.add(<val>)
 
 <dict> [<val>] = <val>
