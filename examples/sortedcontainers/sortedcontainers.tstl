@@ -25,6 +25,16 @@ def sortListAdd(l,i):
 def sortListMultiply(l,v):
     l *= v
     l.sort()
+
+def sortListMultiAdd(l,el):
+    for i in list(el):
+        sortListAdd(l,i)
+
+def sortListDiscard(l,i):
+    try:
+        l.remove(i)
+    except ValueError:
+        pass
 @>
 
 pool: <list> 5 REF
@@ -51,6 +61,13 @@ pool: <sval> 10
 <dict> := SortedDict()
 <set> := SortedSet()
 
+<dict> := <dict>.fromkeys(<list>,<val>)
+<dict> := <dict>.fromkeys(<set>,<val>)
+
+<dict>.setdefault(<val>,<val>)
+
+<dict>.update(<dict>)
+
 <list> == <list>
 <list> != <list>
 <list> > <list>
@@ -63,6 +80,14 @@ pool: <sval> 10
 <plist> := <list> [<ival> : <ival>]
 <list> := SortedList(<plist>)
 
+<list>+=<list>
+
+<list>.update(<set>)
+<list>.update(<list>)
+
+<set>.update(<set>)
+<set>.update(<list>)
+
 <list>.count(<val>)
 
 <dict> == <dict>
@@ -70,6 +95,8 @@ pool: <sval> 10
 
 <set> == <set>
 <set> != <set>
+<set> < <set>
+<set> > <set>
 
 <set> := <set> & <set>
 <set> := <set> | <set>
@@ -135,6 +162,8 @@ len(<dict>.items())
 {KeyError} <set>.remove(<val>)
 <set>.discard(<val>)
 
+<list>.discard(<val>)
+
 reference: SortedList\(\) ==> []
 reference: SortedList\((\S+)\) ==> list(\1)
 reference: SortedDict\(\) ==> {}
@@ -143,6 +172,9 @@ reference: SortedSet\(\) ==> set([])
 reference: (\S+list\S+)\.append\((\S+)\) ==> sortListAppend(\1,\2)
 reference: (\S+list\S+)\.extend\((\S+)\) ==> sortListExtend(\1,\2)
 reference: (\S+list\S+)\.add\((\S+)\) ==> sortListAdd(\1,\2)
+reference: (\S+list\S+)\.update\((\S+)\) ==> sortListMultiAdd(\1,\2)
+reference: (\S+list\S+)\+=(\S+) ==> sortListMultiAdd(\1,\2)
+reference: (\S+list\S+)\.discard\((\S+)\) ==> sortListDiscard(\1,\2)
 reference: (\S+list\S+) \*= (\S+) ==> sortListMultiply(\1,\2)
 
 compare: len
@@ -159,5 +191,4 @@ compare: items
 compare: isdisjoint
 compare: issuperset
 compare: issubset
-
-
+compare: setdefault
