@@ -22,6 +22,16 @@ def sortListAdd(l,i):
     l.append(i)
     l.sort()
 
+def sortListInsert(l,index,el):
+    lcopy = list(l)
+    if index > len(l):
+        index = len(l) + 1
+    lcopy.insert(index,el)
+    for i in xrange(0,len(lcopy)-1):
+        if lcopy[i] > lcopy[i+1]:
+            raise ValueError("would not be sorted")
+    l.insert(index,el)
+
 def sortListMultiply(l,v):
     l *= v
     l.sort()
@@ -35,6 +45,24 @@ def sortListDiscard(l,i):
         l.remove(i)
     except ValueError:
         pass
+
+def sortDictPopitem(d,last=True):
+    k = sorted(d.keys())
+    if k == []:
+        raise KeyError
+    if last:
+        mk = max(k)
+    else:
+        mk = min(k)
+    rv = d[mk]
+    del d[mk]
+    return (mk,rv)
+
+def sortDictPeekitem(d,index=-1):
+    k = sorted(d.keys())
+    mk = k[index]
+    rv = d[mk]
+    return (mk,rv)    
 @>
 
 pool: <list> 5 REF
@@ -130,6 +158,7 @@ repr(<set>)
 {ValueError} <list>.append(<val>)
 {ValueError} <list>.extend(<list>)
 <list>.add(<val>)
+{ValueError} <list>.insert(<ival>,<val>)
 
 <dict> [<val>] = <val>
 
@@ -152,8 +181,19 @@ len(<dict>.items())
 {KeyError} <dict> [<val>]
 {KeyError} del <dict> [<val>]
 
+{IndexError} del <list> [<ival>]
+del <list> [<ival> : <ival>]
+
 <dict>.get(<val>,None)
+<dict>.get(<val>,<val>)
 <dict>.pop(<val>,None)
+<dict>.pop(<val>,<val>)
+{KeyError} <dict>.pop(<val>)
+
+{KeyError} <dict>.popitem()
+{KeyError} <dict>.popitem(last=False)
+{IndexError} <dict>.peekitem()
+{IndexError} <dict>.peekitem(<ival>)
 
 {IndexError} <list>.pop(<ival>)
 {ValueError} <list>.remove(<val>)
@@ -164,6 +204,53 @@ len(<dict>.items())
 
 <list>.discard(<val>)
 
+iter(<dict>)
+reversed(<dict>)
+
+iter(<list>)
+reversed(<list>)
+
+iter(<set>)
+reversed(<set>)
+
+<list>.islice(start=None,stop=<ival>)
+<list>.islice(start=None,stop=None)
+<list>.islice(start=None,stop=None)
+<list>.islice(start=<ival>,stop=<ival>,reverse=True)
+<list>.islice(start=<ival>,stop=<ival>)
+<list>.islice(start=<ival>,stop=<ival>,reverse=True)
+<set>.islice(start=None,stop=<ival>)
+<set>.islice(start=None,stop=None)
+<set>.islice(start=None,stop=None)
+<set>.islice(start=<ival>,stop=<ival>)
+<set>.islice(start=<ival>,stop=<ival>,reverse=True)
+<dict>.islice(start=None,stop=<ival>)
+<dict>.islice(start=None,stop=None)
+<dict>.islice(start=None,stop=None)
+<dict>.islice(start=<ival>,stop=<ival>)
+<dict>.islice(start=<ival>,stop=<ival>,reverse=True)
+
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False))
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True))
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False))
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False),reverse=True)
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True),reverse=True)
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False),reverse=True)
+
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False))
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True))
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False))
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False),reverse=True)
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True),reverse=True)
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False),reverse=True)
+
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False))
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True))
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False))
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False),reverse=True)
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True),reverse=True)
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False),reverse=True)
+
 reference: SortedList\(\) ==> []
 reference: SortedList\((\S+)\) ==> list(\1)
 reference: SortedDict\(\) ==> {}
@@ -172,10 +259,14 @@ reference: SortedSet\(\) ==> set([])
 reference: (\S+list\S+)\.append\((\S+)\) ==> sortListAppend(\1,\2)
 reference: (\S+list\S+)\.extend\((\S+)\) ==> sortListExtend(\1,\2)
 reference: (\S+list\S+)\.add\((\S+)\) ==> sortListAdd(\1,\2)
+reference: (\S+list\S+)\.insert\((\S+),(\S+)\) ==> sortListInsert(\1,\2,\3)
 reference: (\S+list\S+)\.update\((\S+)\) ==> sortListMultiAdd(\1,\2)
 reference: (\S+list\S+)\+=(\S+) ==> sortListMultiAdd(\1,\2)
 reference: (\S+list\S+)\.discard\((\S+)\) ==> sortListDiscard(\1,\2)
 reference: (\S+list\S+) \*= (\S+) ==> sortListMultiply(\1,\2)
+reference: (\S+dict\S+)\.popitem\((\S*)\) ==> sortDictPopitem(\1,\2)
+reference: (\S+dict\S+)\.peekitem\((\S*)\) ==> sortDictPeekitem(\1,\2)
+reference: reversed\((\S+)\) ==> \1
 
 compare: len
 compare: in\
@@ -192,3 +283,5 @@ compare: isdisjoint
 compare: issuperset
 compare: issubset
 compare: setdefault
+compare: popitem
+compare: peekitem
