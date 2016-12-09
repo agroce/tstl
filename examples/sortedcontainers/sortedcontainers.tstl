@@ -1,5 +1,9 @@
 @from sortedcontainers import *
 
+source: /Library/Python/2.7/site-packages/sortedcontainers/sorteddict.py
+source: /Library/Python/2.7/site-packages/sortedcontainers/sortedlist.py
+source: /Library/Python/2.7/site-packages/sortedcontainers/sortedset.py	
+
 <@
 def sortListAppend(l,i):
     if len(l) == 0:
@@ -31,6 +35,32 @@ def sortListInsert(l,index,el):
         if lcopy[i] > lcopy[i+1]:
             raise ValueError("would not be sorted")
     l.insert(index,el)
+
+def setList(l, index, el):
+    l[index] = el
+
+def setListSlice(l, index1, index2, el):
+    if l == el:
+        return
+    l[index1:index2] = el    
+    
+def sortListSet(l,index,el):
+    lcopy = list(l)
+    lcopy[index] = el
+    for i in xrange(0,len(lcopy)-1):
+        if lcopy[i] > lcopy[i+1]:
+            raise ValueError("would not be sorted")
+    l[index] = el
+
+def sortListSetSlice(l,index1,index2,el):
+    if l == el:
+        return    
+    lcopy = list(l)
+    lcopy[index1:index2] = list(el)
+    for i in xrange(0,len(lcopy)-1):
+        if lcopy[i] > lcopy[i+1]:
+            raise ValueError("would not be sorted")
+    l[index1:index2] = list(el)
 
 def sortListMultiply(l,v):
     l *= v
@@ -164,6 +194,9 @@ repr(<set>)
 
 <set>.add(<val>)
 
+{IndexError,ValueError} setList(<list>,<ival>,<val>)
+{IndexError,ValueError} setListSlice(<list>,<ival>,<ival>,<list>)
+
 sorted(list(<dict>.keys()))
 sorted(list(<dict>.values()))
 sorted(list(<dict>.items()))
@@ -262,6 +295,8 @@ reference: (\S+list\S+)\.add\((\S+)\) ==> sortListAdd(\1,\2)
 reference: (\S+list\S+)\.insert\((\S+),(\S+)\) ==> sortListInsert(\1,\2,\3)
 reference: (\S+list\S+)\.update\((\S+)\) ==> sortListMultiAdd(\1,\2)
 reference: (\S+list\S+)\+=(\S+) ==> sortListMultiAdd(\1,\2)
+reference: setList\((\S+),(\S+),(\S+)\) ==> sortListSet(\1,\2,\3)
+reference: setListSlice\((\S+),(\S+),(\S+),(\S+)\) ==> sortListSetSlice(\1,\2,\3,\4)
 reference: (\S+list\S+)\.discard\((\S+)\) ==> sortListDiscard(\1,\2)
 reference: (\S+list\S+) \*= (\S+) ==> sortListMultiply(\1,\2)
 reference: (\S+dict\S+)\.popitem\((\S*)\) ==> sortDictPopitem(\1,\2)
