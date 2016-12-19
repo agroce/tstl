@@ -632,11 +632,11 @@ def main():
     # get definitions
     for c in codeClasses:
         if ":=" in c:
-            lhs = c.split(":=")[0]
+            (lhs,rhs) = c.split(":=")
             for p in poolSet:
                 pSub = p.replace("%","")
                 pAngle = "<" + pSub + ">"
-                if (p in lhs) or (pAngle in lhs):
+                if ((p in lhs) or (pAngle in lhs)) and not ((p in rhs) or (pAngle in rhs)):
                     if pSub not in classDefs:
                         classDefs[pSub] = []
                     classDefs[pSub].append(c)
