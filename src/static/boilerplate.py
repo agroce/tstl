@@ -327,8 +327,8 @@ def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,ch
             if stopFail:
                 return (self.test(), False)
         if checkProp:
-            noFailure = False
             if not self.check():
+                noFailure = False
                 if stopFail:
                     return (self.test(), False)
         if timeout != None:
