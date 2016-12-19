@@ -40,12 +40,14 @@ for l in open(file):
                 print "FAILED STEP"
                 print t.failure()
                 traceback.print_tb(t.failure()[2])
+                sys.exit(1)
         if not nocheck:
             checkResult = t.check()
             if not checkResult:
                 print "FAILED PROPERTY"
                 print t.failure()
                 traceback.print_tb(t.failure()[2])
+                sys.exit(1)                
     i += 1
 
 rout.write("TEST REPLAYED SUCCESSFULLY\n")

@@ -19,7 +19,7 @@ tests = []
 test = []
 
 if "--prefix" in sys.argv:
-    for f in glob.glob(corpfile+".*"):
+    for f in glob.glob(corpfile+"*.*"):
         for l in open(f):
             if "--raw" not in sys.argv:
                 test.append(l[:-1])
