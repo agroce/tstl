@@ -32,7 +32,7 @@ for l in open(file):
     else:
         if verbose:
             print "STEP",i,t.prettyName(name)
-        rout.write("STEP " + str(i) + name + "\n")
+        rout.write("STEP " + str(i) + ": " + name + "\n")
         action = t.playable(name)
         if action[1](): # check the guard
             stepOk = t.safely(action)

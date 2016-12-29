@@ -479,7 +479,7 @@ def main():
     checkResult = True
 
     if config.total:
-        fulltest = open("fulltest.txt",'w')
+        fulltest = open("fulltest.test",'w')
 
     if config.localize:
         localizeSFail = {}
@@ -548,7 +548,7 @@ def main():
             fulltest.write("<<RESTART>>\n")
         
         if config.replayable:
-            currtest = open("currtest.txt",'w')
+            currtest = open("currtest.test",'w')
 
         if (config.exploit != None) and ((time.time() - start) > config.startExploit):
             tryExploit()
