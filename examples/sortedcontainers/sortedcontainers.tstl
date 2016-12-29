@@ -28,6 +28,9 @@ def sortListAdd(l,i):
 
 def sortListInsert(l,index,el):
     lcopy = list(l)
+    if index < 0:
+        if (-index) > len(l):
+            index = -(len(l))
     if index > len(l):
         index = len(l) + 1
     lcopy.insert(index,el)
@@ -40,8 +43,6 @@ def setList(l, index, el):
     l[index] = el
 
 def setListSlice(l, index1, index2, el):
-    if l == el:
-        return
     l[index1:index2] = el    
     
 def sortListSet(l,index,el):
@@ -53,8 +54,6 @@ def sortListSet(l,index,el):
     l[index] = el
 
 def sortListSetSlice(l,index1,index2,el):
-    if l == el:
-        return    
     lcopy = list(l)
     lcopy[index1:index2] = list(el)
     for i in xrange(0,len(lcopy)-1):
@@ -94,6 +93,10 @@ def sortDictPeekitem(d,index=-1):
     rv = d[mk]
     return (mk,rv)    
 @>
+
+property: <list> == REF:<list,1>
+property: <dict> == REF:<dict,1>
+property: <set> == REF:<set,1>
 
 pool: <list> 5 REF
 pool: <plist> 5
