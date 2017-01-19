@@ -480,9 +480,8 @@ failure, generalization simply presents the user with \emph{all}
 ``very similar'' tests that also fail. Formally
 speaking, a generalization algorithm produces as output \emph{a set of
   rewrites} of a test $t$ satisfying {\tt pred} such that each rewrite
-also satisfies {\tt pred}.  Presenting a generalization to a user is just
-concisely expressing these rewrites, which should
-be easy since the rewrites are all small modifications of $t$.
+also satisfies {\tt pred}.  Presenting a generalization involves
+concisely expressing these (small) rewrites.
 
 \subsubsection{Generalization Algorithm}
 
@@ -585,9 +584,9 @@ sut0.normalize(test0,pred0)            \textcolor{black!60}{\# STEP 6}
 \label{fig:mislead}
 \end{figure}
 
-Formalizing this generalization requires some additional notation.
-$U(a)$ provides a list of pools \emph{used} in the action $a$ --- pools that
-appear in the action, not on the left-hand side of an assignment.
+Formalizing this generalization requires additional notation.
+$U(a)$ is the set of pools \emph{used} in the action $a$ --- pools that
+in the action, but not on the left-hand side of an assignment.
 $I(a,p)$ is a predicate that is true iff action $a$ stores a new value
 in pool $p$.  Finally, $t[+(a: i)]$ denotes test $t$ with the action
 $a$ inserted at step $i$ and each step from $i$ onwards moved to a
