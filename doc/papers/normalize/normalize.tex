@@ -1,5 +1,5 @@
 %\documentclass{sig-alternate}
-\documentclass{sig-alternate-05-2015}
+\documentclass[format=sigconf]{acmart}
 \usepackage{graphicx}
 \usepackage{pifont}
 \usepackage{url}
@@ -13,10 +13,36 @@
 
 \newcommand{\mycomment}[1]{}
 
+\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+% DOI
+\acmDOI{10.475/123_4}
+
+% ISBN
+\acmISBN{123-4567-24-567/08/06}
+
+%Conference
+\acmConference[ISSTA'17]{International Symposium on Software Testing
+  and Analysis}{July 2017}{Santa Barbara, California, USA}
+\acmYear{2017}
+\copyrightyear{2017}
+
+
+\begin{document}
+
 \title{One Test to Rule Them All}
 %\title{Normalizing and Generalizing Test Cases}
 
-\numberofauthors{3}
+\author{}
+
+%\numberofauthors{3}
+
+\author{}
 
 \author{}
 %\alignauthor
@@ -37,6 +63,11 @@
 %      \affaddr{Hekla, Iceland}\\
 %      \email{larst@affiliation.org}
 %}
+
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
 
 \mycomment{
 
@@ -77,13 +108,6 @@ Arpit Christi, Matthew Lyle Olson, Mohammad Amin Alipour, Alex Groce\\
 }
 }
 
-\begin{document}
-
-\maketitle 
-
-\begin{abstract}
-\input{abstract}
-\end{abstract}
 
 \begin{CCSXML}
 <ccs2012>
@@ -95,11 +119,9 @@ Arpit Christi, Matthew Lyle Olson, Mohammad Amin Alipour, Alex Groce\\
 </ccs2012>
 \end{CCSXML}
 
-\ccsdesc[500]{Software and its engineering~Software testing and debugging}
-
-\printccsdesc
-
 \keywords{test case reduction, semantic simplification, fuzzer taming}
+
+\maketitle
 
 \input{intro}
 

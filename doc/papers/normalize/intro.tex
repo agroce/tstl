@@ -92,14 +92,13 @@ tests was just 3.1 (with median 2).
 %is due to the same fault as the failure in Figure \ref{normalgen}
 %should be much less difficult than performing the same task over many hundreds of failures with much more extreme variation. 
 
-The contributions of this paper are 1) the idea of normalization and
-generalization for tests, key steps towards a goal of
+The contributions of this paper are 1) the idea of test normalization and
+generalization as key steps towards a goal of
 ``one test to rule them all'' (per fault), 2) algorithms for
 normalization and generalization that make use of the abstract
 interface for testing provided by the TSTL \cite{tstl,NFM15,ISSTA15,tstlsttt}
 domain-specific language (DSL) \cite{Fow10}, and 3)
-experimental results showing the value of normalization and
-generalization.  Normalization frequently provides significant additional test length
+experimental results showing the value of these ideas.  Normalization frequently provides significant additional test length
 reduction for complex SUTs, and can reduce
 the set of failures to be examined by more than an order of
 magnitude.  Normalization and generalization have also been useful in
@@ -108,8 +107,8 @@ systems.
 
 \begin{figure}[t]
 {\scriptsize
-{\bf Test \#1}\hspace{0.415in} {\bf Test \#2} \hspace{0.41in}
-{\bf Test \#3}
+\raggedright
+{\bf Test \#1}\hspace{.7in}{\bf Test \#2} \hspace{0.65in}{\bf Test \#3}
 \begin{verbatim}
 avl0 = avl.AVLTree()   int0 = 14              avl1 = avl.AVLTree()
 int0 = 4               avl0 = avl.AVLTree()   int3 = 18 
@@ -125,7 +124,7 @@ avl0.delete(int2)      avl0.delete(int0)      int1 = 15
 \end{verbatim}
 }
 %\vspace{-0.2in}
-\caption {\scriptsize{Three random tests for one fault.}}
+\caption {{Three random tests for one fault.}}
 \label{threetests}
 %\vspace{-0.15in}
 \end{figure}
@@ -163,7 +162,7 @@ avl0.delete(int1)                     \textcolor{black!60}{\# STEP 9}
 \textcolor{black!60}{\#     )}
 \end{code}
 }
-\caption{\scriptsize{Normalization and generalization for all three tests.
+\caption{{Normalization and generalization for all three tests.
   Lines beginning with \# are comments in Python, used for annotations.}}
 \label{normalgen}
 \end{figure}

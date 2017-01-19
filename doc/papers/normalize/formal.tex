@@ -27,7 +27,7 @@ property: <avl>.check\_balanced()
 
 \mycomment{
 \begin{figure}
-{\scriptsize
+{%\scriptsize
 \begin{code}
 avl1 = avl.AVLTree()  
 int3 = 10  
@@ -51,7 +51,7 @@ TSTL \cite{NFM15,ISSTA15,tstlsttt} is a language for defining the structure of
 tests (usually API-call sequences, but also grammar-based tests), and a set of tools for use in generating,
 manipulating, and understanding those tests.  Figure
 \ref{fig:example} shows a simplified portion of a TSTL definition
-(called a harness) of
+(called a harness \cite{WODA08,WODACommon}) of
 tests for an AVL tree class, in the latest syntax for TSTL.
 %TSTL provides features not shown in this small example,
 %including differential testing, customizable logging, support for
@@ -209,7 +209,7 @@ where the first action is step 0, etc.; e.g., $(2: a)$ indicates the
 third step of the test is action $a$ (indexing is from 0). 
 $\Delta(t,t')$ is the set of all steps in $t$ such that $t(i) \not= t'(i)$.
 
-We use the $<$ operator over various types:
+For ordering, we say that
 $a < b$ iff the index of action $a$ is lower
 than that of action $b$.  We compare steps with $<$ by comparing their
 actions --- $(i: a) < (j: b)$ iff $a < b$.  For a set or sequence of actions or steps, we define the $min$ of the
@@ -231,7 +231,7 @@ the moved steps, again preserving order.
 %\subsubsection{Rewrite Rules}
 
 \begin{figure}[t]
-{\scriptsize
+{%\scriptsize
 \begin{itemize}
 \item {\bf SimplifyAll:}
 $t \Rightarrow t[a \mapsto a']$\\
@@ -301,7 +301,7 @@ new base test, since often a rewrite makes other steps irrelevant.
 \begin{algorithm}
 \caption{Basic algorithm for normalization}
 \label{simpalg}
-{\scriptsize
+{%\scriptsize
 \begin{algorithmic}[1]
 \State {modified = True}
 \While {modified}
@@ -320,22 +320,25 @@ new base test, since often a rewrite makes other steps irrelevant.
 \end{algorithm}
 
 \begin{figure}
+\raggedright
+{\bf Original test:}\hspace{1.5in}{\bf Normalized:}
 {\scriptsize
-{\bf Original test:}\hspace{0.83in}{\bf Normalized:}
 \begin{verbatim}
-  0: int0 = 10                            0: int0 = 1
-  1: int2 = 7                             1: int1 = 2
-  2: avl1 = avl.AVLTree()                 2: avl0 = avl.AVLTree()
-  3: avl1.insert(int2)                    3: avl0.insert(int0) 
-  4: avl1.insert(int0)                    4: avl0.insert(int1) 
-  5: int1 = 1                             5: 5: int1 = 3
-  6: int3 = 1                             6: avl0.insert(int1) 
-  7: avl1.insert(int3)                    7: int1 = 4
-  8: int3 = 15                            8: avl0.insert(int1)
-  9: avl1.insert(int3)                    9: avl0.delete(int0)
+  0: int0 = 10                                    0: int0 = 1
+  1: int2 = 7                                     1: int1 = 2
+  2: avl1 = avl.AVLTree()                         2: avl0 = avl.AVLTree()
+  3: avl1.insert(int2)                            3: avl0.insert(int0) 
+  4: avl1.insert(int0)                            4: avl0.insert(int1) 
+  5: int1 = 1                                     5: 5: int1 = 3
+  6: int3 = 1                                     6: avl0.insert(int1) 
+  7: avl1.insert(int3)                            7: int1 = 4
+  8: int3 = 15                                    8: avl0.insert(int1)
+  9: avl1.insert(int3)                            9: avl0.delete(int0)
  10: avl1.delete(int1) 
 \end{verbatim}
+}
 {\bf Normalization Steps:}
+\raggedright
 \begin{code}
 {\bf SimplifyAll}: int0 = 10 $\mapsto$ int0 = 2 
 {\bf SimplifyAll}: int2 = 7  $\mapsto$ int2 = 3 
@@ -347,13 +350,13 @@ new base test, since often a rewrite makes other steps irrelevant.
 {\bf SwapPool}: int0 $\leftrightarrow$ int1 (between steps 2 and 10)
 {\bf SwapAction}: (1: int1 = 3)  $\leftrightarrow$ (5: int1 = 2)
 \end{code}
-}
+
 \caption{An example of normalization steps.}
 \label{diffnorm}
 \end{figure}
 
-Figure \ref{diffnorm} shows the sequence of successful rewrites in
-normalizing a simple AVL tree test failure.  Note that the numbering
+Figure \ref{diffnorm} shows the sequence of rewrites to
+normalizing an AVL tree failure.  The numbering
 of steps appears inconsistent in the first {\bf SwapAction} because a
 successful delta-debugging removes a no-longer-needed step after a
 rewrite.  The pattern in this example, where successful rewrites
@@ -490,7 +493,7 @@ rewrites:
 \begin{algorithm}
 \caption{Basic algorithm for generalization}
 \label{genalg}
-{\scriptsize
+{%\scriptsize
 \begin{algorithmic}[1]
 \State {swap = $\emptyset$}
 \State {replace = $\emptyset$}
@@ -593,7 +596,7 @@ position one higher.
 \begin{algorithm}
 \caption{Basic algorithm for fresh object generalization}
 \label{freshalg}
-{\scriptsize
+{%\scriptsize
 \begin{algorithmic}[1]
 \State {fresh = $\emptyset$}
 \For {$(i, a) \in t$}
