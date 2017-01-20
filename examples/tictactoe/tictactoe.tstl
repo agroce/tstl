@@ -58,6 +58,8 @@ def deadlock(b):
     return True
 @>
 
+init: <board> = newBoard(); <turn> = "X"
+
 pool: <board> 1
 pool: <turn> 1
 pool: <Xx> 1
@@ -65,8 +67,7 @@ pool: <Xy> 1
 pool: <Ox> 1
 pool: <Oy> 1
 
-<board> := newBoard()
-<turn> := "X"
+<board> := newBoard(); <turn> = "X"
 
 <Xx> := <[0..2]>
 <Xy> := <[0..2]>
