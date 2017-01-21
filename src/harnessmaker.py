@@ -21,6 +21,7 @@ config = None
 poolSet = {}
 poolType = {}
 initSet = []
+finallySet = []
 firstInit = True
 baseIndent = ""
 poolPrefix = None
@@ -358,6 +359,7 @@ def main():
     global refSet
     global poolType
     global initSet
+    global finallySet
     global constSet
     global opaqueSet
     global absSet
@@ -548,6 +550,8 @@ def main():
             autoPrefix = "log: "
         elif cs[0] == "inits:":
             autoPrefix = "init: "
+        elif cs[0] == "finallys:":
+            autoPrefix = "finally: "            
         elif cs[0] == "references:":
             autoPrefix = "reference: "
         elif cs[0] == "compares:":
@@ -562,6 +566,8 @@ def main():
             autoPrefix = ""                        
         elif cs[0] == "init:":
             initSet.append(c.replace("init: ",""))
+        elif cs[0] == "finally:":
+            finallySet.append(c.replace("finally: ",""))            
         elif cs[0] == "log:":
             logSet.append(c.replace("log: ",""))
         elif cs[0] == "property:":
@@ -671,6 +677,7 @@ def main():
     code = expandPool(code,trackOriginal=True)
     propSet = expandPool(propSet)
     initSet = expandPool(initSet)
+    finallySet = expandPool(finallySet)
     logSet = expandPool(logSet)
 
     if config.debug:
@@ -681,6 +688,7 @@ def main():
     code = expandRange(code,trackOriginal=True)
     propSet = expandRange(propSet)
     initSet = expandRange(initSet)
+    finallySet = expandRange(finallySet)    
     logSet = expandRange(logSet)
 
     if config.debug:
@@ -712,6 +720,12 @@ def main():
         for c in initSet:
             newInits.append(c.replace(p + " ", poolPrefix + p.replace("%","")))
         initSet = newInits
+
+    for p in poolSet:
+        newFinallys = []
+        for c in finallySet:
+            newFinallys.append(c.replace(p + " ", poolPrefix + p.replace("%","")))
+        finallySet = newFinallys
 
     for p in poolSet:
         newLogs = []
@@ -1155,6 +1169,25 @@ def main():
     genCode.append(baseIndent + "self.__actions_backup = list(self.__actions)\n")
 
     genCode.append("def restart(self):\n")
+    if finallySet != []:
+        for f in finallySet:
+            genCode.append(baseIndent + "try:\n")
+            genCode.append(baseIndent + baseIndent + f)
+            genCode.append(baseIndent + "except: pass\n")
+            refF = f
+            for p in poolSet:
+                if p in refSet:
+                    pRaw = poolPrefix + p.replace("%","")
+                    refF = refF.replace(pRaw,pRaw+"_REF")
+            for base in referenceMap:
+                if re.match(r"^[a-zA-Z_0-9]+$", refF):  # base is not a regex; treat it like a function name
+                    refF = re.sub(r'\b'+base+r'\b',referenceMap[base],refF)
+                else:   # base is a regex; treat it like one
+                    refF = re.sub(base,referenceMap[base],refF)
+            genCode.append(baseIndent + "try:\n")
+            genCode.append(baseIndent + baseIndent + refF)
+            genCode.append(baseIndent + "except: pass\n")
+            
     genCode.append(baseIndent + "try:\n")
     genCode.append(baseIndent + baseIndent + "test_before_restart(self)\n")
     genCode.append(baseIndent + "except:\n")
