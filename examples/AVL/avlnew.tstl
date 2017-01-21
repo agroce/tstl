@@ -30,7 +30,6 @@ def test_after_reduce(sut):
 # tells TSTL where the source code of the module tested is, to enable code coverage
 # in most cases, you should probably omit this, since coverage.py will find the file
 # at import time; rarely, it is needed
-source: avl.py
 
 # logging -- POST means log after the step executes, the number indicates logging level needed for this logging to appear
 log: 1 <avl>.inorder()
