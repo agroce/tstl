@@ -27,10 +27,6 @@ def test_after_reduce(sut):
     sut.setLog(0) # if this was 1, there would be heavy logging of replays after reduction
 @>
 
-# tells TSTL where the source code of the module tested is, to enable code coverage
-# in most cases, you should probably omit this, since coverage.py will find the file
-# at import time; rarely, it is needed
-
 # logging -- POST means log after the step executes, the number indicates logging level needed for this logging to appear
 log: 1 <avl>.inorder()
 log: POST 1 <avl>.inorder()
