@@ -18,7 +18,7 @@ def sandboxReplay(test):
         tmptest.write(s[0] + "\n")
     tmptest.close()
     start = time.time()
-    subprocess.call(["ulimit -t " + timeout + "; python ../../utilities/replay.py tmptest.txt"],shell=True)
+    subprocess.call(["ulimit -t " + timeout + "; python ~/tstl/utilities/replay.py tmptest.txt"],shell=True)
     print "ELAPSED:",time.time()-start
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:

@@ -209,6 +209,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if config.alphaConvert:
             print "Alpha converting test..."
             test = sut.alphaConvert(test)
+            if not newCov:
+                sut.saveTest(test,config.output.replace(".test",".reduced.test"))                    
         sut.prettyPrintTest(test)
         if config.essentials:
             print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
