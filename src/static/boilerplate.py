@@ -1012,12 +1012,6 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
                             print "NORMALIZER: RULE ReplacePool:",p,"WITH",new
                         else:
                             print "NORMALIZER: RULE ReplaceMovePool:",p,"WITH",new," -- MOVED TO",pos
-                    print "PREFIX:"
-                    self.prettyPrintTest(prefix)
-                    print "SUFFIX:"
-                    self.prettyPrintTest(suffix)
-                    print "NEW SUFFIX:"
-                    self.prettyPrintTest(newSuffix)
                     return (True, testC)
                 # Not possible, try with only replacing between pos and pos2
                 for pos2 in xrange(len(test),pos,-1):
