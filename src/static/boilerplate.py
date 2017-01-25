@@ -1003,13 +1003,21 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
                     else:
                         prefix.append(test[j])
                 suffix = map(lambda x: self.actionModify(x,p,new), moved + test[pos:])
-                testC = prefix + map(lambda x: self.actionModify(x,p,new), suffix)
+                newPrefix = map(lambda x: self.actionModify(x,p,new), prefix)
+                newSuffix = map(lambda x: self.actionModify(x,p,new), suffix)                
+                testC = newPrefix + newSuffix
                 if (testC != test) and (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     if verbose:
                         if pos == 0:
                             print "NORMALIZER: RULE ReplacePool:",p,"WITH",new
                         else:
                             print "NORMALIZER: RULE ReplaceMovePool:",p,"WITH",new," -- MOVED TO",pos
+                    print "PREFIX:"
+                    self.prettyPrintTest(prefix)
+                    print "SUFFIX:"
+                    self.prettyPrintTest(suffix)
+                    print "NEW SUFFIX:"
+                    self.prettyPrintTest(newSuffix)
                     return (True, testC)
                 # Not possible, try with only replacing between pos and pos2
                 for pos2 in xrange(len(test),pos,-1):
