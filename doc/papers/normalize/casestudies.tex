@@ -134,8 +134,7 @@ evident.  Out of 60,226 normalizations performed in our full AVLTree mutant
 experiments, 59,972 (99.6\%) resulted in a cache hit (most of these
 after a small number of normalization steps).  In fact, the total
 number of rewrites performed during the experiments was only 145,780,
-for a mean of only 2.4 non-cache-hit rewrites of each test.  Note
-that this is with the cache starting empty for each of the 82 mutants.
+for a mean of only 2.4 non-cache-hit rewrites of each test.
 
 \subsection{XML Parser}
 
@@ -148,8 +147,9 @@ and possibly existed in an earlier version of the code.  Running 1,000 tests
 produced 848 failing tests.  Without normalization, it took only
 37.45 seconds to execute and delta-debug all 1,000 tests.  The output was 717 distinct failing test
 cases.  Normalization increased the runtime to 354.7 seconds, but
-reduced the number of failures to just 5: 3 
-for the original fault and 2 for the seeded fault.
+output only 5 failures (3 for the original fault and 2 for the seeded fault).
+%reduced the number of failures to just 5: 3 
+%for the original fault and 2 for the seeded fault.
 %Generalization took < 5 seconds.
 
 In addition to these realistic faults, we performed the same
@@ -181,7 +181,7 @@ a total of 3,929 normalizations.
 \subsection{TSTL}
 
 As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own
-API interface (the compiler is about 1,600 LOC; a compiled SUT is
+API interface (the code is about 2,700 LOC; a compiled SUT is
 often $>$ 30KLOC).  We discovered one fault while testing
 the latest version of TSTL, the cache-related problem shown in Figure
 \ref{fig:mislead}\footnote{We note that normalizing a test with
@@ -226,10 +226,9 @@ signature had at least one associated test, producing 570 tests.  Some SymPy fau
 included in our count of 40 tests) cause infinite loops, and
 reduction or normalization sometimes becomes stuck on a
 non-terminating test.  Of the 570 tests, 549 produced a reduced test,
-and 500 produced a normalized test.  Our comparison of unreduced,
-reduced, and reduced and normalized tests includes only the 500 tests
-that both reduced and normalized (this
-set still exhibits all 40 signatures).
+and 500 produced a normalized test.  Our results are for the set of
+500 tests that both reduced and normalized (this set still exhibits
+all 40 fault signatures).
 
 {\bf RQ1:} Reduction alone did not reduce the number of distinct failing tests at
 all.  Normalization reduced the total number of distinct
@@ -364,11 +363,10 @@ test values clear.  For NumPy tests, normalization takes much longer
 than reduction, in part due to the expense of operations on large
 arrays.  For almost all tests, the mean time to reduce tests
 is about 4-5 seconds, and the time for normalization is between 712
-and 774 seconds.  The mean time to discover a failing test,
-for comparison, is just over 400 seconds.  Generalization takes
+and 774 seconds.   Generalization takes
 between 52 and 59 seconds in these cases.  The exception was a test of 45,206 steps (!)  leading to a memory exhaustion error and
-crash.  This was reduced (over a period of nearly a day) to a test
-case with 10 steps, which then normalized (in only 2 hours) to a test
+crash.  This was reduced (over nearly a day) to a test
+with 10 steps, which then normalized (in only 2 hours) to a test
 with 8 steps.  The normalized test involved no operations other than array
 initialization, array flattening, and array
 addition.  The reduced test involved larger array dimensions, array
