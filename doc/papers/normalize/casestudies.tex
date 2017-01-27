@@ -2,7 +2,7 @@
 
 This section presents some initial results of applying normalization
 and generalization.  All tests were generated using pure random testing,
-based on TSTL harnesses we developed previously, all included in the
+based on TSTL harnesses developed previously, all included in the
 TSTL release \cite{tstl}.  We also tested the
 Python interface to Z3 \cite{z3}, but did not find faults thus far;
 normalization did help produce more comprehensible and uniform Z3
@@ -11,7 +11,8 @@ quick tests \cite{icst2014}.
 These experiments are not intended to provide a full evaluation of
 normalization and generalization, but to establish the basic potential
 value of
-the techniques, and some initial data on core research questions.
+the techniques, and some initial data on core research questions, over
+six Python libraries ranging from small to large and complex.
 These are:
 {\bf RQ1:} How effectively does normalization reduce the number of
 failures reported? {\bf RQ2:} How often does normalization lose
@@ -208,7 +209,7 @@ the system.  Testing this core has resulted in discovery of a number
 of faults in SymPy, detected by assertion violations or uncaught (and
 not expected) exceptions.  Some of these have been reported to the project;
 however, since SymPy currently has 2,128 open issues, with one opened
-approximately each day, none have yet been fixed.  If we assume that
+approximately each day, only one has (at this point) been fixed.  If we assume that
 each different assertion violation or exception message indicates a
 different underlying fault, SymPy provides us with a set of 40
 complex, hard-to-understand real faults for evaluating normalization.
