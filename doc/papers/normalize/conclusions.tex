@@ -33,8 +33,11 @@ essential, can these two statements be swapped?) and a limited form of
 fresh value generalization should be easy to apply, even for complex
 programming language tests.  
 
-The working version of  TSTL \cite{tstl} includes
-support for normalization and generalization.  Further experimental
+The working version of  TSTL \cite{tstl} supports
+normalization and generalization.  Although derived via lengthy experiment-driven
+evolution, our rules are likely not yet ideal (though many ``obvious''
+optimizations such as applying alpha-conversion to lower pool indices
+before normalization turn out to be harmful).   Further experimental
 evaluation of normalization and generalization over more SUTs is
 important to quantify effectiveness and motivate new rewrites and
 generalizations.  The TSTL implementations are designed to allow these
