@@ -280,13 +280,14 @@ making it difficult to reduce or normalize.  We therefore only present
 results for the other two faults reported.  As with SymPy, we
 generated N failing tests, all distinct, exhibiting both reported
 faults. All failures reduced and normalized.  Reduction did not reduce
-the number of distinct failures.  Normalization was perfect:  one
-failure per fault (2 failures).  Normalization reduced mean length
-from X steps (for reduced tests) to Y steps (significant by Wilcoxon with $p < V$), and
-reduced the number of actions in each test from a mean of X actions
-for reduced tests to a mean of Y actions for normalized tests ($p <
+the number of distinct failures, but did reduce mean test length from
+X to Y steps, and mean number of different actions per test from X to Y.  Normalization was perfect:  one
+failure per fault (2 failures).  Normalization further reduced mean length
+to Y steps (significant by Wilcoxon test with $p < V$), and
+reduced the number of actions in each test to a mean of Y
+(significant by Wilcoxon, $p <
 V$).  Reduction took a mean of N1 seconds, normalization a mean of N2
-seconds ($p < V$).
+seconds (significant by Wilcoxon, $p < V$).
 
 \subsection{NumPy}
 
