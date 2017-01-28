@@ -46,8 +46,9 @@ rate).  Using reduction only, the mean number of distinct failures for
 each mutant (obviously a single fault) was 498.4 (median 485).  Using normalization, the mean
 was 3.1 failures (median 2).  For 38 of the 82 mutants,
 normalization produced only a single failure.
-Differences were statistically significant by Wilcoxon test with
-$p=1\times10^{-15}$.
+Differences were statistically significant by paired Wilcoxon test with
+$p=1\times10^{-15}$\footnote{All $p$-values given below are for
+  the same recommended \cite{arcuri2014hitchhiker} statistical test.}.
 
 
 AVLTree mutants also provided a way to evaluate the danger of
@@ -106,17 +107,15 @@ alone, using pairs increased the number of distinct failures, while
 normalized failure counts decreased.  For 48.3\% (115 of 238) of
 mutant pairs where reduction did not lose a fault, normalization
 worked as well as possible --- it preserved both faults and produced only 1 or 2 test
-cases\footnote{It is possible to detect both faults with a single test
-  case, if that test fails when \emph{either} fault is
-  present.}.  The improvement due to normalization was
-statistically significant by Wilcoxon test with $p=1\times10^{-80}$.
+cases\footnote{It is sometimes possible to detect both faults with a single test
+  case.}.  The improvement due to normalization was
+statistically significant by with $p=1\times10^{-80}$.
 A second way to examine reduction in a multi-fault setting is to
 consider the mean number of tests a user must examine before seeing
 all faults \cite{PLDI13}.  For the AVL mutant pairs, a user must
 examine almost 20 tests (on average) before encountering at least
 one instance of both faults.  With normalization, this  drops
-to a mean of just 2 tests.  The difference is significant by Wilcoxon
-test, with $p=1.4\times10^{-6}$.
+to a mean of just 2 tests.  The difference is significant with $p=1.4\times10^{-6}$.
 
 AVLTree also provided basic results for {\bf RQ3}. The mean cost to reduce a
 test was 0.05 seconds, with a median of 0.03 seconds.  The mean
@@ -159,10 +158,10 @@ resulted in fault detection for only 5 of 357 mutants.  For these
 mutants, reduction alone produced a mean of 107.6 failures (median
 27); normalization reduced that to only 6.2 failures (median 7) ({\bf
   RQ1}).  The difference was significant at the 95\% confidence level,
-by Wilcoxon test, with $p=0.042$.  With mutant pairs, these numbers
+($p=0.042$).  With mutant pairs, these numbers
 increased to 181.9 mean faults (median 175) with reduction only,
 compared to 7.7 mean faults (median 7) when using normalization ({\bf
-  RQ1}).  This difference was statistically significant, with Wilcoxon
+  RQ1}).  This difference was statistically significant, 
 $p=0.007$.  Normalization was perfect in only one case for
 the XML parser mutants, and perfect for no mutant pairs.  The
 difference in number of tests before encountering both faults,
@@ -221,14 +220,11 @@ non-lossy fault identification method (the exact failure symptom), our
 SymPy results are relatively useless for {\bf RQ2}, but they answer {\bf RQ1}, {\bf RQ3}, and {\bf RQ4} for a large, realistic
 system and real faults.
 
-We generated, normalized, and reduced tests until each fault
-signature had at least one associated test, producing 570 tests.  Some SymPy faults (not
-included in our count of 40 tests) cause infinite loops, and
-reduction or normalization sometimes becomes stuck on a
-non-terminating test.  Of the 570 tests, 549 produced a reduced test,
-and 500 produced a normalized test.  Our results are for the set of
-500 tests that both reduced and normalized (this set still exhibits
-all 40 fault signatures).
+We generated, normalized, and reduced tests until we had 500 tests,
+exhibiting all 40 fault signatures.    Some SymPy faults (not
+included in our count of 40 tests) cause infinite loops, stopping
+reduction or normalization. Of 570 failures, 549 reduced
+and 500 both reduced and normalized.
 
 {\bf RQ1:} Reduction alone did not reduce the number of distinct failing tests at
 all.  Normalization reduced the total number of distinct
@@ -278,16 +274,19 @@ extension containers.  We have reported 3 bugs in SortedContainers
 (all quickly corrected).  One of these bugs causes an infinite loop,
 making it difficult to reduce or normalize.  We therefore only present
 results for the other two faults reported.  As with SymPy, we
-generated N failing tests, all distinct, exhibiting both reported
-faults. All failures reduced and normalized.  Reduction did not reduce
+generated 44 failing tests, all distinct, exhibiting both reported
+faults. In this case, we only generated 44 failures as this
+represented the result of 4.5 hours of random testing, given the low
+failure rates.  All failures reduced and normalized.  Reduction did not reduce
 the number of distinct failures, but did reduce mean test length from
-X to Y steps, and mean number of different actions per test from X to Y.  Normalization was perfect:  one
+78.7 to 14.2 steps, and mean number of different actions per test from 13.6 to 7.8.  Normalization was perfect:  one
 failure per fault (2 failures).  Normalization further reduced mean length
-to Y steps (significant by Wilcoxon test with $p < V$), and
-reduced the number of actions in each test to a mean of Y
-(significant by Wilcoxon, $p <
-V$).  Reduction took a mean of N1 seconds, normalization a mean of N2
-seconds (significant by Wilcoxon, $p < V$).
+to 6.0 steps (significant, $p < 1\times10^{-7}$), and
+reduced the number of actions in each test to a mean of only 5.0
+($p < 1\times10^{-7}$).  Reduction took a mean of 0.1 seconds, normalization a mean of 206.2
+seconds ($p < 1\times10^{-8}$).  There were 63 total
+different actions in tests before reduction, 21 in tests after
+reduction, and only 7 in the two normalized tests.
 
 \subsection{NumPy}
 
@@ -480,8 +479,7 @@ makes this far less clear, as the use of {\tt CopyFeatures} and the
 multiplicity of shapefiles involved disguises the essence of the
 problem.  
 
-To assist ArcPy
-developers, we are also preparing a test suite that covers as much as
+We are also preparing a test suite that covers as much as
 possible of the Python source in the latest version of ArcPy
 and records the values returned.  For future versions of ArcPy, a ``semantic diff'' based on these calls
 can be produced, allowing developers to see how API usage changes with
@@ -538,6 +536,7 @@ arcpy.SelectLayerByAttribute\_management
 \end{code}
 }
 \caption{Original test for ArcPy.}
+%\vspace{-0.33in}
 \label{esriorig}
 \end{figure}
 
