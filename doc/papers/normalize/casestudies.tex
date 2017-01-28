@@ -277,11 +277,11 @@ results for the other two faults reported.  We
 generated 168 failing tests, all distinct, exhibiting both reported
 faults, over 15 hours of testing. All failures reduced and normalized.
 {\bf RQ1-RQ3:} Reduction did not reduce
-the number of distinct failures, but did reduce mean test length from
+the number of failures, but did reduce mean test length from
 80.8 to 13.2 steps (median from 85.0 to 12.5), and mean number of
 different actions per test from 14.4 to 7.4 (median from 14.0 to 8.0).  Normalization was perfect:  one
-failure per fault (2 failures), both of which had 6 steps and 5
-distinct actions.  Changes in length/actions were significant with
+failure per fault (2 failures), both of which had only 6 steps and 5
+distinct actions --- a $>$ 50\% reduction in size beyond delta-debugging.  Changes were significant with
 $p\leq1.0\times10^{-24}$.  There were 95 total
 different actions in tests before reduction, 27 in tests after
 reduction, and only 7 between the two normalized tests.  {\bf RQ4:} Reduction took a mean of 0.09 seconds, normalization a mean of 134.1
