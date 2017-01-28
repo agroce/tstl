@@ -245,7 +245,7 @@ of 40.5 steps.  For reduced tests, this shrank to a mean of
 9.984 and a median of 9.0 steps.  Normalized tests had mean length of
 5.48 steps and median of 5.0 steps.  SymPy failures show
 that normalization reduces not only the length of tests, but the number of
-actions that must be considered for debugging:  reduced tests included
+actions (roughly speaking, different method calls) that must be considered for debugging:  reduced tests included
 8.116 mean different actions, but normalized tests only 5.282
 mean different actions.  These differences were all statistically
 significant with $p$-values below $p=1\times10^{-76}$.  
@@ -269,24 +269,23 @@ normalized data are often simply lines because the tests are similar or identica
 \subsection{SortedContainers}
 
 SortedContainers \cite{SortedContainers} is a popular Python library
-(about 2,000 LOC), that provides pure Python sorted containers that are as fast as C
+of about 2KLOC, that provides pure Python sorted containers that are as fast as C
 extension containers.  We have reported 3 bugs in SortedContainers
 (all quickly corrected).  One of these bugs causes an infinite loop,
 making it difficult to reduce or normalize.  We therefore only present
-results for the other two faults reported.  As with SymPy, we
-generated 44 failing tests, all distinct, exhibiting both reported
-faults. In this case, we only generated 44 failures as this
-represented the result of 4.5 hours of random testing, given the low
-failure rates.  All failures reduced and normalized.  Reduction did not reduce
+results for the other two faults reported.  We
+generated 54 failing tests, all distinct, exhibiting both reported
+faults, over 5 hours of testing. All failures reduced and normalized.
+{\bf RQ1 and RQ3:} Reduction did not reduce
 the number of distinct failures, but did reduce mean test length from
-78.7 to 14.2 steps, and mean number of different actions per test from 13.6 to 7.8.  Normalization was perfect:  one
-failure per fault (2 failures).  Normalization further reduced mean length
-to 6.0 steps (significant, $p < 1\times10^{-7}$), and
-reduced the number of actions in each test to a mean of only 5.0
-($p < 1\times10^{-7}$).  Reduction took a mean of 0.1 seconds, normalization a mean of 206.2
-seconds ($p < 1\times10^{-8}$).  There were 63 total
+79.1 to 13.8 steps (median from 84.0 to 14.5), and mean number of
+different actions per test from 13.8 to 7.6 (median from 14.0 to 8.0).  Normalization was perfect:  one
+failure per fault (2 failures), both of which had 6 steps and 5
+distinct actions.  Changes in length/actions were significant with
+$p < 1.0\times10^{-8}$.  {\bf RQ4:} Reduction took a mean of 0.11 seconds, normalization a mean of 196.8
+seconds (median 0.08 vs. 177.4) (significant, $p < 1\times10^{-9}$).  There were 72 total
 different actions in tests before reduction, 21 in tests after
-reduction, and only 7 in the two normalized tests.
+reduction, and only 7 between the two normalized tests.
 
 \subsection{NumPy}
 
