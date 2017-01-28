@@ -47,7 +47,7 @@ each mutant (obviously a single fault) was 498.4 (median 485).  Using normalizat
 was 3.1 failures (median 2).  For 38 of the 82 mutants,
 normalization produced only a single failure.
 Differences were statistically significant by paired Wilcoxon test with
-$p=1\times10^{-15}$\footnote{All $p$-values given below are for
+$p\leq1\times10^{-15}$\footnote{All $p$-values given below are for
   the same recommended \cite{arcuri2014hitchhiker} statistical test.}.
 
 
@@ -109,13 +109,13 @@ mutant pairs where reduction did not lose a fault, normalization
 worked as well as possible --- it preserved both faults and produced only 1 or 2 test
 cases\footnote{It is sometimes possible to detect both faults with a single test
   case.}.  The improvement due to normalization was
-statistically significant by with $p=1\times10^{-80}$.
+statistically significant with $p\leq1\times10^{-80}$.
 A second way to examine reduction in a multi-fault setting is to
 consider the mean number of tests a user must examine before seeing
 all faults \cite{PLDI13}.  For the AVL mutant pairs, a user must
 examine almost 20 tests (on average) before encountering at least
 one instance of both faults.  With normalization, this  drops
-to a mean of just 2 tests.  The difference is significant with $p=1.4\times10^{-6}$.
+to a mean of just 2 tests.  The difference is significant with $p\leq1.4\times10^{-6}$.
 
 AVLTree also provided basic results for {\bf RQ3}. The mean cost to reduce a
 test was 0.05 seconds, with a median of 0.03 seconds.  The mean
@@ -202,9 +202,9 @@ failures.
 SymPy \cite{SymPy} is a widely used open source pure Python library
 for symbolic mathematics.  SymPy is used by several other projects,
 has over 400 contributors, over 25,000 commits to date, and over
-225KLOC.  Our TSTL tester for SymPy focuses on core expressions and
+225KLOC.  The TSTL tester for SymPy focuses on core expressions and
 algebraic simplification, and covers about 15KLOC and 21,000 branches of
-the system.  Testing this core has resulted in discovery of a number
+the system.  Testing this core resulted in discovery of a number
 of faults in SymPy, detected by assertion violations or uncaught (and
 not expected) exceptions.  Some of these have been reported to the project;
 however, since SymPy currently has 2,128 open issues, with one opened
@@ -238,17 +238,17 @@ examine for 11 of the 13 faults with more than one failure; in 2 cases, the norm
 {\bf RQ3:} The mean time for reduction was 104.45 seconds, with a
 median of 19.70 seconds.  The mean time for normalization was
 594 additional seconds, with a median of 260.214 seconds.  The
-difference was significant, with $p<1\time10^{-80}$.
+difference was significant, with $p\leq1\time10^{-80}$.
 
 {\bf RQ4:} The mean length of unreduced tests was 44.664 steps, with a median
 of 40.5 steps.  For reduced tests, this shrank to a mean of
 9.984 and a median of 9.0 steps.  Normalized tests had mean length of
 5.48 steps and median of 5.0 steps.  SymPy failures show
 that normalization reduces not only the length of tests, but the number of
-actions (roughly speaking, different method calls) that must be considered for debugging:  reduced tests included
+actions (roughly speaking, different API/method calls/functions) that must be considered for debugging:  reduced tests included
 8.116 mean different actions, but normalized tests only 5.282
 mean different actions.  These differences were all statistically
-significant with $p$-values below $p=1\times10^{-76}$.  
+significant with $p\leq1\times10^{-76}$.  
 Normalization made it possible to completely ignore a large number of
 SymPy functions for debugging purposes.  The unreduced and reduced
 tests included all 50 SymPy functions tested.  The normalized tests,
@@ -282,10 +282,10 @@ the number of distinct failures, but did reduce mean test length from
 different actions per test from 13.8 to 7.6 (median from 14.0 to 8.0).  Normalization was perfect:  one
 failure per fault (2 failures), both of which had 6 steps and 5
 distinct actions.  Changes in length/actions were significant with
-$p < 1.0\times10^{-8}$.  There were 72 total
+$p\leq1.0\times10^{-8}$.  There were 72 total
 different actions in tests before reduction, 21 in tests after
 reduction, and only 7 between the two normalized tests.  {\bf RQ4:} Reduction took a mean of 0.11 seconds, normalization a mean of 182.5
-seconds (median 0.08 vs. 164.6) (significant, $p < 1\times10^{-9}$).  
+seconds (median 0.08 vs. 164.6) (significant, $p\leq1\times10^{-9}$).  
 
 \subsection{NumPy}
 
@@ -338,7 +338,7 @@ seconds (median 0.08 vs. 164.6) (significant, $p < 1\times10^{-9}$).
  assert (np.array\_equal(array1,array1))
 \end{code}
 }
-\caption{Original ``failing'' test for numpy.}
+\caption{Reduced () ``failing'' test for numpy.}
 \label{numpyorig}
 \end{figure}
 \end{comment}
@@ -355,10 +355,10 @@ supports large, multi-dimensional matrices and provides a huge library
 of mathematical functions.  The SciPy library for scientific
 computing builds on NumPy.  Developing tests for NumPy is challenging,
 because none of the authors are experts in numeric computation, and
-the specification of correct behavior is often somewhat subtle.  As a
-simple example, consider the test in Figure \ref{numpynormgen}.  Prior to
+the specification of correct behavior is often somewhat subtle.  As an
+example, consider the test in Figure \ref{numpynormgen}.  Prior to
 normalization, understanding why the test leads to a violation of
-self-equality for an array is difficult: the original test has 42
+self-equality for an array is difficult: the reduced-only test has 42
 steps and includes not only array multiplication and addition, but
 subtraction, array copying, reshaping, flattening,  filtering by
 unique elements, and raveling.  After
@@ -473,7 +473,7 @@ to be that ArcGIS (or ArcPy) does not invalidate layers built from a
 feature class when that feature class is deleted.  In this
   instance, a generalization (the fresh values generalization in
   particular) is informative by its absence: we know that it was attempted, but prevented
-  failure.  The original, non-normalized test
+  failure.  The reduced, non-normalized test (Figure \ref{esriorig})
 makes this far less clear, as the use of {\tt CopyFeatures} and the
 multiplicity of shapefiles involved disguises the essence of the
 problem.  
@@ -534,7 +534,7 @@ arcpy.SelectLayerByAttribute\_management
    ' "'+fieldname1+'" '+op0+val1)                \# STEP 18
 \end{code}
 }
-\caption{Original test for ArcPy.}
+\caption{Test with reduction-only for ArcPy.}
 %\vspace{-0.33in}
 \label{esriorig}
 \end{figure}

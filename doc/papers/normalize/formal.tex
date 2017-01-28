@@ -95,7 +95,7 @@ language agnostic.
 
 The definition of pools and actions in TSTL defines a \emph{total
   order} on all actions.  First, actions are ordered by their position
-in the definition file.  All {\tt insert} actions therefore precede
+in the harness definition file.  All {\tt insert} actions therefore precede
 all {\tt delete} actions, and all {\tt delete} actions precede {\tt
   find} actions.  One line of TSTL typically defines more than one action. For
 example, the line {\tt <avl>.insert(<int>)} defines 12 actions, one
