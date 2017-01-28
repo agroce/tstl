@@ -12,7 +12,7 @@ These experiments are not intended to provide a full evaluation of
 normalization and generalization, but to establish the basic potential
 value of
 the techniques, and some initial data on core research questions, over
-six Python libraries ranging from small to large and complex.
+seven Python libraries ranging from small to large and complex.
 These are:
 {\bf RQ1:} How effectively does normalization reduce the number of
 failures reported? {\bf RQ2:} How often does normalization lose
@@ -270,6 +270,24 @@ most individual faults.  The reduction in tests to examine
 is also shown, indirectly, by the fact that the ``boxes'' for
 normalized data are often simply lines because the tests are similar or identical.
 
+\subsection{SortedContainers}
+
+SortedContainers \cite{SortedContainers} is a popular Python library
+(about 2,000 LOC), that provides pure Python sorted containers that are as fast as C
+extension containers.  We have reported 3 bugs in SortedContainers
+(all quickly corrected).  One of these bugs causes an infinite loop,
+making it difficult to reduce or normalize.  We therefore only present
+results for the other two faults reported.  As with SymPy, we
+generated N failing tests, all distinct, exhibiting both reported
+faults. All failures reduced and normalized.  Reduction did not reduce
+the number of distinct failures.  Normalization was perfect:  one
+failure per fault (2 failures).  Normalization reduced mean length
+from X steps (for reduced tests) to Y steps (significant by Wilcoxon with $p < V$), and
+reduced the number of actions in each test from a mean of X actions
+for reduced tests to a mean of Y actions for normalized tests ($p <
+V$).  Reduction took a mean of N1 seconds, normalization a mean of N2
+seconds ($p < V$).
+
 \subsection{NumPy}
 
 \begin{comment}
@@ -352,9 +370,7 @@ number of operations involved in the original reduced test
 obscures this critical point.  In NumPy, array equality does not hold
 for objects containing {\tt NaN}, so the assertion must be modified.
 As far as we know, normalization transforms all instances of this
-fault into this canonical test, but our data (for fewer than 30
-failures) is insufficient to make a definite claim, as the failure rate
-is slightly less than 3 failures/100,000 tests on average.
+fault into this canonical test, but our data is insufficient to make a definite claim.
 
 Other, more complex, failures have also made it clear that
 normalization is useful for additional test length reduction for
@@ -417,12 +433,8 @@ is a Python site-package, ArcPy \cite{ArcPy}.  ArcPy is a complex library,
 with dozens of classes and hundreds of functions.  Most of the code involved in ArcPy
 functionality is the C++ source for ArcGIS itself (which is not
 available), but the released Python interface code alone is over 50KLOC.
-In order to improve the reliability of ArcPy, we are developing a
-TSTL-based framework for testing ArcPy and libraries
-based on ArcPy.  The first
-stage of testing has resulted in discovery of multiple faults in
-ArcPy/ArcGIS, six of which not only cause incorrect behavior but cause
-a crash that ends testing.  
+We have  discovered and reported six crash-inducing faults in
+ArcPy/ArcGIS.  
 %It is critical to understand these
 %faults and the behaviors that trigger them to modify the harness to
 %avoid triggering these faults, while restricting other testing as
@@ -467,6 +479,18 @@ makes this far less clear, as the use of {\tt CopyFeatures} and the
 multiplicity of shapefiles involved disguises the essence of the
 problem.  
 
+To assist ArcPy
+developers, we are also preparing a test suite that covers as much as
+possible of the Python source in the latest version of ArcPy
+and records the values returned.  For future versions of ArcPy, a ``semantic diff'' based on these calls
+can be produced, allowing developers to see how API usage changes with
+new releases.  The tests in the suite are
+normalized and generalized (based on code coverage and output, not
+failure --- these tests all pass) to make them easy to understand, and show
+which parameter combinations do not change results.
+
+
+\begin{comment}
 Normalization and generalization are also being used to prepare an
 API-behavior regression suite for ArcPy.  One of the challenges of
 using a large API like ArcPy is that behavior of the system can change
@@ -479,6 +503,7 @@ can be produced.  The tests in the suite are
 normalized and generalized to help users understand API usage
 consequences, since Esri examples are limited to simple parameter
 combinations, and many illegal combinations are not specified.
+\end{comment}
 
 \begin{figure}[t]
 {\scriptsize 

@@ -5,11 +5,11 @@ reproduce failure (or some other behavior \cite{icst2014,stvrcausereduce}).  Del
 \cite{TCminim} are limited, generally, to producing subsets of the
 original test, not modifying parts of the test to obtain further
 simplicity.  We extend this concept by also allowing modification or
-re-ordering of actions in a test.  In some cases these changes
-allows further reduction of the length of the test as well.  Some
-earlier work in bounded model checking modified counterexamples to use
-numerically smaller values \cite{MakeMost} but otherwise did not aim
-to simplify or normalize failures.
+re-ordering, which also allows further length reduction.
+
+%Some earlier work in bounded model checking modified counterexamples to use
+%numerically smaller values \cite{MakeMost} but otherwise did not aim
+%to simplify or normalize failures.
 
 Normalization is in part motivated by the fuzzer taming \cite{PLDI13}
 problem: determining how many distinct faults are present in a large
