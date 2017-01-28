@@ -11,7 +11,13 @@ often minimal, set of simpler tests.  Generalization uses automated
 experiments to distinguish essential and accidental elements of a
 test.  In our experiments, normalization reduced the number of
 failures to examine by well over an order of magnitude, often to the
-ideal of one per fault.  The algorithms for normalization and
+ideal of one per fault, and reduced the length of tests beyond what is
+possible with delta-debugging alone.  While there is doubt about the
+utility of automatic fault localization \cite{AutoHelp} in real-world debugging, few practicing testers
+doubt the value of being provided with a minimal number of
+minimally-sized failing tests \cite{MinUnit,lithium,AMAI}.
+
+The algorithms for normalization and
 generalization depend only a (possible somewhat arbitrary) total order
 over test actions and an abstract form for tests, suitable for term
 rewriting.  It is therefore likely applicable to any source language
@@ -20,8 +26,6 @@ already produce short tests \cite{FA11,SoftBET}.  TSTL-based
 normalization and generalization is currently available in a
 well-tested Python version \cite{tstl,ISSTA15}; there is also a beta version, with more limited
 normalization, for Java.
-
-
 The goal of normalization and generalization can also be pursued in
 settings other than API sequence or string grammar testing.  The
 difficulties of defining a normal form for JavaScript \cite{jsfunfuzz}
