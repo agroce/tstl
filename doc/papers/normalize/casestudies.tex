@@ -20,7 +20,6 @@ faults? {\bf RQ3:} What is the cost of normalization and generalization? {\bf RQ
 much additional reduction over delta-debugging can normalization
 provide? and {\bf RQ5:} Does normalization and generalization provide
 substantial benefits in understanding complex tests?
-
 The primary
 threat to validity is that we have only applied our methods  to tests produced using random testing for 
 six subjects, written in Python (some small, some large).  Note that {\bf RQ5} would need a human study to fully evaluate.
@@ -146,7 +145,11 @@ and possibly existed in an earlier version of the code.  Running 1,000 tests
 produced 848 failing tests.  Without normalization, it took only
 37.45 seconds to execute and delta-debug all 1,000 tests.  The output was 717 distinct failing test
 cases.  Normalization increased the runtime to 354.7 seconds, but
-output only 5 failures (3 for the original fault and 2 for the seeded fault).
+output only 5 failures (3 for the original fault and 2 for the seeded
+fault).  The XML parser also shows that normalizations works for
+programs whose string inputs are defined by a grammar in TSTL, as well
+as for
+pure-API testing.
 %reduced the number of failures to just 5: 3 
 %for the original fault and 2 for the seeded fault.
 %Generalization took < 5 seconds.
@@ -164,17 +167,14 @@ compared to 7.7 mean faults (median 7) when using normalization ({\bf
   RQ1}).  This difference was statistically significant, 
 $p=0.007$.  Normalization was perfect in only one case for
 the XML parser mutants, and perfect for no mutant pairs.  The
-difference in number of tests before encountering both faults,
-however, was not statistically significant (for these 5 faults,
-failure rates are very similar, so hitting both faults never requires
-many tests).  For combined
+difference in number of tests before encountering both faults
+was not statistically significant (for these 5 faults,
+failure rates are very similar, so hitting both is trivial).  For combined
 mutants, the slippage rate was only 12.5\% for the XML parser ({\bf
   RQ2}).  That is, of the 9 viable mutant pairs, only 1 lost a fault,
 and in that case the faults were both semantically and syntactically
-very similar (within 1 line and with similar effects).  Reduction alone introduced no slippage for XML parser
-mutants.  Adding normalization to reduction increased the runtime by
-approximately 10x, from a mean runtime of 12.6 seconds to a mean
-runtime of 120.8 seconds ({\bf RQ3}); there were 3,829 cache hits over
+very similar (within 1 line and with similar effects).  Reduction alone caused no slippage.  Adding normalization to reduction increased the runtime from
+a mean of 12.6 seconds to 120.8 seconds ({\bf RQ3}); there were 3,829 cache hits over
 a total of 3,929 normalizations.
 
 \subsection{TSTL}
