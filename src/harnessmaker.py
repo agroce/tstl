@@ -413,7 +413,6 @@ def main():
             if l[-1] != "\n":
                 l += "\n"
             l = l.replace("\r","")
-            print "R:",repr(l)
             if len(l)>1:
                 if l[-2] == "'":
                     l = l[:-1] + ' ' + "\n"
