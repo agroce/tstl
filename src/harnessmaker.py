@@ -408,7 +408,7 @@ def main():
 
     with open(config.tstl, 'r') as fp:
         for l in fp:
-            fileLine = str(l)
+            fileLine = str(l).replace("\r","")
             l = preprocess_angle_brackets(l)
             if l[-1] != "\n":
                 l += "\n"
