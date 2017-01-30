@@ -3,6 +3,11 @@ import sut as SUT
 import subprocess
 import time
 
+# Appending current working directory to sys.path
+# So that user can run randomtester from the directory where sut.py is located
+current_working_dir = os.getcwd()
+sys.path.append(current_working_dir)
+
 infile = sys.argv[1]
 outfile = sys.argv[2]
 simpfile = sys.argv[3]

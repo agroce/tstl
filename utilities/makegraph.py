@@ -124,6 +124,11 @@ def collapse(strings):
     return cstrings
                 
 
+# Appending current working directory to sys.path
+# So that user can run randomtester from the directory where sut.py is located
+current_working_dir = os.getcwd()
+sys.path.append(current_working_dir)
+
 outfile = sys.argv[1]
 depth = int(sys.argv[2])
 k = int(sys.argv[3])
