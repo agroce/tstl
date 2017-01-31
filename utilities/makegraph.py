@@ -1,4 +1,3 @@
-import sut
 import sys
 from graphviz import Digraph
 import random
@@ -129,6 +128,8 @@ def collapse(strings):
 # So that user can run randomtester from the directory where sut.py is located
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
+
+import sut
 
 outfile = sys.argv[1]
 depth = int(sys.argv[2])

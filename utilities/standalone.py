@@ -1,11 +1,12 @@
 import sys
-import sut as SUT
 import os
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
+
+import sut as SUT
 
 testFile = sys.argv[1]
 sutFile = sys.argv[2]

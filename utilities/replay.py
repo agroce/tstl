@@ -1,4 +1,3 @@
-import sut as SUT
 import sys
 import traceback
 import os
@@ -7,6 +6,8 @@ import os
 # So that user can run randomtester from the directory where sut.py is located
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
+
+import sut as SUT
 
 rout = open("replay.out",'w')
 

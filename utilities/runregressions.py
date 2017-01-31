@@ -1,5 +1,4 @@
 import sys
-import sut
 import time
 import os
 
@@ -7,6 +6,8 @@ import os
 # So that user can run randomtester from the directory where sut.py is located
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
+
+import sut
 
 sut = sut.sut()
 
