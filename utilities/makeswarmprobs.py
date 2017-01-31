@@ -1,5 +1,6 @@
 import sut
 import sys
+import os
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located

@@ -2,6 +2,7 @@ import sut
 import sys
 from graphviz import Digraph
 import random
+import os
 
 def breakByNumber(s):
     breaks = []

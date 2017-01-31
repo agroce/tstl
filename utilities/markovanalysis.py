@@ -1,6 +1,7 @@
 import sut
 import sys
 import random
+import os
 import glob
 
 # Appending current working directory to sys.path

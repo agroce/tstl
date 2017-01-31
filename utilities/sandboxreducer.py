@@ -1,6 +1,7 @@
 import sys
 import sut as SUT
 import subprocess
+import os
 import time
 
 # Appending current working directory to sys.path

@@ -1,6 +1,7 @@
 import sut as SUT
 import sys
 import traceback
+import os
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
