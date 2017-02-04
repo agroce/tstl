@@ -20,10 +20,10 @@ minimally-sized failing tests \cite{MinUnit,lithium,AMAI}.
 The algorithms for normalization and
 generalization depend only on a (possibly somewhat arbitrary) total order
 over test actions and an abstract form for tests, suitable for term
-rewriting.  It is therefore likely applicable to any source language
+rewriting.  Our approach is therefore likely applicable to any source language
 and many different test generation methods, including those that
 already produce short tests \cite{FA11,SoftBET}.  TSTL-based
-normalization and generalization is currently available in a
+normalization and generalization are currently available in a
 well-tested Python version \cite{tstl,ISSTA15}; there is also a beta version, with more limited
 normalization, for Java.
 The goal of normalization and generalization can also be pursued in
@@ -41,7 +41,7 @@ The working version of  TSTL \cite{tstl} supports
 normalization and generalization.  Although derived via lengthy experiment-driven
 evolution, our rules are likely not yet ideal (though many ``obvious''
 optimizations such as applying alpha-conversion to lower pool indices
-before normalization turn out to be harmful).   Further experimental
+before normalization turn out to be surprisingly harmful).   Further experimental
 evaluation of normalization and generalization over more SUTs is
 important to quantify effectiveness and motivate new rewrites and
 generalizations.  The TSTL implementations are designed to allow these

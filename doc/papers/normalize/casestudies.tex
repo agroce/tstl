@@ -22,7 +22,7 @@ provide? and {\bf RQ5:} Does normalization and generalization provide
 substantial benefits in understanding complex tests?
 The primary
 threat to validity is that we have only applied our methods  to tests produced using random testing for 
-six subjects, written in Python (some small, some large).  Note that {\bf RQ5} would need a human study to fully evaluate.
+seven subjects, written in Python (some small, some large).  Note that {\bf RQ5} would need a human study to fully evaluate.
 
 \subsection{AVLTree}
 
@@ -138,7 +138,7 @@ for a mean of only 2.4 non-cache-hit rewrites of each test.
 
 We also investigated {\bf RQ1-3} for a
 Python XML parser with about 260 lines of code \cite{myxml}, using one
-real fault, triggered by the empty tag ({\tt <>})), and one
+real fault, triggered by the empty tag ({\tt <>}), and one
 seeded fault triggered when adding two nodes with the same
 name.  A comment in the code indicates the seeded fault is realistic,
 and possibly existed in an earlier version of the code.  Running 1,000 tests
@@ -238,7 +238,7 @@ examine for 11 of the 13 faults with more than one failure; in 2 cases, the norm
 {\bf RQ3:} The mean time for reduction was 104.45 seconds, with a
 median of 19.70 seconds.  The mean time for normalization was
 594 additional seconds, with a median of 260.214 seconds.  The
-difference was significant, with $p\leq1\time10^{-80}$.
+difference was significant, with $p\leq1\times10^{-80}$.
 
 {\bf RQ4:} The mean length of unreduced tests was 44.664 steps, with a median
 of 40.5 steps.  For reduced tests, this shrank to a mean of
