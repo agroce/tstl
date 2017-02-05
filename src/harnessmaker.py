@@ -1126,6 +1126,7 @@ def main():
         genCode.append(covc + "]")
         if config.pylib:
             genCode.append(",cover_pylib=True")
+        genCode.append(",omit='sut.py'")
         genCode.append(")\n")
         genCode.append(baseIndent + "self.__cov._warn_no_data = False\n")
         genCode.append(baseIndent + "self.__collectCov = True\n")
