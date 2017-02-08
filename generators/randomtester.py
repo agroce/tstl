@@ -257,7 +257,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
         reduceTime += time.time()-startReduce
 
     i = 0
-    outf = None
     if ((config.output != None) and (test not in map(lambda x:x[0],failures))) or (config.quickTests):
         outname = config.output
         if (outname != None) and config.multiple and not newCov:
@@ -271,8 +270,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
                     print "NEW BRANCH FROM REDUCTION",b
             outname = "quick" + str(quickCount) + ".test"
             quickCount += 1
-        if outname != None:
-            outf = open(outname,'w')
     if config.failedLogging != None:
         sut.setLog(config.failedLogging)
     print
@@ -280,6 +277,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
     if not config.silentFail:
         sut.verbose(True)
     i = 0
+    sut.saveTest(test,outname)
     sut.restart()
     for s in test:
         steps = "# STEP " + str(i)
@@ -288,8 +286,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if checkFail:
             sut.check()
         i += 1
-        if outf != None:
-            outf.write(sut.serializable(s)+"\n")
     if not config.verboseActions:
         sut.verbose(False)
     if not newCov:
@@ -310,8 +306,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
         else:
             print "NO FAILURE!"
     sys.stdout.flush()
-    if outf != None:
-        outf.close()
     if config.multiple:
         if (test in map(lambda x:x[0], failures)) or (test in cloudFailures) or cloudMatch:
             print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
