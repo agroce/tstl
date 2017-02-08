@@ -72,6 +72,8 @@ def parse_args():
                         help="Turn on standard swarm testing.")
     parser.add_argument('--progress', action='store_true',
                         help="Turn on progress report.")
+    parser.add_argument('--timedProgress', type=int, default=-1,
+                        help="Turn on progress reports at x second intervals.")    
     parser.add_argument('--swarmP', type=float, default=0.5,
                         help="Swarm inclusion probability.")
     parser.add_argument('--computeFeatureStats', action="store_true",
@@ -512,6 +514,9 @@ def main():
             quickAnalysisRawCounts[c] = 0
         quickAnalysisReducedB = {}
         quickAnalysisReducedS = {}
+
+    if config.timedProgress:
+        lastInterval = 0
         
     if config.verbose:
         print "ABOUT TO START TESTING"
@@ -519,7 +524,11 @@ def main():
         
     while (config.maxtests == -1) or (ntests < config.maxtests):
         if config.progress:
-            print "TEST #",ntests,(datetime.datetime.now()).ctime()
+            print "TEST #",ntests,(datetime.datetime.now()).ctime(),"[",
+            if not config.nocover:
+                print len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
+            else:
+                print
             sys.stdout.flush()
         if config.verbose:
             print "STARTING TEST",ntests
@@ -606,6 +615,16 @@ def main():
             if elapsed > config.timeout:
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
+            if config.timedProgress != -1:
+                thisInterval = int(elapsed / config.timedProgress)
+                if thisInterval > lastInterval:
+                    print "TEST #",ntests,(datetime.datetime.now()).ctime(),"[",
+                    if not config.nocover:
+                        print len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
+                    else:
+                        print                    
+                    lastInterval = thisInterval
+                    sys.stdout.flush()
             if a == None:
                 print "TERMINATING TEST DUE TO NO ENABLED ACTIONS"
                 break                
