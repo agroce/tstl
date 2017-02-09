@@ -1,0 +1,17 @@
+@from heaps import *
+
+pool: <heap> 3
+pool: <int> 5
+
+<int> := <[1..20]>
+
+<heap> := heapnew()
+<heap> := heapmerge(<heap>,<heap>)
+
+heappush(<heap>,<int>)
+
+{ValueError} heappop(<heap>) # Redundant for actual testing, but gives that nice 100% coverage feeling
+not heapempty(<heap,1>) -> assert (min(<heap,1>) == heappop(<heap>))
+
+
+property: (heapempty(<heap>) == (<heap,1> == heapnew()))
