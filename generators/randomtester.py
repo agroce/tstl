@@ -371,9 +371,9 @@ def collectExploitable():
 
 def printStatus(elapsed):
     global sut
-    print "TEST #"+str(ntests),"("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),"[",
+    print "TEST #"+str(ntests),"("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),
     if not config.nocover:
-        print len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
+        print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
     else:
         print
     sys.stdout.flush()
