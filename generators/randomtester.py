@@ -72,8 +72,8 @@ def parse_args():
                         help="Turn on standard swarm testing.")
     parser.add_argument('--progress', action='store_true',
                         help="Turn on progress report.")
-    parser.add_argument('--timedProgress', type=int, default=-1,
-                        help="Turn on progress reports at x second intervals.")    
+    parser.add_argument('--timedProgress', type=int, default=30,
+                        help="Turn on progress reports at x second intervals (default = 30 seconds).")    
     parser.add_argument('--swarmP', type=float, default=0.5,
                         help="Swarm inclusion probability.")
     parser.add_argument('--computeFeatureStats', action="store_true",
@@ -369,6 +369,15 @@ def collectExploitable():
             print "COLLECTING DUE TO NEW",len(sut.newBranches()),len(sut.newStatements())
         fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
 
+def printStatus(elapsed):
+    global sut
+    print "TEST #"+str(ntests),"("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),"[",
+    if not config.nocover:
+        print len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
+    else:
+        print
+    sys.stdout.flush()
+        
 def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail
@@ -518,12 +527,7 @@ def main():
         
     while (config.maxtests == -1) or (ntests < config.maxtests):
         if config.progress:
-            print "TEST #",ntests,(datetime.datetime.now()).ctime(),"[",
-            if not config.nocover:
-                print len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
-            else:
-                print
-            sys.stdout.flush()
+            printStatus(elapsed)
         if config.verbose:
             print "STARTING TEST",ntests
             sys.stdout.flush()
@@ -562,8 +566,8 @@ def main():
             
         for s in xrange(0,config.depth):
             if config.verbose:
-                print "GENERATING STEP",s
-
+                print "GENERATING STEP",s,
+                sys.stdout.flush()
             if (config.swarmSwitch != None) and (s in switches):
                 if config.highLowSwarm == None:
                     sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
@@ -612,11 +616,7 @@ def main():
             if config.timedProgress != -1:
                 thisInterval = int(elapsed / config.timedProgress)
                 if thisInterval > lastInterval:
-                    print "TEST #",ntests,(datetime.datetime.now()).ctime(),"[",
-                    if not config.nocover:
-                        print len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
-                    else:
-                        print                    
+                    printStatus(elapsed)
                     lastInterval = thisInterval
                     sys.stdout.flush()
             if a == None:
@@ -634,7 +634,7 @@ def main():
 
             if config.verbose:
                 print "ACTION:",sut.prettyName(a[0])
-                
+                sys.stdout.flush()
             startOp = time.time()
             if config.quickAnalysis:
                 quickClassCounts[sut.actionClass(a)] += 1
