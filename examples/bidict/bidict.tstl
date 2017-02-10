@@ -13,6 +13,8 @@ pool: <int> 5
 pool: <string> 5
 pool: <tuple> 5
 
+pool: <updates> 5
+
 <int> := <[1..20]>
 
 <string> := ''
@@ -21,6 +23,9 @@ pool: <tuple> 5
 
 <tuple> := (<value>,<value>)
 <tuple> := (<value>,<value>,<value>)
+
+<updates> := []
+<updates>.append((<value>,<value>))
 
 <value> := <int>
 <value> := <string>
@@ -39,8 +44,10 @@ pool: <tuple> 5
 <value> in <bidict>.inv
 
 <bidict>.keys()
+<bidict>.inv.keys()
 
 <bidict>.values()
+<bidict>.inv.values()
 
 <bidict> == <bidict>
 <bidict> != <bidict>
@@ -48,8 +55,16 @@ pool: <tuple> 5
 {KeyError} <bidict>.pop(<value>) # UNSAFE
 <value,1> in <bidict,1> -> <bidict>.pop(<value>)
 
-
 {KeyError} del <bidict> [<value>] # UNSAFE
 <value,1> in <bidict,1> -> del <bidict> [<value>]
+
+<bidict>.forceput(<value>,<value>)
+<bidict>.inv.forceput(<value>,<value>)
+
+{ValueDuplicationError} <bidict>.update(<bidict>)
+{ValueDuplicationError} <bidict>.update(<updates>)
+
+<bidict>.forceupdate(<bidict>)
+<bidict>.forceupdate(<updates>)
 
 <bidict>.clear()
