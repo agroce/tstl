@@ -491,7 +491,7 @@ def main():
             elif l[0] == "*":       # include action multiple times
                 spos = l.find(" ")
                 times = int(l[1:spos]) 
-                originalCode[l[lspos:]] = fileLine 
+                originalCode[l[spos:]] = fileLine 
                 for n in xrange(0,times):
                     code.append(l[spos:])
             else:
@@ -1003,12 +1003,13 @@ def main():
             genCode.append(baseIndent + baseIndent + "assert " + postCode + "\n")
         genCode.append(baseIndent + baseIndent + "try: test_after_each(self)\n")
         genCode.append(baseIndent + baseIndent + "except: pass\n")
-        genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
-        for p in forVerbose:
-            genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-            genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print '=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + ")\n")                        
-            genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
+        if len(forVerbose) > 0:
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
+            for p in forVerbose:
+                genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print '=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + ")\n")                        
+                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
   
         if not config.nocover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov: self.__cov.stop(); self.__updateCov()\n")
@@ -1275,7 +1276,9 @@ def main():
         st += "copy.deepcopy(" + poolPrefix + p.replace("%","") + "),"
         st += "copy.deepcopy(" + poolPrefix + p.replace("%","") + "_used),"
     st = st[:-1]
-    genCode.append(st + ",copy.copy(self.__test)]\n")
+    if len(poolSet) > 0:
+        st += ","
+    genCode.append(st + "copy.copy(self.__test)]\n")
 
     genCode.append("def shallowState(self):\n")
     st = baseIndent + "return [ "
