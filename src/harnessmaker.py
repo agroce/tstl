@@ -885,10 +885,12 @@ def main():
         newC = newC.replace(":=","=")
         newC = newC.replace("~"+poolPrefix,poolPrefix)
 
+        interestingGuard = ""
         newCguard = ""
         if newC.find(" -> ") > -1:
             inlineGuardSplit = newC.split(" -> ")
             guardConds.append(inlineGuardSplit[0])
+            interestingGuard = inlineGuardSplit[0]
             newCguard = inlineGuardSplit[0]
             newC = inlineGuardSplit[1]
 
@@ -1067,6 +1069,10 @@ def main():
             guardCode += " and (" + newC.replace(")\n",",True))")
 
         genCode.append("def " + guard + "(self):\n")
+        if interestingGuard != "":
+            genCode.append(baseIndent + "'''\n")
+            genCode.append(baseIndent + prettyName(poolSet, interestingGuard) + "\n")
+            genCode.append(baseIndent + "'''\n")
         genCode.append(baseIndent + "return " + guardCode + "\n")
 
         genCode.append("\n")
