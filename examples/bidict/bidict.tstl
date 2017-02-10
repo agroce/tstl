@@ -1,0 +1,55 @@
+@from bidict import bidict
+@from bidict import ValueDuplicationError
+
+source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/_bidict.py
+source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/_common.py
+source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/util.py
+source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/compat.py
+
+pool: <bidict> 5
+pool: <value> 5
+
+pool: <int> 5
+pool: <string> 5
+pool: <tuple> 5
+
+<int> := <[1..20]>
+
+<string> := ''
+<string> += <['a'..'z']>
+<string> += <string>
+
+<tuple> := (<value>,<value>)
+<tuple> := (<value>,<value>,<value>)
+
+<value> := <int>
+<value> := <string>
+<value> := <tuple>
+
+<bidict> := bidict()
+<bidict> := <bidict>.copy()
+
+{ValueDuplicationError} <bidict> [<value>] = <value> # UNSAFE
+<value,2> not in <bidict,1>.inv -> <bidict> [<value>] = <value>
+
+{ValueDuplicationError} <bidict>.inv [<value>] = <value> # UNSAFE
+<value,2> not in <bidict,1> -> <bidict>.inv [<value>] = <value>
+
+<value> in <bidict>
+<value> in <bidict>.inv
+
+<bidict>.keys()
+
+<bidict>.values()
+
+<bidict> == <bidict>
+<bidict> != <bidict>
+
+{KeyError} <bidict>.pop(<value>) # UNSAFE
+<value,1> in <bidict,1> -> <bidict>.pop(<value>)
+
+
+{KeyError} del <bidict> [<value>] # UNSAFE
+<value,1> in <bidict,1> -> del <bidict> [<value>]
+
+<bidict>.clear()
