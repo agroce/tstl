@@ -287,6 +287,20 @@ def genGuard():
     return s
 
 
+def prettyName(pools, name):
+    newName = name
+    for pn in pools:
+        p = poolPrefix + pn.replace("%","")
+        pfind = newName.find(p+"[")
+        while pfind != -1:
+            closePos = newName.find("]",pfind)
+            index = newName[newName.find("[",pfind)+1:closePos]
+            access = newName[pfind:newName.find("]",pfind)+1]
+            newAccess = p.replace(poolPrefix,"") + index                
+            newName = newName.replace(access, newAccess)
+            pfind = newName.find(p+"[")
+    return newName
+
 def genInitialization():
     """
     Generate initialization from configuration, poolSet
@@ -947,6 +961,9 @@ def main():
             checkSig = re.sub('([^\(]+)\(', "\\1_check(__before_res, __after_res, ", expectCode, count=1)
 
         genCode.append("def " + act + "(self):\n")
+        genCode.append(baseIndent + "'''\n")
+        genCode.append(baseIndent + prettyName(poolSet,newC[:-1]) + "\n")
+        genCode.append(baseIndent + "'''\n")        
         d = "self.__test.append(("
         d += "'''" + newC[:-1] +" ''',"
         d += "self." + guard + ","
