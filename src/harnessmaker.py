@@ -491,14 +491,14 @@ def main():
                     
                         # commit point in a guarded function definition
                         outf.write(l.replace("%COMMIT%","if SPECULATIVE_CALL: return True"))
-                    m = re.match(r".*PRE%\((\S+)\)%.*",l)
+                    m = re.match(r".*PRE%\((.+)\)%.*",l)
                     while m:
                         anyPRE = True
                         pre_expr = m.groups()[0]
                         spre_expr = "'''" + pre_expr + "'''"
                         l = l.replace("PRE%(" + pre_expr + ")%", "__pre[" + spre_expr + "]", 1)
                         function_code = [(baseIndent + "__pre[" + spre_expr + "] = " + pre_expr + "\n")] + function_code
-                        m = re.match(r".*PRE%\((\S+)\)%.*",l)
+                        m = re.match(r".*PRE%\((.+)\)%.*",l)
                     function_code.append(l)                    
                 else:
                     outf.write(l)
@@ -908,7 +908,7 @@ def main():
 
         preSet = []
         if postCode:
-            m = re.match(r".*PRE%\((\S+)\)%.*",postCode)
+            m = re.match(r".*PRE%\((.+)\)%.*",postCode)
             while m:
                 pre_expr = m.groups()[0]
                 spre_expr = "'''" + pre_expr + "'''"
@@ -916,7 +916,7 @@ def main():
                 if preSet == []:
                     preSet.append("__pre = {}\n")
                 preSet.append("__pre[" + spre_expr + "] = " + pre_expr + "\n")
-                m = re.match(r".*PRE%\((\S+)\)%.*",postCode)
+                m = re.match(r".*PRE%\((.+)\)%.*",postCode)
             
         expectCode = None
         if newC.find(" ==> ") > -1:
