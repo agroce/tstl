@@ -48,7 +48,7 @@ def main():
     global timeout
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_reduce <test file> <output test file> [--noNormalize] [--noCheck] [--verbose verbosity] [--sandbox] [--timeout secs]"
+        print "Usage:  tstl_reduce <test file> <output test file> [--noCheck] [--noReduce] [--noAlpha] [--noNormalized] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
         print "Options:"
         print " --noCheck:      do not run property checks"
         print " --noReduce      do not reduce test (useful for normalizing an already reduced test)"

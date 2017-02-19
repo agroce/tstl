@@ -32,7 +32,7 @@ def parse_args():
                         help='Allow uncaught exceptions in actions.')
     parser.add_argument('--throughput', action='store_true',
                         help='Measure action throughput.')
-    parser.add_argument('-i', '--ignoreProps', action='store_true',
+    parser.add_argument('-i', '--noCheck', action='store_true',
                         help='Ignore properties.')
     parser.add_argument('-f', '--full', action='store_true',
                         help="Don't reduce -- report full failing test.")
@@ -102,7 +102,7 @@ def parse_args():
                         help="Repeat last action if still enabled with P = <stutter>.")
     parser.add_argument('-g', '--greedyStutter', action='store_true',
                         help="Repeat last action if it is enabled and improved coverage.")
-    parser.add_argument('-n', '--nocover', action='store_true',
+    parser.add_argument('-n', '--noCover', action='store_true',
                         help="Don't produce a coverage report at the end.")
     parser.add_argument('-I', '--internal', action='store_true',
                         help="Produce internal coverage report at the end, as sanity check on coverage.py results.")    
@@ -166,7 +166,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         bnew = sut.newCurrBranches()
         for b in bnew:
             print "NEW BRANCH",b
-        trep = sut.replay(test,catchUncaught=True,checkProp=(not config.ignoreProps))
+        trep = sut.replay(test,catchUncaught=True,checkProp=(not config.noCheck))
         sremove = []
         scov = sut.currStatements()
         for s in snew:
@@ -199,7 +199,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             else:
                 failProp = lambda x: sut.failsCheck(x,failure=f)
         if newCov:
-            failProp = sut.coversAll(snew,bnew,catchUncaught=True,checkProp=(not config.ignoreProps))
+            failProp = sut.coversAll(snew,bnew,catchUncaught=True,checkProp=(not config.noCheck))
         print "REDUCING..."
         startReduce = time.time()
         original = test
@@ -373,7 +373,7 @@ def collectExploitable():
 def printStatus(elapsed):
     global sut
     print "TEST #"+str(ntests),"("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),
-    if not config.nocover:
+    if not config.noCover:
         print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
     else:
         print
@@ -430,7 +430,7 @@ def main():
             if fn >= quickCount:
                 quickCount = fn + 1
             t = sut.loadTest(f)
-            sut.replay(t,catchUncaught=True,checkProp=(not config.ignoreProps))
+            sut.replay(t,catchUncaught=True,checkProp=(not config.noCheck))
         print "EXECUTION TIME:",time.time()-sqrtime
         print "BRANCH COVERAGE:",len(sut.allBranches())
         print "STATEMENT COVERAGE:",len(sut.allStatements())        
@@ -652,7 +652,7 @@ def main():
                 print "SUT WARNING:",sut.warning()            
             if tryStutter:
                 print "DONE STUTTERING"
-            if (stepOk or config.uncaught) and config.ignoreProps and (config.exploit != None):
+            if (stepOk or config.uncaught) and config.noCheck and (config.exploit != None):
                 collectExploitable()                
             if (not config.uncaught) and (not stepOk):
                 testFailed = True
@@ -662,7 +662,7 @@ def main():
                 break
             
             startCheck = time.time()
-            if not config.ignoreProps:
+            if not config.noCheck:
                 checkResult = sut.check()
                 checkTime += time.time()-startCheck
                 if checkResult and (stepOk or config.uncaught) and (config.exploit != None):
@@ -876,7 +876,7 @@ def main():
     if config.total:
         fulltest.close()
         
-    if not config.nocover:
+    if not config.noCover:
         sut.restart()
         print sut.report(config.coverfile),"PERCENT COVERED"
 
@@ -976,7 +976,7 @@ def main():
     print nops, "TOTAL TEST OPERATIONS"
     print opTime, "TIME SPENT EXECUTING TEST OPERATIONS"
     print guardTime, "TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS"
-    if not config.ignoreProps:
+    if not config.noCheck:
         print checkTime, "TIME SPENT CHECKING PROPERTIES"
         print (opTime + checkTime), "TOTAL TIME SPENT RUNNING SUT"
     print restartTime, "TIME SPENT RESTARTING"
@@ -1056,7 +1056,7 @@ def main():
             if scoresB[b] > 0.0:
                 print b, scoresB[b]            
             
-    if not config.nocover:
+    if not config.noCover:
         print len(sut.allBranches()),"BRANCHES COVERED"
         print len(sut.allStatements()),"STATEMENTS COVERED"
 
