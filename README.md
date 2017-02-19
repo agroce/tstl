@@ -86,8 +86,8 @@ Using TSTL
 TSTL installs a few standard tools: the TSTL compiler itself, `tstl` (technically all
 you really need to do something useful); a random tester generator
 `tstl_rt`; a tool for producing standalone tests, `tstl_standalone`;
-a tool for replaying TSTL test files `tstl_replay`; and a tool for
-delta-debugging and normalization of TSTL tests, `tstl_reduce`.  The
+a tool for replaying TSTL test files `tstl_replay`; a tool for
+delta-debugging and normalization of TSTL tests, `tstl_reduce`; and a tool for running a set of tests as a regression, `tstl_regress`.  The
 `tstl_reduce` tool is not essential, since the random tester performs
 delta debugging and alpha conversion by default (you have to add
 `--normalize` to also get normalization of tests, however).
