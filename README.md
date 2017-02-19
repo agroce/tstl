@@ -380,6 +380,8 @@ The currtest.test and fulltest.test files work just like normal TSTL files, and 
 
 What about tests that fail by entering an infinite loop?  The same technique as is used for crashes works.  However, you need to run `tstl_rt` with a time limit (using ulimit if you are on UNIX-like systems, for example).  The `tstl_reduce` utility provides a `--timeout` argument to handle such tests, but this only works on systems supporting ulimit, for now.  In very rare cases, you might have a test execution lock up because, for example, the failure causes a read from standard input.  If you hit this, contact me.
 
+Finally, how do you integrate TSTL testing with more conventional approaches, e.g., pytest?  The file `test_tstl_regressions.py` in the examples directory shows one way.  If you add all your TSTL tests of interest to a `tstl_tests` directory under the directory where `sut.py` lives, you can make pytest run all your TSTL tests.  More interestingly, you can easily augment this with a wrapper that calls tstl_rt and has pytest run a few seconds or minutes of random testing, with whatever configuration you desire.
+
 Developer Info
 --------------
 
