@@ -55,7 +55,7 @@ might be to examine the examples directory and see real TSTL test
 harnesses.  The generators directory includes some simple but useful
 testing tools for finding bugs in systems defined in TSTL.  Only the
 random tester is extensively tested and supports all TSTL features
-well at this point.  Reading generators/randomtester.py provides
+well at this point.  Reading src/randomtester.py provides
 considerable guidance in how to (efficiently) use TSTL in a generic
 testing tool, with TSTL providing an interface to the underlying
 application/library to be tested.
@@ -83,11 +83,15 @@ date.
 Using TSTL
 ------------
 
+TSTL provides three standard tools: the TSTL compiler itself, `tstl` (technically all
+you really need to do something useful), a random tester generator,
+`tstl_rt`, and a tool for producing standalone tests, `tstl_standalone`.
+
 The simplest usage is to go to a directory with a .tstl file, and
 type:
 
     tstl mytstlfile.tstl
-    python <tstl-root>/generators/randomtester.py
+    tstl_rt
 
 The first line compiles mytstlfile.tstl and produces sut.py, which the
 random tester will automatically import and test.  Both tstl and the
@@ -132,7 +136,7 @@ can no longer find it.
 
 If we test this (or avlnew.tstl) for 30 seconds, something like this will appear:
 
-    ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30
+    ~/tstl/examples/AVL$ tstl_rt --timeout 30
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
       12 [2:0]
     -- < 2 [1:0]
@@ -170,7 +174,7 @@ actions in each individual test (e.g., insert but no delete, or find
 but no inorder traversals) (see
 http://www.cs.cmu.edu/~agroce/issta12.pdf).
 
-    ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30 --swarm
+    ~/tstl/examples/AVL$ tstl_rt --timeout 30 --swarm
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=True, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
       11 [2:0]
     -- < 7 [1:0]
@@ -185,7 +189,7 @@ introduce a bug by removing the `self.rebalance()` call on line 205 of
 avl.py, either method will quickly report a failing test case,
 automatically reduced:
         
-    ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30
+    ~/tstl/examples/AVL$ tstl_rt --timeout 30
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
     PROPERLY VIOLATION
     ERROR: (<type 'exceptions.AssertionError'>, AssertionError(), <traceback object at 0x10ca2ce60>)
@@ -242,10 +246,10 @@ Using `--output`, the failing test can be saved to a file, and with the `standal
 utility, converted into a completely standalone test case that does
 not require TSTL itself.
 
-    ~/tstl/examples/AVL$ python ~/tstl/generators/randomtester.py --timeout 30 --output failure.test
+    ~/tstl/examples/AVL$ tstl_rt --timeout 30 --output failure.test
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
     ...
-    ~/tstl/examples/AVL$ python ~/tstl/utilities/standalone.py failure.test sut.py failure.py --check
+    ~/tstl/examples/AVL$ tstl_standalone failure.test sut.py failure.py --check
 	~/tstl/examples/AVL$ python failure.py
     Traceback (most recent call last):
       File "failure.py", line 98, in <module>
@@ -259,8 +263,7 @@ Developer Info
 --------------
 
 There are no developer docs yet, which will hopefully change in the future.
-The best shakedown test for tstl is to compile and run (using
-generators/randomtester.py) the AVL
+The best shakedown test for tstl is to compile and run (using `tstl_rt`) the AVL
 example.  Removing any call to the balancing function in the avl.py
 code should cause TSTL to produce a failing test case.
 
