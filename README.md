@@ -371,6 +371,14 @@ not require TSTL itself.
         assert avl2.check_balanced()
     AssertionError
 
+The final useful hint for getting started is that sometimes you may want to test something
+(for example, a library implemented in C) where failing tests crash the Python interpreter.  This is possible,
+but requires some effort.  First, run `tstl_rt` with the `--replayable` option.  This causes the generator to
+keep a file, currtest.test, in the directory that holds the current test.  If the random tester crashes, this will hold the test up to and including the action that caused the crash.  In a few rare cases, the behavior of past tests is also relevant to a crash (reloading the module does not really reset state of the system -- e.g., interacting with hardware).  For these cases, use `--total` and look at the file fulltest.test, which contains ALL actions ever performed by the random tester.
+
+The currtest.test and fulltest.test files work just like normal TSTL files, and can be replayed with the replay utility or turned into standalone files.  However, for test reduction and normalization to work correctly, they must be reduced by passing the `--sandbox` argument to `tstl_reduce`.
+
+What about tests that fail by entering an infinite loop?  The same technique as is used for crashes works.  However, you need to run `tstl_rt` with a time limit (using ulimit if you are on UNIX-like systems, for example).  The `tstl_reduce` utility provides a `--timeout` argument to handle such tests, but this only works on systems supporting ulimit, for now.  In very rare cases, you might have a test execution lock up because, for example, the failure causes a read from standard input.  If you hit this, contact me.
 
 Developer Info
 --------------
