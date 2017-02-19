@@ -195,60 +195,160 @@ introduce a bug by removing the `self.rebalance()` call on line 205 of
 avl.py, either method will quickly report a failing test case,
 automatically reduced:
         
-    ~/tstl/examples/AVL$ tstl_rt --timeout 30
-    Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
-    PROPERLY VIOLATION
-    ERROR: (<type 'exceptions.AssertionError'>, AssertionError(), <traceback object at 0x10ca2ce60>)
-    TRACEBACK:
-      File "/Users/alexgroce/tstl/examples/avl/sut.py", line 5998, in check
-        assert self.p_avl[2].check_balanced()
-    Original test has 32 steps
-    REDUCING...
-    Reduced test has 11 steps
-    REDUCED IN 1.51964116096 SECONDS
-    int0 = 7                                                                 # STEP 0
-    int3 = 16                                                                # STEP 1
-    int2 = 2                                                                 # STEP 2
-    avl2 = avl.AVLTree()                                                     # STEP 3
-    avl2.insert(int0)                                                        # STEP 4
-    avl2.insert(int3)                                                        # STEP 5
-    int3 = 2                                                                 # STEP 6
-    avl2.insert(int3)                                                        # STEP 7
-    int3 = 14                                                                # STEP 8
-    avl2.insert(int3)                                                        # STEP 9
-    avl2.delete(int2)                                                       # STEP 10
+	~/tstl/examples/AVL$ tstl_rt --timeout 30
+	Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', uniqueValuesAnalysis=False, normalize=False, silentFail=False, noAlphaConvert=False, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', swarm=False, internal=False, total=False, progress=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, timedProgress=30, relax=False, swarmP=0.5, stutter=None, highLowSwarm=None, readQuick=False, verboseActions=False, running=False, ignoreProps=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, computeFeatureStats=False, logging=None, html=None, keep=False, noExceptionMatch=False, depth=100, showActions=False, throughput=False, timeout=30, output='failure.26816.test', markov=None, startExploit=0)
+	  11 [2:0]
+	-- < 8 [1:0]
+	---- < 4 [0:0] L
+	---- > 9 [0:0] L
+	-- > 18 [1:1]
+	---- < 15 [0:0] L
+	set([4, 8, 9, 11, 15, 18])
+	PROPERLY VIOLATION
+	ERROR: (<type 'exceptions.AssertionError'>, AssertionError(), <traceback object at 0x1032bf4d0>)
+	TRACEBACK:
+	  File "/Users/alex/tstl/examples/AVL/sut.py", line 7960, in check
+	    assert self.p_avl[0].check_balanced()
+	Original test has 98 steps
+	REDUCING...
+	Failed to reduce, increasing granularity to 4
+	Reduced test length to 73
+	Failed to reduce, increasing granularity to 4
+	Reduced test length to 55
+	Failed to reduce, increasing granularity to 4
+	Reduced test length to 41
+	Failed to reduce, increasing granularity to 4
+	Reduced test length to 31
+	Failed to reduce, increasing granularity to 4
+	Reduced test length to 24
+	Failed to reduce, increasing granularity to 4
+	Failed to reduce, increasing granularity to 8
+	Reduced test length to 20
+	Failed to reduce, increasing granularity to 4
+	Failed to reduce, increasing granularity to 8
+	Reduced test length to 17
+	Failed to reduce, increasing granularity to 4
+	Failed to reduce, increasing granularity to 8
+	Reduced test length to 14
+	Failed to reduce, increasing granularity to 4
+	Failed to reduce, increasing granularity to 8
+	Reduced test length to 13
+	Failed to reduce, increasing granularity to 4
+	Failed to reduce, increasing granularity to 8
+	Reduced test length to 11
+	Failed to reduce, increasing granularity to 4
+	Failed to reduce, increasing granularity to 8
+	Failed to reduce, increasing granularity to 11
+	Reduced test has 11 steps
+	REDUCED IN 1.02356314659 SECONDS
+	Alpha converting test...
+	int0 = 1                                                                 # STEP 0
+	avl0 = avl.AVLTree()                                                     # STEP 1
+	avl0.insert(int0)                                                        # STEP 2
+	int0 = 6                                                                 # STEP 3
+	avl0.insert(int0)                                                        # STEP 4
+	int0 = 8                                                                 # STEP 5
+	avl0.insert(int0)                                                        # STEP 6
+	int1 = 20                                                                # STEP 7
+	avl0.insert(int1)                                                        # STEP 8
+	int1 = 1                                                                 # STEP 9
+	avl0.delete(int1)                                                       # STEP 10
 
-    FINAL VERSION OF TEST, WITH LOGGED REPLAY:
-    int0 = 7                                                                 # STEP 0
-    int3 = 16                                                                # STEP 1
-    int2 = 2                                                                 # STEP 2
-    avl2 = avl.AVLTree()                                                     # STEP 3
-    avl2.insert(int0)                                                        # STEP 4
-    avl2.insert(int3)                                                        # STEP 5
-    int3 = 2                                                                 # STEP 6
-    avl2.insert(int3)                                                        # STEP 7
-    int3 = 14                                                                # STEP 8
-    avl2.insert(int3)                                                        # STEP 9
-    avl2.delete(int2)                                                       # STEP 10
-    ERROR: (<type 'exceptions.AssertionError'>, AssertionError(), <traceback object at 0x10cc28290>)
-    TRACEBACK:
-      File "/Users/alexgroce/tstl/examples/avl/sut.py", line 5998, in check
-        assert self.p_avl[2].check_balanced()
-    STOPPING TESTING DUE TO FAILED TEST
-    70.1923076923 PERCENT COVERED
-    1.69284701347 TOTAL RUNTIME
-    2 EXECUTED
-    132 TOTAL TEST OPERATIONS
-    0.0442249774933 TIME SPENT EXECUTING TEST OPERATIONS
-    0.00354051589966 TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS
-    0.0838589668274 TIME SPENT CHECKING PROPERTIES
-    0.128083944321 TOTAL TIME SPENT RUNNING SUT
-    0.00327777862549 TIME SPENT RESTARTING
-    1.51979422569 TIME SPENT REDUCING TEST CASES
-    192 BRANCHES COVERED
-    146 STATEMENTS COVERED
+	SAVING TEST AS failure.26816.test
+	FINAL VERSION OF TEST, WITH LOGGED REPLAY:
+	int0 = 1                                                                 # STEP 0
+	ACTION: int0 = 1 
+	int0 = None : <type 'NoneType'>
+	=> int0 = 1 : <type 'int'>
+	==================================================
+	avl0 = avl.AVLTree()                                                     # STEP 1
+	ACTION: avl0 = avl.AVLTree() 
+	avl0 = None : <type 'NoneType'>
+	avl_REF0 = None : <type 'NoneType'>
+	=> avl0 = <avlbug2.AVLTree instance at 0x10311edd0> : <type 'instance'>
+	REFERENCE ACTION: avl_REF0 = set()
+	=> avl_REF0 = set([]) : <type 'set'>
+	==================================================
+	avl0.insert(int0)                                                        # STEP 2
+	ACTION: avl0.insert(int0) 
+	int0 = 1 : <type 'int'>
+	avl0 = <avlbug2.AVLTree instance at 0x10311edd0> : <type 'instance'>
+	avl_REF0 = set([]) : <type 'set'>
+	REFERENCE ACTION: avl_REF0.add(int0)
+	=> avl_REF0 = set([1]) : <type 'set'>
+	==================================================
+	int0 = 6                                                                 # STEP 3
+	ACTION: int0 = 6 
+	int0 = 1 : <type 'int'>
+	=> int0 = 6 : <type 'int'>
+	==================================================
+	avl0.insert(int0)                                                        # STEP 4
+	ACTION: avl0.insert(int0) 
+	int0 = 6 : <type 'int'>
+	avl0 = <avlbug2.AVLTree instance at 0x10311edd0> : <type 'instance'>
+	avl_REF0 = set([1]) : <type 'set'>
+	REFERENCE ACTION: avl_REF0.add(int0)
+	=> avl_REF0 = set([1, 6]) : <type 'set'>
+	==================================================
+	int0 = 8                                                                 # STEP 5
+	ACTION: int0 = 8 
+	int0 = 6 : <type 'int'>
+	=> int0 = 8 : <type 'int'>
+	==================================================
+	avl0.insert(int0)                                                        # STEP 6
+	ACTION: avl0.insert(int0) 
+	int0 = 8 : <type 'int'>
+	avl0 = <avlbug2.AVLTree instance at 0x10311edd0> : <type 'instance'>
+	avl_REF0 = set([1, 6]) : <type 'set'>
+	REFERENCE ACTION: avl_REF0.add(int0)
+	=> avl_REF0 = set([8, 1, 6]) : <type 'set'>
+	==================================================
+	int1 = 20                                                                # STEP 7
+	ACTION: int1 = 20 
+	int1 = None : <type 'NoneType'>
+	=> int1 = 20 : <type 'int'>
+	==================================================
+	avl0.insert(int1)                                                        # STEP 8
+	ACTION: avl0.insert(int1) 
+	int1 = 20 : <type 'int'>
+	avl0 = <avlbug2.AVLTree instance at 0x10311edd0> : <type 'instance'>
+	avl_REF0 = set([8, 1, 6]) : <type 'set'>
+	REFERENCE ACTION: avl_REF0.add(int1)
+	=> avl_REF0 = set([8, 1, 20, 6]) : <type 'set'>
+	==================================================
+	int1 = 1                                                                 # STEP 9
+	ACTION: int1 = 1 
+	int1 = 20 : <type 'int'>
+	=> int1 = 1 : <type 'int'>
+	==================================================
+	avl0.delete(int1)                                                       # STEP 10
+	ACTION: avl0.delete(int1) 
+	int1 = 1 : <type 'int'>
+	avl0 = <avlbug2.AVLTree instance at 0x10311edd0> : <type 'instance'>
+	avl_REF0 = set([8, 1, 20, 6]) : <type 'set'>
+	REFERENCE ACTION: avl_REF0.discard(int1)
+	=> avl_REF0 = set([8, 20, 6]) : <type 'set'>
+	==================================================
+	ERROR: (<type 'exceptions.AssertionError'>, AssertionError(), <traceback object at 0x10369c128>)
+	TRACEBACK:
+	  File "/Users/alex/tstl/examples/AVL/sut.py", line 7960, in check
+	    assert self.p_avl[0].check_balanced()
+	STOPPING TESTING DUE TO FAILED TEST
+	79.552715655 PERCENT COVERED
+	2.22598695755 TOTAL RUNTIME
+	15 EXECUTED
+	1498 TOTAL TEST OPERATIONS
+	0.408244371414 TIME SPENT EXECUTING TEST OPERATIONS
+	0.0258889198303 TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS
+	0.706946611404 TIME SPENT CHECKING PROPERTIES
+	1.11519098282 TOTAL TIME SPENT RUNNING SUT
+	0.00753235816956 TIME SPENT RESTARTING
+	1.03021097183 TIME SPENT REDUCING TEST CASES
+	220 BRANCHES COVERED
+	164 STATEMENTS COVERED
 
-Using `--output`, the failing test can be saved to a file, and with the `standalone.py`
+
+Using `--output`, the failing test can be saved to a named file, and with the `standalone.py`
 utility, converted into a completely standalone test case that does
 not require TSTL itself.
 
