@@ -10,14 +10,26 @@ import sut as SUT
 
 def main():
 
+    if "--help" in sys.argv:
+        print "Usage:  tstl_standalone <test file> <output Python file> [<sut file>]"
+        print "  default for <sut file> is sut.py"
+        print "Options:"
+        print " --noCheck:      do not include property checks"
+        print " --noRefs:       do not include reference actions"
+        print " --regression:   produce a regression test that captures values"
+        print " --verbose:      produce a verbose test that shows actions taken"
+        sys.exit(0)
+    
     testFile = sys.argv[1]
-    sutFile = sys.argv[2]
-    outFile = sys.argv[3]
+    outFile = sys.argv[2]
+    if (len(sys.argv) > 3) and (".py" in sys.argv[3]):
+        sutFile = sys.argv[3]
+    else:
+        sutFile = "sut.py"
 
-    checkProps = "--check" in sys.argv
-    checkRefs = "--refs" in sys.argv
+    checkProps = not "--noCheck" in sys.argv
+    checkRefs = not "--noRefs" in sys.argv
     makeRegression = "--regression" in sys.argv
-    onlyInAction = "--inActon" in sys.argv
     verbose = "--verbose" in sys.argv
 
     t = SUT.sut()

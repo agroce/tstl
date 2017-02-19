@@ -249,7 +249,7 @@ not require TSTL itself.
     ~/tstl/examples/AVL$ tstl_rt --timeout 30 --output failure.test
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
     ...
-    ~/tstl/examples/AVL$ tstl_standalone failure.test sut.py failure.py --check
+    ~/tstl/examples/AVL$ tstl_standalone failure.test failure.py
 	~/tstl/examples/AVL$ python failure.py
     Traceback (most recent call last):
       File "failure.py", line 98, in <module>
