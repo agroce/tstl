@@ -193,7 +193,9 @@ Here, the method is not very important; simple random testing does a
 decent job covering the AVL tree code in just 60 seconds.  If we
 introduce a bug by removing the `self.rebalance()` call on line 205 of
 avl.py, either method will quickly report a failing test case,
-automatically reduced:
+automatically reduced.  By default, the random tester will run the test
+in a verbose mode to show in more detail what happens during the execution
+that causes a failure.
         
 	~/tstl/examples/AVL$ tstl_rt --timeout 30
 	Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', uniqueValuesAnalysis=False, normalize=False, silentFail=False, noAlphaConvert=False, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', swarm=False, internal=False, total=False, progress=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, timedProgress=30, relax=False, swarmP=0.5, stutter=None, highLowSwarm=None, readQuick=False, verboseActions=False, running=False, ignoreProps=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, computeFeatureStats=False, logging=None, html=None, keep=False, noExceptionMatch=False, depth=100, showActions=False, throughput=False, timeout=30, output='failure.26816.test', markov=None, startExploit=0)
