@@ -83,9 +83,14 @@ date.
 Using TSTL
 ------------
 
-TSTL provides three standard tools: the TSTL compiler itself, `tstl` (technically all
+TSTL installs a few standard tools: the TSTL compiler itself, `tstl` (technically all
 you really need to do something useful), a random tester generator,
-`tstl_rt`, and a tool for producing standalone tests, `tstl_standalone`.
+`tstl_rt`, a tool for producing standalone tests, `tstl_standalone`,
+a tool for replaying TSTL test files, `tstl_replay`, and a tool for
+delta-debugging and normalization of TSTL tests, `tstl_reduce`.  The
+`tstl_reduce` tool is not essential, since the random tester performs
+delta debugging and alpha conversion by default (you have to add
+`--normalize` to also get normalization of tests, however).
 
 The simplest usage is to go to a directory with a .tstl file, and
 type:

@@ -19,6 +19,8 @@ setup(
     tstl = src.harnessmaker:main
     tstl_rt = src.randomtester:main
     tstl_standalone = src.standalone:main
+    tstl_replay = src.replay:main
+    tstl_reduce = src.reduce:main
     """,
     keywords='testing tstl',
     classifiers=[
