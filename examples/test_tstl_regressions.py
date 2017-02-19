@@ -3,6 +3,7 @@ import glob
 import traceback
 import sut as SUT
 import sys
+import subprocess
 
 def test_tstl_regressions():
     sut = SUT.sut()
@@ -36,3 +37,7 @@ def test_tstl_regressions():
     print passCount,"TESTS PASSED,",failCount,"TESTS FAILED"
     assert failCount == 0
         
+def test_random_testing():
+    print "RANDOM TESTING:"
+    r = subprocess.call(["tstl_rt","--timeout","60"])
+    assert (r == 0)

@@ -1060,6 +1060,11 @@ def main():
         print len(sut.allBranches()),"BRANCHES COVERED"
         print len(sut.allStatements()),"STATEMENTS COVERED"
 
+    if failCount == 0:
+        sys.exit(0)
+    else:
+        sys.exit(255)
+
 if __name__ == '__main__':
     main()
 
