@@ -10,7 +10,7 @@ def test_tstl_regressions():
     failCount = 0
     passCount = 0
     
-    for f in glob.glob("regressions/*.test"):
+    for f in glob.glob("tstl_tests/*.test"):
         print
         print "*"*50
         print
