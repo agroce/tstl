@@ -273,11 +273,12 @@ def handle_failure(test, msg, checkFail, newCov = False):
     if config.failedLogging != None:
         sut.setLog(config.failedLogging)
     print
+    print "SAVING TEST AS",outname
+    sut.saveTest(test,outname)
     print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
     if not config.silentFail:
         sut.verbose(True)
     i = 0
-    sut.saveTest(test,outname)
     sut.restart()
     for s in test:
         steps = "# STEP " + str(i)
