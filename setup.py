@@ -17,6 +17,8 @@ setup(
     entry_points="""
     [console_scripts]
     tstl = src.harnessmaker:main
+    tstl_rt = src.randomtester:main
+    tstl_standalone = src.standalone:main
     """,
     keywords='testing tstl',
     classifiers=[
