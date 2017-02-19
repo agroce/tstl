@@ -67,6 +67,9 @@ def prettyName(self, name):
 def actOrder(self, action):
     return self.__orderings[action[0]]
 
+def pools(self):
+    return self.__pools
+
 def prettyPrintTest(self, test, columns=80):
     i = 0
     for (s,_,_) in test:
@@ -1229,7 +1232,7 @@ def alphaConvert(self, test):
                 if count[basep] < int(n):
                     p1new = p
                     p2new = p.replace(n,str(count[basep]))
-                    print "REPLACING",p1new,"WITH",p2new
+                    #print "REPLACING",p1new,"WITH",p2new
                     newTest = map(lambda x: x[0].replace(p1new,"!!P1NEW!!"), test)
                     newTest = map(lambda x: x.replace(p2new,p1new), newTest)
                     newTest = map(lambda x: x.replace("!!P1NEW!!",p2new), newTest)
