@@ -156,7 +156,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         f = sut.failure()
         print "ERROR:",f
         print "TRACEBACK:"
-        traceback.print_tb(f[2])
+        traceback.print_tb(f[2],file=sys.stdout)
         sut.saveTest(test,config.output.replace(".test",".full.test"))
     else:
         print "Handling new coverage for quick testing"
@@ -303,7 +303,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if f != None:
             print "ERROR:",f
             print "TRACEBACK:"
-            traceback.print_tb(f[2])
+            traceback.print_tb(f[2],file=sys.stdout)
         else:
             print "NO FAILURE!"
     sys.stdout.flush()
@@ -994,7 +994,7 @@ def main():
             if err != None:
                 print "ERROR:", err
                 print "TRACEBACK:"
-                traceback.print_tb(err[2])
+                traceback.print_tb(err[2],file=sys.stdout)
         i = -1
         if config.compareFails: # Comparison feature normally not useful, just for researching normalization
             for test1 in failures:
