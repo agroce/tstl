@@ -57,16 +57,17 @@ def main():
                 if not stepOk:
                     print "FAILED STEP"
                     print t.failure()
-                    traceback.print_tb(t.failure()[2])
-                    sys.exit(1)
+                    traceback.print_tb(t.failure()[2],file=sys.stdout)
+                    sys.exit(255)
             if not nocheck:
                 checkResult = t.check()
                 if not checkResult:
                     print "FAILED PROPERTY"
                     print t.failure()
-                    traceback.print_tb(t.failure()[2])
-                    sys.exit(1)                
+                    traceback.print_tb(t.failure()[2],file=sys.stdout)
+                    sys.exit(255)                
         i += 1
 
     rout.write("TEST REPLAYED SUCCESSFULLY\n")
     rout.close()
+    sys.exit(0)
