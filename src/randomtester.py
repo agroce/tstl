@@ -18,118 +18,118 @@ import sut as SUT
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--depth', type=int, default=100,
-                        help='Maximum search depth (100 default).')
     parser.add_argument('-t', '--timeout', type=int, default=3600,
                         help='Timeout in seconds (3600 default).')
     parser.add_argument('-s', '--seed', type=int, default=None,
-                        help='Random seed (default = None).')
-    parser.add_argument('--showActions', action='store_true',
-                        help="Show actions as they run")
-    parser.add_argument('-m', '--maxtests', type=int, default=-1,
-                        help='Maximum #tests to run (-1 = infinite default).')
-    parser.add_argument('-u', '--uncaught', action='store_true',
-                        help='Allow uncaught exceptions in actions.')
-    parser.add_argument('--throughput', action='store_true',
-                        help='Measure action throughput.')
-    parser.add_argument('-i', '--noCheck', action='store_true',
-                        help='Ignore properties.')
-    parser.add_argument('-f', '--full', action='store_true',
-                        help="Don't reduce -- report full failing test.")
-    parser.add_argument('-N', '--normalize', action='store_true',
-                        help="Normalize/simplify after reduction.")
-    parser.add_argument('--noAlphaConvert', action='store_true',
-                        help="Alpha convert tests.")    
-    parser.add_argument('-E', '--essentials', action='store_true',
-                        help="Determine essential elements in failing test.")
-    parser.add_argument('-G', '--generalize', action='store_true',
-                        help="Generalize tests.")
-    parser.add_argument('--verboseActions', action='store_true',
-                        help="Make test actions verbose.")
-    parser.add_argument('--silentFail', action='store_true',
-                        help="Don't make failure replays verbose.")        
-    parser.add_argument('-D', '--gendepth', type=int, default=None,
-                        help = "Generalization depth for cloud overlap comparisons (default = None).")
-    parser.add_argument('-e', '--speed', type=str, default="FAST",
-                        help='Normalization/simplification speed (default = FAST).')    
-    parser.add_argument('-k', '--keep', action='store_true',
-                        help="Keep last action the same when reducing.")
-    parser.add_argument('-K', '--markov', type=str, default=None,
-                        help="Guide testing by a Markov model.")
-    parser.add_argument('-o', '--output', type=str, default="failure."+str(os.getpid())+".test",
-                        help="Filename to save failing test(s).")
-    parser.add_argument('-R', '--replayable', action='store_true',
-                        help="Keep replayable file of current test, in case of crash.")
-    parser.add_argument('-T', '--total', action='store_true',
-                        help="Keep a file with ALL TESTING ACTIONS in case of crash.")
-    parser.add_argument('-M', '--multiple', action='store_true',
-                        help="Allow multiple failures.")
-    parser.add_argument('-O', '--localize', action='store_true',
-                        help="Produce fault localization (Ochai formula) if there are any failing tests.")
-    parser.add_argument('-p', '--profile', action='store_true',
-                        help="Profile actions.")    
+                        help='Random seed (default = None).')    
+    parser.add_argument('-d', '--depth', type=int, default=100,
+                        help='Maximum search depth (100 default).')
     parser.add_argument('-w', '--swarm', action='store_true',
                         help="Turn on standard swarm testing.")
+    parser.add_argument('-r', '--running', action='store_true',
+                        help="Produce running branch coverage report.")    
+    parser.add_argument('--normalize', action='store_true',
+                        help="Normalize/simplify after reduction.")
+    parser.add_argument('--generalize', action='store_true',
+                        help="Generalize tests.")
+    parser.add_argument('-n', '--noCover', action='store_true',
+                        help="Don't produce a coverage report at the end.")
+    parser.add_argument('--html', type=str, default=None,
+                        help="Write HTML report (directory to write to, None/no html report by default).")    
+    parser.add_argument('-m', '--maxtests', type=int, default=-1,
+                        help='Maximum #tests to run (-1 = infinite default).')
+    parser.add_argument('-o', '--output', type=str, default="failure."+str(os.getpid())+".test",
+                        help="Filename to save failing test(s).")
+    parser.add_argument('-M', '--multiple', action='store_true',
+                        help="Allow multiple failures.")
+    parser.add_argument('--replayable', action='store_true',
+                        help="Keep replayable file of current test, in case of crash.")
+    parser.add_argument('--total', action='store_true',
+                        help="Keep a file with ALL TESTING ACTIONS in case of crash.")    
+    parser.add_argument('--noCheck', action='store_true',                            
+                        help='Do not check properties.')
+    parser.add_argument('--uncaught', action='store_true',
+                        help='Allow uncaught exceptions in actions.')
+    parser.add_argument('-q', '--quickTests', action='store_true',
+                        help="Produce quick tests for coverage (save a test for each newly reached coverage target).")
+    parser.add_argument('--readQuick', action='store_true',
+                        help="Read existing quick tests (and add to them if producing quick tests).")        
+    parser.add_argument('--localize', action='store_true',
+                        help="Produce fault localization (Ochai formula) if there are any failing tests.")
+    parser.add_argument('--full', action='store_true',
+                        help="Don't reduce -- report full failing test.")
+    parser.add_argument('-l', '--logging', type=int, default=None,
+                        help="Set logging level")
+    parser.add_argument('--failedLogging', type=int, default=None,
+                        help="Set failed test case logging level")        
     parser.add_argument('--progress', action='store_true',
                         help="Turn on progress report.")
     parser.add_argument('--timedProgress', type=int, default=30,
-                        help="Turn on progress reports at x second intervals (default = 30 seconds).")    
+                        help="Turn on progress reports at x second intervals (default = 30 seconds).")        
+    parser.add_argument('-k', '--keep', action='store_true',
+                        help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument('--swarmP', type=float, default=0.5,
                         help="Swarm inclusion probability.")
     parser.add_argument('--computeFeatureStats', action="store_true",
                         help="When using swarm testing, compute coverage triggers and suppressors")
     parser.add_argument('--highLowSwarm', type=float, default=None,
                         help="Apply high/low probability swarm testing with high portion of action being P.")
-    parser.add_argument('-P', '--swarmProbs', type=str, default=None,
-                        help="File with probabilities for any kind of swarm.")    
-    parser.add_argument('-L', '--relax', action='store_true',
-                        help="Use relaxed semantics.")
-    parser.add_argument('-W', '--swarmSwitch', type=int, default=None,
+    parser.add_argument('--swarmProbs', type=str, default=None,
+                        help="File with probabilities for any kind of swarm.")
+    parser.add_argument('--swarmSwitch', type=int, default=None,
                         help="How many times to switch swarm config during each test.")
     parser.add_argument('--swarmLength', type=int, default=None,
-                        help="How long a swarm config persists.")
-    parser.add_argument('-l', '--logging', type=int, default=None,
-                        help="Set logging level")
-    parser.add_argument('-F', '--failedLogging', type=int, default=None,
-                        help="Set failed test case logging level")    
-    parser.add_argument('-r', '--running', action='store_true',
-                        help="Produce running branch coverage report.")
-    parser.add_argument('-C', '--compareFails', action='store_true',
-                        help="Compare all failing tests.")
-    parser.add_argument('--noExceptionMatch', action='store_true',
-                        help="Do not force exceptions in reduced / normalized failures to match.")    
-    parser.add_argument('-S', '--stutter', type=float, default=None,
-                        help="Repeat last action if still enabled with P = <stutter>.")
-    parser.add_argument('-g', '--greedyStutter', action='store_true',
-                        help="Repeat last action if it is enabled and improved coverage.")
-    parser.add_argument('-n', '--noCover', action='store_true',
-                        help="Don't produce a coverage report at the end.")
-    parser.add_argument('-I', '--internal', action='store_true',
-                        help="Produce internal coverage report at the end, as sanity check on coverage.py results.")    
-    parser.add_argument('-c', '--coverfile', type=str, default="coverage.out",
-                        help="File to write coverage report to ('coverage.out' default).")
-    parser.add_argument('-q', '--quickTests', action='store_true',
-                        help="Produce quick tests for coverage.")
-    parser.add_argument('--readQuick', action='store_true',
-                        help="Read existing quick tests (and add to them if producing quick tests).")    
+                        help="How long a swarm config persists (only relevant with --swarmSwitch).")    
+    parser.add_argument('--markov', type=str, default=None,
+                        help="Guide testing by a Markov model.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
     parser.add_argument('-X', '--startExploit', type=int, default=0,
                         help="Time at which exploitation starts.")
-    parser.add_argument('-%', '--exploitCeiling', type=float, default=0.1,
-                        help="Max ratio to mean coverage count for exploitation.")            
-    parser.add_argument('-Q', '--quickAnalysis', action='store_true',
-                        help="Reduce tests by branch coverage, collect action frequencies in reductions.")
-    parser.add_argument('-U', '--uniqueValuesAnalysis', action='store_true',
-                        help="Quick analysis based on unique values, not coverage.")    
-    parser.add_argument('-!', '--fastQuickAnalysis', action='store_true',
-                        help="Quick analysis skips analyzing branch/statement if previously analyzed already covers.")
-    parser.add_argument('-a', '--noreassign', action='store_true',
-                        help="Add noReassign rule to normalization steps.")
+    parser.add_argument('--exploitCeiling', type=float, default=0.1,
+                        help="Max ratio to mean coverage count for exploitation.")
+    parser.add_argument('--internal', action='store_true',
+                        help="Produce internal coverage report at the end, as sanity check on coverage.py results.")    
+    parser.add_argument('--coverFile', type=str, default="coverage.out",
+                        help="File to write coverage report to ('coverage.out' default).")
+    parser.add_argument('--noExceptionMatch', action='store_true',
+                        help="Do not force exceptions in reduced / normalized failures to match.")        
     parser.add_argument('-v', '--verbose', action='store_true',
                         help="Run in verbose mode.")
-    parser.add_argument('-H', '--html', type=str, default=None,
-                        help="Write HTML report (directory to write to, None default).")
+    parser.add_argument('--silentFail', action='store_true',
+                        help="Don't make failure replays verbose.")            
+    parser.add_argument('--throughput', action='store_true',
+                        help='Measure action throughput.')
+    parser.add_argument('--profile', action='store_true',
+                        help="Profile actions.")    
+    parser.add_argument('--verboseActions', action='store_true',
+                        help="Make test actions verbose.")
+    parser.add_argument('--showActions', action='store_true',
+                        help="Show actions as they run")
+    parser.add_argument('--noAlphaConvert', action='store_true',
+                        help="Do not alpha convert failing tests.")        
+    parser.add_argument('--genDepth', type=int, default=None,
+                        help = "[EXPERIMENTAL] Generalization depth for cloud overlap comparisons (default = None).")
+    parser.add_argument('--compareFails', action='store_true',
+                        help="Compare all failing tests.")
+    parser.add_argument('--stutter', type=float, default=None,
+                        help="[EXPERIMENTAL] Repeat last action if still enabled with P = <stutter>.")
+    parser.add_argument('--greedyStutter', action='store_true',
+                        help="[EXPERIMENTAL] Repeat last action if it is enabled and improved coverage.")
+    parser.add_argument('--essentials', action='store_true',
+                        help="[EXPERIMENTAL] Determine essential elements in failing test.")    
+    parser.add_argument('--quickAnalysis', action='store_true',
+                        help="[EXPERIMENTAL] Reduce tests by branch coverage, collect action frequencies in reductions.")
+    parser.add_argument('--uniqueValuesAnalysis', action='store_true',
+                        help="[EXPERIMENTAL] Quick analysis based on unique values, not coverage.")    
+    parser.add_argument('--fastQuickAnalysis', action='store_true',
+                        help="[EXPERIMENTAL] Quick analysis skips analyzing branch/statement if previously analyzed already covers.")
+    parser.add_argument('--speed', type=str, default="FAST",
+                        help='[EXPERIMENTAL] Normalization/simplification speed (default = FAST).')        
+    parser.add_argument('--noReassign', action='store_true',
+                        help="[EXPERIMENTAL] Add noReassign rule to normalization steps.")
+    parser.add_argument('--relax', action='store_true',
+                        help="[EXPERIMENTAL] Use relaxed semantics (not recommended for even experts, really).")    
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
 
@@ -226,14 +226,14 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if config.normalize:
             startSimplify = time.time()
             print "NORMALIZING..."
-            test = sut.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noreassign, useCache=False)
+            test = sut.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noReassign, useCache=False)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
             sut.saveTest(test,config.output.replace(".test",".normalized.test"))
-        if (config.gendepth != None) and (test not in map(lambda x:x[0],failures)) and (test not in cloudFailures):
+        if (config.genDepth != None) and (test not in map(lambda x:x[0],failures)) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print "GENERATING GENERALIZATION CLOUD"
-            (cloudFound,matchTest,thisCloud) = sut.generalize(test, failProp, silent=True, returnCollect=True, depth=config.gendepth, targets = allClouds)
+            (cloudFound,matchTest,thisCloud) = sut.generalize(test, failProp, silent=True, returnCollect=True, depth=config.genDepth, targets = allClouds)
             print "CLOUD GENERATED IN",time.time()-startCheckCloud,"SECONDS"
             print "CLOUD LENGTH =",len(thisCloud)
             if cloudFound:
@@ -313,7 +313,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
             repeatCount += 1
         else:
             failures.append((test,sut.failure()))
-            if config.gendepth != None:
+            if config.genDepth != None:
                 failCloud[sut.captureReplay(test)] = thisCloud
                 for c in thisCloud:
                     allClouds[c] = True
@@ -360,6 +360,8 @@ def tryExploit():
                 fulltest.write(a[0] + "\n")
                 fulltest.flush()
         if config.replayable:
+            currtest.close()
+            currtest = open("currtest.test",'w')
             for a in sut.test():
                 currtest.write(a[0] + "\n")
                 currtest.flush()
@@ -398,7 +400,7 @@ def main():
     failures = []
     cloudFailures = []
 
-    if config.gendepth != None:
+    if config.genDepth != None:
         failCloud = {}
         allClouds = {}
 
@@ -861,7 +863,7 @@ def main():
                     quickAnalysisSCounts[s][c] += 1                    
 
         if config.throughput:
-            print "ACTION THROUGHPUT:",nops/(time.time()-start)
+            print "THROUGHPUT:",nops/(time.time()-start),"ACTIONS/SECOND"
         if config.replayable:
             currtest.close()
         if config.quickTests:
@@ -878,7 +880,7 @@ def main():
         
     if not config.noCover:
         sut.restart()
-        print sut.report(config.coverfile),"PERCENT COVERED"
+        print sut.report(config.coverFile),"PERCENT COVERED"
 
         if config.internal:
             sut.internalReport()
@@ -1014,6 +1016,7 @@ def main():
 
     if config.profile:
         print "ACTION PROFILE:"
+        print "<ACTION> <COUNT> <AVERAGE RUNTIME> <NORMALIZED BY MAX> <NORMALIZED BY MIN> [<TOTAL PERCENT RUNTIME>]"
         averages = []
         for a in profileTime:
             if profileCount[a] != 0:
@@ -1023,7 +1026,7 @@ def main():
         minAvg = averages[0][1]
         sumAvg = sum(map(lambda x: x[1], averages))
         for (a,t) in averages:
-            print a,profileCount[a],t,round(t/maxAvg,2),round(t/minAvg,2),round(t/sumAvg,2)
+            print a,profileCount[a],t,round(t/maxAvg,2),round(t/minAvg,2),str(round((t*100.0)/sumAvg,2))+"%"
                                 
     if config.localize and failCount > 0:
         scoresS = {}
