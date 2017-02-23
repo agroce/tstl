@@ -147,7 +147,7 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail, newCov = False):
-    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail
+    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount
     test = list(test)
     sys.stdout.flush()
     if not newCov:
@@ -260,7 +260,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
     if ((config.output != None) and (test not in map(lambda x:x[0],failures))) or (config.quickTests):
         outname = config.output
         if (outname != None) and config.multiple and not newCov:
-            outname += ("." + str(failCount))
+            outname += ("." + str(failFileCount))
+            failFileCount += 1
         if config.quickTests and newCov:
             for s in sut.allStatements():
                 if s not in beforeReduceS:
@@ -270,11 +271,12 @@ def handle_failure(test, msg, checkFail, newCov = False):
                     print "NEW BRANCH FROM REDUCTION",b
             outname = "quick" + str(quickCount) + ".test"
             quickCount += 1
+        print
+        print "SAVING TEST AS",outname
+        sut.saveTest(test,outname)
+            
     if config.failedLogging != None:
         sut.setLog(config.failedLogging)
-    print
-    print "SAVING TEST AS",outname
-    sut.saveTest(test,outname)
     print "FINAL VERSION OF TEST, WITH LOGGED REPLAY:"
     if not config.silentFail:
         sut.verbose(True)
@@ -383,6 +385,7 @@ def printStatus(elapsed):
         
 def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
+    global failFileCount
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail
     
     parsed_args, parser = parse_args()
@@ -395,6 +398,7 @@ def main():
     elapsed = time.time()-start
 
     failCount = 0
+    failFileCount = 0
     quickCount = 0
     repeatCount = 0
     failures = []
