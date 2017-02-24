@@ -850,7 +850,8 @@ def main():
                 g = g.replace(" ","")
                 if g not in forVerbose:
                     forVerbose.append(g)
-                    changes.append(g.replace("[","_used[") + "=True")
+                    if (not twiddle):
+                        changes.append(g.replace("[","_used[") + "=True")
                 g += " != None"
                 guardConds.append(g)
             for (used,twiddle) in drhs:
