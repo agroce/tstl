@@ -533,8 +533,6 @@ def main():
         sys.stdout.flush()
         
     while (config.maxtests == -1) or (ntests < config.maxtests):
-        if config.progress:
-            printStatus(elapsed)
         if config.verbose:
             print "STARTING TEST",ntests
             sys.stdout.flush()
@@ -873,6 +871,8 @@ def main():
         if config.quickTests:
             if (sut.newCurrBranches() != set([])) or (sut.newCurrStatements() != set([])):
                 handle_failure(sut.test(), "NEW COVERAGE", False, newCov=True)
+        if config.progress:
+            printStatus(elapsed)                
         if (not config.multiple) and (failCount > 0):
             break
         if elapsed > config.timeout:
