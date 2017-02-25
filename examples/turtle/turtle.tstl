@@ -1,0 +1,58 @@
+@from Tkinter import *
+@from turtle import *
+@import turtle
+@import os
+
+<@
+def fileToSave():
+    i = 0
+    while os.path.exists("drawing." + str(i) + ".eps"):
+    	  i += 1
+    return "drawing." + str(i) + ".eps"
+    
+@>
+
+# unfortunately, first save is a pointless one, but the rest are after drawing
+# you want a decent search depth to get interesting "random testing art"
+finally: ts = turtle.getscreen(); ts.getcanvas().postscript(file=fileToSave())
+
+pool: <angle> 5
+pool: <distance> 5
+pool: <color> 5
+pool: <polysize> 5
+pool: <size> 3
+pool: <speed> 3
+
+<angle> := <[0..360]>
+<distance> := <[1..100]>
+<polysize> := <[1..20]>
+<color> := 'red'
+<color> := 'yellow'
+<color> := 'green'
+<color> := 'blue'
+<color> := 'black'
+<color> := 'orange'
+<color> := 'brown'
+<speed> := <[0..10]>
+
+speed(<speed>)
+forward(<distance>)
+fd(<distance>)
+backward(<distance>)
+bk(<distance>)
+right(<angle>)
+left(<angle>)
+home()
+undo()
+circle(<distance>)
+circle(<distance>,<angle>)
+circle(<distance>,<angle>,<polysize>)
+setheading(<angle>)
+penup()
+pendown()
+begin_fill()
+end_fill()
+color(<color>,<color>)
+pensize(<size>)
+pencolor(<color>)
+fillcolor(<color>)
