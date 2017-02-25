@@ -374,9 +374,12 @@ def collectExploitable():
             print "COLLECTING DUE TO NEW",len(sut.newBranches()),len(sut.newStatements())
         fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
 
-def printStatus(elapsed):
+def printStatus(elapsed,step=None):
     global sut
-    print "TEST #"+str(ntests),"("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),
+    print "TEST #"+str(ntests),
+    if step != None:
+        print "STEP #"+str(step),
+    print "("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),
     if not config.noCover:
         print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
     else:
@@ -621,7 +624,7 @@ def main():
             if config.timedProgress != -1:
                 thisInterval = int(elapsed / config.timedProgress)
                 if thisInterval > lastInterval:
-                    printStatus(elapsed)
+                    printStatus(elapsed,step=s)
                     lastInterval = thisInterval
                     sys.stdout.flush()
             if a == None:
