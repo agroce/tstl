@@ -579,12 +579,16 @@ def main():
             if (config.swarmSwitch != None) and (s in switches):
                 if config.highLowSwarm == None:
                     sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+                    if config.progress:
+                        print "NEW CONFIG:",(sut.swarmConfig())                    
                 else:
                     classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)
 
             if (config.swarmLength != None) and (((s + 1) % config.swarmLength) == 0):
                 if config.highLowSwarm == None:
                     sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+                    if config.progress:
+                        print "NEW CONFIG:",(sut.swarmConfig())                    
                 else:
                     classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)                
                 
