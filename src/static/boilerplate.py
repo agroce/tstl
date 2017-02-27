@@ -59,7 +59,10 @@ def prettyName(self, name):
             closePos = newName.find("]",pfind)
             index = newName[newName.find("[",pfind)+1:closePos]
             access = newName[pfind:newName.find("]",pfind)+1]
-            newAccess = p.replace(self.__poolPrefix,"") + index                
+            needUnderscore = ""
+            if p[-1] in ['0','1','2','3','4','5','6','7','8','9']:
+                needUnderscore = "_"
+            newAccess = p.replace(self.__poolPrefix,"") + needUnderscore + index                
             newName = newName.replace(access, newAccess)
             pfind = newName.find(p+"[")
     return newName
