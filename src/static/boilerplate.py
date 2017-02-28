@@ -300,6 +300,43 @@ def randomEnabledPred(self,rgen,n,pred):
         acts = acts[:p] + acts[p+1:]
     return lastSafe
 
+def mutate(self,test,rgen,Pinsert=0.2):
+    '''
+    Simple tool for mutating tests randomly.  Does not ensure validity of the new test, which may be functionally equivalent.
+    There are two types of mutation, replacement and insertion.  Pinsert gives probability of insert (default 0.2).
+    '''
+    newTest = list(test)
+    loc = rgen.randrange(0,len(test))
+    act = rgen.choice(self.__actions)
+    if rgen.random() < Pinsert:
+        newTest.insert(loc,act)
+    else:
+        newTest[loc] = act
+    return newTest
+
+def crossover(self,test1,test2,rgen,twoPoint=False):
+    '''
+    Simple code for performing crossover of two tests.  Just picks an order, then picks a point at which to stop first 
+    test then start second.  twoPoint results in two point crossover.
+    '''
+    if rgen.randrange(2) == 0:
+        t1 = test1
+        t2 = test2
+    else:
+        t2 = test1
+        t1 = test2
+    p1 = rgen.randrange(1,len(t1))
+    p2 = rgen.randrange(0,len(t2))
+    newTest = t1[:p1]
+    if twoPoint:
+        p3 = rgen.randrange(p1,len(t1))
+        p4 = rgen.randrange(p2,len(t2))
+        newTest.extend(t2[p2:p4])
+        newTest.extend(t1[p3:])
+    else:
+        newTest.extend(t2[p2:])
+    return newTest
+        
 def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,checkProp=True,initial=None,timeout=None):
     '''
     Allows generation of fixed length tests using either a default generator (pure random testing), or using a simple

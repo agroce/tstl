@@ -88,6 +88,10 @@ def parse_args():
                         help="Time at which exploitation starts.")
     parser.add_argument('--exploitCeiling', type=float, default=0.1,
                         help="Max ratio to mean coverage count for exploitation.")
+    parser.add_argument('--Pmutate', type=float, default=0.0,
+                        help="Probability to mutate exploited tests (default = 0.0 -- no mutation).")
+    parser.add_argument('--Pcrossover', type=float, default=0.2,
+                        help="Probability to try crossover when mutating exploited tests (default = 0.2).")        
     parser.add_argument('--internal', action='store_true',
                         help="Produce internal coverage report at the end, as sanity check on coverage.py results.")    
     parser.add_argument('--coverFile', type=str, default="coverage.out",
@@ -323,7 +327,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
 
 def buildActivePool():
     global activePool
-    #print "FULL POOL:",len(fullPool)
+    if config.verbose:
+        print "FULL POOL SIZE:",len(fullPool)
     if len(branchCoverageCount) >= 1:
         meanBranch = sum(branchCoverageCount.values()) / (len(branchCoverageCount) * 1.0)
     else:
@@ -349,14 +354,28 @@ def buildActivePool():
                     activePool.append(t)
                     added = True
                     break
-    #print "ACTIVE POOL:",len(activePool)
+    if config.verbose:
+        print "ACTIVE POOL SIZE:",len(activePool)
             
 def tryExploit():
     if R.random() < config.exploit:
         buildActivePool()
         if len(activePool) == 0:
             return
-        sut.replay(R.choice(activePool))
+        if config.verbose:
+            print "EXPLOITING STORED TEST"
+        et = R.choice(activePool)
+        if R.random() < config.Pmutate:
+            if config.verbose:
+                print "MUTATING EXPLOITED TEST"
+            if R.random() < config.Pcrossover:
+                if config.verbose:
+                    print "USING CROSSOVER"                
+                et2 = R.choice(activePool)
+                et = sut.crossover(et,et2,R)
+            else:
+                et = sut.mutate(et,R)
+        sut.replay(et)
         if config.total:
             for a in sut.test():
                 fulltest.write(a[0] + "\n")
