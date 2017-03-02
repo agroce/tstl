@@ -86,6 +86,10 @@ def parse_args():
                         help="Probability to exploit stored coverage tests.")
     parser.add_argument('-X', '--startExploit', type=int, default=0,
                         help="Time at which exploitation starts.")
+    parser.add_argument("--verboseExploit",action='store_true',
+                        help="Exploitation is verbose (info on pool, etc.).")    
+    parser.add_argument("--reducePool",action='store_true',
+                        help="Reduce tests by their new coverage before adding to exploitation pool.")
     parser.add_argument('--exploitCeiling', type=float, default=0.1,
                         help="Max ratio to mean coverage count for exploitation.")
     parser.add_argument('--Pmutate', type=float, default=0.0,
@@ -327,8 +331,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
 
 def buildActivePool():
     global activePool
-    if config.verbose:
-        print "FULL POOL SIZE:",len(fullPool)
     if len(branchCoverageCount) >= 1:
         meanBranch = sum(branchCoverageCount.values()) / (len(branchCoverageCount) * 1.0)
     else:
@@ -354,22 +356,27 @@ def buildActivePool():
                     activePool.append(t)
                     added = True
                     break
-    if config.verbose:
-        print "ACTIVE POOL SIZE:",len(activePool)
+    if config.verbose or config.verboseExploit:
+        print 'FULL POOL SIZE',len(fullPool),'ACTIVE POOL SIZE',len(activePool)
+    if (config.verbose or config.verboseExploit) and (len(activePool) < 10):
+        print "ACTIVE POOL:"
+        for t in activePool:
+            print "="*30
+            sut.prettyPrintTest(t)
             
 def tryExploit():
     if R.random() < config.exploit:
         buildActivePool()
         if len(activePool) == 0:
             return
-        if config.verbose:
+        if config.verboseExploit or config.verbose:
             print "EXPLOITING STORED TEST"
         et = R.choice(activePool)
         if R.random() < config.Pmutate:
-            if config.verbose:
+            if config.verboseExploit or config.verbose:
                 print "MUTATING EXPLOITED TEST"
             if R.random() < config.Pcrossover:
-                if config.verbose:
+                if config.verboseExploit or config.verbose:
                     print "USING CROSSOVER"                
                 et2 = R.choice(activePool)
                 et = sut.crossover(et,et2,R)
@@ -388,10 +395,30 @@ def tryExploit():
                 currtest.flush()
             
 def collectExploitable():
+    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail    
     if (len(sut.newBranches()) != 0) or (len(sut.newStatements()) != 0):
-        if config.verbose:
-            print "COLLECTING DUE TO NEW",len(sut.newBranches()),len(sut.newStatements())
-        fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
+        if config.verbose or config.verboseExploit:
+            print "COLLECTING DUE TO NEW COVERAGE:",len(sut.newBranches()),len(sut.newStatements())
+        if not config.reducePool:
+            fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
+        else:
+            if config.verbose or config.verboseExploit:
+                print "REDUCING NEW TEST FOR POOL, ORIGINAL LENGTH =",len(sut.test()),"STEPS"
+            r = sut.reduce(sut.test(),sut.coversAll(set(sut.newCurrStatements()),set(sut.newCurrBranches()),checkProp=not(config.noCheck)),verbose=False)
+            if config.verbose or config.verboseExploit:            
+                print "REDUCED TO",len(r),"STEPS"
+            sut.replay(r)
+            fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
+            for b in sut.currBranches():
+                if b not in branchCoverageCount:
+                    branchCoverageCount[b] = 1
+                else:
+                    branchCoverageCount[b] += 1
+            for s in sut.currStatements():
+                if s not in statementCoverageCount:
+                    statementCoverageCount[s] = 1
+                else:
+                    statementCoverageCount[s] += 1                     
 
 def printStatus(elapsed,step=None):
     global sut
