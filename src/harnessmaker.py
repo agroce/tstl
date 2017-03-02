@@ -36,6 +36,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('tstl', metavar='filename', type=str, default=None,
                         help='Path to the .tstl file.')
+    parser.add_argument('-v', '--version', action='store_true',
+                        help='Display the tstl version.')    
     parser.add_argument('-o', '--output', type=str, default="sut.py",
                         help='Name of the file containing the generated harness code (default = sut.py)')
     parser.add_argument('-c', '--classname', type=str, default='sut',
@@ -365,7 +367,7 @@ def genInitialization():
 
 
 def main():
-
+    
     global config
     global import_froms
     global ignoredExcepts
@@ -384,6 +386,13 @@ def main():
     global originalCode
 
     baseIndent = "    "
+
+    if "-v" in sys.argv or "--version" in sys.argv:
+        print "TSTL, version 0.9"
+        print "Documentation at https://github.com/agroce/tstl"
+        sys.exit(0)
+        
+
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
