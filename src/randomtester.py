@@ -331,6 +331,41 @@ def handle_failure(test, msg, checkFail, newCov = False):
 
 def buildActivePool():
     global activePool
+
+    if config.reducePool and len(reducePool) != 0:
+        for (t,bs,ss) in reducePool:
+            if config.verbose or config.verboseExploit:
+                print "REDUCING POOL TEST FROM",len(t),"STEPS...",
+            r = sut.reduce(t,sut.coversAll(ss,bs,,checkProp=not(config.noCheck)),verbose=False)
+            if config.verbose or config.verboseExploit:            
+                print "TO",len(r),"STEPS"
+            sut.replay(r)
+            fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
+            # Have to make sure if we got some new coverage out of this it's in the coverage map
+            # Also need to make sure quickTests know about it
+            # Some statistics may be inaccurate, though
+            newBranches = set([])
+            newStatements = set([])
+            for b in sut.currBranches():
+                if b not in branchCoverageCount:
+                    newBranches.add(b)
+                    branchCoverageCount[b] = 1
+                else:
+                    branchCoverageCount[b] += 1
+            for s in sut.currStatements():
+                if s not in statementCoverageCount:
+                    newStatements.add(s)
+                    statementCoverageCount[s] = 1
+                else:
+                    statementCoverageCount[s] += 1                     
+            if len(newBranches) > 0 or len(newStatements) > 0:
+                sut.newCurrStatements().update(newStatements)
+                sut.newCurrBranches().update(newBranches)
+                # Collect the quick test
+                handle_failure(r,"NEW COVERAGE", False, newCov=True)
+        # At this point all of reducePool is in fullPool
+        reducePool = []
+
     if len(branchCoverageCount) >= 1:
         meanBranch = sum(branchCoverageCount.values()) / (len(branchCoverageCount) * 1.0)
     else:
@@ -395,30 +430,18 @@ def tryExploit():
                 currtest.flush()
             
 def collectExploitable():
-    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail    
+    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
     if (len(sut.newBranches()) != 0) or (len(sut.newStatements()) != 0):
         if config.verbose or config.verboseExploit:
             print "COLLECTING DUE TO NEW COVERAGE:",len(sut.newBranches()),len(sut.newStatements())
         if not config.reducePool:
             fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
         else:
+            # We can't reduce right now, unless we want the annoyance of saving and restoring state, since
+            # we are in the middle of a test run, and we'd mess up quick test and coverage stats collection
             if config.verbose or config.verboseExploit:
-                print "REDUCING NEW TEST FOR POOL, ORIGINAL LENGTH =",len(sut.test()),"STEPS"
-            r = sut.reduce(sut.test(),sut.coversAll(set(sut.newCurrStatements()),set(sut.newCurrBranches()),checkProp=not(config.noCheck)),verbose=False)
-            if config.verbose or config.verboseExploit:            
-                print "REDUCED TO",len(r),"STEPS"
-            sut.replay(r)
-            fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
-            for b in sut.currBranches():
-                if b not in branchCoverageCount:
-                    branchCoverageCount[b] = 1
-                else:
-                    branchCoverageCount[b] += 1
-            for s in sut.currStatements():
-                if s not in statementCoverageCount:
-                    statementCoverageCount[s] = 1
-                else:
-                    statementCoverageCount[s] += 1                     
+                print "SAVING TEST FOR REDUCTION"
+            reducePool.append((list(sut.test()),set(sut.newBranches()),set(sut.newStatements())))
 
 def printStatus(elapsed,step=None):
     global sut
@@ -435,7 +458,7 @@ def printStatus(elapsed,step=None):
 def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
     global failFileCount
-    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail
+    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -459,6 +482,7 @@ def main():
 
     if config.exploit != None:
         fullPool = []
+        reducePool = []
         activePool = []
 
     if config.quickAnalysis or (config.exploit != None):
