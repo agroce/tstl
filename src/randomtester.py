@@ -330,13 +330,13 @@ def handle_failure(test, msg, checkFail, newCov = False):
             print "FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES"
 
 def buildActivePool():
-    global activePool
+    global activePool, reducePool
 
     if config.reducePool and len(reducePool) != 0:
         for (t,bs,ss) in reducePool:
             if config.verbose or config.verboseExploit:
                 print "REDUCING POOL TEST FROM",len(t),"STEPS...",
-            r = sut.reduce(t,sut.coversAll(ss,bs,,checkProp=not(config.noCheck)),verbose=False)
+            r = sut.reduce(t,sut.coversAll(ss,bs,checkProp=not(config.noCheck)),verbose=False)
             if config.verbose or config.verboseExploit:            
                 print "TO",len(r),"STEPS"
             sut.replay(r)
