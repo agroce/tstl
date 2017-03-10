@@ -1273,7 +1273,8 @@ def main():
     else:
         genCode.append(baseIndent + "hvals = []\n")
         for h in hintSet:
-            genCode.append(baseIndent + "hvals.append(" + replaceRefs(h[:-1]) + ")\n")
+            genCode.append(baseIndent + "try: hvals.append(" + replaceRefs(h[:-1]) + ")\n")
+            genCode.append(baseIndent + "except: hvals.append(None)\n")
         genCode.append(baseIndent + "return hvals\n")
             
 
