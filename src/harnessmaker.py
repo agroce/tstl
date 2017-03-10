@@ -375,6 +375,7 @@ def main():
     global refSet
     global poolType
     global initSet
+    
     global finallySet
     global constSet
     global opaqueSet
@@ -547,6 +548,7 @@ def main():
     compareSet = []
     featureSet = []
     logSet = []
+    hintSet = []
     referenceMap = {}
     autoPrefix = ""
     
@@ -572,6 +574,8 @@ def main():
             autoPrefix = "property: "
         elif cs[0] == "logs:":
             autoPrefix = "log: "
+        elif cs[0] == "hints:":
+            autoPrefix = "hint: "            
         elif cs[0] == "inits:":
             autoPrefix = "init: "
         elif cs[0] == "finallys:":
@@ -594,6 +598,8 @@ def main():
             finallySet.append(c.replace("finally: ",""))            
         elif cs[0] == "log:":
             logSet.append(c.replace("log: ",""))
+        elif cs[0] == "hint:":
+            hintSet.append(c.replace("hint: ",""))            
         elif cs[0] == "property:":
             propSet.append(c.replace("property: ",""))
         elif cs[0] == "exception:":
@@ -703,6 +709,7 @@ def main():
     initSet = expandPool(initSet)
     finallySet = expandPool(finallySet)
     logSet = expandPool(logSet)
+    hintSet = expandPool(hintSet)
 
     if config.debug:
         print(":code: after expandPool(code)")
@@ -714,6 +721,7 @@ def main():
     initSet = expandRange(initSet)
     finallySet = expandRange(finallySet)    
     logSet = expandRange(logSet)
+    hintSet = expandRange(hintSet)
 
     if config.debug:
         print(":code: after expandRange(code)")
@@ -756,6 +764,12 @@ def main():
         for c in logSet:
             newLogs.append(c.replace(p + " ", poolPrefix + p.replace("%","")))
         logSet = newLogs
+
+    for p in poolSet:
+        newHints = []
+        for c in hintSet:
+            newHints.append(c.replace(p + " ", poolPrefix + p.replace("%","")))
+        hintSet = newHints
 
     # ------------------------------------------ #
     newLogs = []
@@ -1252,6 +1266,17 @@ def main():
     genCode.append(baseIndent + baseIndent + "test_after_restart(self)\n")
     genCode.append(baseIndent + "except:\n")
     genCode.append(baseIndent + baseIndent + "pass\n")    
+
+    genCode.append("def hints(self):\n")
+    if hintSet == []:
+        genCode.append(baseIndent + "return []\n")
+    else:
+        genCode.append(baseIndent + "hvals = []\n")
+        for h in hintSet:
+            genCode.append(baseIndent + "hvals.append(" + replaceRefs(h[:-1]) + ")\n")
+        genCode.append(baseIndent + "return hvals\n")
+            
+
     
     genCode.append("def log(self, name):\n")
     if logSet != []:
