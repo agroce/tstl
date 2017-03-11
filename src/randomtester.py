@@ -95,7 +95,13 @@ def parse_args():
     parser.add_argument('--Pmutate', type=float, default=0.0,
                         help="Probability to mutate exploited tests (default = 0.0 -- no mutation).")
     parser.add_argument('--Pcrossover', type=float, default=0.2,
-                        help="Probability to try crossover when mutating exploited tests (default = 0.2).")        
+                        help="Probability to try crossover when mutating exploited tests (default = 0.2).")
+    parser.add_argument("--useHints",action='store_true',
+                        help="Use hint values (utility to maximize) as another cause for exploitation.")
+    parser.add_argument("--noCoverageExploit",action="store_true",
+                        help="Do not use coverage in exploitation (only useful with heuristic hints).")
+    parser.add_argument("--exploitBestHint",type=int,default=1,
+                        help="How many of the best heuristic values to put in active pool for exploitation.")    
     parser.add_argument('--internal', action='store_true',
                         help="Produce internal coverage report at the end, as sanity check on coverage.py results.")    
     parser.add_argument('--coverFile', type=str, default="coverage.out",
@@ -332,67 +338,75 @@ def handle_failure(test, msg, checkFail, newCov = False):
 def buildActivePool():
     global activePool, reducePool
 
-    if config.reducePool and len(reducePool) != 0:
-        for (t,bs,ss) in reducePool:
-            if config.verbose or config.verboseExploit:
-                print "REDUCING POOL TEST FROM",len(t),"STEPS...",
-            r = sut.reduce(t,sut.coversAll(ss,bs,checkProp=not(config.noCheck)),verbose=False)
-            if config.verbose or config.verboseExploit:            
-                print "TO",len(r),"STEPS"
-            sut.replay(r)
-            fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
-            # Have to make sure if we got some new coverage out of this it's in the coverage map
-            # Also need to make sure quickTests know about it
-            # Some statistics may be inaccurate, though
-            newBranches = set([])
-            newStatements = set([])
-            for b in sut.currBranches():
-                if b not in branchCoverageCount:
-                    newBranches.add(b)
-                    branchCoverageCount[b] = 1
-                else:
-                    branchCoverageCount[b] += 1
-            for s in sut.currStatements():
-                if s not in statementCoverageCount:
-                    newStatements.add(s)
-                    statementCoverageCount[s] = 1
-                else:
-                    statementCoverageCount[s] += 1                     
-            if len(newBranches) > 0 or len(newStatements) > 0:
-                sut.newCurrStatements().update(newStatements)
-                sut.newCurrBranches().update(newBranches)
-                # Collect the quick test
-                handle_failure(r,"NEW COVERAGE", False, newCov=True)
-        # At this point all of reducePool is in fullPool
-        reducePool = []
-
-    if len(branchCoverageCount) >= 1:
-        meanBranch = sum(branchCoverageCount.values()) / (len(branchCoverageCount) * 1.0)
-    else:
-        meanBranch = 0.0
-    if len(statementCoverageCount) >= 1:
-        meanStatement = sum(statementCoverageCount.values()) / (len(statementCoverageCount) * 1.0)
-    else:
-        meanStatement = 0.0
-    #print "MEAN BRANCH",meanBranch,"MEAN STATEMENT",meanStatement
-    bThreshold = meanBranch * config.exploitCeiling
-    sThreshold = meanStatement * config.exploitCeiling
     activePool = []
-    for (t,bs,ss) in fullPool:
-        added = False
-        for b in bs:
-            if branchCoverageCount[b] <= bThreshold:
-                activePool.append(t)
-                added = True
-                break
-        if not added:
-            for s in ss:
-                if statementCoverageCount[s] <= sThreshold:
+
+    if not config.noCoverageExploit:
+        if config.reducePool and len(reducePool) != 0:
+            for (t,bs,ss) in reducePool:
+                if config.verbose or config.verboseExploit:
+                    print "REDUCING POOL TEST FROM",len(t),"STEPS...",
+                r = sut.reduce(t,sut.coversAll(ss,bs,checkProp=not(config.noCheck)),verbose=False)
+                if config.verbose or config.verboseExploit:            
+                    print "TO",len(r),"STEPS"
+                sut.replay(r)
+                fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
+                # Have to make sure if we got some new coverage out of this it's in the coverage map
+                # Also need to make sure quickTests know about it
+                # Some statistics may be inaccurate, though
+                newBranches = set([])
+                newStatements = set([])
+                for b in sut.currBranches():
+                    if b not in branchCoverageCount:
+                        newBranches.add(b)
+                        branchCoverageCount[b] = 1
+                    else:
+                        branchCoverageCount[b] += 1
+                for s in sut.currStatements():
+                    if s not in statementCoverageCount:
+                        newStatements.add(s)
+                        statementCoverageCount[s] = 1
+                    else:
+                        statementCoverageCount[s] += 1                     
+                if len(newBranches) > 0 or len(newStatements) > 0:
+                    sut.newCurrStatements().update(newStatements)
+                    sut.newCurrBranches().update(newBranches)
+                    # Collect the quick test
+                    handle_failure(r,"NEW COVERAGE", False, newCov=True)
+            # At this point all of reducePool is in fullPool
+            reducePool = []
+
+        if len(branchCoverageCount) >= 1:
+            meanBranch = sum(branchCoverageCount.values()) / (len(branchCoverageCount) * 1.0)
+        else:
+            meanBranch = 0.0
+        if len(statementCoverageCount) >= 1:
+            meanStatement = sum(statementCoverageCount.values()) / (len(statementCoverageCount) * 1.0)
+        else:
+            meanStatement = 0.0
+        #print "MEAN BRANCH",meanBranch,"MEAN STATEMENT",meanStatement
+        bThreshold = meanBranch * config.exploitCeiling
+        sThreshold = meanStatement * config.exploitCeiling
+        for (t,bs,ss) in fullPool:
+            added = False
+            for b in bs:
+                if branchCoverageCount[b] <= bThreshold:
                     activePool.append(t)
                     added = True
                     break
+            if not added:
+                for s in ss:
+                    if statementCoverageCount[s] <= sThreshold:
+                        activePool.append(t)
+                        added = True
+                        break
+
+
+    # for now a stupid fixed last-n is used, since we know higher values are at the end
+    if config.useHints:
+        activePool.extend(map(lambda x:x[0],hintPool[-config.exploitBestHint:]))
+                
     if config.verbose or config.verboseExploit:
-        print 'FULL POOL SIZE',len(fullPool),'ACTIVE POOL SIZE',len(activePool)
+        print 'FULL POOL SIZE',len(fullPool)+len(hintPool),'ACTIVE POOL SIZE',len(activePool)
     if (config.verbose or config.verboseExploit) and (len(activePool) < 10):
         print "ACTIVE POOL:"
         for t in activePool:
@@ -430,8 +444,21 @@ def tryExploit():
                 currtest.flush()
             
 def collectExploitable():
-    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
-    if (len(sut.newBranches()) != 0) or (len(sut.newStatements()) != 0):
+    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool,hintValueCounts
+
+    if config.useHints:
+        # We are assuming hints are all normalized to the same scale!
+        hval = max(sut.hints())
+        if (len(hintValueCounts) == 0) or (hval > max(hintValueCounts.keys())):
+            if config.verbose or config.verboseExploit:
+                print "COLLECTING DUE TO HIGH HEURISTIC SCORE:",hval            
+            hintPool.append((list(sut.test()),hval))
+        if hval in hintValueCounts:
+            hintValueCounts[hval] += 1
+        else:
+            hintValueCounts[hval] = 1
+    
+    if (not config.noCoverageExploit) and ((len(sut.newBranches()) != 0) or (len(sut.newStatements()) != 0)):
         if config.verbose or config.verboseExploit:
             print "COLLECTING DUE TO NEW COVERAGE:",len(sut.newBranches()),len(sut.newStatements())
         if not config.reducePool:
@@ -459,6 +486,7 @@ def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
     global failFileCount
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
+    global hintPool, hintValueCounts
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -484,6 +512,9 @@ def main():
         fullPool = []
         reducePool = []
         activePool = []
+
+    hintPool = []
+    hintValueCounts = {}
 
     if config.quickAnalysis or (config.exploit != None):
         branchCoverageCount = {}
