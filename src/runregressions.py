@@ -7,10 +7,10 @@ import os
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-import sut
+import sut as SUT
 
 def main():
-
+    
     if "--help" in sys.argv:
         print "Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running]"
         print "Options:"
@@ -22,7 +22,7 @@ def main():
         print " --keepGoing:    don't stop on failed test"
         sys.exit(0)
     
-    sut = sut.sut()
+    sut = SUT.sut()
 
     nocover = False
     verbose = False

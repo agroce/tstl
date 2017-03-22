@@ -28,6 +28,8 @@ def main():
     lastEpoch = 0
     
     count = 0
+    sut.standardSwarm(R)
+    print sut.swarmConfig()
     totalPaths = int(math.pow(len(sut.actions()),depth))
     print totalPaths,"UPPER BOUND ON POSSIBLE TESTS"
     while count < totalPaths:
@@ -105,3 +107,5 @@ def main():
                     print a,allTaken[a]
 
     print repeats,"TOTAL REPEATED TESTS",len(takenFull),"DISTINCT TESTS"
+
+main()
