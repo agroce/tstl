@@ -1,0 +1,9 @@
+@from maze import *
+
+pool: <pos> 1
+
+<pos> := (0,0)
+
+~<pos> = tryMove(<['U','D','R','L']>, ~<pos>)
+
+
