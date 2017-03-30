@@ -2,7 +2,7 @@
 
 pool: <pos> 1
 
-<pos> := (0,0)
+<pos> := start
 
 ~<pos> = tryMove(<['U','D','R','L']>, ~<pos>)
 

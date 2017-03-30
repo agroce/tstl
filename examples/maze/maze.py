@@ -1,12 +1,18 @@
-mtext = '''               |
--------------- |
-               |
- ------- ------|
-               *'''
+mtext = '''
+| --------------|
+|               |
+|-------- ----- |
+|               |
+| - ----- ------|
+|              *|
+|---------------|
+'''
 
 mlist = []
-for l in mtext.split("\n"):
+for l in mtext.split("\n")[1:]:
    mlist.append(l)
+
+start = (1,0)
 
 def drawMaze(pos):
     print
