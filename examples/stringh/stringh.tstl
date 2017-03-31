@@ -25,6 +25,7 @@ pool: <len> 5
 
 <len,1> <= len(<string,1>) -> libc.strnlen(<string>,<len>)
 <len,1> <= len(<string,1>) -> sign(libc.strncmp(<string>,<string>,<len>))
+<len,1> <= len(<string,1>) -> sign(libc.memcmp(<string>,<string>,<len>))
 
 reference: libc ==> pystringh
 

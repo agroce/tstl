@@ -18,6 +18,13 @@ def strncmp(s1,s2,n):
         return 1
     return 0
 
+def memcmp(s1,s2,n):
+    if s1c < s2c:
+        return -1
+    if s1c > s2c:
+        return 1
+    return 0    
+
 def strnlen(s,n):
     return len(cutNull(s,n))
 
