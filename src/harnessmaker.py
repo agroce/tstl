@@ -42,7 +42,7 @@ def parse_args():
                         help='Name of the file containing the generated harness code (default = sut.py)')
     parser.add_argument('-c', '--classname', type=str, default='sut',
                         help='Name of the class representing the SUT (default = sut)')
-    parser.add_argument('-n', '--nocover', action='store_true',
+    parser.add_argument('-n', '--noCover', action='store_true',
                         help='Disable generating coverage collection support.  Faster testing, but no coverage info!')
     parser.add_argument('-r', '--coverreload', action='store_true',
                         help='Generate coverage for module reload behavior.')
@@ -70,7 +70,7 @@ def make_config(pargs, parser):
     Process the raw arguments, returning a namedtuple object holding the
     entire configuration, if everything parses correctly.
     Example:
-    Config(output='sut.py', classname='sut', nocover=False, tstl='yourfile.tstl',
+    Config(output='sut.py', classname='sut', noCover=False, tstl='yourfile.tstl',
            debug=False, coverreload=False, coverinit=False)
     """
     pdict = pargs.__dict__
@@ -350,7 +350,7 @@ def genInitialization():
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "_used[" + str(x) + "] = True"
             genCode.append(s + "\n")
-    if (not config.nocover) and config.coverinit:
+    if (not config.noCover) and config.coverinit:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     if firstInit:
         genCode.append("# BEGIN INITIALIZATION CODE\n")
@@ -361,7 +361,7 @@ def genInitialization():
     if firstInit:
         genCode.append("# END INITIALIZATION CODE\n")
         firstInit = False    
-    if (not config.nocover) and config.coverinit:
+    if (not config.noCover) and config.coverinit:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
 
@@ -413,7 +413,7 @@ def main():
     outf.write("import time\n")    
     outf.write("from itertools import chain, combinations\n")    
 
-    if not config.nocover:
+    if not config.noCover:
         outf.write("import coverage\n")
 
     outf.write("# BEGIN STANDALONE CODE\n")
@@ -1008,7 +1008,7 @@ def main():
         for p in verboseRef:
             genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + ")\n")
             genCode.append(baseIndent + baseIndent + "except: pass\n")            
-        if not config.nocover:
+        if not config.noCover:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
             genCode.append(baseIndent + "try: test_before_each(self)\n")
             genCode.append(baseIndent + "except: pass\n")
@@ -1054,7 +1054,7 @@ def main():
                 genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print '=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + ")\n")                        
                 genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
   
-        if not config.nocover:
+        if not config.noCover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov: self.__cov.stop(); self.__updateCov()\n")
 
         if checkRefRaised:
@@ -1165,7 +1165,7 @@ def main():
         genCode.append(baseIndent + "self.__replayBacktrack = False\n")
     else:
         genCode.append(baseIndent + "self.__replayBacktrack = True\n")
-    if not config.nocover:
+    if not config.noCover:
         covc = baseIndent + "self.__cov = coverage.coverage(branch=True, source=["
         for s in sourceSet:
             covc += '"' + s + '",'
@@ -1242,7 +1242,7 @@ def main():
     genCode.append(baseIndent + baseIndent + "test_before_restart(self)\n")
     genCode.append(baseIndent + "except:\n")
     genCode.append(baseIndent + baseIndent + "pass\n")    
-    if not config.nocover:
+    if not config.noCover:
         genCode.append(baseIndent + "self.cleanCov()\n")
         #genCode.append(baseIndent + "self.__currBranches = set()\n")
         #genCode.append(baseIndent + "self.__currStatements = set()\n")
@@ -1258,7 +1258,7 @@ def main():
     #    s = baseIndent + l
     #    genCode.append(s)
     genCode.append("# END RELOAD CODE\n")        
-    if (not config.nocover) and config.coverreload:
+    if (not config.noCover) and config.coverreload:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
     genInitialization()
@@ -1378,7 +1378,7 @@ def main():
     genCode.append("def check(self):\n")
     if (propSet != []) or (len(poolType) > 0):
         genCode.append(baseIndent + "try:\n")
-        if not config.nocover:
+        if not config.noCover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__cov.start()\n")
         genCode.append(baseIndent + baseIndent + "# BEGIN CHECK CODE\n")
@@ -1433,7 +1433,7 @@ def main():
         genCode.append(baseIndent + "except:\n")
         genCode.append(baseIndent + baseIndent + "self.__failure = sys.exc_info()\n")
         genCode.append(baseIndent + baseIndent + "return False\n")
-        if not config.nocover:
+        if not config.noCover:
             genCode.append(baseIndent + "finally:\n")
             genCode.append(baseIndent + baseIndent + "if self.__collectCov:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__cov.stop()\n")
@@ -1451,7 +1451,7 @@ def main():
     for l in boilerplate:
         outf.write(baseIndent + l)
 
-    if not config.nocover:
+    if not config.noCover:
         for l in boilerplate_cov:
             outf.write(baseIndent + l)    
 
