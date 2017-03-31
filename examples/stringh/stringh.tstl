@@ -1,0 +1,32 @@
+@from ctypes import *
+@libc = cdll.LoadLibrary("/usr/lib/libc.dylib")
+@import pystringh
+
+<@
+def sign(n):
+    if n < 0:
+        return -1
+    if n > 0:
+        return 1
+    return 0
+@>
+
+pool: <string> 5 REF
+pool: <len> 5
+
+<string> := ""
+<string> += <['a'..'z']>
+<string> += '\0'
+
+<len> := <[0..20]>
+<len> := len(<string>)
+<len> := len(pystringh.cutNull(<string>))
+<len> += 1
+
+<len,1> <= len(<string,1>) -> libc.strnlen(<string>,<len>)
+<len,1> <= len(<string,1>) -> sign(libc.strncmp(<string>,<string>,<len>))
+
+reference: libc ==> pystringh
+
+compare: strnlen
+compare: strncmp
