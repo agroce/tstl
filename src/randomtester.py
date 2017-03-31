@@ -81,7 +81,7 @@ def parse_args():
     parser.add_argument('--swarmLength', type=int, default=None,
                         help="How long a swarm config persists (only relevant with --swarmSwitch).")    
     parser.add_argument('--markov', type=str, default=None,
-                        help="Guide testing by a Markov model.")
+                        help="Guide testing by a Markov model file.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
     parser.add_argument('-X', '--startExploit', type=int, default=0,

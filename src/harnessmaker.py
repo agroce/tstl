@@ -341,9 +341,9 @@ def genInitialization():
             genCode.append(s + "\n")
         if p in absSet:
             s = baseIndent
-            s += 'self.__abstraction["' + poolPrefix + p.replace("%","") + '] = "' + absSet[p] + '"'
+            s += 'self.__abstraction["' + poolPrefix + p.replace("%","") + '"] = "' + absSet[p] + '"'
             genCode.append(s + "\n")
-        for x in xrange(0,poolSet[p]+1):
+        for x in xrange(0,poolSet[p]):
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "[" + str(x) + "] = None"
             genCode.append(s + "\n")    
