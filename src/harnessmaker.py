@@ -908,6 +908,7 @@ def main():
 
         newC = newC.replace(":=","=")
         newC = newC.replace("~"+poolPrefix,poolPrefix)
+        newC = replaceRefs(newC)
 
         interestingGuard = ""
         newCguard = ""
@@ -1062,7 +1063,7 @@ def main():
         
         if refC != newC:
             genCode.append(baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION:',self.prettyName('''"+refC[:-1]+"''')\n")            
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION:',self.prettyName('''"+refC[:-1]+" ''')\n")            
             genCode.append(baseIndent + baseIndent + refC)
             genCode.append(baseIndent + "except KeyboardInterrupt:\n")
             genCode.append(baseIndent + baseIndent + "raise\n")            
@@ -1130,7 +1131,7 @@ def main():
         if refC != newC:
             d = "self.__refCode[" + "'''" + newC[:-1] + " '''] = []\n"
             actDefs.append(d)
-            d = "self.__refCode[" + "'''" + newC[:-1] + " '''].append(r\"" + refC[:-1] + "\")\n"
+            d = "self.__refCode[" + "'''" + newC[:-1] + " '''].append('''" + refC[:-1] + " ''')\n"
             actDefs.append(d)
             if comparing:
                 d = "self.__refCode[" + "'''" + newC[:-1] + " '''].append(\"assert result == result_REF, \\\" (%s) == (%s) \\\" % (result, result_REF)\\n\")\n"
