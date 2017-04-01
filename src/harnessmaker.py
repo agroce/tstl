@@ -801,6 +801,8 @@ def main():
     nind = 0
 
     allNames = {}
+
+    warnedAbout = []
     
     for corig in code:
         act = genAct()
@@ -910,6 +912,18 @@ def main():
         newC = newC.replace("~"+poolPrefix,poolPrefix)
         newC = replaceRefs(newC)
 
+        bad = re.findall("%\w*%",newC)
+        for b in bad:
+            if b in warnedAbout:
+                continue
+            warnedAbout.append(b)
+            print "*"*70
+            print "WARNING: did you forget to declare the pool",b.replace("%","")+"?"
+            print "first used in this code:"
+            print originalCode[corig]
+            print "*"*70            
+
+        
         interestingGuard = ""
         newCguard = ""
         if newC.find(" -> ") > -1:
