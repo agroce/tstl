@@ -17,6 +17,8 @@ pool: <string> 5
 pool: <int> 5
 pool: <list> 5
 pool: <set> 5
+pool: <tuple> 5
+pool: <dict> 5
 
 pool: <key> 5
 pool: <val> 5
@@ -25,6 +27,7 @@ pool: <dump> 5
 
 <string> := ""
 <string> += <['a'..'z']>
+<string> += chr(<[0..255]>)
 
 <int> := <[0..9]>
 <int> *= 10
@@ -37,15 +40,25 @@ pool: <dump> 5
 <set>.add(<string>)
 <set>.add(<int>)
 
+
+<tuple> := (<val>,<val>)
+<tuple> := (<val>,<val>,<val>)
+
+<dict> := {}
+<dict>[<key>] = <val>
+
 <key> := <string>
+<key> := <int>
 
 <val> := <string>
 <val> := <int>
 <val> := <list>
 <val> := <set>
+<val> := <tuple>
 
 <r> := redis.StrictRedis(host='localhost', port=6379, db=0)
 
+#dicts and basic operations on store
 <r>.set(<key>,<val>)
 {redis.exceptions.ResponseError} <r>.get(<key>)
 <r>.delete(<key>)
@@ -67,8 +80,9 @@ pool: <dump> 5
 #<r>.unlink(<key>)
 (<int,2> > 0) and (<int,2> < 3) -> <r>.wait(<int>,<int>)
 
-{redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <r>.blpop(<key>,<int>)
-{redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <r>.brpop(<key>,<int>)
+#lists
+{redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <r>.blpop(<string>,<int>) # can't take int keys for some reason...
+{redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <r>.brpop(<string>,<int>) # same
 {redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <r>.brpoplpush(<key>,<key>,<int>)
 {redis.exceptions.ResponseError} <val> := <r>.lindex(<key>,<int>)
 {redis.exceptions.ResponseError} <val> := <r>.linsert(<key>,"before",<val>,<val>)
@@ -86,6 +100,7 @@ pool: <dump> 5
 {redis.exceptions.ResponseError} <r>.rpush(<key>,<val>)
 {redis.exceptions.ResponseError} <r>.rpushx(<key>,<val>)
 
+#sets
 {redis.exceptions.ResponseError} <r>.sadd(<key>,<val>)
 {redis.exceptions.ResponseError} <r>.scard(<key>)
 {redis.exceptions.ResponseError} <r>.sdiff(<key>,<key>)
@@ -96,13 +111,29 @@ pool: <dump> 5
 {redis.exceptions.ResponseError} <r>.smembers(<key>)
 {redis.exceptions.ResponseError} <r>.smove(<key>,<key>,<val>)
 {redis.exceptions.ResponseError} <r>.spop(<key>)
-{redis.exceptions.ResponseError} <r>.spop(<key>,<int>)
 {redis.exceptions.ResponseError} <r>.srandmember(<key>)
 {redis.exceptions.ResponseError} <r>.srandmember(<key>,<int>)
 {redis.exceptions.ResponseError} <r>.srem(<key>,<val>)
 {redis.exceptions.ResponseError} <r>.sunion(<key>,<key>)
 {redis.exceptions.ResponseError} <r>.sunionstore(<key>,<key>,<key>)
 
+#hashes
+{redis.exceptions.ResponseError} <r>.hdel(<key>)
+{redis.exceptions.ResponseError} <r>.hexists(<key>,<key>)
+{redis.exceptions.ResponseError} <r>.hget(<key>,<key>)
+{redis.exceptions.ResponseError} <r>.hgetall(<key>)
+{redis.exceptions.ResponseError} <r>.hincrby(<key>,<key>,<int>)
+{redis.exceptions.ResponseError} <r>.hincrbyfloat(<key>,<key>,<int>)
+{redis.exceptions.ResponseError} <r>.hkeys(<key>)
+{redis.exceptions.ResponseError} <r>.hlen(<key>)
+{redis.exceptions.ResponseError} <r>.hmget(<key>,<key>,<key>)
+#{redis.exceptions.ResponseError} <r>.hmset(<key>,<key>,<val>)
+{redis.exceptions.ResponseError} <r>.hset(<key>,<key>,<val>)
+{redis.exceptions.ResponseError} <r>.hsetnx(<key>,<key>,<val>)
+#{redis.exceptions.ResponseError} <r>.hstrlen(<key>,<key>)
+{redis.exceptions.ResponseError} <r>.hvals(<key>)
+
+#server commands
 <r>.dbsize()
 <r>.flushdb()
 <r>.info()
