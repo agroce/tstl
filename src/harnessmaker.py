@@ -1249,9 +1249,10 @@ def main():
                     refF = re.sub(r'\b'+base+r'\b',referenceMap[base],refF)
                 else:   # base is a regex; treat it like one
                     refF = re.sub(base,referenceMap[base],refF)
-            genCode.append(baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + refF)
-            genCode.append(baseIndent + "except: pass\n")
+            if refF != f:
+                genCode.append(baseIndent + "try:\n")
+                genCode.append(baseIndent + baseIndent + refF)
+                genCode.append(baseIndent + "except: pass\n")
             
     genCode.append(baseIndent + "try:\n")
     genCode.append(baseIndent + baseIndent + "test_before_restart(self)\n")
