@@ -31,6 +31,8 @@ pool: <pattern> 5
 
 pool: <pipe> 5
 
+pool: <database> 5
+
 <string> := ""
 <string> += <['a'..'z']>
 <string> += chr(<[0..255]>)
@@ -62,7 +64,9 @@ pool: <pipe> 5
 <val> := <set>
 <val> := <tuple>
 
-<r> := redis.StrictRedis(host='localhost', port=6379, db=0)
+<database> := <[0..15]>
+
+<r> := redis.StrictRedis(host='localhost', port=6379, db=<database>)
 
 #dicts and basic operations on store
 <r>.set(<key>,<val>)
@@ -72,6 +76,7 @@ pool: <pipe> 5
 <r>.exists(<key>)
 <r>.expire(<key>,<int>)
 <r>.keys()
+{redis.exceptions.ResponseError} <r>.move(<key>,<database>)
 <r>.persist(<key>)
 <r>.pexpire(<key>,<int>)
 <r>.pttl(<key>)
@@ -80,7 +85,7 @@ pool: <pipe> 5
 {redis.exceptions.ResponseError} <r>.renamenx(<key>,<key>)
 {redis.exceptions.ResponseError} <r>.restore(<key>,<int>,<dump>)
 {redis.exceptions.ResponseError} <r>.sort(<key>)
-#<r>.touch(<key>) -- no support in redis-pu
+#<r>.touch(<key>) -- no support in redis-py
 <r>.ttl(<key>)
 <r>.type(<key>)
 #<r>.unlink(<key>) -- no support in redis-pu
