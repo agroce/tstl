@@ -168,7 +168,7 @@ pool: <database> 5
 <pubsub>.unsubscribe()
 <pubsub>.unsubscribe(<channel>)
 <pubsub>.unsubscribe(<pattern>)
-<pubsub>.close() # without close, overwhelms FDs quickly; with close, overwhelms soon
+<pubsub>.close() # without close, overwhelms FDs quickly; with close, overwhelms eventually
 
 #from here on, use pipes in place of connections
 <pipe> := <r>.pipeline()
