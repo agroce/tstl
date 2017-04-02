@@ -9,7 +9,7 @@ source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-pac
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/sentinel.py
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/utils.py
 
-init: r = redis.StrictRedis(host='localhost', port=6379, db=0); r.flushdb()
+init: r = redis.StrictRedis(host='localhost', port=6379, db=0); r.flushall()
 
 pool: <r> 5
 
@@ -147,6 +147,7 @@ pool: <database> 5
 #server commands
 <r>.dbsize()
 <r>.flushdb()
+<r>.flushall()
 <r>.info()
 
 #publish/subscribe
@@ -178,6 +179,7 @@ pool: <database> 5
 <pipe>.exists(<key>)
 <pipe>.expire(<key>,<int>)
 <pipe>.keys()
+{redis.exceptions.ResponseError} <pipe>.move(<key>,<database>)
 <pipe>.persist(<key>)
 <pipe>.pexpire(<key>,<int>)
 <pipe>.pttl(<key>)
