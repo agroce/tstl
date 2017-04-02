@@ -1,5 +1,6 @@
 @import redis
 
+#Source locations will obviously vary on your machine!
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/_compat.py
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/client.py
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/connection.py
@@ -7,7 +8,6 @@ source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-pac
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/lock.py
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/sentinel.py
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/utils.py
-
 
 init: r = redis.StrictRedis(host='localhost', port=6379, db=0); r.flushdb()
 
@@ -24,6 +24,12 @@ pool: <key> 5
 pool: <val> 5
 
 pool: <dump> 5
+
+pool: <pubsub> 5
+pool: <channel> 5
+pool: <pattern> 5
+
+pool: <pipe> 5
 
 <string> := ""
 <string> += <['a'..'z']>
@@ -74,10 +80,10 @@ pool: <dump> 5
 {redis.exceptions.ResponseError} <r>.renamenx(<key>,<key>)
 {redis.exceptions.ResponseError} <r>.restore(<key>,<int>,<dump>)
 {redis.exceptions.ResponseError} <r>.sort(<key>)
-#<r>.touch(<key>)
+#<r>.touch(<key>) -- no support in redis-pu
 <r>.ttl(<key>)
 <r>.type(<key>)
-#<r>.unlink(<key>)
+#<r>.unlink(<key>) -- no support in redis-pu
 (<int,2> > 0) and (<int,2> < 3) -> <r>.wait(<int>,<int>)
 
 #lists
@@ -137,3 +143,99 @@ pool: <dump> 5
 <r>.dbsize()
 <r>.flushdb()
 <r>.info()
+
+#publish/subscribe
+
+<channel> := <string>
+<pattern> := <string>
+<pattern> := <pattern> + "*"
+<pattern> := "*" + <pattern>
+
+<r>.publish(<channel>,<val>)
+
+<pubsub> := <r>.pubsub()
+<pubsub>.subscribe(<channel>)
+<pubsub>.subscribe(<pattern>)
+{AttributeError} <pubsub>.get_message()
+<pubsub>.unsubscribe()
+<pubsub>.unsubscribe(<channel>)
+<pubsub>.unsubscribe(<pattern>)
+
+#from here on, use pipes in place of connections
+<pipe> := <r>.pipeline()
+{redis.exceptions.ResponseError} <pipe>.execute()
+
+#dicts and basic operations on store
+<pipe>.set(<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.get(<key>)
+<pipe>.delete(<key>)
+<pipe>.dump(<key>)
+<pipe>.exists(<key>)
+<pipe>.expire(<key>,<int>)
+<pipe>.keys()
+<pipe>.persist(<key>)
+<pipe>.pexpire(<key>,<int>)
+<pipe>.pttl(<key>)
+<pipe>.randomkey()
+{redis.exceptions.ResponseError} <pipe>.rename(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.renamenx(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.restore(<key>,<int>,<dump>)
+{redis.exceptions.ResponseError} <pipe>.sort(<key>)
+#<pipe>.touch(<key>) -- no support in redis-pu
+<pipe>.ttl(<key>)
+<pipe>.type(<key>)
+#<pipe>.unlink(<key>) -- no support in redis-pu
+(<int,2> > 0) and (<int,2> < 3) -> <pipe>.wait(<int>,<int>)
+
+#lists
+{redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <pipe>.blpop(<string>,<int>) # can't take int keys for some reason...
+{redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <pipe>.brpop(<string>,<int>) # same
+{redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <pipe>.brpoplpush(<key>,<key>,<int>)
+{redis.exceptions.ResponseError} <pipe>.lindex(<key>,<int>)
+{redis.exceptions.ResponseError} <pipe>.linsert(<key>,"before",<val>,<val>)
+{redis.exceptions.ResponseError} <pipe>.linsert(<key>,"after",<val>,<val>)
+{redis.exceptions.ResponseError} <pipe>.llen(<key>)
+{redis.exceptions.ResponseError} <pipe>.lpop(<key>)
+{redis.exceptions.ResponseError} <pipe>.lpush(<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.lpushx(<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.lrange(<key>,<int>,<int>)
+{redis.exceptions.ResponseError} <pipe>.lrem(<key>,<int>,<val>)
+{redis.exceptions.ResponseError} <pipe>.lset(<key>,<int>,<val>)
+{redis.exceptions.ResponseError} <pipe>.ltrim(<key>,<int>,<int>)
+{redis.exceptions.ResponseError} <pipe>.rpop(<key>)
+{redis.exceptions.ResponseError} <pipe>.rpoplpush(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.rpush(<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.rpushx(<key>,<val>)
+
+#sets
+{redis.exceptions.ResponseError} <pipe>.sadd(<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.scard(<key>)
+{redis.exceptions.ResponseError} <pipe>.sdiff(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.sdiffstore(<key>,<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.sinter(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.sinterstore(<key>,<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.sismember(<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.smembers(<key>)
+{redis.exceptions.ResponseError} <pipe>.smove(<key>,<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.spop(<key>)
+{redis.exceptions.ResponseError} <pipe>.srandmember(<key>)
+{redis.exceptions.ResponseError} <pipe>.srandmember(<key>,<int>)
+{redis.exceptions.ResponseError} <pipe>.srem(<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.sunion(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.sunionstore(<key>,<key>,<key>)
+
+#hashes
+{redis.exceptions.ResponseError} <pipe>.hdel(<key>)
+{redis.exceptions.ResponseError} <pipe>.hexists(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.hget(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.hgetall(<key>)
+{redis.exceptions.ResponseError} <pipe>.hincrby(<key>,<key>,<int>)
+{redis.exceptions.ResponseError} <pipe>.hincrbyfloat(<key>,<key>,<int>)
+{redis.exceptions.ResponseError} <pipe>.hkeys(<key>)
+{redis.exceptions.ResponseError} <pipe>.hlen(<key>)
+{redis.exceptions.ResponseError} <pipe>.hmget(<key>,<key>,<key>)
+#{redis.exceptions.ResponseError} <pipe>.hmset(<key>,<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.hset(<key>,<key>,<val>)
+{redis.exceptions.ResponseError} <pipe>.hsetnx(<key>,<key>,<val>)
+#{redis.exceptions.ResponseError} <pipe>.hstrlen(<key>,<key>)
+{redis.exceptions.ResponseError} <pipe>.hvals(<key>)
