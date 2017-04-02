@@ -11,6 +11,8 @@ source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-pac
 
 init: r = redis.StrictRedis(host='localhost', port=6379, db=0); r.flushall()
 
+finally: <pubsub>.close()
+
 pool: <r> 5
 
 pool: <string> 5
@@ -166,6 +168,7 @@ pool: <database> 5
 <pubsub>.unsubscribe()
 <pubsub>.unsubscribe(<channel>)
 <pubsub>.unsubscribe(<pattern>)
+<pubsub>.close() # without close, overwhelms FDs quickly; with close, overwhelms soon
 
 #from here on, use pipes in place of connections
 <pipe> := <r>.pipeline()
