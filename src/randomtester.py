@@ -541,6 +541,20 @@ def main():
                 quickCount = fn + 1
             t = sut.loadTest(f)
             sut.replay(t,catchUncaught=True,checkProp=(not config.noCheck))
+            # quick tests are obviously good sources for exploitation
+            if (config.exploit != None) and (not config.noCoverageExploit):
+                for b in sut.currBranches():
+                    if b not in branchCoverageCount:
+                        branchCoverageCount[b] = 1
+                    else:
+                        branchCoverageCount[b] += 1
+                for s in sut.currStatements():
+                    if s not in statementCoverageCount:
+                        statementCoverageCount[s] = 1
+                    else:
+                        statementCoverageCount[s] += 1      
+                fullPool.append((t,set(sut.currBranches()), set(sut.currStatements())))
+                
         print "EXECUTION TIME:",time.time()-sqrtime
         print "BRANCH COVERAGE:",len(sut.allBranches())
         print "STATEMENT COVERAGE:",len(sut.allStatements())        
