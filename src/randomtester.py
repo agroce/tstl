@@ -79,7 +79,9 @@ def parse_args():
     parser.add_argument('--swarmSwitch', type=int, default=None,
                         help="How many times to switch swarm config during each test.")
     parser.add_argument('--swarmLength', type=int, default=None,
-                        help="How long a swarm config persists (only relevant with --swarmSwitch).")    
+                        help="How long a swarm config persists (only relevant with --swarmSwitch).")
+    parser.add_argument('--probs', type=str, default=None,
+                        help="Guide testing by an action class probability file.")    
     parser.add_argument('--markov', type=str, default=None,
                         help="Guide testing by a Markov model file.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
@@ -624,6 +626,12 @@ def main():
         featureStatsB = {}                
         featureStatsS = {}
         featureStatsA = {}
+
+    if config.swarmProbs != None:
+        swarmClassProbs = sut.readProbFile(config.swarmProbs)
+
+    if config.probs != None:
+        classP = sut.readProbFile(config.probs,returnList=True)
         
     if config.quickAnalysis:
         quickcf = open("quick.corpus",'w')
@@ -657,7 +665,7 @@ def main():
         ntests += 1
 
         if config.swarm:
-            sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+            sut.standardSwarm(R,classProb=swarmClassProbs,P=config.swarmP)
             if config.progress:
                 print "CONFIG:",(sut.swarmConfig())
 
@@ -718,7 +726,7 @@ def main():
                         tryStutter = True
             else:
                 if config.markov == None:
-                    if config.highLowSwarm == None:
+                    if (config.highLowSwarm == None) and (config.probs == None):
                         a = sut.randomEnabled(R)
                     else:
                         a = sut.randomEnabledClassProbs(R,classP)

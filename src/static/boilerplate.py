@@ -409,7 +409,22 @@ def enableAll(self):
     self.__swarmConfig = None
     self.__actions = self.__actions_backup
 
-def standardSwarm(self, rgen, P = 0.5, file = None):
+def readProbFile(self, file, returnList=False):
+    classProb = {}
+    with open(file) as f:
+        for l in f:
+            ls = l.split("%%%%")
+            c = ls[0][:-1]
+            prob = float(ls[1])
+            classProb[c] = prob
+    if not returnList:
+        return classProb
+    l = []
+    for k in classProb:
+        l.append((classProb[k],k))
+    return l
+    
+def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None):
     """
     Enables all actions, then sets a swarm configuration based on rgen, P = probability of enabling an action class,
     file is a file (format action %%%% probability) giving probabilities for inclusion)
@@ -418,15 +433,10 @@ def standardSwarm(self, rgen, P = 0.5, file = None):
     newEnabled = []
 
     if file != None:
-        classProb = {}
-        for l in open(file):
-            ls = l.split("%%%%")
-            c = ls[0][:-1]
-            prob = float(ls[1])
-            classProb[c] = prob
+        classProb = self.readProbFile(file)
             
     for c in self.__actionClasses:
-        if file == None:
+        if classProb == None:
             if rgen.random() < P:
                 newEnabled.append(c)
         else:
