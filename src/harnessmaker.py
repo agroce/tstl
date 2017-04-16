@@ -137,6 +137,7 @@ def parse_import_line(line):
     :
     """
     global import_froms
+    global need_imports
     
     #print "IMPORT:",line
     raw = line.split('import ')
@@ -307,16 +308,12 @@ def genInitialization():
     """
     Generate initialization from configuration, poolSet
     """
-    global firstInit
-    genCode.append(baseIndent + "self.__noReassigns = False\n")
+    global firstInit, import_modules
     genCode.append(baseIndent + "self.__test = []\n")
     genCode.append(baseIndent + "self.__pools = []\n")
     genCode.append(baseIndent + "self.__psize = {}\n")    
-    genCode.append(baseIndent + "self.__consts = []\n")
-    genCode.append(baseIndent + "self.__opaque = []\n")
-    genCode.append(baseIndent + "self.__abstraction = {}\n")    
     genCode.append(baseIndent + "self.__failure = None\n")
-    genCode.append(baseIndent + "self.__warning = None\n")        
+    genCode.append(baseIndent + "self.__warning = None\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%","") + " = {}"
@@ -324,25 +321,6 @@ def genInitialization():
         s = baseIndent
         s += poolPrefix + p.replace("%","") + "_used = {}"
         genCode.append(s + "\n")
-        s = baseIndent
-        s += 'self.__psize["' + p.replace("%","") + '"] = ' + str(poolSet[p])
-        genCode.append(s + "\n")
-        
-        s = baseIndent
-        s += 'self.__pools.append("' + poolPrefix + p.replace("%","") + '")'
-        genCode.append(s + "\n")
-        if p in constSet:
-            s = baseIndent
-            s += 'self.__consts.append("' + poolPrefix + p.replace("%","") + '")'
-            genCode.append(s + "\n")
-        if p in opaqueSet:
-            s = baseIndent
-            s += 'self.__opaque.append("' + poolPrefix + p.replace("%","") + '")'
-            genCode.append(s + "\n")
-        if p in absSet:
-            s = baseIndent
-            s += 'self.__abstraction["' + poolPrefix + p.replace("%","") + '"] = "' + absSet[p] + '"'
-            genCode.append(s + "\n")
         for x in xrange(0,poolSet[p]):
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "[" + str(x) + "] = None"
@@ -370,6 +348,7 @@ def main():
     
     global config
     global import_froms
+    global import_modules
     global ignoredExcepts
     global poolSet
     global refSet
@@ -389,7 +368,7 @@ def main():
     baseIndent = "    "
 
     if "-v" in sys.argv or "--version" in sys.argv:
-        print "TSTL, version 0.9.5"
+        print "TSTL, version 0.9.6"
         print "Documentation at https://github.com/agroce/tstl"
         sys.exit(0)
         
@@ -1172,6 +1151,9 @@ def main():
     genCode.append(baseIndent + "self.__modules = []\n")
     for s in sourceSet:
         genCode.append(baseIndent + 'self.__modules.append(r"' + s + '")\n')
+    genCode.append(baseIndent + "self.__importModules = []\n")        
+    for i in import_modules:
+        genCode.append(baseIndent + "self.__importModules.append(" + i + ")\n")
     genCode.append(baseIndent + "self.__features = []\n")
     for f in featureSet:
         genCode.append(baseIndent + 'self.__features.append(r"' + f + '")\n')
@@ -1227,8 +1209,32 @@ def main():
     genCode.append(baseIndent + "self.__verboseActions = False\n")    
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
+    genCode.append(baseIndent + "self.__noReassigns = False\n")
     genCode.append(baseIndent + "self.__safeSafelyMode = False\n")    
     genCode.append(baseIndent + "self.__simplifyCache = {}\n")
+    genCode.append(baseIndent + "self.__consts = []\n")
+    genCode.append(baseIndent + "self.__opaque = []\n")
+    genCode.append(baseIndent + "self.__abstraction = {}\n")
+    for p in poolSet:
+        s = baseIndent
+        s += 'self.__psize["' + p.replace("%","") + '"] = ' + str(poolSet[p])
+        genCode.append(s + "\n")
+        s = baseIndent
+        s += 'self.__pools.append("' + poolPrefix + p.replace("%","") + '")'
+        genCode.append(s + "\n")
+        if p in constSet:
+            s = baseIndent
+            s += 'self.__consts.append("' + poolPrefix + p.replace("%","") + '")'
+            genCode.append(s + "\n")
+        if p in opaqueSet:
+            s = baseIndent
+            s += 'self.__opaque.append("' + poolPrefix + p.replace("%","") + '")'
+            genCode.append(s + "\n")
+        if p in absSet:
+            s = baseIndent
+            s += 'self.__abstraction["' + poolPrefix + p.replace("%","") + '"] = "' + absSet[p] + '"'
+            genCode.append(s + "\n")
+            
     for d in actDefs:
         genCode.append(baseIndent + d + "\n")
     genCode.append(baseIndent + "self.__actions_backup = list(self.__actions)\n")
