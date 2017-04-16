@@ -385,6 +385,7 @@ def main():
     # Handle raw python, imports
     outf.write("import copy\n")
     outf.write("import traceback\n")
+    outf.write("import inspect\n")    
     outf.write("import re\n")
     outf.write("import sys\n")
     outf.write("import time\n")    
