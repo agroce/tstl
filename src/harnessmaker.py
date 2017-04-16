@@ -310,8 +310,6 @@ def genInitialization():
     """
     global firstInit, import_modules
     genCode.append(baseIndent + "self.__test = []\n")
-    genCode.append(baseIndent + "self.__pools = []\n")
-    genCode.append(baseIndent + "self.__psize = {}\n")    
     genCode.append(baseIndent + "self.__failure = None\n")
     genCode.append(baseIndent + "self.__warning = None\n")
     for p in poolSet:
@@ -1212,6 +1210,8 @@ def main():
     genCode.append(baseIndent + "self.__noReassigns = False\n")
     genCode.append(baseIndent + "self.__safeSafelyMode = False\n")    
     genCode.append(baseIndent + "self.__simplifyCache = {}\n")
+    genCode.append(baseIndent + "self.__pools = []\n")
+    genCode.append(baseIndent + "self.__psize = {}\n")        
     genCode.append(baseIndent + "self.__consts = []\n")
     genCode.append(baseIndent + "self.__opaque = []\n")
     genCode.append(baseIndent + "self.__abstraction = {}\n")
