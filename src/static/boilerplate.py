@@ -409,6 +409,21 @@ def enableAll(self):
     self.__swarmConfig = None
     self.__actions = self.__actions_backup
 
+def objCodeLOCs(self,obj,context):
+    LOCs = []
+    for o in inspect.getmembers(obj):
+        if inspect.isfunction(o[1]) or inspect.ismethod(o[1]):
+            LOCs.append((o[0],len(inspect.getsourcelines(o[1])[0]), context))
+        if inspect.isclass(o[1]):
+            LOCs.extend(self.objCodeLOCs(o[1],context + [o[0]]))
+    return LOCs
+    
+def codeLOCs(self):
+    LOCs = []
+    for m in self.__importModules:
+        LOCs.extend(self.objCodeLOCs(m,[m.__name__]))
+    return LOCs
+    
 def readProbFile(self, file, returnList=False):
     classProb = {}
     with open(file) as f:
