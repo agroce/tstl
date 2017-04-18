@@ -1162,12 +1162,16 @@ def main():
     else:
         genCode.append(baseIndent + "self.__replayBacktrack = True\n")
     if not config.noCover:
-        covc = baseIndent + "self.__cov = coverage.coverage(branch=True, source=["
+        covc = baseIndent + "self.__cov = coverage.coverage(branch=True, source="
+        if len(sourceSet) > 0:
+            covc += "["
         for s in sourceSet:
             covc += '"' + s + '",'
         if len(sourceSet) > 0:
-            covc = covc[:-1]
-        genCode.append(covc + "]")
+            covc = covc[:-1] + "] + self.moduleFiles()"
+        else:
+            covc = covc + "self.moduleFiles()"
+        genCode.append(covc)
         if config.pylib:
             genCode.append(",cover_pylib=True")
         genCode.append(",omit='sut.py'")

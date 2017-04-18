@@ -213,3 +213,10 @@ def coversSame(self, test, catchUncaught=False, checkProp=False):
 def coversMoreThan(self, test, catchUncaught=False, checkProp=False):
     self.replay(test,catchUncaught=catchUncaught,checkProp=checkProp)
     return self.coversMore(self.currStatements(), self.currBranches(), catchUncaught=catchUncaught, checkProp=checkProp)
+
+def moduleFiles(self):
+    files = []
+    for m in self.__importModules:
+        files.extend(m.__path__)
+    return files
+        
