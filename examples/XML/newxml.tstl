@@ -1,5 +1,4 @@
-@import my_xml_bug as my_xml
-source: my_xml_bug.py
+@import my_xml
 
 pool: <XML> 3
 pool: <string> 3
