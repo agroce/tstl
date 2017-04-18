@@ -1,6 +1,6 @@
-@from dateutil.rrule import *
-@from dateutil.parser import *
-@from datetime import *
+@import dateutil.rrule
+@import dateutil.parser
+@import datetime
 
 pool: <freq> 3
 pool: <dt> 2
@@ -8,15 +8,15 @@ pool: <count> 5
 pool: <int> 5
 pool: <bysetpos> 5
 
-<freq> := YEARLY
-<freq> := MONTHLY
-<freq> := DAILY
-<freq> := HOURLY
-<freq> := MINUTELY
-<freq> := SECONDLY
+<freq> := dateutil.rrule.YEARLY
+<freq> := dateutil.rrule.MONTHLY
+<freq> := dateutil.rrule.DAILY
+<freq> := dateutil.rrule.HOURLY
+<freq> := dateutil.rrule.MINUTELY
+<freq> := dateutil.rrule.SECONDLY
 
-<dt> := parse("19970902T090000")
-<dt> := parse("19971224T000000")
+<dt> := dateutil.parser.parse("19970902T090000")
+<dt> := dateutil.parser.parse("19971224T000000")
 
 <int> := <[0..10]>
 <count> := <[0..100]>
@@ -26,5 +26,5 @@ pool: <bysetpos> 5
 #type(<bysetpos,1>) == list -> <bysetpos>.append(<[-10..-1]>)
 #type(<bysetpos,1>) == list -> <bysetpos>.append(<[1..10]>)
 
-assert list(rrule(<freq>,count=<count>,interval=<int>,dtstart=<dt>,until=<dt>,bysetpos=<bysetpos>,cache=True)) == list(rrule(<freq,1>,count=<count,1>,interval=<int,1>,dtstart=<dt,1>,until=<dt,2>,bysetpos=<bysetpos,1>,cache=False))
-assert list(rrule(<freq>,count=<count>,interval=<int>,dtstart=<dt>,until=<dt>,cache=True)) == list(rrule(<freq,1>,count=<count,1>,interval=<int,1>,dtstart=<dt,1>,until=<dt,2>,cache=False))
+assert list(dateutil.rrule.rrule(<freq>,count=<count>,interval=<int>,dtstart=<dt>,until=<dt>,bysetpos=<bysetpos>,cache=True)) == list(dateutil.rrule.rrule(<freq,1>,count=<count,1>,interval=<int,1>,dtstart=<dt,1>,until=<dt,2>,bysetpos=<bysetpos,1>,cache=False))
+assert list(dateutil.rrule.rrule(<freq>,count=<count>,interval=<int>,dtstart=<dt>,until=<dt>,cache=True)) == list(dateutil.rrule.rrule(<freq,1>,count=<count,1>,interval=<int,1>,dtstart=<dt,1>,until=<dt,2>,cache=False))
