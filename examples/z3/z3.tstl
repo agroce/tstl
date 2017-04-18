@@ -1,57 +1,57 @@
-@from z3 import *
+@import z3
 
-pool: %SOLVER% 3
-pool: %MODEL% 3
-pool: %INTVAR% 4
-pool: %BOOLVAR% 3
-pool: %FORMULA% 8
-pool: %INTCONST% 3
-pool: %INTEXPR% 8
-pool: %BOOLEXPR% 8
+pool: <solver> 3
+pool: <model> 3
+pool: <intvar> 4
+pool: <boolvar> 3
+pool: <formula> 8
+pool: <intconst> 3
+pool: <intexpr> 8
+pool: <boolexpr> 8
 
-%INTCONST% := %[-20..20]%
+<intconst> := <[-20..20]>
 
-%INTVAR% := Int('A')
-%INTVAR% := Int('B')
-%INTVAR% := Int('C')
-%INTVAR% := Int('D')
-%INTVAR% := Int('E')
-%INTVAR% := Int('F')
-%INTVAR% := Int('G')
-%INTVAR% := Int('H')
+<intvar> := z3.Int('A')
+<intvar> := z3.Int('B')
+<intvar> := z3.Int('C')
+<intvar> := z3.Int('D')
+<intvar> := z3.Int('E')
+<intvar> := z3.Int('F')
+<intvar> := z3.Int('G')
+<intvar> := z3.Int('H')
 
-%BOOLVAR% := Bool('P')
-%BOOLVAR% := Bool('Q')
-%BOOLVAR% := Bool('R')
+<boolvar> := z3.Bool('P')
+<boolvar> := z3.Bool('Q')
+<boolvar> := z3.Bool('R')
 
-%INTEXPR% := %INTVAR%
-%INTEXPR% := -(%INTVAR%)
-%INTEXPR% := %INTCONST%
-%INTEXPR% := %INTEXPR% + %INTEXPR%
-%INTEXPR% := %INTEXPR% - %INTEXPR%
-{ZeroDivisionError} %INTEXPR% := %INTEXPR% / %INTEXPR%
-%INTEXPR% := %INTEXPR% * %INTEXPR%
+<intexpr> := <intvar>
+<intexpr> := -(<intvar>)
+<intexpr> := <intconst>
+<intexpr> := <intexpr> + <intexpr>
+<intexpr> := <intexpr> - <intexpr>
+{ZeroDivisionError} <intexpr> := <intexpr> / <intexpr>
+<intexpr> := <intexpr> * <intexpr>
 
-%BOOLEXPR% := %INTEXPR% > %INTEXPR%
-%BOOLEXPR% := %INTEXPR% < %INTEXPR%
-%BOOLEXPR% := %INTEXPR% <= %INTEXPR%
-%BOOLEXPR% := %INTEXPR% >= %INTEXPR%
-%BOOLEXPR% := %INTEXPR% == %INTEXPR%
+<boolexpr> := <intexpr> > <intexpr>
+<boolexpr> := <intexpr> < <intexpr>
+<boolexpr> := <intexpr> <= <intexpr>
+<boolexpr> := <intexpr> >= <intexpr>
+<boolexpr> := <intexpr> == <intexpr>
 
-%FORMULA% := %BOOLEXPR%
-%FORMULA% := %BOOLVAR%
-%FORMULA% := %BOOLVAR% == %BOOLEXPR%
-%FORMULA% = And(~%FORMULA%,~%FORMULA%)
-%FORMULA% = Or(~%FORMULA%,~%FORMULA%)
-%FORMULA% = Not(~%FORMULA%)
-%FORMULA% = Implies(~%FORMULA%,~%FORMULA%)
+<formula> := <boolexpr>
+<formula> := <boolvar>
+<formula> := <boolvar> == <boolexpr>
+<formula> = z3.And(~<formula>,~<formula>)
+<formula> = z3.Or(~<formula>,~<formula>)
+<formula> = z3.Not(~<formula>)
+<formula> = z3.Implies(~<formula>,~<formula>)
 
-print "CLEARING %SOLVER,1%" ; %SOLVER% := Solver()
+print "CLEARING <solver,1>" ; <solver> := z3.Solver()
 
-print "%SOLVER,1%:", ; print %SOLVER%.check()
-print "%SOLVER,1%: ADDING", %FORMULA,1% ; ~%SOLVER%.add(%FORMULA%)
+print "<solver,1>:", ; print <solver>.check()
+print "<solver,1>: ADDING", <formula,1> ; ~<solver>.add(<formula>)
 
-str(%SOLVER,1%.check()) == "sat" -> print "%MODEL,1% = %SOLVER,1%.model()" ; %MODEL% := %SOLVER%.model()
+str(<solver,1>.check()) == "sat" -> print "<model,1> = <solver,1>.model()" ; <model> := <solver>.model()
 
-print "%MODEL,1% = ", %MODEL%
+print "<model,1> = ", <model>
 

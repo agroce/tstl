@@ -1,4 +1,4 @@
-@from z3 import *
+@import z3
 
 pools:
   <solver> 3
@@ -12,10 +12,10 @@ pools:
 
 actions:
 
-<intconst> := IntVal(<[-20..20]>)
+<intconst> := z3.IntVal(<[-20..20]>)
 
-<intvar> := Int(<['A'..'H']>)
-<boolvar> := Bool(<['P'..'T']>)
+<intvar> := z3.Int(<['A'..'H']>)
+<boolvar> := z3.Bool(<['P'..'T']>)
 
 <intexpr> := <intvar>
 <intexpr> := -(<intvar>)
@@ -24,7 +24,7 @@ actions:
 <intexpr> := <intexpr> - <intexpr>
 <intexpr> := <intexpr> * <intexpr>
 {ZeroDivisionError} <intexpr> := <intexpr> * <intexpr>
-{Z3Exception} int -> <intexpr> := simplify(<intexpr>,max_steps=1000)
+{z3.Z3Exception} int -> <intexpr> := z3.simplify(<intexpr>,max_steps=1000)
 
 <boolexpr> := <intexpr> == <intexpr>
 <boolexpr> := <intexpr> < <intexpr>
@@ -32,26 +32,26 @@ actions:
 <boolexpr> := <intexpr> != <intexpr>
 <boolexpr> := <intexpr> <= <intexpr>
 <boolexpr> := <intexpr> >= <intexpr>
-{Z3Exception} <boolexpr> := simplify(<boolexpr>,max_steps=1000)
+{z3.Z3Exception} <boolexpr> := z3.simplify(<boolexpr>,max_steps=1000)
 
 <constraint> := <boolexpr>
 <constraint> := <boolvar>
 <constraint> := <boolvar> == <boolexpr>
-<constraint> := ForAll(<intvar>,~<constraint>)
-<constraint> := Exists(<intvar>,~<constraint>)
+<constraint> := z3.ForAll(<intvar>,~<constraint>)
+<constraint> := z3.Exists(<intvar>,~<constraint>)
 <constraint> := ~<constraint> == ~<constraint>
-<constraint> := And(~<constraint>,~<constraint>)
-<constraint> := Or(~<constraint>,~<constraint>)
-<constraint> := Not(~<constraint>)
-<constraint> := Implies(~<constraint>,~<constraint>)
-{Z3Exception} <constraint> := simplify(~<constraint>,max_steps=1000)
+<constraint> := z3.And(~<constraint>,~<constraint>)
+<constraint> := z3.Or(~<constraint>,~<constraint>)
+<constraint> := z3.Not(~<constraint>)
+<constraint> := z3.Implies(~<constraint>,~<constraint>)
+{z3.Z3Exception} <constraint> := z3.simplify(~<constraint>,max_steps=1000)
 
 
-<solver> := Solver(); <solver,1>.set("timeout",120000)
+<solver> := z3.Solver(); <solver,1>.set("timeout",120000)
 
 <solver>.check()
 ~<solver>.push()
-{Z3Exception} ~<solver>.pop()
+{z3.Z3Exception} ~<solver>.pop()
 ~<solver>.add(<constraint>)
 
 str(<solver,1>.check()) == "sat" -> <model> := <solver>.model()
