@@ -139,12 +139,12 @@ make sure that our AVL tree "acts like" a set --- when we insert
 something, we can find that thing, and when we delete something, we
 can no longer find it.
 
-MAJOR CHANGE:
-Examples will soon reflect that importing the module to be tested is the "right"
-way to work with SUT code in TSTL.  TSTL now automatically determines many things
-about the code to be tested based on your imports.  Don't import with an alias,
-and don't do "import from" on code you are actually testing (fine for utility
-code).
+Note that we start with "raw Python" to import the avl module, the SUT.  While TSTL
+supports using from, aliases, and wildcards in imports, you should always
+import the module(s) under test with a simple import.  This allows TSTL to identify
+the code to be tested and automatically provide coverage, static analysis-aided
+testing methods, and proper module management.  Utility code in the standard library,
+on the other hand, can be imported any way you wish.
 
 If we test this (or avlnew.tstl) for 30 seconds, something like this will appear:
 
