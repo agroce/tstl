@@ -4,7 +4,7 @@
 # the coverage tests (in coverage subfolder) kill 80% of the mutants.  But the remainder
 # require the much greater testing in the mutkill folder (which also has 100% coverage)
 
-@import kwic as yourkwic
+@import kwic
 @import mykwic
 
 source: kwic.py
@@ -49,9 +49,9 @@ pool: <ignore> 5
 <ignore> := <string>.split()
 <ignore>.append(<string>)
 
-assert yourkwic.kwic(<string>) == mykwic.kwic(<string,1>)
-assert yourkwic.kwic(<string>, listPairs=True) == mykwic.kwic(<string,1>, listPairs=True)
-assert yourkwic.kwic(<string>, ignoreWords = <ignore>) == mykwic.kwic(<string,1>, ignoreWords = <ignore,1>)
-assert yourkwic.kwic(<string>, periodsToBreaks=True) == mykwic.kwic(<string,1>, periodsToBreaks=True)
-assert yourkwic.kwic(<string>, periodsToBreaks=True, listPairs=True) == mykwic.kwic(<string,1>, periodsToBreaks=True, listPairs=True)
-assert yourkwic.kwic(<string>, periodsToBreaks=True, listPairs=True, ignoreWords = <ignore>) == mykwic.kwic(<string,1>, periodsToBreaks=True, listPairs=True, ignoreWords = <ignore,1>)
+assert kwic.kwic(<string>) == mykwic.kwic(<string,1>)
+assert kwic.kwic(<string>, listPairs=True) == mykwic.kwic(<string,1>, listPairs=True)
+assert kwic.kwic(<string>, ignoreWords = <ignore>) == mykwic.kwic(<string,1>, ignoreWords = <ignore,1>)
+assert kwic.kwic(<string>, periodsToBreaks=True) == mykwic.kwic(<string,1>, periodsToBreaks=True)
+assert kwic.kwic(<string>, periodsToBreaks=True, listPairs=True) == mykwic.kwic(<string,1>, periodsToBreaks=True, listPairs=True)
+assert kwic.kwic(<string>, periodsToBreaks=True, listPairs=True, ignoreWords = <ignore>) == mykwic.kwic(<string,1>, periodsToBreaks=True, listPairs=True, ignoreWords = <ignore,1>)
