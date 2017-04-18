@@ -1,14 +1,5 @@
 @import redis
 
-#Source locations will obviously vary on your machine!
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/_compat.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/client.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/connection.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/exceptions.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/lock.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/sentinel.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/redis/utils.py
-
 init: r = redis.StrictRedis(host='localhost', port=6379, db=0); r.flushall()
 
 finally: <pubsub>.close()
