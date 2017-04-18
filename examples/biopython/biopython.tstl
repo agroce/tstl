@@ -1,6 +1,6 @@
-@from Bio.Seq import Seq
-@from Bio.Alphabet import IUPAC
-@from Bio.Alphabet import generic_rna
+@import Bio.Seq
+@import Bio.Alphabet
+@import Bio
 @from Bio import pairwise2
 
 pool: <base> 4
@@ -19,16 +19,16 @@ pool: <alignments> 3
 <bases> := <bases> + <base>
 <bases> := <bases> + <bases>
 
-<alphabet> := IUPAC.protein
-<alphabet> := IUPAC.unambiguous_dna
-<alphabet> := generic_rna
+<alphabet> := Bio.Alphabet.IUPAC.protein
+<alphabet> := Bio.Alphabet.IUPAC.unambiguous_dna
+<alphabet> := Bio.Alphabet.generic_rna
 
-<seq> := Seq(<bases>)
-<seq> := Seq(<bases>,<alphabet>)
+<seq> := Bio.Seq.Seq(<bases>)
+<seq> := Bio.Seq.Seq(<bases>,<alphabet>)
 #<seq,1>.alphabet == <seq,2>.alphabet -> <seq> := <seq> + <seq> 
 
-<seq,1>.alphabet != IUPAC.protein -> <seq>.complement()
-<seq,1>.alphabet != IUPAC.protein -> <seq>.reverse_complement()
+<seq,1>.alphabet != Bio.Alphabet.IUPAC.protein -> <seq>.complement()
+<seq,1>.alphabet != Bio.Alphabet.IUPAC.protein -> <seq>.reverse_complement()
 
 <alignments> := pairwise2.align.globalxx(<seq>,<seq>)
 <alignments>
@@ -40,5 +40,5 @@ pool: <alignments> 3
 <table> := <[21..24]>
 <table> := "Vertebrate Mitochondrial"
 
-<seq,1>.alphabet != IUPAC.protein -> <seq>.translate(to_stop=<bool>)
-<seq,1>.alphabet != IUPAC.protein -> <seq>.translate(to_stop=<bool>,table=<table>)
+<seq,1>.alphabet != Bio.Alphabet.IUPAC.protein -> <seq>.translate(to_stop=<bool>)
+<seq,1>.alphabet != Bio.Alphabet.IUPAC.protein -> <seq>.translate(to_stop=<bool>,table=<table>)
