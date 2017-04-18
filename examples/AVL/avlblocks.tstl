@@ -1,6 +1,5 @@
-@import avl as avl
+@import avl
 @import math
-@import time
 
 # tells TSTL where the source code of the module tested is, to enable code coverage
 source: avl.py

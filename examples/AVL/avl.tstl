@@ -1,6 +1,5 @@
 @import avl
 @import math
-@import time
 
 <@
 def heightOk(tree):

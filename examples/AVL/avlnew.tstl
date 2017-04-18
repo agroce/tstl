@@ -1,6 +1,5 @@
 @import avl
 @import math
-@import time
 
 # @ indicates raw python code, such as imports, and is usually not parsed by TSTL, but available for use in testing
 
