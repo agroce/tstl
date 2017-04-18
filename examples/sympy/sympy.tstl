@@ -1,5 +1,4 @@
 @import sympy
-@from sympy import *
 @from sympy.core.cache import *
 
 init: clear_cache()
@@ -15,12 +14,12 @@ exception: NotImplementedError
 
 log: 0 <expr>
 
-<c> := Integer(<[0..10]>)
-<v> := Symbol(<['a'..'d']>)
-<v> := Symbol(<['x'..'z']>)
-<v> := Symbol(<['e'..'l']>,positive=True)
+<c> := sympy.Integer(<[0..10]>)
+<v> := sympy.Symbol(<['a'..'d']>)
+<v> := sympy.Symbol(<['x'..'z']>)
+<v> := sympy.Symbol(<['e'..'l']>,positive=True)
 
-<expr> := Rational(<c>,<c>)
+<expr> := sympy.Rational(<c>,<c>)
 <expr> := <v>
 <expr> := <c>
 
@@ -37,50 +36,50 @@ log: 0 <expr>
 
 {ZeroDivisionError} <expr> := <expr> % <expr>
 
-<expr> := sin(<expr>)
-<expr> := cos(<expr>)
-<expr> := tan(<expr>)
-<expr> := asin(<expr>)
-<expr> := acos(<expr>)
-<expr> := atan(<expr>)
+<expr> := sympy.sin(<expr>)
+<expr> := sympy.cos(<expr>)
+<expr> := sympy.tan(<expr>)
+<expr> := sympy.asin(<expr>)
+<expr> := sympy.acos(<expr>)
+<expr> := sympy.atan(<expr>)
 
-<expr> := sqrt(<expr>)
+<expr> := sympy.sqrt(<expr>)
 
-<expr> := factorial(<expr>)
+<expr> := sympy.factorial(<expr>)
 
 <expr> := <expr>.subs(<expr>,<expr>)
 
-<expr> := pi
-<expr> := E
-<expr> := I
+<expr> := sympy.pi
+<expr> := sympy.E
+<expr> := sympy.I
 
-<expr> := Sum(<expr>,(<v>,<c>,<c>))
-<expr> := Product(<expr>,(<v>,<c>,<c>))
+<expr> := sympy.Sum(<expr>,(<v>,<c>,<c>))
+<expr> := sympy.Product(<expr>,(<v>,<c>,<c>))
 
 <expr> := <expr>.doit()
 
-<expr> := simplify(<expr>)
-<expr> := expand(<expr>)
-<expr> := expand(<expr>,force=True)
-{ValueError} <expr> := factor(<expr>)
-<expr> := collect(<expr>,<expr>)
-<expr> := cancel(<expr>)
-{PolynomialError} <expr> := apart(<expr>)
+<expr> := sympy.simplify(<expr>)
+<expr> := sympy.expand(<expr>)
+<expr> := sympy.expand(<expr>,force=True)
+{ValueError} <expr> := sympy.factor(<expr>)
+<expr> := sympy.collect(<expr>,<expr>)
+<expr> := sympy.cancel(<expr>)
+{PolynomialError} <expr> := sympy.apart(<expr>)
 
-<expr> := trigsimp(<expr>)
-<expr> := expand_trig(<expr>)
+<expr> := sympy.trigsimp(<expr>)
+<expr> := sympy.expand_trig(<expr>)
 
-<expr> := powsimp(<expr>)
-<expr> := expand_power_exp(<expr>)
-<expr> := expand_power_base(<expr>)
-<expr> := powdenest(<expr>)
+<expr> := sympy.powsimp(<expr>)
+<expr> := sympy.expand_power_exp(<expr>)
+<expr> := sympy.expand_power_base(<expr>)
+<expr> := sympy.powdenest(<expr>)
 
-<expr> := expand_log(<expr>)
-<expr> := logcombine(<expr>)
+<expr> := sympy.expand_log(<expr>)
+<expr> := sympy.logcombine(<expr>)
 
-<expr> := expand_func(<expr>)
-<expr> := combsimp(<expr>)
+<expr> := sympy.expand_func(<expr>)
+<expr> := sympy.combsimp(<expr>)
 
 <expr>.evalf()
 
-property: ("<expr>" == "<expr>") or (simplify(<expr,1>-<expr,2>) != 0) or (<expr,1>.equals(<expr,2>))
+property: ("<expr>" == "<expr>") or (sympy.simplify(<expr,1>-<expr,2>) != 0) or (<expr,1>.equals(<expr,2>))
