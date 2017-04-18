@@ -217,6 +217,9 @@ def coversMoreThan(self, test, catchUncaught=False, checkProp=False):
 def moduleFiles(self):
     files = []
     for m in self.__importModules:
-        files.extend(m.__path__)
+        try:
+            files.extend(m.__path__)
+        except AttributeError:
+            files.append(os.path.dirname(m.__file__))
     return files
         

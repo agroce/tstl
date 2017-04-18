@@ -1,5 +1,4 @@
 @import gmpy2
-@from gmpy2 import mpz,mpq,mpfr,mpc
 
 <@
 # Use naming to "dispatch" right function via reference transformation;
@@ -26,7 +25,7 @@ log: 1 <val>
 <pval> := <[0..9]>
 <pval> := long(<val>)
 
-<val> := mpz(<[0..9]>)
+<val> := gmpy2.mpz(<[0..9]>)
 
 <val> = <val> + <val>
 <val> = <val> - <val>
