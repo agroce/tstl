@@ -1,13 +1,5 @@
-@import simplejson as json
+@import simplejson
 @import math
-
-source: /usr/local/lib/python2.7/site-packages/simplejson/__init__.py
-source: /usr/local/lib/python2.7/site-packages/simplejson/encoder.py
-source: /usr/local/lib/python2.7/site-packages/simplejson/decoder.py
-source: /usr/local/lib/python2.7/site-packages/simplejson/compat.py
-source: /usr/local/lib/python2.7/site-packages/simplejson/ordered_dict.py
-source: /usr/local/lib/python2.7/site-packages/simplejson/scanner.py
-source: /usr/local/lib/python2.7/site-packages/simplejson/tool.py
 
 <@
 MAXDEPTH = 15
@@ -126,26 +118,26 @@ isCircular(<structure,1>) -> <structure> = None
 
 <ilevel> := <[0..5]>
 
-#not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>)
-#not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, sort_keys=True)
-#not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, ensure_ascii=False)
-#not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, check_circular=False)
-#not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, use_decimal=False)
-#not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, tuple_as_array=False)
-#not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>, iterable_as_array=True)
+#not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure>)
+#not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure>, sort_keys=True)
+#not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure>, ensure_ascii=False)
+#not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure>, check_circular=False)
+#not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure>, use_decimal=False)
+#not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure>, tuple_as_array=False)
+#not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure>, iterable_as_array=True)
 
 # The above is nice and easy to read, but doesn't combine optional arguments, so...
 # we replace it with the Lovecraftian nightmare below, which does all possible combinations
 # using nondeterministic choice trickery
 
-not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure><,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,ignore_nan=True,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
+not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure><,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,ignore_nan=True,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
 
-{ValueError} not isCircular(<structure,1>) -> <jsonstring> := json.dumps(<structure>,allow_nan=False<,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,ignore_nan=True,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
+{ValueError} not isCircular(<structure,1>) -> <jsonstring> := simplejson.dumps(<structure>,allow_nan=False<,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,ignore_nan=True,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],>)
 
-json.loads(<jsonstring>)
-json.loads(<jsonstring>,use_decimal=True)
+simplejson.loads(<jsonstring>)
+simplejson.loads(<jsonstring>,use_decimal=True)
 
 # Don't check round-trip property for every possible option, but basic sanity check is a good idea
 # Round trip fails for NaN because NaN != NaN, so have to recursively change all NaNs into a string representation -- AFTER loads
 
-property: isCircular(<structure,1>) or (stringifyNans(json.loads(json.dumps(<structure>))) == stringifyNans(<structure,1>))
+property: isCircular(<structure,1>) or (stringifyNans(simplejson.loads(simplejson.dumps(<structure>))) == stringifyNans(<structure,1>))

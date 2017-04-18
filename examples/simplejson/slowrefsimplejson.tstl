@@ -1,10 +1,11 @@
-@import simplejson as json
+@import simplejson
 @import math
 @import copy
 
-source: /usr/local/lib/python2.7/site-packages/simplejson/__init__.py
-source: /usr/local/lib/python2.7/site-packages/simplejson/encoder.py
-source: /usr/local/lib/python2.7/site-packages/simplejson/decoder.py
+source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/simplejson/__init__.py
+source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/simplejson/encoder.py
+source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/simplejson/decoder.py
+
 
 <@
 MAXDEPTH = 15
@@ -157,19 +158,19 @@ isCircular(<structure,1>) -> <structure> = None
 ~<rsep> += <istring>
 ~<rsep> = <istring> + ~<rsep>
 
-{ValueError} not isCircular(<structure,1>) -> <jsonpair> := (json.dumps(replaceNones(<structure>),allow_nan=False), copy.deepcopy(replaceNones(<structure,1>)))
+{ValueError} not isCircular(<structure,1>) -> <jsonpair> := (simplejson.dumps(replaceNones(<structure>),allow_nan=False), copy.deepcopy(replaceNones(<structure,1>)))
 # Lets us get rid of these, since they don't have any actions to use them
 <jsonpair> = None
 
 # only for circular, so should never actually work
 # can't replace Nones, since the list is circular
-{ValueError} isCircular(<structure,1>) -> json.dumps(<structure>) => (type(raised) == ValueError) and (raised.args[0] == "Circular reference detected")
+{ValueError} isCircular(<structure,1>) -> simplejson.dumps(<structure>) => (type(raised) == ValueError) and (raised.args[0] == "Circular reference detected")
 
 # If you did a possibly failing (no NaNs) dumps, check round trip; we know there are no NaNs!
-property: json.loads(<jsonpair> [0]) == <jsonpair,1> [1]
+property: simplejson.loads(<jsonpair> [0]) == <jsonpair,1> [1]
 
 # The bulk of the testing is done here:  very slow, but tries all the basic combinations of call values one very single generated structure and checks round trip
-property: isCircular(<structure,1>) or (stringifyNans(json.loads(json.dumps(replaceNones(<structure>)<,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],><,[,separators=(<lsep> , <rsep>),,],>)<,[,use_decimal=True,,],>)) == stringifyNans(replaceNones(<structure,1>)))
+property: isCircular(<structure,1>) or (stringifyNans(simplejson.loads(simplejson.dumps(replaceNones(<structure>)<,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],><,[,separators=(<lsep> , <rsep>),,],>)<,[,use_decimal=True,,],>)) == stringifyNans(replaceNones(<structure,1>)))
 
 # If we are ignoring nans, need to filter them out of the structure for round trip check
-property: isCircular(<structure,1>) or (ignoreNans(json.loads(json.dumps(replaceNones(<structure>),ignore_nan=True<,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],><,[,separators=(<lsep> , <rsep>),,],>)<,[,use_decimal=True,,],>)) == ignoreNans(replaceNones(<structure,1>)))
+property: isCircular(<structure,1>) or (ignoreNans(simplejson.loads(simplejson.dumps(replaceNones(<structure>),ignore_nan=True<,[,sort_keys=True,,],><,[,ensure_ascii=False,,],><,[,check_circular=False,,],><,[,use_decimal=False,,],><,[,tuple_as_array=False,,],><,[,iterable_as_array=False,,],><,[,indent=<istring>,,,indent=<ilevel>,,],><,[,separators=(<lsep> , <rsep>),,],>)<,[,use_decimal=True,,],>)) == ignoreNans(replaceNones(<structure,1>)))
