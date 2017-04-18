@@ -1,11 +1,6 @@
 @import bidict
 @from bidict import ValueDuplicationError
 
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/_bidict.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/_common.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/util.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/compat.py
-
 pool: <bidict> 5
 pool: <value> 5
 
