@@ -629,6 +629,8 @@ def main():
 
     if config.swarmProbs != None:
         swarmClassProbs = sut.readProbFile(config.swarmProbs)
+    else:
+        swarmClassProbs = None
 
     if config.probs != None:
         classP = sut.readProbFile(config.probs,returnList=True)
