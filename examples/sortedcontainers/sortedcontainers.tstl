@@ -1,8 +1,4 @@
-@from sortedcontainers import *
-
-source: /Library/Python/2.7/site-packages/sortedcontainers/sorteddict.py
-source: /Library/Python/2.7/site-packages/sortedcontainers/sortedlist.py
-source: /Library/Python/2.7/site-packages/sortedcontainers/sortedset.py	
+@import sortedcontainers
 
 <@
 def sortListAppend(l,i):
@@ -116,11 +112,10 @@ pool: <sval> 10
 <sval> := <sval> + <sval>
 <val> := <ival>
 <val> := <sval>
-<val> := None
 
-<list> := SortedList()
-<dict> := SortedDict()
-<set> := SortedSet()
+<list> := sortedcontainers.SortedList()
+<dict> := sortedcontainers.SortedDict()
+<set> := sortedcontainers.SortedSet()
 
 <dict> := <dict>.fromkeys(<list>,<val>)
 <dict> := <dict>.fromkeys(<set>,<val>)
@@ -136,7 +131,7 @@ pool: <sval> 10
 <list> >= <list>
 <list> <= <list>
 
-{OverflowError} <list> *= <ival>
+{OverflowError} <ival,1> < 5 -> <list> *= <ival>
 
 <plist> := <list> [<ival> : <ival>]
 <list> := SortedList(<plist>)
@@ -287,10 +282,10 @@ reversed(<set>)
 <dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True),reverse=True)
 <dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False),reverse=True)
 
-reference: SortedList\(\) ==> []
-reference: SortedList\((\S+)\) ==> list(\1)
-reference: SortedDict\(\) ==> {}
-reference: SortedSet\(\) ==> set([])
+reference: sortedcontainers.SortedList\(\) ==> []
+reference: sortedcontainers.SortedList\((\S+)\) ==> list(\1)
+reference: sortedcontainers.SortedDict\(\) ==> {}
+reference: sortedcontainers.SortedSet\(\) ==> set([])
 
 reference: (\S+list\S+)\.append\((\S+)\) ==> sortListAppend(\1,\2)
 reference: (\S+list\S+)\.extend\((\S+)\) ==> sortListExtend(\1,\2)
@@ -304,7 +299,7 @@ reference: (\S+list\S+)\.discard\((\S+)\) ==> sortListDiscard(\1,\2)
 reference: (\S+list\S+) \*= (\S+) ==> sortListMultiply(\1,\2)
 reference: (\S+dict\S+)\.popitem\((\S*)\) ==> sortDictPopitem(\1,\2)
 reference: (\S+dict\S+)\.peekitem\((\S*)\) ==> sortDictPeekitem(\1,\2)
-reference: reversed\((\S+)\) ==> \1
+reference: sortedcontainers.reversed\((\S+)\) ==> \1
 
 compare: len
 compare: in\
