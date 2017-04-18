@@ -1,49 +1,49 @@
-@import numpy as np
+@import numpy
 
-pool: %ARRAY% 4
-pool: %INT% 4
-pool: %FLOAT% 4
-pool: %DIM% 4
-pool: %SHAPE% 4
-pool: %INDEX% 4
+pool: <ARRAY> 4
+pool: <INT> 4
+pool: <FLOAT> 4
+pool: <DIM> 4
+pool: <SHAPE> 4
+pool: <INDEX> 4
 
-%INT% := %[-100..100]%
-%FLOAT% := float(%INT%)
+<INT> := <[-100..100]>
+<FLOAT> := float(<INT>)
 
-%DIM% := 1
-%DIM% := 10
-%DIM% := 100
-%DIM,2% > 1 -> ~%DIM% = ~%DIM% - 1 
-~%DIM% = ~%DIM% + 1
+<DIM> := 1
+<DIM> := 10
+<DIM> := 100
+<DIM,2> > 1 -> ~<DIM> = ~<DIM> - 1 
+~<DIM> = ~<DIM> + 1
 
-%SHAPE% := (%DIM%)
-%SHAPE% := (%DIM%, %DIM%)
-%SHAPE% := (%DIM%, %DIM%, %DIM%)
+<SHAPE> := (<DIM>)
+<SHAPE> := (<DIM>, <DIM>)
+<SHAPE> := (<DIM>, <DIM>, <DIM>)
 
-%INDEX% := %DIM%
+<INDEX> := <DIM>
 
-%ARRAY% := np.empty(%SHAPE%)
-%ARRAY% := np.zeros(%SHAPE%)
-%ARRAY% := np.ones(%SHAPE%)
-%ARRAY% := np.empty_like(%ARRAY%)
-%ARRAY% := np.zeros_like(%ARRAY%)
-%ARRAY% := np.ones_like(%ARRAY%)
+<ARRAY> := numpy.empty(<SHAPE>)
+<ARRAY> := numpy.zeros(<SHAPE>)
+<ARRAY> := numpy.ones(<SHAPE>)
+<ARRAY> := numpy.empty_like(<ARRAY>)
+<ARRAY> := numpy.zeros_like(<ARRAY>)
+<ARRAY> := numpy.ones_like(<ARRAY>)
 
-{IndexError,TypeError} %ARRAY%[%INDEX%] = %FLOAT%
-{IndexError,TypeError} %ARRAY%[%INDEX%][%INDEX%] = %FLOAT%
-{IndexError,TypeError} %ARRAY%[%INDEX%][%INDEX%][%INDEX%] = %FLOAT%
+{IndexError,TypeError} <ARRAY>[<INDEX>] = <FLOAT>
+{IndexError,TypeError} <ARRAY>[<INDEX>][<INDEX>] = <FLOAT>
+{IndexError,TypeError} <ARRAY>[<INDEX>][<INDEX>][<INDEX>] = <FLOAT>
 
-{ValueError} %ARRAY% := %ARRAY% + %ARRAY%
-{ValueError} %ARRAY% := %ARRAY% * %ARRAY%
-{ValueError} %ARRAY% := %ARRAY% - %ARRAY%
-{ValueError} %ARRAY% := %ARRAY% / %ARRAY%
+{ValueError} <ARRAY> := <ARRAY> + <ARRAY>
+{ValueError} <ARRAY> := <ARRAY> * <ARRAY>
+{ValueError} <ARRAY> := <ARRAY> - <ARRAY>
+{ValueError} <ARRAY> := <ARRAY> / <ARRAY>
 
-{ValueError} %ARRAY% := np.reshape(%ARRAY%,%SHAPE%)
-%ARRAY% := np.ravel(%ARRAY%)
-%ARRAY% := %ARRAY%.flatten()
+{ValueError} <ARRAY> := numpy.reshape(<ARRAY>,<SHAPE>)
+<ARRAY> := numpy.ravel(<ARRAY>)
+<ARRAY> := <ARRAY>.flatten()
 
-{ValueError} np.copyto(%ARRAY%,%ARRAY%)
+{ValueError} numpy.copyto(<ARRAY>,<ARRAY>)
 
-%ARRAY% := np.unique(%ARRAY%)
+<ARRAY> := numpy.unique(<ARRAY>)
 
-{ValueError} np.trim_zeros(%ARRAY%)
+{ValueError} numpy.trim_zeros(<ARRAY>)
