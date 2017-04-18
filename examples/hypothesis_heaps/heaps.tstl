@@ -1,17 +1,19 @@
-@from heaps import *
+@import heaps
 
 pool: <heap> 3
 pool: <int> 5
 
 <int> := <[1..20]>
 
-<heap> := heapnew()
-<heap> := heapmerge(<heap>,<heap>)
+<heap> := heaps.heapnew()
+<heap> := heaps.heapmerge(<heap>,<heap>)
 
-heappush(<heap>,<int>)
+heaps.heappush(<heap>,<int>)
 
-{ValueError} heappop(<heap>) # Redundant for actual testing, but gives that nice 100% coverage feeling
-not heapempty(<heap,1>) -> assert (min(<heap,1>) == heappop(<heap>))
+# Redundant for actual testing, but gives that nice 100% coverage feeling
+{ValueError} heaps.heappop(<heap>)
+
+not heaps.heapempty(<heap,1>) -> assert (min(<heap,1>) == heaps.heappop(<heap>))
 
 
-property: (heapempty(<heap>) == (<heap,1> == heapnew()))
+property: (heaps.heapempty(<heap>) == (<heap,1> == heaps.heapnew()))
