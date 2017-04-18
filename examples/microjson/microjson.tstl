@@ -1,0 +1,109 @@
+@import microjson
+@import math
+@import copy
+
+<@
+MAXDEPTH = 15
+
+def klimitequal(o1,o2,k=0,klimit=MAXDEPTH):
+    if k > klimit:
+        return True
+    if type(o1) != type(o2):
+        return False
+    if type(o1) == list:
+        if len(o1) != len(o2):
+            return False
+        for i in xrange(0,len(o1)):
+            if i > k:
+                return True
+            if not klimitequal(o1[i],o2[i],k+1):
+                return False
+    elif type(o1) == dict:
+        for v in o1.keys():
+            if v not in o2.keys():
+                return False
+            if not klimitequal(o1[v],o2[v],k+1):
+                return False
+    else:
+        return o1 == o2
+
+def isCircular(s,depth=0,seen = []):
+    if depth > MAXDEPTH:
+        return True
+    for v in seen:
+        if klimitequal(s,v):
+            return True
+    newSeen = seen + [s]
+    if type(s) == list:
+        for v in s:
+            if isCircular(v,depth+1,newSeen):
+                return True
+    if type(s) == dict:
+        for v in s.values():
+            if isCircular(v,depth+1,newSeen):
+                return True
+    return False
+
+def replaceNones(s):
+    if s == "none":
+        return None
+    if type(s) == list:
+        return map(replaceNones, s)
+    if type(s) == dict:
+        return {k: replaceNones(v) for k, v in s.items()}
+    return s
+@>
+
+pool: <int> 3
+pool: <string> 5
+pool: <float> 5
+pool: <bool> 2
+
+pool: <list> 5
+pool: <dict> 5
+
+pool: <structure> 4
+
+<int> := <[0..9]>
+<int> = <int> * 10
+<int> = <int> + <int>
+
+<string> := ""
+<string> += <["a","b"," ",":","[","]","{","}"]>
+<string> += ","
+<string> += chr(9) #tab
+<string> += chr(13) #return
+#<string> += chr(34) #double quote
+#<string> += chr(39) #single quote
+# If you want very slow but all-chars testing, try adding this and using a long test length
+#<string> += unicode(chr(<[0..255]>),encoding="latin-1")
+
+<float> := float(<int>)
+#{ZeroDivisionError} <float> = <float> / <float> # Removed due to float round issues
+#<float> := float("Inf")
+#<float> := float("-Inf")
+#<float> := float("NaN")
+
+<bool> := True
+<bool> := False
+
+# Ciruclar structures cannot be handled, so avoid them
+
+<list> := []
+(not isCircular(<list,1>)) and (not isCircular(~<structure,1>)) -> ~<list>.append(~<structure>)
+
+<dict> := {}
+(not isCircular(<dict,1>)) and (not isCircular(~<structure,1>)) -> ~<dict> [<string>] = ~<structure>
+
+# if we build a circular structure, ok to get rid of it and start over
+isCircular(<structure,1>) -> <structure> = None
+
+<structure> := <int>
+<structure> := <string>
+<structure> := <float>
+<structure> := <bool>
+<structure> := <list>
+<structure> := <dict>
+<structure> := "none"
+
+property: (isCircular(<structure>)) or (microjson.decode(microjson.encode(replaceNones(<structure,1>))) == replaceNones(<structure,1>))
