@@ -27,6 +27,8 @@ pool: <updates> 5
 <value> := <tuple>
 
 <bidict> := bidict.bidict()
+<bidict> := bidict.loosebidict()
+<bidict> := bidict.orderedbidict()
 <bidict> := <bidict>.copy()
 
 {ValueDuplicationError} <bidict> [<value>] = <value> # UNSAFE
