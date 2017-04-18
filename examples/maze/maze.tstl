@@ -1,9 +1,9 @@
-@from maze import *
+@import maze
 
 pool: <pos> 1
 
-<pos> := start
+<pos> := maze.start
 
-~<pos> = tryMove(<['U','D','R','L']>, ~<pos>)
+~<pos> = maze.tryMove(<['U','D','R','L']>, ~<pos>)
 
 
