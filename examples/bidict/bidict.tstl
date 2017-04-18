@@ -1,4 +1,4 @@
-@from bidict import bidict
+@import bidict
 @from bidict import ValueDuplicationError
 
 source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/bidict/_bidict.py
@@ -31,7 +31,7 @@ pool: <updates> 5
 <value> := <string>
 <value> := <tuple>
 
-<bidict> := bidict()
+<bidict> := bidict.bidict()
 <bidict> := <bidict>.copy()
 
 {ValueDuplicationError} <bidict> [<value>] = <value> # UNSAFE
