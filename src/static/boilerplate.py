@@ -435,7 +435,6 @@ def codeLOCProbs(self, baseline=0.1):
         thisLOC = 0
         for (f,LOC,c) in cl:
             if f in a:
-                print a,"calls",f,"with",LOC
                 thisLOC += LOC
         totalLOCs += thisLOC
         if thisLOC == 0:
