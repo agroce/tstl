@@ -423,6 +423,33 @@ def codeLOCs(self):
     for m in self.__importModules:
         LOCs.extend(self.objCodeLOCs(m,[m.__name__]))
     return LOCs
+
+def codeLOCProbs(self, baseline=0.1):
+    cl = self.codeLOCs()
+
+    totalLOCs = 0.0
+    aProbs = []
+    num0LOC = 0
+    
+    for a in self.__actionClasses:
+        thisLOC = 0
+        for (f,LOC,c) in cl:
+            if f in a:
+                print a,"calls",f,"with",LOC
+                thisLOC += LOC
+        totalLOCs += thisLOC
+        if thisLOC == 0:
+            num0LOC += 1
+        aProbs.append((a,thisLOC))
+    P = []
+    leftOver = 1.0 - (baseline * num0LOC)
+    for (a,LOC) in aProbs:
+        if LOC == 0:
+            P.append((baseline,a))
+        else:
+            P.append(((LOC/totalLOCs)*leftOver,a))
+    return P
+    
     
 def readProbFile(self, file, returnList=False):
     classProb = {}
