@@ -81,7 +81,11 @@ def parse_args():
     parser.add_argument('--swarmLength', type=int, default=None,
                         help="How long a swarm config persists (only relevant with --swarmSwitch).")
     parser.add_argument('--probs', type=str, default=None,
-                        help="Guide testing by an action class probability file.")    
+                        help="Guide testing by an action class probability file.")
+    parser.add_argument('--LOCProbs', action='store_true',
+                        help="Guide testing by approximate relative lines of top-level code called by actions.")
+    parser.add_argument('--LOCBaseline', type=float, default=0.1,
+                        help="Baseline probability for actions that do not seem to call any SUT code.")  
     parser.add_argument('--markov', type=str, default=None,
                         help="Guide testing by a Markov model file.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
@@ -634,6 +638,9 @@ def main():
 
     if config.probs != None:
         classP = sut.readProbFile(config.probs,returnList=True)
+
+    if config.LOCProbs:
+        classP = sut.codeLOCProbs(baseline=config.LOCBaseline)
         
     if config.quickAnalysis:
         quickcf = open("quick.corpus",'w')
@@ -728,7 +735,7 @@ def main():
                         tryStutter = True
             else:
                 if config.markov == None:
-                    if (config.highLowSwarm == None) and (config.probs == None):
+                    if (config.highLowSwarm == None) and (config.probs == None) and (not config.LOCProbs):
                         a = sut.randomEnabled(R)
                     else:
                         a = sut.randomEnabledClassProbs(R,classP)
