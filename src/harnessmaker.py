@@ -161,7 +161,7 @@ def parse_import_line(line):
     mod_names = []
     for si in subimports:
         name = None
-        if 'as' in si:
+        if ' as ' in si:
             ts = si.split(' as ')
             assert len(ts) == 2, 'Parse error on "as" during import of {}'.format(name)
             name = ts[1].rstrip()  # remove the trailing newline or whitespace if any

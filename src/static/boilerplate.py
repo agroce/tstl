@@ -415,6 +415,10 @@ def objCodeLOCs(self,obj,context):
         if inspect.isfunction(o[1]) or inspect.ismethod(o[1]):
             LOCs.append((o[0],len(inspect.getsourcelines(o[1])[0]), context))
         if inspect.isclass(o[1]):
+            if o[1] == object:
+                continue
+            if o[1] == type:
+                continue
             LOCs.extend(self.objCodeLOCs(o[1],context + [o[0]]))
     return LOCs
     
@@ -434,7 +438,7 @@ def codeLOCProbs(self, baseline=0.1):
     for a in self.__actionClasses:
         thisLOC = 0
         for (f,LOC,c) in cl:
-            if f in a:
+            if (("." + f + "(") in a):
                 thisLOC += LOC
         totalLOCs += thisLOC
         if thisLOC == 0:
