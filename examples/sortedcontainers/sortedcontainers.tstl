@@ -134,7 +134,7 @@ pool: <sval> 10
 {OverflowError} <ival,1> < 5 -> <list> *= <ival>
 
 <plist> := <list> [<ival> : <ival>]
-<list> := SortedList(<plist>)
+<list> := sortedcontainers.SortedList(<plist>)
 
 <list>+=<list>
 
