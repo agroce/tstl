@@ -413,6 +413,8 @@ def objCodeLOCs(self,obj,context):
     LOCs = []
     for o in inspect.getmembers(obj):
         if inspect.isfunction(o[1]) or inspect.ismethod(o[1]):
+            if o[0] == "__init__":
+                LOCs.append((context[-1],len(inspect.getsourcelines(o[1])[0]), context))
             LOCs.append((o[0],len(inspect.getsourcelines(o[1])[0]), context))
         if inspect.isclass(o[1]):
             if o[1] == object:
@@ -428,7 +430,7 @@ def codeLOCs(self):
         LOCs.extend(self.objCodeLOCs(m,[m.__name__]))
     return LOCs
 
-def codeLOCProbs(self, baseline=0.1):
+def codeLOCProbs(self, baseline=0.2):
     cl = self.codeLOCs()
 
     totalLOCs = 0.0
@@ -445,10 +447,10 @@ def codeLOCProbs(self, baseline=0.1):
             num0LOC += 1
         aProbs.append((a,thisLOC))
     P = []
-    leftOver = 1.0 - (baseline * num0LOC)
+    leftOver = 1.0 - baseline
     for (a,LOC) in aProbs:
         if LOC == 0:
-            P.append((baseline,a))
+            P.append((baseline/num0LOC,a))
         else:
             P.append(((LOC/totalLOCs)*leftOver,a))
     return P

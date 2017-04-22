@@ -84,7 +84,7 @@ def parse_args():
                         help="Guide testing by an action class probability file.")
     parser.add_argument('--LOCProbs', action='store_true',
                         help="Guide testing by approximate relative lines of top-level code called by actions.")
-    parser.add_argument('--LOCBaseline', type=float, default=0.1,
+    parser.add_argument('--LOCBaseline', type=float, default=0.2,
                         help="Baseline probability for actions that do not seem to call any SUT code.")  
     parser.add_argument('--markov', type=str, default=None,
                         help="Guide testing by a Markov model file.")
