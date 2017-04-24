@@ -36,7 +36,7 @@ def parse_args():
                         help="Don't produce a coverage report at the end.")
     parser.add_argument('--html', type=str, default=None,
                         help="Write HTML report (directory to write to, None/no html report by default).")    
-    parser.add_argument('-m', '--maxtests', type=int, default=-1,
+    parser.add_argument('-m', '--maxTests', type=int, default=-1,
                         help='Maximum #tests to run (-1 = infinite default).')
     parser.add_argument('-o', '--output', type=str, default="failure."+str(os.getpid())+".test",
                         help="Filename to save failing test(s).")
@@ -121,17 +121,21 @@ def parse_args():
     parser.add_argument('--throughput', action='store_true',
                         help='Measure action throughput.')
     parser.add_argument('--profile', action='store_true',
-                        help="Profile actions.")    
+                        help="Profile actions.")
+    parser.add_argument('--stopWhenBranches', type=int, default=None,
+                        help="Stop when branch coverage exceeds a given target value.")
+    parser.add_argument('--stopWhenStatements', type=int, default=None,
+                        help="Stop when statement coverage exceeds a given target value.")    
     parser.add_argument('--verboseActions', action='store_true',
                         help="Make test actions verbose.")
     parser.add_argument('--showActions', action='store_true',
                         help="Show actions as they run")
     parser.add_argument('--noAlphaConvert', action='store_true',
                         help="Do not alpha convert failing tests.")        
-    parser.add_argument('--genDepth', type=int, default=None,
-                        help = "[EXPERIMENTAL] Generalization depth for cloud overlap comparisons (default = None).")
     parser.add_argument('--compareFails', action='store_true',
                         help="Compare all failing tests.")
+    parser.add_argument('--genDepth', type=int, default=None,
+                        help = "[EXPERIMENTAL] Generalization depth for cloud overlap comparisons (default = None).")
     parser.add_argument('--stutter', type=float, default=None,
                         help="[EXPERIMENTAL] Repeat last action if still enabled with P = <stutter>.")
     parser.add_argument('--greedyStutter', action='store_true',
@@ -667,7 +671,7 @@ def main():
         print "ABOUT TO START TESTING"
         sys.stdout.flush()
         
-    while (config.maxtests == -1) or (ntests < config.maxtests):
+    while (config.maxTests == -1) or (ntests < config.maxTests):
         if config.verbose:
             print "STARTING TEST",ntests
             sys.stdout.flush()
@@ -859,8 +863,15 @@ def main():
                         uniquef.write(("="*50)+"\n")
                         uniquef.flush()
                 sut.backtrack(olds)
-                
 
+            if (config.stopWhenBranches != None):
+                if len(sut.allBranches()) >= config.stopWhenBranches:
+                    print "STOPPING TEST DUE TO REACHING BRANCH COVERAGE TARGET, TERMINATED AT LENGTH",len(sut.test()),"TIME",time.time()-start
+                    break
+            if config.stopWhenStatements != None:
+                if len(sut.allStatements()) >= config.stopWhenStatements:
+                    print "STOPPING TEST DUE TO REACHING STATEMENT COVERAGE TARGET, TERMINATED AT LENGTH",len(sut.test()),"TIME",time.time()-start
+                    break                            
                                         
             if elapsed > config.timeout:
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
@@ -1014,6 +1025,14 @@ def main():
             printStatus(elapsed)                
         if (not config.multiple) and (failCount > 0):
             break
+        if (config.stopWhenBranches != None):
+            if len(sut.allBranches()) >= config.stopWhenBranches:
+                print "STOPPING TESTING DUE TO REACHING BRANCH COVERAGE TARGET"
+                break
+        if config.stopWhenStatements != None:
+            if len(sut.allStatements()) >= config.stopWhenStatements:
+                print "STOPPING TESTING DUE TO REACHING STATEMENT COVERAGE TARGET"
+                break                               
         if elapsed > config.timeout:
             print "STOPPING TESTING DUE TO TIMEOUT"
             break        
