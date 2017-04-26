@@ -1,0 +1,82 @@
+@import rsa
+@import rsa.randnum
+
+<@
+def breakStr(s,p):
+    p = p % len(s)
+    c = ""
+    for i in xrange(0,len(s)):
+    	if i != p:
+	   c += s[i]
+	else:
+	   if s[i] != "*":
+	      c += "*"
+	   else:
+	      c += "?"
+    return c
+@>
+
+
+pool: <keypair> 5
+pool: <plain> 5
+pool: <utf> 5
+pool: <encrypt> 5
+pool: <brokencrypt> 5
+pool: <pos> 5
+pool: <signature> 5
+pool: <brokensig> 5
+
+<pos> := 0
+~<pos> += 1
+~<pos> *= 2
+
+<keypair> := rsa.newkeys(128)
+<keypair> := rsa.newkeys(128,accurate=False)
+<keypair> := rsa.newkeys(128,poolsize=2)
+<keypair> := rsa.newkeys(128,poolsize=2,accurate=False)
+<keypair> := rsa.newkeys(512)
+<keypair> := rsa.newkeys(512,accurate=False)
+<keypair> := rsa.newkeys(512,poolsize=2)
+<keypair> := rsa.newkeys(512,poolsize=2,accurate=False)
+<keypair> := rsa.newkeys(1024)
+<keypair> := rsa.newkeys(1024,accurate=False)
+<keypair> := rsa.newkeys(1024,poolsize=2)
+<keypair> := rsa.newkeys(1024,poolsize=2,accurate=False)
+<keypair> := rsa.newkeys(2048)
+<keypair> := rsa.newkeys(2048,accurate=False)
+<keypair> := rsa.newkeys(2048,poolsize=2)
+<keypair> := rsa.newkeys(2048,poolsize=2,accurate=False)
+
+<plain> := ""
+~<plain> += <['a'..'z']>
+~<plain> += <['A'..'Z']>
+~<plain> += <['0'..'9']>
+~<plain> += " "
+<plain> := ~<plain> + ~<plain>
+
+<utf> := <plain>.encode('utf8')
+
+{OverflowError} <encrypt> := (rsa.encrypt(<utf>,<keypair> [0]), <utf,1>, <keypair,1>)
+
+assert rsa.decrypt(<encrypt> [0], <encrypt,1> [2][1]) == <encrypt,1> [1]
+
+<brokencrypt> := (breakStr(<encrypt> [0], <pos>), <encrypt,1> [1], <encrypt,1> [2])
+
+{rsa.pkcs1.DecryptionError} assert rsa.decrypt(<brokencrypt> [0], <brokencrypt,1> [2][1]) != <brokencrypt,1> [1]
+
+{OverflowError} <signature> := (rsa.sign(<utf>,<keypair> [1], 'MD5'), <utf,1>, <keypair,1>)
+{OverflowError} <signature> := (rsa.sign(<utf>,<keypair> [1], 'SHA-1'), <utf,1>, <keypair,1>)
+{OverflowError} <signature> := (rsa.sign(<utf>,<keypair> [1], 'SHA-256'), <utf,1>, <keypair,1>)
+{OverflowError} <signature> := (rsa.sign(<utf>,<keypair> [1], 'SHA-384'), <utf,1>, <keypair,1>)
+{OverflowError} <signature> := (rsa.sign(<utf>,<keypair> [1], 'SHA-512'), <utf,1>, <keypair,1>)
+
+<brokensig> := (breakStr(<signature> [0], <pos>), <signature,1> [1], <signature,1> [2])
+
+assert rsa.verify(<signature> [1], <signature,1> [0], <signature,1> [2][0])
+
+{rsa.pkcs1.VerificationError} assert not rsa.verify(<brokensig> [1], <brokensig,1> [0], <brokensig,1> [2][0])
+
+{ValueError} rsa.randnum.randint(<pos>)
+{ValueError} rsa.randnum.read_random_bits(<pos>)
+{ValueError} rsa.randnum.read_random_int(<pos>)
+{ValueError} rsa.randnum.read_random_odd_int(<pos>)
