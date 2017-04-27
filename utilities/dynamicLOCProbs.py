@@ -5,7 +5,7 @@ import inspect
 import time
 
 def traceLOC(frame,event,arg):
-    global lastLOCs,lastFuncs
+    global lastLOCs,lastFuncs,onlyFirst
     if event != "call":
         return traceLOC
     co = frame.f_code
@@ -20,7 +20,10 @@ def traceLOC(frame,event,arg):
     loc = len(inspect.getsourcelines(co)[0])
     print "==>",n,co.co_filename,loc
     lastLOCs += loc
-    return traceLOC
+    if not onlyFirst:
+        return traceLOC
+    else:
+        return None
 
 SUT = sut.sut()
 R = random.Random()
@@ -37,6 +40,7 @@ print "CONSTRUCTING ESTIMATE FOR",numClasses,"CLASSES"
 
 start = time.time()
 TIMEOUT = int(sys.argv[1])
+onlyFirst = "--onlyFirst" in sys.argv
 
 while (len(actLOCs) != numClasses) and (time.time()-start < TIMEOUT):
     act = SUT.randomEnabledPred(R,N,lambda act:SUT.actionClass(act) not in actLOCs)
@@ -88,7 +92,10 @@ for c in SUT.actionClasses():
         P.append(((actLOCs[c]/total)*leftover,c))
 
         
-pf = open("loc.probs",'w')
+if not onlyFirst:
+    pf = open("loc.probs",'w')
+else:
+    pf = open("firstloc.probs",'w')
     
 for (p,a) in sorted(P,key=lambda x:x[0]):
     pf.write(a + " %%%% " + str(p) + "\n")
