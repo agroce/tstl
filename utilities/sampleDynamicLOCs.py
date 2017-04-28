@@ -83,6 +83,7 @@ actMeans = {}
 for c in SUT.actionClasses():
     if c not in actLOCs:
         print "MISSING SAMPLE DATA FOR:",c
+        actLOCs[c] = []
         actMeans[c] = 0
     else:
         actMeans[c] = scipy.mean(actLOCs[c])        
