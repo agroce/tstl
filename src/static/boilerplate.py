@@ -430,8 +430,12 @@ def codeLOCs(self):
         LOCs.extend(self.objCodeLOCs(m,[m.__name__]))
     return LOCs
 
-def codeLOCProbs(self, baseline=0.2):
-    cl = self.codeLOCs()
+def codeLOCProbs(self, baseline=0.2, codeLOCs=None):
+    if codeLOCs == None:
+        # use static estimation if no dynamic estimates provided
+        cl = self.codeLOCs()
+    else:
+        cl = codeLOCs
 
     totalLOCs = 0.0
     aProbs = []
@@ -711,13 +715,16 @@ def __candidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None, amplify = False, stopFound = False):
+def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
     (this is useful for keeping the fault detected from changing).
 
     amplify changes behavior from "preserve (or find) pred(test) = True" to "increase the value of pred(test)"
+
+    tryFast means that instead of the binary search, reduce assumes the test is already close to 1-minimal (e.g., from normalization)
+    and skips right to the smallest granularity, searching for a close-by 1-minimal test.
     """
     try:
         test_before_reduce(self)
@@ -736,7 +743,10 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = Tru
     else:
         tb = test
         addLast = []
-    n = 2
+    if not tryFast:
+        n = 2
+    else:
+        n = len(tb)
     count = 0
     stests = {}
     while True:
@@ -762,7 +772,10 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = Tru
                 if stopFound:
                     return (tc + addLast)
                 tb = tc
-                n = 2
+                if not tryFast:
+                    n = 2
+                else:
+                    n = len(tb)
                 if pruneGuards:
                     self.restart()
                     newtb = []
@@ -1029,7 +1042,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
                     continue
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if (self.numReassigns(testC) <= reassignCount) and pred(testC):
-                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast, verbose=verbose)
+                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast, verbose=verbose,tryFast=True)
                     if len(rtestC) < len(test):
                         if verbose:
                             print "NORMALIZER: RULE ReduceAction: STEP",i,name1,"-->",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
@@ -1415,7 +1428,7 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = 
             (changed, test) = s(test, pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit)
             if changed:
                 if reduceOnChange:
-                    test = self.reduce(test, pred, pruneGuards, keepLast, verbose=verbose)
+                    test = self.reduce(test, pred, pruneGuards, keepLast, verbose=verbose, tryFast=True)
                 if verbose:
                     self.prettyPrintTest(test)
                 stest = self.captureReplay(test)

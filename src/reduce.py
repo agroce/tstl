@@ -108,7 +108,8 @@ def main():
         r = sut.normalize(r,pred,verbose=vLevel)
         print "NORMALIZED IN",time.time()-start,"SECONDS"
         print "NEW LENGTH",len(r)                
-    sut.saveTest(r,sys.argv[2])        
+    sut.saveTest(r,sys.argv[2])
+    sut.prettyPrintTest(r)
     print "TEST WRITTEN TO",sys.argv[2]
     
     
