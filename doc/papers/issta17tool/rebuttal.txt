@@ -1,0 +1,39 @@
+We thank the anonymous reviewers for their very helpful comments.
+
+Both:
+
+The methodology for all experiments is the same, except for obvious exceptions (use of mutation, RQs addressed).  Mutation operators provided by MutPy include the standard Andrews set (operator/constant replacement, negations, statement deletion) plus some Python-specific.  Rearranging experimental section around RQs after stating methodology, (and adding summarizing tables) sounds useful and easy.
+
+R1:
+
+Rules and their order were found by experiment, but without exhaustive search of the very large solution space, constrained by the "reduce indices" termination requirement.
+
+"collects all steps..." just rephrases Algorithm 2: try small rewrites and collect ones preserving pred.  The phrasing will be clarified.
+
+Higher order mutants are for RQ2.  With only one mutation, normalization cannot change detected fault.  With two mutations, there is a possibility for slippage.  364 samples = six hours of sampling, more samples than needed for statistical evaluation (as stats-tests show).
+
+We compare lengths/actions of DD-only and normalized tests, and #distinct tests.  Normalization is not a replacement for DD, but applied after DD (due to high cost).  We omitted some original test examples due to space limitations, will attempt to restore: they are similar, but longer and with more varied actions.
+
+R2:
+
+Using AVLTree as motivating example sounds good, fairly easily done, and may save space.
+
+We shed "some light" on RQ5, but it is more anecdotal than experimental, so we agree.
+
+For XMLParser we didn't think of that, since we were trying to simulate realistic detection by the original harnesses (and reference matching with a regression version is rare in real random testing), but it could produce more data points.
+
+Actions can construct strings: TSTL can thus test strings from a grammar (see NFM15 paper).
+
+In Fig 9, squaring the array repeatedly is what causes step 14 to produce a NaN rather than an all-zero array.
+
+The claim is that "are due to the same fault" is only formalizable, as far as we can see, by some notion of minimal, localized edits to avoid failures.  Distinguishing certain very similar but distinct faults under this definition would seem to basically imply localization and repair (which, for some specs, requires determining termination).
+
+Action index is position in total order on actions, unrelated to step indices.  (i:a) < (j:b) depends only on the actions, and ignores the step indices i and j.  The overloading of "index" is confusing, and we have we-written it to be clearer.  Pool/instance uses have also been clarified.
+
+Each pred is implemented by TSTL API functions.  For experiments measuring worst-case slippage (AVL and XML) we intentionally used a pred that only checks if the test fails for _any reason_; some AVL/XML faults can produce multiple exceptions.  For larger, more realistic, examples, pred captures exception type (not exact message), which we know works well for DD.
+
+Good catch, we need a function to order C(t) by the reduction order, or to make C a list!
+
+Yes, an instance in the pool.
+
+Will add the related work.

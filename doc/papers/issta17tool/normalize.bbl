@@ -1,0 +1,305 @@
+\begin{thebibliography}{10}
+
+\bibitem{NumPy}
+{NumPy}.
+\newblock \url{http://www.numpy.org}.
+
+\bibitem{SymPy}
+{SymPy}.
+\newblock \url{http://www.sympy.org/en/index.html}.
+
+\bibitem{ArcPy}
+What is {ArcPy}?
+\newblock
+  \url{http://resources.arcgis.com/EN/HELP/MAIN/10.1/index.html#//000v000000v7000000}.
+
+\bibitem{AndrewsTR}
+J.~Andrews, Y.~R. Zhang, and A.~Groce.
+\newblock Comparing automated unit testing strategies.
+\newblock Technical Report 736, Department of Computer Science, University of
+  Western Ontario, December 2010.
+
+\bibitem{mutant}
+J.~H. Andrews, L.~C. Briand, and Y.~Labiche.
+\newblock Is mutation an appropriate tool for testing experiments?
+\newblock In {\em International Conference on Software Engineering}, pages
+  402--411, 2005.
+
+\bibitem{arcuri2014hitchhiker}
+A.~Arcuri and L.~Briand.
+\newblock A hitchhiker's guide to statistical tests for assessing randomized
+  algorithms in software engineering.
+\newblock {\em Software Testing, Verification and Reliability}, 24(3):219--250,
+  2014.
+
+\bibitem{RandFormal}
+A.~Arcuri, M.~Z.~Z. Iqbal, and L.~C. Briand.
+\newblock Formal analysis of the effectiveness and predictability of random
+  testing.
+\newblock In {\em International Symposium on Software Testing and Analysis},
+  pages 219--230, 2010.
+
+\bibitem{PLDI13}
+Y.~Chen, A.~Groce, C.~Zhang, W.-K. Wong, X.~Fern, E.~Eide, and J.~Regehr.
+\newblock Taming compiler fuzzers.
+\newblock In {\em ACM SIGPLAN Conference on Programming Language Design and
+  Implementation}, pages 197--208, 2013.
+
+\bibitem{SoftBET}
+D.~Coppit, J.~Yang, S.~Khurshid, W.~Le, and K.~Sullivan.
+\newblock Software assurance by bounded exhaustive testing.
+\newblock {\em IEEE Transactions on Software Engineering}, 31(4):328--339, Apr.
+  2005.
+
+\bibitem{Guava}
+E.~Daka, J.~Campos, J.~Dorn, G.~Fraser, and W.~Weimer.
+\newblock Generating readable unit tests for {Guava}.
+\newblock In {\em Search-Based Software Engineering - 7th International
+  Symposium, {SSBSE} 2015, Bergamo, Italy, September 5-7, 2015, Proceedings},
+  pages 235--241, 2015.
+
+\bibitem{Readable}
+E.~Daka, J.~Campos, G.~Fraser, J.~Dorn, and W.~Weimer.
+\newblock Modeling readability to improve unit tests.
+\newblock In {\em Foundations of Software Engineering, {ESEC/FSE}}, pages
+  107--118, 2015.
+
+\bibitem{cloc}
+A.~Danial.
+\newblock {CLOC}: Count lines of code.
+\newblock \url{https://github.com/AlDanial/cloc}.
+
+\bibitem{z3}
+L.~M. de~Moura and N.~Bj{\o}rner.
+\newblock {Z3:} an efficient {SMT} solver.
+\newblock In {\em Tools and Algorithms for the Construction and Analysis of
+  Systems}, pages 337--340, 2008.
+
+\bibitem{term1}
+N.~Dershowitz.
+\newblock Termination of rewriting.
+\newblock {\em Journal of Symbolic Computing}, 3(1):69--115, 1987.
+
+\bibitem{myxml}
+erezbibi.
+\newblock \url{https://pypi.python.org/pypi/my_xml/0.1.1}.
+
+\bibitem{Daikon}
+M.~Ernst, J.~Cockrell, W.~Griswold, and D.~Notkin.
+\newblock Dynamically discovering likely program invariants to support program
+  evolution.
+\newblock In {\em International Conference on Software Engineering}, pages
+  213--224, 1999.
+
+\bibitem{Fow10}
+M.~Fowler.
+\newblock {\em {Domain-Specific Languages}}.
+\newblock Addison-Wesley Professional, 2010.
+
+\bibitem{FA11}
+G.~Fraser and A.~Arcuri.
+\newblock {EvoSuite}: automatic test suite generation for object-oriented
+  software.
+\newblock In {\em Proceedings of the 19th ACM SIGSOFT Symposium and the 13th
+  European Conference on Foundations of Software Engineering}, ESEC/FSE '11,
+  pages 416--419. ACM, 2011.
+
+\bibitem{Gastin04minimizationof}
+P.~Gastin, P.~Moro, and M.~Zeitoun.
+\newblock Minimization of counterexamples in {SPIN}.
+\newblock In {\em SPIN Workshop on Model Checking of Software}, pages 92--108.
+  Springer-Verlag, 2004.
+
+\bibitem{stvrcausereduce}
+A.~Groce, M.~A. Alipour, C.~Zhang, Y.~Chen, and J.~Regehr.
+\newblock Cause reduction: Delta-debugging, even without bugs.
+\newblock {\em Journal of Software Testing, Verification, and Reliability}.
+\newblock accepted for publication.
+
+\bibitem{icst2014}
+A.~Groce, M.~A. Alipour, C.~Zhang, Y.~Chen, and J.~Regehr.
+\newblock Cause reduction for quick testing.
+\newblock In {\em IEEE International Conference on Software Testing,
+  Verification and Validation}, pages 243--252. IEEE, 2014.
+
+\bibitem{WODACommon}
+A.~Groce and M.~Erwig.
+\newblock Finding common ground: Choose, assert, and assume.
+\newblock In {\em International Workshop on Dynamic Analysis}, pages 12--17,
+  2012.
+
+\bibitem{AMAI}
+A.~Groce, K.~Havelund, G.~Holzmann, R.~Joshi, and R.-G. Xu.
+\newblock Establishing flight software reliability: Testing, model checking,
+  constraint-solving, monitoring and learning.
+\newblock {\em Annals of Mathematics and Artificial Intelligence},
+  70(4):315--349, 2014.
+
+\bibitem{ICSEDiff}
+A.~Groce, G.~Holzmann, and R.~Joshi.
+\newblock Randomized differential testing as a prelude to formal verification.
+\newblock In {\em International Conference on Software Engineering}, pages
+  621--631, 2007.
+
+\bibitem{WODA08}
+A.~Groce and R.~Joshi.
+\newblock Random testing and model checking: Building a common framework for
+  nondeterministic exploration.
+\newblock In {\em Workshop on Dynamic Analysis}, pages 22--28, 2008.
+
+\bibitem{MakeMost}
+A.~Groce and D.~Kroening.
+\newblock Making the most of {BMC} counterexamples.
+\newblock {\em Electron. Notes Theor. Comput. Sci.}, 119(2):67--81, Mar. 2005.
+
+\bibitem{NFM15}
+A.~Groce and J.~Pinto.
+\newblock A little language for testing.
+\newblock In {\em NASA Formal Methods Symposium}, pages 204--218, 2015.
+
+\bibitem{ISSTA15}
+A.~Groce, J.~Pinto, P.~Azimi, and P.~Mittal.
+\newblock {TSTL}: a language and tool for testing (demo).
+\newblock In {\em ACM International Symposium on Software Testing and
+  Analysis}, pages 414--417, 2015.
+
+\bibitem{tstl}
+A.~Groce, J.~Pinto, P.~Azimi, P.~Mittal, J.~Holmes, and K.~Kellar.
+\newblock {TSTL}: the template scripting testing language.
+\newblock \url{https://github.com/agroce/tstl}.
+
+\bibitem{SPIN03}
+A.~Groce and W.~Visser.
+\newblock What went wrong: Explaining counterexamples.
+\newblock In {\em SPIN Workshop on Model Checking of Software}, pages 121--135,
+  2003.
+
+\bibitem{mutpy}
+K.~Halas.
+\newblock {MutPy} 0.4.0.
+\newblock \url{https://pypi.python.org/pypi/MutPy/0.4.0}.
+
+\bibitem{HamletOnly}
+R.~Hamlet.
+\newblock When only random testing will do.
+\newblock In {\em International Workshop on Random Testing}, pages 1--9, 2006.
+
+\bibitem{slippage}
+J.~Holmes, A.~Groce, and A.~Alipour.
+\newblock Mitigating (and exploiting) test reduction slippage.
+\newblock In {\em Workshop on Automated Software Testing}, 2016.
+
+\bibitem{tstlsttt}
+J.~Holmes, A.~Groce, J.~Pinto, P.~Mittal, P.~Azimi, K.~Kellar, and J.~O'Brien.
+\newblock {TSTL:} the template scripting testing language.
+\newblock {\em International Journal on Software Tools for Technology
+  Transfer}, 2017.
+\newblock Accepted for publication.
+
+\bibitem{term2}
+G.~Huet and D.~C. Oppen.
+\newblock Equations and rewrite rules: A survey.
+\newblock Technical report, Stanford, CA, USA, 1980.
+
+\bibitem{Hunter:2007}
+J.~D. Hunter.
+\newblock Matplotlib: A 2d graphics environment.
+\newblock {\em Computing In Science \& Engineering}, 9(3):90--95, 2007.
+
+\bibitem{SortedContainers}
+G.~Jenks.
+\newblock {SortedContainers} introduction.
+\newblock
+  \url{http://www.grantjenks.com/docs/sortedcontainers/introduction.html}.
+
+\bibitem{FreeWill}
+H.~Jin, K.~Ravi, and F.~Somenzi.
+\newblock Fate and free will in error traces.
+\newblock In {\em Tools and Algorithms for the Construction and Analysis of
+  Systems}, pages 445--458, 2002.
+
+\bibitem{MinUnit}
+Y.~Lei and J.~H. Andrews.
+\newblock Minimization of randomized unit test cases.
+\newblock In {\em International Symposium on Software Reliability Engineering},
+  pages 267--276, 2005.
+
+\bibitem{TCminim}
+A.~Leitner, M.~Oriol, A.~Zeller, I.~Ciupa, and B.~Meyer.
+\newblock Efficient unit test case minimization.
+\newblock In {\em International Conference on Automated Software Engineering},
+  pages 417--420, 2007.
+
+\bibitem{Lev}
+V.~I. Levenshtein.
+\newblock Binary codes capable of correcting deletions, insertions, and
+  reversals.
+\newblock {\em Soviet Physics Doklady}, 10:707--710, 1966.
+
+\bibitem{AutoHelp}
+C.~Parnin and A.~Orso.
+\newblock Are automated debugging techniques actually helping programmers?
+\newblock In {\em International Symposium on Software Testing and Analysis},
+  pages 199--209, 2011.
+
+\bibitem{SmartCheck}
+L.~Pike.
+\newblock {SmartCheck}: automatic and efficient counterexample reduction and
+  generalization.
+\newblock In {\em {ACM} {SIGPLAN} Symposium on Haskell}, pages 53--64, 2014.
+
+\bibitem{CReduce}
+J.~Regehr, Y.~Chen, P.~Cuoq, E.~Eide, C.~Ellison, and X.~Yang.
+\newblock Test-case reduction for {C} compiler bugs.
+\newblock In {\em ACM SIGPLAN Conference on Programming Language Design and
+  Implementation}, pages 335--346, 2012.
+
+\bibitem{lithium}
+J.~Ruderman.
+\newblock Bug 329066 - {Lithium}, a testcase reduction tool (delta debugger).
+\newblock \url{https://bugzilla.mozilla.org/show_bug.cgi?id=329066}, 2006.
+
+\bibitem{jsfunfuzz}
+J.~Ruderman.
+\newblock Introducing jsfunfuzz, 2007.
+\newblock \url{http://www.squarefree.com/2007/08/02/introducing-jsfunfuzz/}.
+
+\bibitem{jsfunfuzz2}
+J.~Ruderman.
+\newblock Releasing jsfunfuzz and {DOMFuzz}.
+\newblock
+  \url{https://www.squarefree.com/2015/07/28/releasing-jsfunfuzz-and-domfuzz/},
+  2015.
+
+\bibitem{avltree}
+user1689822.
+\newblock python {AVL} tree insertion.
+\newblock
+  \url{http://stackoverflow.com/questions/12537986/python-avl-tree-insertion}.
+
+\bibitem{csmith}
+X.~Yang, Y.~Chen, E.~Eide, and J.~Regehr.
+\newblock Finding and understanding bugs in {C} compilers.
+\newblock In {\em ACM SIGPLAN Conference on Programming Language Design and
+  Implementation}, pages 283--294, 2011.
+
+\bibitem{DD}
+A.~Zeller and R.~Hildebrandt.
+\newblock Simplifying and isolating failure-inducing input.
+\newblock {\em Software Engineering, IEEE Transactions on}, 28(2):183--200,
+  2002.
+
+\bibitem{issta14}
+C.~Zhang, A.~Groce, and M.~A. Alipour.
+\newblock Using test case reduction and prioritization to improve symbolic
+  execution.
+\newblock In {\em International Symposium on Software Testing and Analysis},
+  pages 160--170, 2014.
+
+\bibitem{SaiSimple}
+S.~Zhang.
+\newblock Practical semantic test simplification.
+\newblock In {\em International Conference on Software Engineering}, pages
+  1173--1176, 2013.
+
+\end{thebibliography}

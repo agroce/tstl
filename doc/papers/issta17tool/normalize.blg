@@ -1,0 +1,52 @@
+This is BibTeX, Version 0.99d (TeX Live 2016)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: normalize.aux
+The style file: abbrv.bst
+Database file #1: bibliography.bib
+Warning--to sort, need author or key in SymPy
+Warning--to sort, need author or key in NumPy
+Warning--to sort, need author or key in ArcPy
+Warning--empty year in stvrcausereduce
+Warning--empty institution in term2
+You've used 52 entries,
+            2118 wiz_defined-function locations,
+            792 strings with 11444 characters,
+and the built_in function-call counts, 19444 in all, are:
+= -- 1926
+> -- 815
+< -- 27
++ -- 326
+- -- 272
+* -- 1175
+:= -- 2938
+add.period$ -- 157
+call.type$ -- 52
+change.case$ -- 291
+chr.to.int$ -- 0
+cite$ -- 57
+duplicate$ -- 823
+empty$ -- 1644
+format.name$ -- 272
+if$ -- 4310
+int.to.chr$ -- 0
+int.to.str$ -- 52
+missing$ -- 39
+newline$ -- 261
+num.names$ -- 98
+pop$ -- 409
+preamble$ -- 1
+purify$ -- 240
+quote$ -- 0
+skip$ -- 698
+stack$ -- 0
+substring$ -- 1230
+swap$ -- 302
+text.length$ -- 27
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 206
+warning$ -- 5
+while$ -- 189
+width$ -- 54
+write$ -- 548
+(There were 5 warnings)

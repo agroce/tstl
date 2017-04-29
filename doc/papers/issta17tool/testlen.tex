@@ -1,0 +1,72 @@
+%\documentclass{sig-alternate}
+\documentclass[conference]{IEEEtran}
+
+\usepackage{graphicx}
+\usepackage{pifont}
+\usepackage{url}
+\usepackage{code}
+\usepackage{amsmath}
+
+\newcommand{\comment}[1]{}
+
+\title{The Ideal Test Length is Infinity}
+
+
+\author{\IEEEauthorblockN{%
+Alex Groce,\IEEEauthorrefmark{1}
+Josie Holmes\IEEEauthorrefmark{2}
+}
+
+\comment{
+\IEEEauthorblockA{\IEEEauthorrefmark{1}%
+School of Electrical Engineering and Computer Science\\
+Oregon State University
+\{grocea,zhangch,alipourm\}@onid.orst.edu%
+}
+}
+
+%\author{\IEEEauthorblockN{Alex Groce, Amin Alipour, Chaoqiang Zhang, Yang Chen, John Regehr}
+%\IEEEauthorblockA{School of Electrical Engineering and Computer Science\\
+%Oregon State University, Corvallis, OR\\
+%Email: agroce@gmail.com, alipourm,zhangch@onid.oregonstate.edu}}
+}
+
+\comment{
+\numberofauthors{1}
+\author{
+\alignauthor
+Arpit Christi, Matthew Lyle Olson, Mohammad Amin Alipour, Alex Groce\\
+\affaddr{School of Electrical Engineering and Computer Science}\\
+\affaddr{Oregon State University}
+\affaddr{Corvallis, OR USA}\\
+%\affaddr{Corvallis, OR}\\
+%\affaddr{USA}
+}
+}
+
+\begin{document}
+
+\maketitle 
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\input{intro}
+
+\input{related}
+
+\input{formal}
+
+\input{casestudies}
+
+\input{conclusions}
+
+\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+
+\def\IEEEbibitemsep{0.6pt plus 0.9pt}
+
+\bibliography{bibliography}
+
+\end{document}
