@@ -5,7 +5,7 @@ import sys, os
 
 setup(
     name='tstl',
-    version='0.9.7',
+    version='0.9.9',
     description='Template scripting testing language (TSTL)',
     long_description=open('README.md').read(),
     packages=['src',],
@@ -21,6 +21,7 @@ setup(
     tstl_standalone = src.standalone:main
     tstl_replay = src.replay:main
     tstl_reduce = src.reduce:main
+    tstl_generalize = src.generalize:main
     tstl_regress = src.runregressions:main
     """,
     keywords='testing tstl',

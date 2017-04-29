@@ -1517,7 +1517,7 @@ def freshSimpleVariants(self, name, previous, replacements):
     return freshSimples
 
 def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None,
-               returnCollect = False, collected = None, depth = 0, silent=False, targets = None):
+               returnCollect = False, collected = None, depth = 0, silent=False, targets = None, fresh=True):
     
     if collected is None:
         collected = {}
@@ -1569,10 +1569,11 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                             return (True, stestC, dict(collected))                        
                 canSwap[i].append(j)
                 canSwap[j].append(i)
-        for v in self.freshSimpleVariants(test[i][0],test[:i],canReplace):
-            testC = test[:i] + v + test[i+1:]
-            if pred(testC):
-                canMakeSimple[i].append(v)
+        if fresh:
+            for v in self.freshSimpleVariants(test[i][0],test[:i],canReplace):
+                testC = test[:i] + v + test[i+1:]
+                if pred(testC):
+                    canMakeSimple[i].append(v)
     if not silent:
         noOrder = []
         endSwappable = -1
