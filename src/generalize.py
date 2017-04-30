@@ -50,7 +50,7 @@ def main():
     if "--help" in sys.argv:
         print "Usage:  tstl_generalize <test file> <output test file> [--noFresh] [--noCheck] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
         print "Options:"
-        print " --noFresh:      do not perform fresh object generalization"
+        print " --fresh:        perform fresh object generalization"
         print " --noCheck:      do not run property checks"
         print " --verbose:      set verbosity level for reduction/normalization (defaults to silent reduction/normalization)"
         print " --sandbox:      run tests in a subprocess sandbox, for tests that crash Python interpreter;"
@@ -75,7 +75,7 @@ def main():
     if vLevel == "False":
         vLevel = False
 
-    freshGen = not "--noFresh" in sys.argv
+    freshGen = "--fresh" in sys.argv
 
     timeout = None
     if "--timeout" in sys.argv:
