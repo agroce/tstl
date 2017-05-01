@@ -1553,7 +1553,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 continue
             if a != test[i][0]:
                 testC = test[:i] + [self.__names[a]] + test[i+1:]
-                if pred(testC) and self.allEnabled(testC):
+                if pred(testC): # and self.allEnabled(testC):
                     if returnCollect:
                         stestC = self.captureReplay(testC)
                         if stestC not in collected:
@@ -1567,7 +1567,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             if i == j or test[i][0] == test[j][0]:
                 continue
             testC = test[:i]+[test[j]]+test[i+1:j]+[test[i]]+test[j+1:]
-            if pred(testC) and self.allEnabled(testC):
+            if pred(testC): # and self.allEnabled(testC):
                 if returnCollect:
                     stestC = self.captureReplay(testC)
                     if stestC not in collected:
