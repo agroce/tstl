@@ -40,6 +40,8 @@ def main():
             files.append(f)
         elif f == "--html":
             lastWasHtml = True
+        else:
+            lastWasHtml = False
 
     if "--noCover" in sys.argv:
         nocover = True

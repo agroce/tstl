@@ -70,6 +70,8 @@ def main():
                 vLevel = l
             if l == "--verbose":
                 lastWasVerbose = True
+            else:
+                lastWasVerbose = False
     if vLevel == "True":
         vLevel = True
     if vLevel == "False":
@@ -85,6 +87,8 @@ def main():
                 timeout = l
             if l == "--timeout":
                 lastWasTimeout = True
+            else:
+                lastWasTimeout = False
     if not "--sandbox" in sys.argv:
         pred = sut.failsCheck
         if "--noCheck" is sys.argv:

@@ -366,7 +366,7 @@ def main():
     baseIndent = "    "
 
     if "-v" in sys.argv or "--version" in sys.argv:
-        print "TSTL, version 1.0.1"
+        print "TSTL, version 1.0.2"
         print "Documentation at https://github.com/agroce/tstl"
         sys.exit(0)
         

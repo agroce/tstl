@@ -33,6 +33,8 @@ def main():
                 logLevel = int(l)
             if l == "--logging":
                 lastWasLogging = True
+            else:
+                lastWasLogging = False
 
     t = SUT.sut()
     t.restart()
