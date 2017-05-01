@@ -366,7 +366,7 @@ def main():
     baseIndent = "    "
 
     if "-v" in sys.argv or "--version" in sys.argv:
-        print "TSTL, version 0.9.9"
+        print "TSTL, version 1.0.1"
         print "Documentation at https://github.com/agroce/tstl"
         sys.exit(0)
         
@@ -412,7 +412,7 @@ def main():
     with open(config.tstl, 'r') as fp:
         for l in fp:
             fileLine = str(l).replace("\r","")
-            l = preprocess_angle_brackets(l).replace("%[","% [")
+            l = preprocess_angle_brackets(l)
             if l[-1] != "\n":
                 l += "\n"
             l = l.replace("\r","")
