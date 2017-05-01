@@ -583,6 +583,13 @@ def failure(self):
 def warning(self):
     return self.__warning
 
+def allEnabled(self, test):
+    for (name, guard, act) in test:
+        if not guard():
+            return False
+        self.safely((name,guard,act))
+    return True
+
 def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False, stopFail = True):
     if not extend:
         self.restart()
@@ -1518,6 +1525,8 @@ def freshSimpleVariants(self, name, previous, replacements):
 
 def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None,
                returnCollect = False, collected = None, depth = 0, silent=False, targets = None, fresh=True):
+
+    #print self.__consts
     
     if collected is None:
         collected = {}
@@ -1544,7 +1553,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 continue
             if a != test[i][0]:
                 testC = test[:i] + [self.__names[a]] + test[i+1:]
-                if pred(testC):
+                if pred(testC) and self.allEnabled(testC):
                     if returnCollect:
                         stestC = self.captureReplay(testC)
                         if stestC not in collected:
@@ -1558,7 +1567,7 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
             if i == j or test[i][0] == test[j][0]:
                 continue
             testC = test[:i]+[test[j]]+test[i+1:j]+[test[i]]+test[j+1:]
-            if pred(testC):
+            if pred(testC) and self.allEnabled(testC):
                 if returnCollect:
                     stestC = self.captureReplay(testC)
                     if stestC not in collected:
@@ -1571,8 +1580,12 @@ def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose =
                 canSwap[j].append(i)
         if fresh:
             for v in self.freshSimpleVariants(test[i][0],test[:i],canReplace):
+                #print "="*50
+                #print "FRESH SIMPLE, i = ",i
                 testC = test[:i] + v + test[i+1:]
-                if pred(testC):
+                #self.prettyPrintTest(testC)                
+                if pred(testC) and self.allEnabled(testC):
+                    #print "SUCCESS!"
                     canMakeSimple[i].append(v)
     if not silent:
         noOrder = []

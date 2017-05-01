@@ -412,7 +412,7 @@ def main():
     with open(config.tstl, 'r') as fp:
         for l in fp:
             fileLine = str(l).replace("\r","")
-            l = preprocess_angle_brackets(l)
+            l = preprocess_angle_brackets(l).replace("%[","% [")
             if l[-1] != "\n":
                 l += "\n"
             l = l.replace("\r","")
