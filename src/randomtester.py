@@ -66,7 +66,7 @@ def parse_args():
                         help="Turn on progress report.")
     parser.add_argument('--timedProgress', type=int, default=30,
                         help="Turn on progress reports at x second intervals (default = 30 seconds).")        
-    parser.add_argument('-k', '--keep', action='store_true',
+    parser.add_argument('-k', '--keepLast', action='store_true',
                         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument('--swarmP', type=float, default=0.5,
                         help="Swarm inclusion probability.")
@@ -227,7 +227,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         print "REDUCING..."
         startReduce = time.time()
         original = test
-        test = sut.reduce(test, failProp, True, config.keep)
+        test = sut.reduce(test, failProp, True, keepLast = config.keepLast)
         if not newCov:
             sut.saveTest(test,config.output.replace(".test",".reduced.test"))        
         print "Reduced test has",len(test),"steps"
@@ -240,7 +240,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         sut.prettyPrintTest(test)
         if config.essentials:
             print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
-            (canRemove, cannotRemove) = sut.reduceEssentials(test, original, failProp, True, config.keep)
+            (canRemove, cannotRemove) = sut.reduceEssentials(test, original, failProp, True, keepLast = config.keepLast)
             print len(canRemove),len(cannotRemove)
             for (c,reducec) in canRemove:
                 print "CAN BE REMOVED:",map(lambda x:x[0], c)
@@ -250,7 +250,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if config.normalize:
             startSimplify = time.time()
             print "NORMALIZING..."
-            test = sut.normalize(test, failProp, True, config.keep, verbose = True, speed = config.speed, noReassigns = config.noReassign, useCache=False)
+            test = sut.normalize(test, failProp, True, keepLast = config.keepLast, verbose = True, speed = config.speed, noReassigns = config.noReassign, useCache=False)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
             sut.saveTest(test,config.output.replace(".test",".normalized.test"))

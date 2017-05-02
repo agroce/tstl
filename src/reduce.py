@@ -1,5 +1,6 @@
 import sys
 import time
+import traceback
 import os
 import subprocess
 
@@ -48,22 +49,30 @@ def main():
     global timeout
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_reduce <test file> <output test file> [--noCheck] [--noReduce] [--noAlpha] [--noNormalized] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
+        print "Usage:  tstl_reduce <test file> <output test file> [--noCheck] [--matchException] [--keepLast] [--noReduce] [--fast] [--multiple] [--recursion N] [--limit K] [--noAlpha] [--noNormalized] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
         print "Options:"
-        print " --noCheck:      do not run property checks"
-        print " --noReduce      do not reduce test (useful for normalizing an already reduced test)"
-        print " --noAlpha       do not alpha convert test"
-        print " --noNormalize   after reducing, do not also normalize"
-        print " --verbose:      set verbosity level for reduction/normalization (defaults to silent reduction/normalization)"
-        print " --sandbox:      run tests in a subprocess sandbox, for tests that crash Python interpreter;"
-        print "                 due to common difficulties, sandbox is by default very verbose!"
-        print "                 WARNING: if not needed, sandbox mode is VERY SLOW"
-        print " --quietSandbox: run sandbox in a quiet mode"
-        print " --timeout:      if tests are run in a sandbox, consider tests running longer than this to have failed"
+        print " --noCheck:         do not run property checks"
+        print " --matchException   force test to fail with same exception as original test (does not work for sandbox reduction"
+        print " --keepLast         force test to keep same last action"
+        print " --noReduce         do not reduce test (useful for normalizing an already reduced test)"
+        print " --fast             if test is near 1-minimal, this may improve delta-debugging speed"
+        print " --multiple         produce multiple reductions, to avoid (or induce) slippage"
+        print " --recursive        recursive depth for multiple reductions (default 1)"
+        print " --limit            depth limit for multiple reductions"
+        print " --noAlpha          do not alpha convert test"
+        print " --noNormalize      after reducing, do not also normalize"
+        print " --verbose:         set verbosity level for reduction/normalization (defaults to silent reduction/normalization)"
+        print " --sandbox:         run tests in a subprocess sandbox, for tests that crash Python interpreter;"
+        print "                    due to common difficulties, sandbox is by default very verbose!"
+        print "                    WARNING: if not needed, sandbox mode is VERY SLOW"
+        print " --quietSandbox:    run sandbox in a quiet mode"
+        print " --timeout:         if tests are run in a sandbox, consider tests running longer than this to have failed"
         sys.exit(0)
 
     sut = SUT.sut()
-        
+
+    fastReduce = "--fast" in sys.argv
+    
     vLevel = False      
     if "--verbose" in sys.argv:
         lastWasVerbose = False
@@ -72,6 +81,8 @@ def main():
                 vLevel = l
             if l == "--verbose":
                 lastWasVerbose = True
+            else:
+                lastWasVerbose = False
     if vLevel == "True":
         vLevel = True
     if vLevel == "False":
@@ -85,31 +96,96 @@ def main():
                 timeout = l
             if l == "--timeout":
                 lastWasTimeout = True
+                
+    recursive = 1
+    if "--recursive" in sys.argv:
+        lastWasRecur = False
+        for l in sys.argv:
+            if lastWasRecur:
+                recursive = int(l)
+            if l == "--recursive":
+                lastWasRecur = True
+            else:
+                lastWasRecur = False
+    limit = 1
+    if "--limit" in sys.argv:
+        lastWasLimit = False
+        for l in sys.argv:
+            if lastWasLimit:
+                limit = int(l)
+            if l == "--limit":
+                lastWasLimit = True
+            else:
+                lastWasLimit = False
+
+    multiple = "--multiple" in sys.argv
+    exceptionMatch = "--matchException" in sys.argv
+
+    r = sut.loadTest(sys.argv[1])
+
+    f = None
+    
+    if exceptionMatch:
+        print "RUNNING TO GET FAILURE FOR MATCHING..."
+        assert (sut.fails(r))
+        f = sut.failure()
+        print "ERROR:",f
+        print "TRACEBACK:"
+        traceback.print_tb(f[2],file=sys.stdout)
+    
     if not "--sandbox" in sys.argv:
-        pred = sut.failsCheck
+        pred = (lambda x: sut.failsCheck(x,failure=f))
         if "--noCheck" is sys.argv:
-            pred = sut.fails
+            pred = (lambda x: sut.fails(x,failure=f))
     else:
         pred = sandboxReplay
-    r = sut.loadTest(sys.argv[1])
+
     print "STARTING WITH TEST OF LENGTH",len(r)
     if not ("--noReduce" in sys.argv):
         start = time.time()
         print "REDUCING..."
-        r = sut.reduce(r,pred,verbose=vLevel)
+        if not multiple:
+            r = sut.reduce(r,pred,verbose=vLevel,tryFast=fastReduce)
+        else:
+            rs = sut.reductions(r,pred,verbose=vLevel,recursive=recursive,limit=limit)
         print "REDUCED IN",time.time()-start,"SECONDS"
-        print "NEW LENGTH",len(r)        
+        if not multiple:
+            print "NEW LENGTH",len(r)
+        else:
+            print "NEW LENGTHS",map(len,rs)
     if not ("--noAlpha" in sys.argv):
         print "ALPHA CONVERTING..."
-        r = sut.alphaConvert(r)
+        if not multiple:
+            r = sut.alphaConvert(r)
+        else:
+            rs = map(sut.alphaConvert, rs)
     if not ("--noNormalize" in sys.argv):
         start = time.time()
         print "NORMALIZING..."
-        r = sut.normalize(r,pred,verbose=vLevel)
+        if not multiple:
+            r = sut.normalize(r,pred,verbose=vLevel)
+        else:
+            newrs = []
+            for r in rs:
+                newrs.append(sut.normalize(r,pred,verbose=vLevel))
+            rs = newrs
         print "NORMALIZED IN",time.time()-start,"SECONDS"
-        print "NEW LENGTH",len(r)                
-    sut.saveTest(r,sys.argv[2])
-    sut.prettyPrintTest(r)
-    print "TEST WRITTEN TO",sys.argv[2]
+        if not multiple:
+            print "NEW LENGTH",len(r)
+        else:
+            print "NEW LENGTHS",map(len,news)
+    if not multiple:
+        sut.saveTest(r,sys.argv[2])
+        sut.prettyPrintTest(r)
+    else:
+        i = 0
+        for r in rs:
+            print "TEST #"+str(i)+":"
+            sut.saveTest(r,sys.argv[2]+"."+str(i))
+            sut.prettyPrintTest(r)
+            print
+            print "TEST WRITTEN TO",sys.argv[2]+"."+str(i)
+            i += 1
+            
     
     

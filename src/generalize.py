@@ -48,16 +48,18 @@ def main():
     global timeout
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_generalize <test file> <output test file> [--noFresh] [--noCheck] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
+        print "Usage:  tstl_generalize <test file> <output test file> [--noCheck] [--matchException] [--keepLast] [--noFresh] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
         print "Options:"
-        print " --noFresh:        perform fresh object generalization"
-        print " --noCheck:      do not run property checks"
-        print " --verbose:      set verbosity level for reduction/normalization (defaults to silent reduction/normalization)"
-        print " --sandbox:      run tests in a subprocess sandbox, for tests that crash Python interpreter;"
-        print "                 due to common difficulties, sandbox is by default very verbose!"
-        print "                 WARNING: if not needed, sandbox mode is VERY SLOW"
-        print " --quietSandbox: run sandbox in a quiet mode"
-        print " --timeout:      if tests are run in a sandbox, consider tests running longer than this to have failed"
+        print " --noCheck:         do not run property checks"
+        print " --matchException   force test to fail with same exception as original test (does not work for sandbox reduction"
+        print " --keepLast         force test to keep same last action"        
+        print " --noFresh:         perform fresh object generalization"
+        print " --verbose:         set verbosity level for reduction/normalization (defaults to silent reduction/normalization)"
+        print " --sandbox:         run tests in a subprocess sandbox, for tests that crash Python interpreter;"
+        print "                    due to common difficulties, sandbox is by default very verbose!"
+        print "                    WARNING: if not needed, sandbox mode is VERY SLOW"
+        print " --quietSandbox:    run sandbox in a quiet mode"
+        print " --timeout:         if tests are run in a sandbox, consider tests running longer than this to have failed"
         sys.exit(0)
 
     sut = SUT.sut()
@@ -89,13 +91,35 @@ def main():
                 lastWasTimeout = True
             else:
                 lastWasTimeout = False
+
+    exceptionMatch = "--matchException" in sys.argv
+    
+    t = sut.loadTest(sys.argv[1])
+
+    f = None
+    
+    if exceptionMatch:
+        print "RUNNING TO GET FAILURE FOR MATCHING..."
+        assert (sut.fails(t))
+        f = sut.failure()
+        print "ERROR:",f
+        print "TRACEBACK:"
+        traceback.print_tb(f[2],file=sys.stdout)
+    
+    if not "--sandbox" in sys.argv:
+        pred = (lambda x: sut.failsCheck(x,failure=f))
+        if "--noCheck" is sys.argv:
+            pred = (lambda x: sut.fails(x,failure=f))
+    else:
+        pred = sandboxReplay
+    
     if not "--sandbox" in sys.argv:
         pred = sut.failsCheck
         if "--noCheck" is sys.argv:
             pred = sut.fails
     else:
         pred = sandboxReplay
-    t = sut.loadTest(sys.argv[1])
+
     sut.generalize(t,pred,verbose=vLevel,fresh=freshGen)
     
     

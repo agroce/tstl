@@ -722,7 +722,7 @@ def __candidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False):
+def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -826,14 +826,14 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = True, verbose = Tru
             else:
                 return (tb + addLast)
 
-def tryCompose(tests, pred, pruneGuards = False, keepLast = True, verbose = True, rgen = None, amplify = False, combs = 1):
+def tryCompose(tests, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, combs = 1):
     newt = []
     for t in tests:
         newt.extend(t)
     newt = newt * combs
     return reduce(newt, pred, pruneGuards, keepLast, verbose, rgen, amplify)
             
-def reductions(self, test, pred, pruneGuards = False, keepLast = True, verbose=True, recursive=1, useClasses=True, limit = None):
+def reductions(self, test, pred, pruneGuards = False, keepLast = False, verbose=True, recursive=1, useClasses=True, limit = None):
     # use recursive = -1 for infinite recursion (all tests)
     r = self.reduce(test, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose)
     reductions = [r]
