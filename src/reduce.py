@@ -3,6 +3,7 @@ import time
 import traceback
 import os
 import subprocess
+import random
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
@@ -49,7 +50,7 @@ def main():
     global timeout
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_reduce <test file> <output test file> [--noCheck] [--matchException] [--keepLast] [--noReduce] [--fast] [--multiple] [--recursion N] [--limit K] [--noAlpha] [--noNormalized] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
+        print "Usage:  tstl_reduce <test file> <output test file> [--noCheck] [--matchException] [--coverage] [--coverMore] [--uncaught] [--keepLast] [--noReduce] [--fast] [--multiple] [--recursive depth] [--limit N] [--random] [--seed seed] [--noAlpha] [--noNormalized] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
         print "Options:"
         print " --noCheck:         do not run property checks"
         print " --matchException   force test to fail with same exception as original test (does not work for sandbox reduction"
@@ -61,7 +62,9 @@ def main():
         print " --fast             if test is near 1-minimal, this may improve delta-debugging speed"
         print " --multiple         produce multiple reductions, to avoid (or induce) slippage"
         print " --recursive        recursive depth for multiple reductions (default 1)"
-        print " --limit            depth limit for multiple reductions"
+        print " --limit            total limit for multiple reduction attempts"
+        print " --random           randomize order of reductions in delta-debugging"
+        print " --seed             set random seed for randomized ordering"        
         print " --noAlpha          do not alpha convert test"
         print " --noNormalize      after reducing, do not also normalize"
         print " --verbose:         set verbosity level for reduction/normalization (defaults to silent reduction/normalization)"
@@ -79,7 +82,11 @@ def main():
             sut.stopCoverage()
         except:
             pass
-    
+
+    R = None
+    if "--random" in sys.argv:
+        R = random.Random()
+        
     fastReduce = "--fast" in sys.argv
     keepLast = "--keepLast" in sys.argv
     
@@ -106,7 +113,18 @@ def main():
                 timeout = l
             if l == "--timeout":
                 lastWasTimeout = True
-                
+
+    seed = None
+    if "--seed" in sys.argv:
+        lastWasSeed = False
+        for l in sys.argv:
+            if lastWasSeed:
+                seed = int(l)
+            if l == "--seed":
+                lastWasSeed = True                
+    if seed != None:
+        R.seed(seed)
+        
     recursive = 1
     if "--recursive" in sys.argv:
         lastWasRecur = False
@@ -168,7 +186,7 @@ def main():
         start = time.time()
         print "REDUCING..."
         if not multiple:
-            r = sut.reduce(r,pred,verbose=vLevel,tryFast=fastReduce,keepLast=keepLast)
+            r = sut.reduce(r,pred,verbose=vLevel,tryFast=fastReduce,keepLast=keepLast,rgen=R)
         else:
             rs = sut.reductions(r,pred,verbose=vLevel,recursive=recursive,limit=limit,keepLast=keepLast)
         print "REDUCED IN",time.time()-start,"SECONDS"

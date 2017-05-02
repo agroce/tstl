@@ -12,14 +12,14 @@ import sut as SUT
 def main():
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--coverage]"
+        print "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--coverage] [--internal] [--html directory]"
         print "Options:"
-        print "  --noCheck:      do not run property checks"
-        print "  --logging:      set the logging level for the test"
-        print "  --verbose:      run with verbose action output"
-        print " --coverage:      report code coverage"        
-        print " --internal:      report detailed code coverage information"
-        print "     --html:      produce HTML report on coverage"
+        print "--noCheck:      do not run property checks"
+        print "--logging:      set the logging level for the test"
+        print "--verbose:      run with verbose action output"
+        print "--coverage:     report code coverage"        
+        print "--internal:     report detailed code coverage information"
+        print "--html:         produce HTML report on coverage"
         sys.exit(0)
     
     if not (("--coverage" in sys.argv) or ("--internal" in sys.argv)):

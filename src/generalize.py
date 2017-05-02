@@ -48,7 +48,7 @@ def main():
     global timeout
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_generalize <test file> <output test file> [--noCheck] [--matchException] [--keepLast] [--noFresh] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
+        print "Usage:  tstl_generalize <test file> <output test file> [--noCheck] [--matchException] [--coverage] [--uncaught] [--keepLast] [--noFresh] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
         print "Options:"
         print " --noCheck:         do not run property checks"
         print " --matchException   force test to fail with same exception as original test (does not work for sandbox reduction"
