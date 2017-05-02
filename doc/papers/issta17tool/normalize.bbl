@@ -13,12 +13,6 @@ What is {ArcPy}?
 \newblock
   \url{http://resources.arcgis.com/EN/HELP/MAIN/10.1/index.html#//000v000000v7000000}.
 
-\bibitem{AndrewsTR}
-J.~Andrews, Y.~R. Zhang, and A.~Groce.
-\newblock Comparing automated unit testing strategies.
-\newblock Technical Report 736, Department of Computer Science, University of
-  Western Ontario, December 2010.
-
 \bibitem{mutant}
 J.~H. Andrews, L.~C. Briand, and Y.~Labiche.
 \newblock Is mutation an appropriate tool for testing experiments?
@@ -51,19 +45,6 @@ D.~Coppit, J.~Yang, S.~Khurshid, W.~Le, and K.~Sullivan.
 \newblock {\em IEEE Transactions on Software Engineering}, 31(4):328--339, Apr.
   2005.
 
-\bibitem{Guava}
-E.~Daka, J.~Campos, J.~Dorn, G.~Fraser, and W.~Weimer.
-\newblock Generating readable unit tests for {Guava}.
-\newblock In {\em Search-Based Software Engineering - 7th International
-  Symposium, {SSBSE} 2015, Bergamo, Italy, September 5-7, 2015, Proceedings},
-  pages 235--241, 2015.
-
-\bibitem{Readable}
-E.~Daka, J.~Campos, G.~Fraser, J.~Dorn, and W.~Weimer.
-\newblock Modeling readability to improve unit tests.
-\newblock In {\em Foundations of Software Engineering, {ESEC/FSE}}, pages
-  107--118, 2015.
-
 \bibitem{cloc}
 A.~Danial.
 \newblock {CLOC}: Count lines of code.
@@ -83,13 +64,6 @@ N.~Dershowitz.
 \bibitem{myxml}
 erezbibi.
 \newblock \url{https://pypi.python.org/pypi/my_xml/0.1.1}.
-
-\bibitem{Daikon}
-M.~Ernst, J.~Cockrell, W.~Griswold, and D.~Notkin.
-\newblock Dynamically discovering likely program invariants to support program
-  evolution.
-\newblock In {\em International Conference on Software Engineering}, pages
-  213--224, 1999.
 
 \bibitem{Fow10}
 M.~Fowler.
@@ -122,12 +96,6 @@ A.~Groce, M.~A. Alipour, C.~Zhang, Y.~Chen, and J.~Regehr.
 \newblock In {\em IEEE International Conference on Software Testing,
   Verification and Validation}, pages 243--252. IEEE, 2014.
 
-\bibitem{WODACommon}
-A.~Groce and M.~Erwig.
-\newblock Finding common ground: Choose, assert, and assume.
-\newblock In {\em International Workshop on Dynamic Analysis}, pages 12--17,
-  2012.
-
 \bibitem{AMAI}
 A.~Groce, K.~Havelund, G.~Holzmann, R.~Joshi, and R.-G. Xu.
 \newblock Establishing flight software reliability: Testing, model checking,
@@ -135,17 +103,17 @@ A.~Groce, K.~Havelund, G.~Holzmann, R.~Joshi, and R.-G. Xu.
 \newblock {\em Annals of Mathematics and Artificial Intelligence},
   70(4):315--349, 2014.
 
+\bibitem{OneTest}
+A.~Groce, J.~Holmes, and K.~Kellar.
+\newblock One test to rule them all.
+\newblock In {\em International Symposium on Software Testing and Analysis},
+  page accepted for publication, 2017.
+
 \bibitem{ICSEDiff}
 A.~Groce, G.~Holzmann, and R.~Joshi.
 \newblock Randomized differential testing as a prelude to formal verification.
 \newblock In {\em International Conference on Software Engineering}, pages
   621--631, 2007.
-
-\bibitem{WODA08}
-A.~Groce and R.~Joshi.
-\newblock Random testing and model checking: Building a common framework for
-  nondeterministic exploration.
-\newblock In {\em Workshop on Dynamic Analysis}, pages 22--28, 2008.
 
 \bibitem{MakeMost}
 A.~Groce and D.~Kroening.
@@ -230,11 +198,11 @@ A.~Leitner, M.~Oriol, A.~Zeller, I.~Ciupa, and B.~Meyer.
 \newblock In {\em International Conference on Automated Software Engineering},
   pages 417--420, 2007.
 
-\bibitem{Lev}
-V.~I. Levenshtein.
-\newblock Binary codes capable of correcting deletions, insertions, and
-  reversals.
-\newblock {\em Soviet Physics Doklady}, 10:707--710, 1966.
+\bibitem{HDD}
+G.~Misherghi and Z.~Su.
+\newblock Hdd: hierarchical delta debugging.
+\newblock In {\em International Conference on Software engineering}, pages
+  142--151, 2006.
 
 \bibitem{AutoHelp}
 C.~Parnin and A.~Orso.
