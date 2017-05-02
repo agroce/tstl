@@ -72,6 +72,7 @@ def main():
     sut = SUT.sut()
 
     fastReduce = "--fast" in sys.argv
+    keepLast = "--keepLast" in sys.argv
     
     vLevel = False      
     if "--verbose" in sys.argv:
@@ -145,9 +146,9 @@ def main():
         start = time.time()
         print "REDUCING..."
         if not multiple:
-            r = sut.reduce(r,pred,verbose=vLevel,tryFast=fastReduce)
+            r = sut.reduce(r,pred,verbose=vLevel,tryFast=fastReduce,keepLast=keepLast)
         else:
-            rs = sut.reductions(r,pred,verbose=vLevel,recursive=recursive,limit=limit)
+            rs = sut.reductions(r,pred,verbose=vLevel,recursive=recursive,limit=limit,keepLast=keepLast)
         print "REDUCED IN",time.time()-start,"SECONDS"
         if not multiple:
             print "NEW LENGTH",len(r)
@@ -163,11 +164,11 @@ def main():
         start = time.time()
         print "NORMALIZING..."
         if not multiple:
-            r = sut.normalize(r,pred,verbose=vLevel)
+            r = sut.normalize(r,pred,verbose=vLevel,keepLast=keepLast)
         else:
             newrs = []
             for r in rs:
-                newrs.append(sut.normalize(r,pred,verbose=vLevel))
+                newrs.append(sut.normalize(r,pred,verbose=vLevel,keepLast=keepLast))
             rs = newrs
         print "NORMALIZED IN",time.time()-start,"SECONDS"
         if not multiple:

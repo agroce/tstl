@@ -64,6 +64,8 @@ def main():
 
     sut = SUT.sut()
 
+    keepLast = "--keepLast" in sys.argv
+    
     vLevel = False      
     if "--verbose" in sys.argv:
         lastWasVerbose = False
@@ -120,6 +122,6 @@ def main():
     else:
         pred = sandboxReplay
 
-    sut.generalize(t,pred,verbose=vLevel,fresh=freshGen)
+    sut.generalize(t,pred,verbose=vLevel,fresh=freshGen,keepLast=keepLast)
     
     
