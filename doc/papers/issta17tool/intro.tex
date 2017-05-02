@@ -1,6 +1,33 @@
 \section{Introduction}
 
-It has long been understood that effective automated testing often requires
+Automated test generation tools, in essence, exist in order to produce
+failing tests.  However, once a tool has produced either one such test
+or a large set of such tests, the real work of a user of such a tool
+begins in earnest.  First, users of course wish to be able to replay
+failed tests, and run batches of tests as regressions (possibly
+collecting code coverage information as well).  Second, with most test generation methods, it is
+important to reduce the size of the test to make it easier to
+understand (and quicker to run as a regression test)
+\cite{DD,MinUnit,TCminim,ICSEDiff}.  Most industrial-strength
+automated testing systems support test minimization, usually using a
+variation of delta-debugging \cite{CReduce,hypothesis,lithum}.
+However, such systems usually do not provide algorithmic defenses
+against the problem of slippage, where in the absence of a good
+failure labeling system, the reducer may change a failure due to one
+fault to a failure due to another (and often less interesting) fault \cite{PLDI13,slippage}.
+Additionally, a user may want to \emph{semantically} simplify a test, to
+make it not only shorter but simpler and less complex in ways that go
+beyond mere test length \cite{OneTest}.  Such functionality is less common, or only a
+byproduct of specialized minimization methods.  Finally, users may
+want to be informed of the neighborhood of a failing test:  which
+similar tests also fail (and, equally important, which similar tests
+do not fail).  Again, this functionality is usually not present in
+current automated test generation tools.
+
+The TSTL testing language and tool, currently implemented for testing
+Python programs, supports all of these features, both 
+
+It has long been understood that effective automated test generation often requires
 test reduction \cite{DD,MinUnit,TCminim,ICSEDiff} to produce useful tests.  In fact, test reduction is
 now standard practice in industrial testing tools such as Mozilla's
 {\tt jsfunfuzz} \cite{jsfunfuzz,jsfunfuzz2,lithium}.\footnote{Approaches that
