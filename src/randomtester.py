@@ -539,6 +539,13 @@ def main():
     if config.relax:
         sut.relax()
 
+    # MAJOR SPEED GAIN:  IF NOT MEASURING COVERGE, NO NEED TO RECOMPILE, JUST RUN --noCover
+    if config.noCover:
+        try:
+            sut.stopCoverage()
+        except:
+            pass
+        
     if config.verboseActions:
         sut.verbose(True)
         

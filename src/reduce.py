@@ -53,6 +53,9 @@ def main():
         print "Options:"
         print " --noCheck:         do not run property checks"
         print " --matchException   force test to fail with same exception as original test (does not work for sandbox reduction"
+        print " --coverage         reduce with respect to maintaining coverage, rather than failure"
+        print " --coverMore        force test to GAIN coverage over baseline, if possible"
+        print " --uncaught         allow uncaught exceptions (only applies to coverage-based reduction)"                
         print " --keepLast         force test to keep same last action"
         print " --noReduce         do not reduce test (useful for normalizing an already reduced test)"
         print " --fast             if test is near 1-minimal, this may improve delta-debugging speed"
@@ -71,6 +74,12 @@ def main():
 
     sut = SUT.sut()
 
+    if not (("--coverage" in sys.argv) or ("--coverMore" in sys.argv)):
+        try:
+            sut.stopCoverage()
+        except:
+            pass
+    
     fastReduce = "--fast" in sys.argv
     keepLast = "--keepLast" in sys.argv
     
@@ -121,19 +130,21 @@ def main():
 
     multiple = "--multiple" in sys.argv
     exceptionMatch = "--matchException" in sys.argv
-
+    coverage = "--coverage" in sys.argv
+    coverMore = "--coverMore" in sys.argv
+    
     r = sut.loadTest(sys.argv[1])
 
     f = None
     
     if exceptionMatch:
-        print "RUNNING TO GET FAILURE FOR MATCHING..."
+        print "EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING..."
         assert (sut.fails(r))
         f = sut.failure()
         print "ERROR:",f
         print "TRACEBACK:"
         traceback.print_tb(f[2],file=sys.stdout)
-    
+
     if not "--sandbox" in sys.argv:
         pred = (lambda x: sut.failsCheck(x,failure=f))
         if "--noCheck" is sys.argv:
@@ -141,6 +152,17 @@ def main():
     else:
         pred = sandboxReplay
 
+    if coverage or coverMore:
+        print "EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION..."
+        sut.replay(r,checkProp = not ("--noCheck" in sys.argv),catchUncaught=("--uncaught" in sys.argv))
+        b = set(sut.currBranches())
+        s = set(sut.currStatements())
+        print "PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS"
+        if coverMore:
+            pred = sut.coversMore(s,b,checkProp = not ("--noCheck" in sys.argv),catchUncaught=("--uncaught" in sys.argv))
+        else:
+            pred = sut.coversAll(s,b,checkProp = not ("--noCheck" in sys.argv),catchUncaught=("--uncaught" in sys.argv))
+        
     print "STARTING WITH TEST OF LENGTH",len(r)
     if not ("--noReduce" in sys.argv):
         start = time.time()

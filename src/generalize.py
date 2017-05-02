@@ -52,6 +52,8 @@ def main():
         print "Options:"
         print " --noCheck:         do not run property checks"
         print " --matchException   force test to fail with same exception as original test (does not work for sandbox reduction"
+        print " --coverage         reduce with respect to maintaining coverage, rather than failure"
+        print " --uncaught         allow uncaught exceptions (only applies to coverage-based generalization)"               
         print " --keepLast         force test to keep same last action"        
         print " --noFresh:         perform fresh object generalization"
         print " --verbose:         set verbosity level for reduction/normalization (defaults to silent reduction/normalization)"
@@ -64,6 +66,12 @@ def main():
 
     sut = SUT.sut()
 
+    if not ("--coverage" in sys.argv):
+        try:
+            sut.stopCoverage()
+        except:
+            pass
+    
     keepLast = "--keepLast" in sys.argv
     
     vLevel = False      
@@ -95,13 +103,14 @@ def main():
                 lastWasTimeout = False
 
     exceptionMatch = "--matchException" in sys.argv
+    coverage = "--coverage" in sys.argv
     
     t = sut.loadTest(sys.argv[1])
 
     f = None
     
     if exceptionMatch:
-        print "RUNNING TO GET FAILURE FOR MATCHING..."
+        print "RUNNING TO OBTAIN FAILURE FOR EXCEPTION MATCHING..."
         assert (sut.fails(t))
         f = sut.failure()
         print "ERROR:",f
@@ -114,14 +123,17 @@ def main():
             pred = (lambda x: sut.fails(x,failure=f))
     else:
         pred = sandboxReplay
-    
-    if not "--sandbox" in sys.argv:
-        pred = sut.failsCheck
-        if "--noCheck" is sys.argv:
-            pred = sut.fails
-    else:
-        pred = sandboxReplay
 
+    if coverage:
+        print "EXECUTING TEST TO OBTAIN COVERAGE..."
+        sut.replay(t,checkProp = not ("--noCheck" in sys.argv),catchUncaught=("--uncaught" in sys.argv))
+        b = set(sut.currBranches())
+        s = set(sut.currStatements())
+        print "PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS"
+        pred = sut.coversAll(s,b,checkProp = not ("--noCheck" in sys.argv),catchUncaught=("--uncaught" in sys.argv))
+
+    print "GENERALIZING..."
+    start = time.time()
     sut.generalize(t,pred,verbose=vLevel,fresh=freshGen,keepLast=keepLast)
-    
+    print "GENERALIZED IN",time.time()-start,"SECONDS"
     

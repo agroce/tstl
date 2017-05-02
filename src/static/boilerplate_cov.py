@@ -144,6 +144,8 @@ def coversBranches(self, branches, catchUncaught=False):
     def coverPred(test):
         try:
             self.replay(test, catchUncaught)
+        except KeyboardInterrupt as e:
+            raise e                  
         except:
             pass
         cb = self.currBranches()
@@ -157,6 +159,8 @@ def coversStatements(self, statements, catchUncaught=False):
     def coverPred(test):
         try:
             self.replay(test, catchUncaught)
+        except KeyboardInterrupt as e:
+            raise e                  
         except:
             pass
         cs = self.currStatements()
@@ -170,6 +174,8 @@ def coversAll(self, statements, branches, catchUncaught=False, checkProp=False):
     def coverPred(test):
         try:
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
+        except KeyboardInterrupt as e:
+            raise e                  
         except:
             pass
         cs = self.currStatements()
@@ -187,6 +193,8 @@ def coversMore(self, statements, branches, catchUncaught=False, checkProp=False)
     def coverPred(test):
         try:
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
+        except KeyboardInterrupt as e:
+            raise e                  
         except:
             pass
         cs = self.currStatements()
