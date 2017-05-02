@@ -713,9 +713,12 @@ def logPrint(self, name, code, text, after):
         print "POST",
     print "LOG " + name + "  :  " + str(code) + "] " + str(text)
 
-def __candidates(self, t, n):
+def testCandidates(self, t, n):
+    # Fix so that if n means removal is single items, you just return all the relevant removals
     candidates = []
     s = len(t) / n
+    if (s == 1):
+        n = len(t)
     for i in xrange(0,n):
         tc = t[0:i*s]
         tc.extend(t[(i+1)*s:])
@@ -761,7 +764,7 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
         assert ((stest,n) not in stests)
         stests[(stest,n)] = True
         count += 1
-        c = self.__candidates(tb, n)
+        c = self.testCandidates(tb, n)
         if rgen:
             rgen.shuffle(c)
         reduced = False
@@ -938,7 +941,7 @@ def powerset(self,iterable):
     xs = list(iterable)
     return chain.from_iterable(combinations(xs,n) for n in range(len(xs)+1) )
 
-def reduceEssentials(self, test, original, pred, pruneGuards = False, keepLast = True):
+def reduceEssentials(self, test, original, pred, pruneGuards = False, keepLast = False):
     possibleRemove = test
     if keepLast:
         possibleRemove = test[:-1]
@@ -1031,7 +1034,7 @@ def numReassigns(self, test):
         i += 1
     return len(reuses)
 
-def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING REDUCE LENGTH STEP"
     # Replace any action with another action, if that allows test to be further reduced
@@ -1056,7 +1059,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = True, ver
                         return (True, rtestC)
     return (False, test)
 
-def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING REPLACE ALL STEP"    
     # Replace all occurrences of an action with a simpler action
@@ -1081,7 +1084,7 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
                     return (True, testC)
     return (False, test)
 
-def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING REPLACE POOL STEP"        
     # Replace pools with lower-numbered pools
@@ -1145,7 +1148,7 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = True, verb
     return (False, test)
 
 
-def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING REPLACE SINGLE STEP"        
     # Replace any single action with a lower-numbered action
@@ -1168,7 +1171,7 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = True, ve
                     return (True, testC)
     return (False, test)
 
-def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING SWAP POOL STEP"        
     # Swap two pool uses in between two positions, if this lowers the minimal action ordering between them
@@ -1235,7 +1238,7 @@ def coversUnique(self, val, catchUncaught=False):
         return val in uv
     return coverPred
 
-def noReassignStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+def noReassignStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if not self.__noReassigns:
         return (False, test)
     
@@ -1285,7 +1288,7 @@ def noReassignStep(self, test, pred, pruneGuards = False, keepLast = True, verbo
             
     return (False, test)
 
-def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None):
+def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING SWAP ACTION ORDER STEP"        
     # Try to swap any out-of-order actions
@@ -1365,7 +1368,7 @@ def alphaConvert(self, test):
                 break
     return test
     
-def normalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
+def normalize(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
               noReassigns = False, useCache = True):
     """
     Attempts to produce a normalized test case
@@ -1523,7 +1526,7 @@ def freshSimpleVariants(self, name, previous, replacements):
     freshSimples = sorted(freshSimples,key = lambda x:self.__orderings[x[0][0]])
     return freshSimples
 
-def generalize(self, test, pred, pruneGuards = False, keepLast = True, verbose = False, checkEnabled = False, distLimit = None,
+def generalize(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None,
                returnCollect = False, collected = None, depth = 0, silent=False, targets = None, fresh=True):
 
     #print self.__consts
