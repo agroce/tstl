@@ -11,15 +11,23 @@ import sut as SUT
 
 def main():
 
-
     if "--help" in sys.argv:
-        print "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose]"
+        print "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--coverage]"
         print "Options:"
-        print " --noCheck:      do not run property checks"
-        print " --logging:      set the logging level for the test"
-        print " --verbose:      run with verbose action output"
+        print "  --noCheck:      do not run property checks"
+        print "  --logging:      set the logging level for the test"
+        print "  --verbose:      run with verbose action output"
+        print " --coverage:      report code coverage"        
+        print " --internal:      report detailed code coverage information"
+        print "     --html:      produce HTML report on coverage"
         sys.exit(0)
     
+    if not (("--coverage" in sys.argv) or ("--internal" in sys.argv)):
+        try:
+            sut.stopCoverage()
+        except:
+            pass
+
     rout = open("replay.out",'w')
 
     file = sys.argv[1]
@@ -36,40 +44,77 @@ def main():
             else:
                 lastWasLogging = False
 
-    t = SUT.sut()
-    t.restart()
+    htmlOut = None
+    lastWasHtml = False
+    for f in sys.argv[1:]:
+        if lastWasHtml:
+            htmlOut = f
+            lastWasHtml = False
+        elif f == "--html":
+            lastWasHtml = True
+        else:
+            lastWasHtml = False
+                
+    sut = SUT.sut()
+    sut.restart()
     if logLevel != None:
-        t.setLog(logLevel)
+        sut.setLog(logLevel)
     i = 0
     if verbose:
-        t.verbose(True)
+        sut.verbose(True)
     for l in open(file):
         name = l[:-1]
         if name == "<<RESTART>>":
             #print "RESTART"
             rout.write("RESTART\n")
-            t.restart()
+            sut.restart()
         else:
             if verbose:
-                print "STEP",i,t.prettyName(name)
+                print "STEP",i,sut.prettyName(name)
             rout.write("STEP " + str(i) + ": " + name + "\n")
-            action = t.playable(name)
+            action = sut.playable(name)
             if action[1](): # check the guard
-                stepOk = t.safely(action)
+                stepOk = sut.safely(action)
                 if not stepOk:
                     print "FAILED STEP"
-                    print t.failure()
-                    traceback.print_tb(t.failure()[2],file=sys.stdout)
+                    print sut.failure()
+                    traceback.print_tb(sut.failure()[2],file=sys.stdout)
+                    if "--internal" in sys.argv:
+                        sut.internalReport()
+                        
+                    if "--coverage" in sys.argv:
+                        print sut.report("coverage.out"),"PERCENT COVERED"    
+
+                    if htmlOut != None:
+                        sut.htmlReport(htmlOut)                        
                     sys.exit(255)
             if not nocheck:
-                checkResult = t.check()
+                checkResult = sut.check()
                 if not checkResult:
                     print "FAILED PROPERTY"
-                    print t.failure()
-                    traceback.print_tb(t.failure()[2],file=sys.stdout)
+                    print sut.failure()
+                    traceback.print_tb(sut.failure()[2],file=sys.stdout)
+                    if "--internal" in sys.argv:
+                        sut.internalReport()
+                        
+                    if "--coverage" in sys.argv:
+                        print sut.report("coverage.out"),"PERCENT COVERED"    
+
+                    if htmlOut != None:
+                        sut.htmlReport(htmlOut)
+                        
                     sys.exit(255)                
         i += 1
 
     rout.write("TEST REPLAYED SUCCESSFULLY\n")
     rout.close()
+    if "--internal" in sys.argv:
+        sut.internalReport()
+        
+    if "--coverage" in sys.argv:
+        print sut.report("coverage.out"),"PERCENT COVERED"    
+
+    if htmlOut != None:
+        sut.htmlReport(htmlOut)
+        
     sys.exit(0)
