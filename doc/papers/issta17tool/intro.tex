@@ -64,7 +64,7 @@ the stack.  For stack operations that can cause underflow, there is
 both a version of the action that guards the action with a check on
 stack emptiness and a version that throws away the return value and
 allows the call to throw an {\tt IndexError} exception.  TSTL also
-supports automatic differential testing, where one implementation
+supports automatic differential \cite{Differential} testing, where one implementation
 serves as a reference model for the Software Under Test, and other
 features.  See the journal paper on TSTL \cite{tstlsttt} or the online
 documentation on github for more details.
@@ -96,10 +96,10 @@ list(<stack>)
 \label{fig:stack}
 \end{figure}
 
-To make use of the stack harness, the user saves it into a file, such
-as {\tt stack.tstl}.  Then at a command prompt, compiles the file into
+To make use of the stack harness, we save it into a file, such
+as {\tt stack.tstl}.  Then at a command prompt, we compile the file into
 a standalone interface for testing the stack, {\tt sut.py}, and
-(usually) invokes the tstl random testing tool, {\tt tstl\_rt} to look for faults:
+(usually) invoke the tstl random testing tool, {\tt tstl\_rt} to look for faults:
 
 {\scriptsize
 \begin{code}
@@ -116,6 +116,5 @@ a standalone interface for testing the stack, {\tt sut.py}, and
 
 TSTL has generated 738 tests (of 100 operations each) and performed
 73,749 actions.  In this case, there is no fault to be found.  This
-paper concerns the tools TSTL provides for working with tests when a
-fault is found.
-
+paper describes the tools TSTL provides for working with tests in the
+instance when a fault is detected.
