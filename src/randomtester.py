@@ -399,12 +399,16 @@ def buildActivePool():
         for (t,bs,ss) in fullPool:
             added = False
             for b in bs:
+                if b not in branchCoverageCount:
+                    branchCoverageCount[b] = 1 # covered during a failure or reduction
                 if branchCoverageCount[b] <= bThreshold:
                     activePool.append(t)
                     added = True
                     break
             if not added:
                 for s in ss:
+                    if s not in statementCoverageCount:
+                        statementCoverageCount[s] = 1 # covered during a failure or reduction
                     if statementCoverageCount[s] <= sThreshold:
                         activePool.append(t)
                         added = True
