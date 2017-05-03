@@ -1,9 +1,12 @@
 import sys
 import time
 import traceback
+import argparse
 import os
 import subprocess
 import random
+import datetime
+from collections import namedtuple
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
@@ -12,6 +15,66 @@ sys.path.append(current_working_dir)
 
 import sut as SUT
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('infile', metavar='filename', type=str, default=None,
+                            help='Path to the test to be reduced.')
+    parser.add_argument('outfile', metavar='filename', type=str, default=None,
+                            help='Path to the test to be reduced.')
+    parser.add_argument('--noCheck', action='store_true',                            
+                        help='Do not check properties.') 
+    parser.add_argument('--noReduce', action='store_true',
+                        help="Do not reduce the test.")   
+    parser.add_argument('--noNormalize', action='store_true',
+                        help="Do not normalize/simplify test.")    
+    parser.add_argument('--noAlpha', action='store_true',
+                        help="Do not alpha convert test.")      
+    parser.add_argument('--matchException', action='store_true',                            
+                        help='Force test to fail with same exception as original (does not work for sandboxes).')
+    parser.add_argument('--coverage', action='store_true',                            
+                        help='Reduce with respect to maintaining code coverage, not failure.')
+    parser.add_argument('--coverMore', action='store_true',                            
+                        help='Only allow reductions that increase code coverage.')
+    parser.add_argument('-k', '--keepLast', action='store_true',
+                        help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
+    parser.add_argument('--uncaught', action='store_true',
+                        help='Allow uncaught exceptions in actions (for coverage-based reduction).')
+    parser.add_argument('--fast', action='store_true',
+                        help="Try fast reduction (for nearly 1-minimal tests).")
+    parser.add_argument('-M', '--multiple', action='store_true',
+                        help="Produce multiple reductions.")
+    parser.add_argument('--recursive', type=int, default=1,
+                        help='How many recursive levels of comb-block to apply (default 1).')
+    parser.add_argument('--limit', type=int, default=None,
+                        help='Limit on combinations generated in comb-block (default None).')
+    parser.add_argument('--random', action='store_true',
+                        help="Randomize order of reductions.")    
+    parser.add_argument('--seed', type=int, default=None,
+                        help='Random seed (default = None).')
+    parser.add_argument('--verbose', type=str, default=None,
+                        help='Level of verbosity for reduction.')
+    parser.add_argument('--sandbox', action='store_true',
+                        help="Use sandbox reduction.")
+    parser.add_argument('--quietSandbox', action='store_true',
+                        help="Run sandbox in a quieter mode.")
+    parser.add_argument('--timeout', type=int, default=None,
+                        help='Timeout for sandbox reductions (only works on unix-like systems).')    
+    
+    parsed_args = parser.parse_args(sys.argv[1:])
+    return (parsed_args, parser)
+
+def make_config(pargs, parser):
+    """
+    Process the raw arguments, returning a namedtuple object holding the
+    entire configuration, if everything parses correctly.
+    """
+    pdict = pargs.__dict__
+    # create a namedtuple object for fast attribute lookup
+    key_list = pdict.keys()
+    arg_list = [pdict[k] for k in key_list]
+    Config = namedtuple('Config', key_list)
+    nt_config = Config(*arg_list)
+    return nt_config   
 
 def sandboxReplay(test):
     global timeout
@@ -49,113 +112,24 @@ def main():
 
     global timeout
 
-    if "--help" in sys.argv:
-        print "Usage:  tstl_reduce <test file> <output test file> [--noCheck] [--matchException] [--coverage] [--coverMore] [--uncaught] [--keepLast] [--noReduce] [--fast] [--multiple] [--recursive depth] [--limit N] [--random] [--seed seed] [--noAlpha] [--noNormalized] [--verbose verbosity] [--sandbox] [--quietSandbox] [--timeout secs]"
-        print "Options:"
-        print " --noCheck:         do not run property checks"
-        print " --matchException   force test to fail with same exception as original test (does not work for sandbox reduction"
-        print " --coverage         reduce with respect to maintaining coverage, rather than failure"
-        print " --coverMore        force test to GAIN coverage over baseline, if possible"
-        print " --uncaught         allow uncaught exceptions (only applies to coverage-based reduction)"                
-        print " --keepLast         force test to keep same last action"
-        print " --noReduce         do not reduce test (useful for normalizing an already reduced test)"
-        print " --fast             if test is near 1-minimal, this may improve delta-debugging speed"
-        print " --multiple         produce multiple reductions, to avoid (or induce) slippage"
-        print " --recursive        recursive depth for multiple reductions (default 1)"
-        print " --limit            total limit for multiple reduction attempts"
-        print " --random           randomize order of reductions in delta-debugging"
-        print " --seed             set random seed for randomized ordering"        
-        print " --noAlpha          do not alpha convert test"
-        print " --noNormalize      after reducing, do not also normalize"
-        print " --verbose:         set verbosity level for reduction/normalization (defaults to silent reduction/normalization)"
-        print " --sandbox:         run tests in a subprocess sandbox, for tests that crash Python interpreter;"
-        print "                    due to common difficulties, sandbox is by default very verbose!"
-        print "                    WARNING: if not needed, sandbox mode is VERY SLOW"
-        print " --quietSandbox:    run sandbox in a quiet mode"
-        print " --timeout:         if tests are run in a sandbox, consider tests running longer than this to have failed"
-        sys.exit(0)
-
+    parsed_args, parser = parse_args()
+    config = make_config(parsed_args, parser)
+    print('Reducing using config={}'.format(config))    
+    
     sut = SUT.sut()
 
-    if not (("--coverage" in sys.argv) or ("--coverMore" in sys.argv)):
-        try:
-            sut.stopCoverage()
-        except:
-            pass
-
     R = None
-    if "--random" in sys.argv:
+    if config.random:
         R = random.Random()
-        
-    fastReduce = "--fast" in sys.argv
-    keepLast = "--keepLast" in sys.argv
+
+        if config.seed != None:
+            R.seed(seed)
     
-    vLevel = False      
-    if "--verbose" in sys.argv:
-        lastWasVerbose = False
-        for l in sys.argv:
-            if lastWasVerbose:
-                vLevel = l
-            if l == "--verbose":
-                lastWasVerbose = True
-            else:
-                lastWasVerbose = False
-    if vLevel == "True":
-        vLevel = True
-    if vLevel == "False":
-        vLevel = False       
-
-    timeout = None
-    if "--timeout" in sys.argv:
-        lastWasTimeout = False
-        for l in sys.argv:
-            if lastWasTimeout:
-                timeout = l
-            if l == "--timeout":
-                lastWasTimeout = True
-
-    seed = None
-    if "--seed" in sys.argv:
-        lastWasSeed = False
-        for l in sys.argv:
-            if lastWasSeed:
-                seed = int(l)
-            if l == "--seed":
-                lastWasSeed = True                
-    if seed != None:
-        R.seed(seed)
-        
-    recursive = 1
-    if "--recursive" in sys.argv:
-        lastWasRecur = False
-        for l in sys.argv:
-            if lastWasRecur:
-                recursive = int(l)
-            if l == "--recursive":
-                lastWasRecur = True
-            else:
-                lastWasRecur = False
-    limit = 1
-    if "--limit" in sys.argv:
-        lastWasLimit = False
-        for l in sys.argv:
-            if lastWasLimit:
-                limit = int(l)
-            if l == "--limit":
-                lastWasLimit = True
-            else:
-                lastWasLimit = False
-
-    multiple = "--multiple" in sys.argv
-    exceptionMatch = "--matchException" in sys.argv
-    coverage = "--coverage" in sys.argv
-    coverMore = "--coverMore" in sys.argv
-    
-    r = sut.loadTest(sys.argv[1])
+    r = sut.loadTest(config.infile)
 
     f = None
     
-    if exceptionMatch:
+    if config.matchException:
         print "EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING..."
         assert (sut.fails(r))
         f = sut.failure()
@@ -163,69 +137,72 @@ def main():
         print "TRACEBACK:"
         traceback.print_tb(f[2],file=sys.stdout)
 
-    if not "--sandbox" in sys.argv:
+    if not config.sandbox:
         pred = (lambda x: sut.failsCheck(x,failure=f))
-        if "--noCheck" is sys.argv:
+        if not config.noCheck:
             pred = (lambda x: sut.fails(x,failure=f))
     else:
         pred = sandboxReplay
 
-    if coverage or coverMore:
+    if config.coverage or config.coverMore:
         print "EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION..."
-        sut.replay(r,checkProp = not ("--noCheck" in sys.argv),catchUncaught=("--uncaught" in sys.argv))
+        sut.replay(r,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         b = set(sut.currBranches())
         s = set(sut.currStatements())
         print "PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS"
         if coverMore:
-            pred = sut.coversMore(s,b,checkProp = not ("--noCheck" in sys.argv),catchUncaught=("--uncaught" in sys.argv))
+            pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         else:
-            pred = sut.coversAll(s,b,checkProp = not ("--noCheck" in sys.argv),catchUncaught=("--uncaught" in sys.argv))
+            pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         
     print "STARTING WITH TEST OF LENGTH",len(r)
-    if not ("--noReduce" in sys.argv):
+    if not config.noReduce:
         start = time.time()
         print "REDUCING..."
-        if not multiple:
-            r = sut.reduce(r,pred,verbose=vLevel,tryFast=fastReduce,keepLast=keepLast,rgen=R)
+        if not config.multiple:
+            r = sut.reduce(r,pred,verbose=config.verbose,tryFast=config.fast,keepLast=config.keepLast,rgen=R)
         else:
-            rs = sut.reductions(r,pred,verbose=vLevel,recursive=recursive,limit=limit,keepLast=keepLast)
+            rs = sut.reductions(r,pred,verbose=config.verbose,recursive=config.recursive,limit=config.limit,keepLast=config.keepLast)
         print "REDUCED IN",time.time()-start,"SECONDS"
-        if not multiple:
+        if not config.multiple:
             print "NEW LENGTH",len(r)
         else:
             print "NEW LENGTHS",map(len,rs)
-    if not ("--noAlpha" in sys.argv):
+    if not config.noAlpha:
         print "ALPHA CONVERTING..."
-        if not multiple:
+        if not config.multiple:
             r = sut.alphaConvert(r)
         else:
             rs = map(sut.alphaConvert, rs)
-    if not ("--noNormalize" in sys.argv):
+    if not config.noNormalize:
         start = time.time()
         print "NORMALIZING..."
-        if not multiple:
-            r = sut.normalize(r,pred,verbose=vLevel,keepLast=keepLast)
+        if not config.multiple:
+            r = sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast)
         else:
             newrs = []
             for r in rs:
-                newrs.append(sut.normalize(r,pred,verbose=vLevel,keepLast=keepLast))
+                newrs.append(sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast))
             rs = newrs
         print "NORMALIZED IN",time.time()-start,"SECONDS"
-        if not multiple:
+        if not config.multiple:
             print "NEW LENGTH",len(r)
         else:
-            print "NEW LENGTHS",map(len,news)
-    if not multiple:
-        sut.saveTest(r,sys.argv[2])
+            print "NEW LENGTHS",map(len,rs)
+    if not config.multiple:
+        sut.saveTest(r,config.outfile)
         sut.prettyPrintTest(r)
+        print
+        print "TEST WRITTEN TO",config.outfile     
     else:
         i = 0
         for r in rs:
             print "TEST #"+str(i)+":"
-            sut.saveTest(r,sys.argv[2]+"."+str(i))
+            sut.saveTest(r,config.outfile+"."+str(i))
             sut.prettyPrintTest(r)
             print
-            print "TEST WRITTEN TO",sys.argv[2]+"."+str(i)
+            print "TEST WRITTEN TO",config.outfile+"."+str(i)
+            print
             i += 1
             
     
