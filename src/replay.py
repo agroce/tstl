@@ -70,7 +70,7 @@ def main():
             sut.restart()
         else:
             if verbose:
-                print "STEP",i,sut.prettyName(name)
+                print "STEP #"+str(i)+":",
             rout.write("STEP " + str(i) + ": " + name + "\n")
             action = sut.playable(name)
             if action[1](): # check the guard
