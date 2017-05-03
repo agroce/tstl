@@ -91,7 +91,7 @@ test\footnote{For details on how much shorter and simpler, see the
   \cite{OneTest}.  Note that normalization times are usually faster in
 the current release than reported in that paper, due to the
 implementation of a useful heuristic for reducing nearly 1-minimal
-tests suggested by David R. MacIver, the author of the Hypothesis tool.}.  By default, the TSTL random test generator
+tests suggested by David R. MacIver \cite{MacIver}, the author of the Hypothesis tool.}.  By default, the TSTL random test generator
 reduces tests before saving them, and the standalone {\tt
   tstl\_reduce} tool is use to normalize interesting tests.  Calling
 {\tt tstl\_rt} with the {\tt --normalize} option avoids going through
@@ -197,6 +197,7 @@ extent required for data flow, is not important.
 
 Now that we understand the fault, we may want a non-TSTL test to run
 in a debugger to try out possible solutions.  Generating a standalone
+Python executable
 test is easy:
 
 {\scriptsize
@@ -205,19 +206,92 @@ test is easy:
 \end{code}
 }
 
+In this example, reduction or normalization has always been with
+respect to a failure.  However, simply by providing the {\tt
+  --coverage} option to {\tt tstl\_reduce} or {\tt tstl\_generalize}
+the same approaches can be applied to reduce tests by their code
+coverage, a useful method for producing very efficient regression tests
+\cite{icst2014,stvrcausereduce}.  Running {\tt tstl\_rt} with the {\tt
+  --quickTests} option will also produce a suite of such
+coverage-based reduced regression tests.
+
 \section{Avoiding Slippage}
 
-Test slippage \cite{PLDI13,slippage} is a phenomenon where a weak
-labeling of failed tests (e.g., simply checking that a reduced test
-still causes some kind of uncaught exception) causes a test that
-originally fails due to one fault to be reduced to a test that fails
+Test slippage \cite{PLDI13,slippage} is when a weak
+labeling of failed tests (e.g., simply checking that a failing test
+still causes some kind of uncaught exception) results in a test that
+originally failed due to one fault being reduced to a test that fails
 due to a different fault.
 
-TSTL provides a few ways to avoid slippage, and also some ways to
-intentionally induce ``good'' slippage where a failing test is reduced
-to produce multiple tests that fail due to different faults
+There is a need for flexibility in handling slippage and fault
+signatures in general; with some programs, many exceptions may reveal
+the same fault, with other programs even the same assertion on the
+same line of code can be violated due to different underlying faults.
+TSTL therefore provides a few ways to avoid slippage, and also some ways to 
+intentionally induce ``good'' slippage where a failing test is reduced 
+to produce multiple tests that fail due to different faults 
 \cite{slippage}.  First, the random test generator and the reduction,
-normalization, and generalization tools all take the {\tt --keepLast}
+and generalization tools all take the {\tt --keepLast}
 option, which forces reduced tests to have the same final action as
 the original test.  This is a heuristic for avoiding slippage
 discovered during file system testing at NASA \cite{ICSEDiff}.
+Second, the reducer and generalizer take a {\tt --matchException}
+argument that forces reductions to fail due to the same type of
+exception (but not exact message); this is the default behavior for the random
+tester, where the user has more reason to be concerned about losing
+the original fault since it is not stored in a file.
+
+While these methods are useful for producing more precise labels for
+failure, they are not helpful in instances where precise labeling is
+impossible, such as many differential testing settings \cite{PLDI13}.
+For these cases, and for using reduction as a mutation-based fuzzing
+tool to look for new faults, TSTL provides two more modes.  First,
+using the {\tt --multiple} option configures {\tt tstl\_reduce} to use
+the {\tt comb-block} algorithm \cite{slippage} to attempt to produce
+as many reduced tests as possible, that are all as different as
+possible from each other.  The effort extended to consider
+combinations of test components can be configured with the {\tt
+  --recursive} and {\tt --limit} options.  Second, the {\tt --random}
+flag to the reducer causes the order of possible reductions to be
+randomized, so that different runs of the reducer will produce
+different reduced tests.
+
+\section{API Access to Tool Functionality}
+
+In addition to the command-line tools described here, TSTL also makes
+it easy to perform sophisticated test manipulations in code.  When a
+TSTL harness is compiled it produces an {\tt sut} module providing an
+abstract interface for testing the SUT.  It is this interface that
+{\tt tstl\_rt}, {\tt tstl\_reduce}, and the other tools interact with,
+making test generation and manipulation independent of the SUT.
+
+The interface includes {\tt reduce}, {\tt normalize} and {\tt
+  generalize} methods for reduction and normalization that provide
+many more parameters for fine-tuned control of the algorithms than are
+provided by the command line tools.  These methods are all
+higher-order functions, so the predicate for the algorithm to maintain
+as true can be an arbitrary function of a test.  The interface to the
+SUT also provides methods to return commonly used predicates, such as
+matching the coverage of a test, or failing a property check.  Because
+TSTL's reduction implementations do not require their initial input to
+satsify the predicate, this can be used for unusual applications.  For
+example, if are testing an XML parser, have a long, high-coverage
+test, and wish to modify it to produce an input that takes as long as
+possible to parse, we can define a function:
+
+{\scriptsize
+\begin{code}
+def takesLonger(t):
+      global WCET, SUT
+      start = time.time()
+      SUT.replay(t)
+      elapsed = time.time() - start
+      if elapsed > WCET:
+         WCET = elapsed
+         return True
+      return False
+\end{code}
+}
+
+and call {\tt SUT.reduce(longTest,takeLonger)} after setting WCET to the
+runtime for the initial test.

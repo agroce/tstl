@@ -43,15 +43,10 @@ methods.   Unlike most QuickCheck-like tools, TSTL is focused on
 generating unit tests that consist of sequences of method/function
 calls \cite{AndrewsTR}, rather than generating input data for functions (though TSTL
 can generate arbitrary data, since data creation is usually easily
-expressed as a sequence of constructions and modifications of data).  TSTL is available on github
-\url{https://github.com/agroce/tstl}, but is most easily obtained
-using pip, e.g.:
-
-{\scriptsize
-\begin{code}
-> pip install tstl
-\end{code}
-}
+expressed as a sequence of constructions and modifications of data).
+TSTL is available on github at
+\url{https://github.com/agroce/tstl}.  Simply typing {\tt pip
+  install tstl} on a system with pip installed will also install TSTL.
 
 The user of TSTL writes a test harness \cite{WODACommon} that describes
 the actions that are possible during testing, and the pools of values
@@ -74,22 +69,17 @@ documentation on github for more details.
 \begin{code}
 @import stack
 \vspace{0.1in}
-pool: <stack> 4
-pool: <value> 4
+pool: <stack> 4        \# These are the variables used in tests,
+pool: <value> 4        \# stack0...stack3 and value0...value3
 \vspace{0.1in}
-<value> := <[1..20]>
+<value> := <[1..20]>       \# := is Python assignment, but
+<stack> := stack.Stack()   \# marks a value  as initialized
 \vspace{0.1in}
-<stack> := stack.Stack()
-\vspace{0.1in}
-<stack>.push(<value>)
-\{IndexError\} <value> := <stack>.pop() 
+<stack>.push(<value>) \# This is a test action
+\{IndexError\} <value> := <stack>.pop() \# ... as are all these
 not <stack,1>.isEmpty() -> <value> := <stack>.pop()
 \{IndexError\} <value> := <stack>.peek() 
 not <stack,1>.isEmpty() -> <value> := <stack>.peek()
-<value> := <stack>.size
-str(<stack>)
-repr(<stack>)
-list(<stack>)
 \end{code}
 }
 \caption{A simple TSTL harness for a stack.}
@@ -99,22 +89,24 @@ list(<stack>)
 To make use of the stack harness, we save it into a file, such
 as {\tt stack.tstl}.  Then at a command prompt, we compile the file into
 a standalone interface for testing the stack, {\tt sut.py}, and
-(usually) invoke the tstl random testing tool, {\tt tstl\_rt} to look for faults:
+(usually) invoke the basic TSTL testing tool, {\tt tstl\_rt} to look for faults.
 
 {\scriptsize
 \begin{code}
  > tstl stack.tstl
  > tstl\_rt --timeout 30
-...
- 738 EXECUTED
- 73749 TOTAL TEST OPERATIONS
-...
- 40 BRANCHES COVERED
- 26 STATEMENTS COVERED
 \end{code}
 }
 
-TSTL has generated 738 tests (of 100 operations each) and performed
+If we forget how to use the tools, all TSTL command line tools
+produce a full list of options when called with the {\tt --help}
+argument.  For most tools this list is short and simple; the ``random
+tester'' {\tt tstl\_rt}, however, has a very large number of options,
+since it supports pure random testing, swarm testing,
+genetic-algorithm based testing, control over action probabilities,
+Markov-model driven testing, and a large array of other configuration settings.
+
+TSTL generates 738 tests (of 100 operations each) and performs
 73,749 actions.  In this case, there is no fault to be found.  This
 paper describes the tools TSTL provides for working with tests in the
 instance when a fault is detected.
