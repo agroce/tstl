@@ -1,0 +1,47 @@
+\section{SymPy Example: the TSTL Test Tools}
+
+Instead of the fault-free stack, we can test a real-world program with real faults, such as the SymPy library for performing symbolic mathematics in Python \cite{SymPy}.  The SymPy harness can be found in the TSTL github repository {\tt examples/sympy} directory.
+
+{\scriptsize
+\begin{code}
+ > tstl sympy.tstl
+ > tstl\_rt --swarm --noCover --full
+...
+ UNCAUGHT EXCEPTION
+ ERROR: (<type 'exceptions.RuntimeError'>,
+ RuntimeError('maximum recursion depth exceeded',)
+...
+    return func(a, b)
+...
+ SAVING TEST AS failure.67076.test
+ > wc -l failure.67076.test
+ 72
+ > head -n5 failure.67076.test
+ self.p\_v[3] = sympy.Symbol('j',positive=True) 
+ self.p\_expr[0].evalf() 
+ self.p\_expr[0] = self.p\_expr[0] + self.p\_expr[3] 
+ self.p\_expr[3] = self.p\_expr[3] + self.p\_expr[1] 
+ self.p\_expr[1] = self.p\_expr[3] \% self.p\_expr[0] 
+
+\end{code}
+}
+
+The user has instructed the random tester to use swarm testing \cite{ISSTA12} and not collect code coverage, in order to improve the chances of quickly finding a fault.  By default {\tt tstl\_rt} uses delta-debugging to minimize tests before saving them, but the user has also instructed the tool to simply save the full test case {\tt --full}.  The unreduced test (which causes Python to enter an infinite recursion sequence) consists of 72 steps, saved in a textual format (in an automatically generated file name, based on the random tester process ID) that is not executable, but is somewhat human-readable.  This is not a very useful test, so we want to reduce it:
+
+{\scriptsize
+\begin{code}
+ > tstl\_reduce failure.67076.test reduced.test --noNormalize
+ STARTING WITH TEST OF LENGTH 72
+ REDUCING...
+ REDUCED IN 31.3780119419 SECONDS
+ NEW LENGTH 7
+ ALPHA CONVERTING...
+ c0 = sympy.Integer(4)                                 \# STEP 0
+ c1 = sympy.Integer(9)                                  \# STEP 1
+ v0 = sympy.Symbol('k',positive=True)         \# STEP 2
+ expr0 = sympy.Rational(c1,c1)                     \# STEP 3
+ expr1 = sympy.Product(expr0,(v0,c0,c0))     \# STEP 4
+ expr2 = c1                                                \# STEP 5
+ expr3 = expr2 \% expr1                      \# STEP 6
+\end{code}
+}

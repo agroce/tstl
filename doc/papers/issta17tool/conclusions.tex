@@ -1,49 +1,20 @@
 \section{Conclusions and Future Work}
 
-This paper introduces test normalization and generalization.  The
-methods presented are significant steps towards a difficult goal:
-providing users of automated testing with a \emph{single test, as
-  short and simple as possible, for each underlying fault in the SUT},
-and \emph{annotations describing the general conditions under which
-  the fault manifests as failure}.  Normalization approaches this
-ideal by rewriting numerous distinct failing tests into a smaller,
-often minimal, set of simpler tests.  Generalization uses automated
-experiments to distinguish essential and accidental elements of a
-test.  In our experiments, normalization reduced the number of
-failures to examine by well over an order of magnitude, often to the
-ideal of one per fault, and reduced the length of tests beyond what is
-possible with delta-debugging alone.  While there is doubt about the
-utility of automatic fault localization \cite{AutoHelp} in real-world debugging, few practicing testers
-doubt the value of being provided with a minimal number of
-minimally-sized failing tests \cite{MinUnit,lithium,AMAI}.
+This paper presents a set of tools, part of the TSTL \cite{tstlsttt}
+testing language and tool suite, for letting users make the most of the
+tests it generates.  In addition to standard
+replay, regression, and minimization, TSTL implements some powerful
+new techniques from the recent literature for manipulating tests
+\cite{OneTest,slippage}.
 
-The algorithms for normalization and
-generalization depend only on a (possibly somewhat arbitrary) total order
-over test actions and an abstract form for tests, suitable for term
-rewriting.  Our approach is therefore likely applicable to any source language
-and many different test generation methods, including those that
-already produce short tests \cite{FA11,SoftBET}.  TSTL-based
-normalization and generalization are currently available in a
-well-tested Python version \cite{tstl,ISSTA15}; there is also a beta version, with more limited
-normalization, for Java.
-The goal of normalization and generalization can also be pursued in
-settings other than API sequence or string grammar testing.  The
-difficulties of defining a normal form for JavaScript \cite{jsfunfuzz}
-or C \cite{csmith} tests are non-trivial, but not obviously
-overwhelming \cite{CReduce}. Less effective methods
-than ours might still aid debugging and assist fuzzer taming
-\cite{PLDI13}.  Simple generalization (e.g., is this numeric constant
-essential, can these two statements be swapped?) and a limited form of
-fresh value generalization should be easy to apply, even for complex
-programming language tool tests.  
-
-The working version of  TSTL \cite{tstl} supports
-normalization and generalization.  Although derived via lengthy experiment-driven
-evolution, our rules are likely not yet ideal (though many ``obvious''
-optimizations such as applying alpha-conversion to lower pool indices
-before normalization turn out to be surprisingly harmful).   Further experimental
-evaluation of normalization and generalization over more SUTs is
-important to quantify effectiveness and motivate new rewrites and
-generalizations.  The TSTL implementations are designed to allow these
-to be easily added, in order to bring testing closer to the
-goal of ``one test to rule them all.''
+As future work, we plan to continue to develop TSTL's tools for
+working with tests.  Some improvments are simple:  for instance, the TSTL
+random tester currently provides simple fault localization over the
+tests generated during a run (if there are any failures)
+\cite{Tarantula}.  However, the regression tool does not yet provide
+the same functionality for a suite of stored tests.  More importantly,
+we plan to continue to use TSTL as a platform for experimenting with
+and making available novel methods for making use of automatically
+generated tests, including methods for composing and de-composing
+tests and generating information from tests that can be used to guide
+future testing.
