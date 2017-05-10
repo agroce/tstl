@@ -1,0 +1,163 @@
+@from cparser import *
+@import interpreter
+
+pool: <expr> 4
+pool: <bexpr> 4
+pool: <var> 4
+pool: <const> 4
+
+pool: <state> 4 OPAQUE
+
+pool: <interp> 1 OPAQUE
+
+pool: <asize> 4
+
+pool: <program> 4
+
+pool: <block> 4
+
+pool: <val> 4
+
+pool: <type> 4
+
+pool: <if> 4
+pool: <assignment> 4
+pool: <while> 4
+pool: <return> 4
+
+pool: <fcall> 4
+
+pool: <decl> 4
+pool: <decls> 4
+
+pool: <stmts> 8
+pool: <stmt> 8
+pool: <nlstmt> 8
+
+pool: <label> 4
+pool: <goto> 4
+
+pool: <mdecl> 4
+
+pool: <fname> 4
+
+pool: <fdecl> 4
+
+pool: <fdecls> 4
+
+pool: <fargs> 4
+
+pool: <fcargs> 4
+
+<program> := <fdecls> + "int main() {" + chr(10) + <block> + chr(10) + "}" + chr(10)
+
+<fcargs> := <expr>
+<fcargs> := <fcargs> + "," + <fcargs>
+
+<fcall> := <fname> + "(" + <fcargs> + ")"
+
+<fargs> := <type> + " " + <var>
+<fargs> := <fargs> + "," + <fargs>
+
+<fname> := <["f","g","h"]>
+
+<fdecl> := <type> + " " + <fname> + "(" + <fargs> + ") {" + chr(10) + <block> + chr(10) + "}" + chr(10)
+
+<fdecls> := ""
+<fdecls> := <fdecl> + chr(10) + <fdecls>
+
+<block> := <decls> + <stmts>
+
+<decls> := ""
+<decls> := <decl> + ";" + chr(10) + <decls>
+
+<type> := "int"
+<type> := "long"
+<type> := "short"
+<type> := "unsigned int"
+
+<asize> := str(<[1..20]>)
+
+<decl> := <type> + " " + <var> + "[" + <asize> + "] "
+<decl> := <type> + " " + <var>
+<decl> := <type> + " " + <var> + " = " + <expr>
+<decl> := <type> + " " + <var> + ", " + <mdecl>
+<mdecl> := <var>
+<mdecl> := <var> + ", " + <mdecl>
+
+<stmts> := <stmt>
+<stmts> := <stmt> + chr(10) + <stmts>
+
+<var> := <["a","b","c","d"]>
+
+<const> := str(<[-20..20]>)
+
+<expr> := <fcall>
+<expr> := <const>
+<expr> := <var>
+<expr> := <var> + "[" + <expr> + "]"
+
+len(<expr,2>) < 50 -> <expr> := "(" + <expr> + ")"
+(len(<expr,2>) < 50) and (len(<expr,3>) < 50) -> <expr> := <expr> + " + " + <expr>
+(len(<expr,2>) < 50) and (len(<expr,3>) < 50) -> <expr> := <expr> + " - " + <expr>
+(len(<expr,2>) < 50) and (len(<expr,3>) < 50) -> <expr> := <expr> + " * " + <expr>
+(len(<expr,2>) < 50) and (len(<expr,3>) < 50) -> <expr> := <expr> + " / " + <expr>
+
+(len(<expr,1>) < 50) and (len(<expr,2>) < 50) -> <bexpr> := <expr> + " < " + <expr>
+(len(<expr,1>) < 50) and (len(<expr,2>) < 50) -> <bexpr> := <expr> + " > " + <expr>
+(len(<expr,1>) < 50) and (len(<expr,2>) < 50) -> <bexpr> := <expr> + " <= " + <expr>
+(len(<expr,1>) < 50) and (len(<expr,2>) < 50) -> <bexpr> := <expr> + " >= " + <expr>
+(len(<expr,1>) < 50) and (len(<expr,2>) < 50) -> <bexpr> := <expr> + " != " + <expr>
+(len(<expr,1>) < 50) and (len(<expr,2>) < 50) -> <bexpr> := <expr> + " == " + <expr>
+
+len(<bexpr,2>) < 50 -> <bexpr> := "(" + <bexpr> + ")"
+len(<bexpr,2>) < 50 -> <bexpr> := "!" + <bexpr>
+(len(<bexpr,2>) < 50) and (len(<bexpr,3>) < 50) -> <bexpr> := <bexpr> + "&&" + <bexpr>
+(len(<bexpr,2>) < 50) and (len(<bexpr,3>) < 50) -> <bexpr> := <bexpr> + "||" + <bexpr>
+
+<assignment> := <var> + " = " + <expr>
+
+<if> := "if (" + <bexpr> + ") {" + chr(10) + <block> + chr(10) + "}"
+<if> := "if (" + <bexpr> + ") {" + chr(10) + <block> + "}" + chr(10) + "else {" + chr(10) + <block> + chr(10) + "}"
+
+<while> := "while (" + <bexpr> + ") {" + chr(10) + <block> + chr(10) + "}"
+
+<return> := "return " + <expr>
+
+<goto> := "goto " + <label>
+
+<label> := "l1"
+<label> := "l2"
+<label> := "l3"
+<label> := "l4"
+
+<stmt> := <nlstmt>
+<stmt> := <label> + ": " + <nlstmt>
+
+<nlstmt> := <if>
+<nlstmt> := <while>
+<nlstmt> := <assignment> + ";"
+<nlstmt> := <return> + ";"
+<nlstmt> := <goto> + ";"
+
+#len(<program,1>) >= 20 -> print <program>; assert (len(<program,1>) < 20)
+("if" not in <program,1>) and ("while" not in <program,1>) -> <program> = None
+
+<state> := State()
+
+print <program,1>; parse_code(<program>,<state>)
+
+#property: "if" not in <program>
+#property: "while" not in <program>
+
+<interp> := interpreter.Interpreter()
+
+<interp>.register(<state>)
+
+{KeyError,AssertionError,UnboundLocalError,ZeroDivisionError,RuntimeError} <interp>.dumpFunc(<fname>)
+{KeyError,AssertionError,UnboundLocalError,ZeroDivisionError,RuntimeError} <interp>.dumpFunc("main")
+
+<val> := <[-10..10]>
+
+#{KeyError,AssertionError,UnboundLocalError,ZeroDivisionError,RuntimeError} print <interp>.runFunc(<fname>,<val>)
+
