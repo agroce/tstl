@@ -1189,6 +1189,10 @@ def main():
 
     if config.profile:
         print "ACTION PROFILE:"
+        for a in sut.actionClasses():
+            if profileCount[a] == 0:
+                print "** ACTION CLASS ",a,"NEVER EXECUTED! **"
+        
         print "<ACTION> <COUNT> <AVERAGE RUNTIME> <NORMALIZED BY MAX> <NORMALIZED BY MIN> [<TOTAL PERCENT RUNTIME>]"
         averages = []
         for a in profileTime:
