@@ -507,32 +507,27 @@ combinations, and many illegal combinations are not specified.
 \begin{figure}[t]
 {\scriptsize 
 \begin{code}
-shapefile2 = "C:\\arctmp\\new3.shp"                \# STEP 0 
-shapefile1 = "C:\\arctmp\\new3.shp"                \# STEP 1
-featureclass2 = shapefile2                       \# STEP 2
-featureclass0 = shapefile1                       \# STEP 3
-shapefilelist2 = 
-   glob.glob("C:\\Arctmp\\*.shp")                  \# STEP 4
-fieldname0 = "newf3"                             \# STEP 5
-shapefile1 = shapefilelist2 [0]                  \# STEP 6
-featureclass1 = shapefile1                       \# STEP 7
-arcpy.CopyFeatures\_management
-   (featureclass1,featureclass2)                 \# STEP 8
-op1 = ">"                                        \# STEP 9
-newlayer2 = "l2"                                 \# STEP 10
-val1 = "100"                                     \# STEP 11
-selectiontype2 = "SWITCH\_SELECTION"              \# STEP 12
-fieldname1 = "newf1"                             \# STEP 13
-arcpy.MakeFeatureLayer\_management
-   (featureclass0, newlayer2)                    \# STEP 14
+shapefile2 = "C:\\arctmp\\new3.shp"                               \# STEP 0 
+shapefile1 = "C:\\arctmp\\new3.shp"                               \# STEP 1
+featureclass2 = shapefile2                                      \# STEP 2
+featureclass0 = shapefile1                                      \# STEP 3
+shapefilelist2 = glob.glob("C:\\Arctmp\\*.shp")                   \# STEP 4
+fieldname0 = "newf3"                                            \# STEP 5
+shapefile1 = shapefilelist2 [0]                                 \# STEP 6
+featureclass1 = shapefile1                                      \# STEP 7
+arcpy.CopyFeatures\_management(featureclass1,featureclass2)     \# STEP 8
+op1 = ">"                                                       \# STEP 9
+newlayer2 = "l2"                                                  \# STEP 10
+val1 = "100"                                                      \# STEP 11
+selectiontype2 = "SWITCH\_SELECTION"                               \# STEP 12
+fieldname1 = "newf1"                                              \# STEP 13
+arcpy.MakeFeatureLayer\_management(featureclass0, newlayer2)   \# STEP 14
 arcpy.SelectLayerByAttribute\_management
-   (newlayer2,selectiontype2,
-   ' "'+fieldname0+'" '+op1+val1)                \# STEP 15
-op0 = ">"                                        \# STEP 16
-arcpy.Delete\_management(featureclass2)           \# STEP 17
+   (newlayer2,selectiontype2,' "'+fieldname0+'" '+op1+val1)   \# STEP 15
+op0 = ">"                                                        \# STEP 16
+arcpy.Delete\_management(featureclass2)                           \# STEP 17
 arcpy.SelectLayerByAttribute\_management
-   (newlayer2,selectiontype2,
-   ' "'+fieldname1+'" '+op0+val1)                \# STEP 18
+   (newlayer2,selectiontype2, ' "'+fieldname1+'" '+op0+val1) \# STEP 18
 \end{code}
 }
 \caption{Test with reduction-only for ArcPy.}
@@ -543,46 +538,42 @@ arcpy.SelectLayerByAttribute\_management
 \begin{figure}[t]
 {\scriptsize 
 \begin{code}
-shapefilelist0 = 
-   glob.glob("C:\\Arctmp\\*.shp")        \textcolor{black!60}{\# STEP 0}
+shapefilelist0 = glob.glob("C:\\Arctmp\\*.shp")                 \textcolor{black!60}{\# STEP 0}
 \textcolor{black!60}{\#[}
-shapefile0 = shapefilelist0 [0]        \textcolor{black!60}{\# STEP 1}
-newlayer0 = "l1"                       \textcolor{black!60}{\# STEP 2}
+shapefile0 = shapefilelist0 [0]                                   \textcolor{black!60}{\# STEP 1}
+newlayer0 = "l1"                                                  \textcolor{black!60}{\# STEP 2}
 \textcolor{black!60}{\#  or newlayer0 = "l2" }
 \textcolor{black!60}{\#  or newlayer0 = "l3" }
 \textcolor{black!60}{\#  swaps with steps 3 4 5 6 7}
 \textcolor{black!60}{\#] (steps in [] can be in any order)}
 \textcolor{black!60}{\#[}
-featureclass0 = shapefile0             \textcolor{black!60}{\# STEP 3}
+featureclass0 = shapefile0                                        \textcolor{black!60}{\# STEP 3}
 \textcolor{black!60}{\#  swaps with step 2}
-fieldname0 = "newf1"                   \textcolor{black!60}{\# STEP 4}
+fieldname0 = "newf1"                                              \textcolor{black!60}{\# STEP 4}
 \textcolor{black!60}{\#  or fieldname0 = "newf2" }
 \textcolor{black!60}{\#  or fieldname0 = "newf3" }
 \textcolor{black!60}{\#  swaps with steps 2 8}
-selectiontype0 = "SWITCH\_SELECTION"    \textcolor{black!60}{\# STEP 5}
+selectiontype0 = "SWITCH\_SELECTION"                               \textcolor{black!60}{\# STEP 5}
 \textcolor{black!60}{\#  or selectiontype0 = "NEW\_SELECTION" }
 \textcolor{black!60}{\#  or selectiontype0 = "ADD\_TO\_SELECTION" }
 \textcolor{black!60}{\#  or selectiontype0 = "REMOVE\_FROM\_SELECTION"}
 \textcolor{black!60}{\#  or selectiontype0 = "SUBSET\_SELECTION"}
 \textcolor{black!60}{\#  or selectiontype0 = "CLEAR\_SELECTION"   }
 \textcolor{black!60}{\#  swaps with steps 2 8}
-op0 = ">"                              \textcolor{black!60}{\# STEP 6}
+op0 = ">"                                                         \textcolor{black!60}{\# STEP 6}
 \textcolor{black!60}{\#  or op0 = "<" }
 \textcolor{black!60}{\#  swaps with steps 2 8}
-val0 = "100"                           \textcolor{black!60}{\# STEP 7}
+val0 = "100"                                                      \textcolor{black!60}{\# STEP 7}
 \textcolor{black!60}{\#  or val0 = "1000" }
 \textcolor{black!60}{\#  swaps with steps 2 8}
 \textcolor{black!60}{\#] (steps in [] can be in any order)}
-arcpy.MakeFeatureLayer\_management
-   (featureclass0, newlayer0)          \textcolor{black!60}{\# STEP 8}
+arcpy.MakeFeatureLayer\_management(featureclass0, newlayer0)    \textcolor{black!60}{\# STEP 8}
 \textcolor{black!60}{\#  swaps with steps 4 5 6 7}
 arcpy.SelectLayerByAttribute\_management
-   (newlayer0,selectiontype0,
-   ' "'+fieldname0+'" '+op0+val0)      \textcolor{black!60}{\# STEP 9}
-arcpy.Delete\_management(featureclass0) \textcolor{black!60}{\# STEP 10}
+   (newlayer0,selectiontype0,' "'+fieldname0+'" '+op0+val0)    \textcolor{black!60}{\# STEP 9}
+arcpy.Delete\_management(featureclass0)                             \textcolor{black!60}{\# STEP 10}
 arcpy.SelectLayerByAttribute\_management
-   (newlayer0,selectiontype0,
-   ' "'+ fieldname0+'" '+op0+val0)     \textcolor{black!60}{\# STEP 11}
+   (newlayer0,selectiontype0,' "'+ fieldname0+'" '+op0+val0) \textcolor{black!60}{\# STEP 11}
 \end{code}
 }
 \caption{Normalized and generalized ArcPy test.}
