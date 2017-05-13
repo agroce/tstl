@@ -27,7 +27,7 @@ property: <avl>.check\_balanced()
 
 \mycomment{
 \begin{figure}
-{%\scriptsize
+{\scriptsize
 \begin{code}
 avl1 = avl.AVLTree()  
 int3 = 10  
@@ -231,7 +231,7 @@ the moved steps, again preserving order.
 %\subsubsection{Rewrite Rules}
 
 \begin{figure}[t]
-{%\scriptsize
+{\scriptsize
 \begin{itemize}
 \item {\bf SimplifyAll:}
 $t \Rightarrow t[a \mapsto a']$\\
@@ -301,7 +301,7 @@ new base test, since often a rewrite makes other steps irrelevant.
 \begin{algorithm}
 \caption{Basic algorithm for normalization}
 \label{simpalg}
-{%\scriptsize
+{\scriptsize
 \begin{algorithmic}[1]
 \State {modified = True}
 \While {modified}
@@ -339,6 +339,7 @@ new base test, since often a rewrite makes other steps irrelevant.
 }
 {\bf Normalization Steps:}
 \raggedright
+{\scriptsize
 \begin{code}
 {\bf SimplifyAll}: int0 = 10 $\mapsto$ int0 = 2 
 {\bf SimplifyAll}: int2 = 7  $\mapsto$ int2 = 3 
@@ -350,7 +351,7 @@ new base test, since often a rewrite makes other steps irrelevant.
 {\bf SwapPool}: int0 $\leftrightarrow$ int1 (between steps 2 and 10)
 {\bf SwapAction}: (1: int1 = 3)  $\leftrightarrow$ (5: int1 = 2)
 \end{code}
-
+}
 \caption{An example of normalization steps.}
 \label{diffnorm}
 \end{figure}
@@ -493,7 +494,7 @@ rewrites:
 \begin{algorithm}
 \caption{Basic algorithm for generalization}
 \label{genalg}
-{%\scriptsize
+{\scriptsize
 \begin{algorithmic}[1]
 \State {swap = $\emptyset$}
 \State {replace = $\emptyset$}
@@ -595,7 +596,7 @@ position one higher.
 \begin{algorithm}
 \caption{Basic algorithm for fresh object generalization}
 \label{freshalg}
-{%\scriptsize
+{\scriptsize
 \begin{algorithmic}[1]
 \State {fresh = $\emptyset$}
 \For {$(i, a) \in t$}
