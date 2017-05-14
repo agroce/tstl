@@ -1,7 +1,8 @@
 \section {Experimental Results}
 
 This section presents some initial results of applying normalization
-and generalization.  All tests were generated using pure random testing,
+and generalization, and comparing the results to delta-debugging 
+(which we refer to as reduction) alone.  All tests were generated using pure random testing,
 based on TSTL harnesses developed previously, all included in the
 TSTL release \cite{tstl}.  We also tested the
 Python interface to Z3 \cite{z3}, but did not find faults thus far;
@@ -48,17 +49,20 @@ simple Python AVL tree found on the web
 \cite{avltree}, with 225 lines of code\footnote{All sizes non-comment,
   non-blank lines, by cloc \cite{cloc}.} and a
 simple XML parser with about 260 lines of code \cite{myxml}.  For both
-subjects, we produced mutants \cite{mutant} using the MutPy tool
+subjects, we produced mutants using the MutPy tool
 \cite{mutpy}, then filtered the set to contain only mutants that produced
-at least 1 failing test in 1,000 tests.  We then used the filtered
+at least 1 failing test in 1,000 tests.  MutPy generates mutants using
+both the standard ``core'' operators common to many tools \cite{mutant} and
+a few Python-specific operators.  We then used the filtered
 mutants to generate higher-order mutants (``pairs'') composed of two mutants,
 such that each of the mutants could be detected in isolation:  that
 is, there existed at least one failing test such that fixing the other
 mutant left the test still failing.  For AVL, there were 82 failing
-mutants (out of 228 total), from which we sampled 364 pairs
-(restricted to mutants modifying different source lines).  Of these,
+mutants (out of 228 total), from which we sampled 364 pairs, restricted to mutants modifying different source lines; 364 random samples
+were required to sample each mutant at least twice.  Of these,
 238 pairs had independently detectable faults.  For XML, only 5 of 357
-mutants generated were detectable due to a weak specification.  There were 9 pairs with independently
+mutants generated were detectable due to a weak specification.  There
+were thus only 9 pairs with independently
 detectable faults.
 
 \subsubsection{RQ1: Reduction in number of failures}
@@ -306,11 +310,6 @@ SortedContainers & 168 & 80.8 & 14.4 & 95 & 168 & 13.2 & 7.4 & 27 & 0.09 & 2 & 6
 
 \subsubsection{SymPy}
 
-\begin{figure}
-\includegraphics[width=\columnwidth]{sympyd}
-\caption{Effects of normalization on SymPy tests.}
-\label{lengthandactions}
-\end{figure}
 
 SymPy \cite{SymPy} is a widely used open source pure Python library
 for symbolic mathematics.  SymPy is used by several other projects,
@@ -378,6 +377,13 @@ only has a significant effect on average, but has a large benefit for
 most individual faults.  The reduction in tests to examine
 is also shown, indirectly, by the fact that the ``boxes'' for
 normalized data are often simply lines because the tests are similar or identical.
+
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{sympyd}
+\caption{Effects of normalization on SymPy tests.}
+\label{lengthandactions}
+\end{figure}
 
 \subsubsection{SortedContainers}
 

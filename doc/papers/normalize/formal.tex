@@ -290,7 +290,9 @@ order in our default implementation is the order above, with the
 modification that in practice the {\bf ReplacePool} and {\bf
   ReplaceMovePool} rewrites are checked in the same loop
 (e.g., for every possible replacement of a pool instance, both rules are
-checked, in the order given above).  The core algorithm, assuming a set
+checked, in the order given above).  The order was determined after
+considerable, but not exhaustive, trial and error, and aims to apply
+more general, but less expensive, rules first.  The core algorithm, assuming a set
 of ordered rewrite rules defines $C(t)$, is given as Algorithm
 \ref{simpalg}.  Here {\tt pred} is an arbitrary predicate indicating
 that the candidate test still satisfies the property of interest that
