@@ -65,19 +65,19 @@ The TSTL release \cite{tstl} provides testing tools that use the
 interface for testing and debugging.
 
 The key point for our purposes is merely that a TSTL test harness
-defines a set of \emph{pools} that hold values produced and used
+defines a set of \emph{pools} whose instances hold values produced and used
 during testing \cite{AndrewsTR} (a common approach to defining
 API-testing sequences) and a \emph{finite} set of actions that are possible during
-testing, typically API calls and assignments to pool values.  In this
+testing, typically API calls and assignments to pool instances.  In this
 example, there are two pools, one named {\tt int} and one named {\tt
   avl}.  There are four instances of the {\tt int} pool, which means
 that a test in progress can store up to 4 {\tt int}s at one time (in
 variables named {\tt int0}, {\tt int1}, {\tt int2}, and {\tt int3}), and three
 instances of the {\tt avl} pool.  The actions defined are: setting
-the value of an {\tt int} pool to any integer in the range 1-20
-inclusive, setting the value of an {\tt avl} pool to a newly
+the value of an {\tt int} to any integer in the range 1-20
+inclusive, setting the value of an {\tt avl} to a newly
 constructed AVL tree, and calling {\tt insert}, {\tt
-  delete}, {\tt find} and {\tt inorder} with chosen pools.  Figure
+  delete}, {\tt find} and {\tt inorder} with chosen pool instances.  Figure
 \ref{threetests} in the introduction shows three
 valid tests produced by running a random test generator on
 the TSTL-compiled interface produced by this definition.  TSTL handles
@@ -102,7 +102,7 @@ example, the line {\tt <avl>.insert(<int>)} defines 12 actions, one
 for each choice of {\tt avl} and {\tt int} pool instance, e.g.
 {\tt avl0.insert(int0)}, {\tt avl1.insert(int0)}, and {\tt
   avl0.insert(int1)}.  These are
-ordered lexically, with the first pool appearing in the text taking
+ordered lexically, with the first pool instance appearing in the text taking
 precedence.  Value ranges, such as in the {\tt int} initialization, are also
 ordered in the natural way, with lower values first.  Given this total
 order, each action can be assigned a unique index, from 0 up to 1 less
@@ -193,7 +193,7 @@ The second principle that determines the rewrite rules is that each
 rule ought to be unlikely to change the underlying cause for test
 failure.  To that end, the rules for normalization always either change at most
 one action (possibly in multiple steps, but in a uniform way) or make
-\emph{no} changes to the actions performed, only to the pools used or the
+\emph{no} changes to the actions performed, only to the pool instances used or the
 positions of actions in the test.  We cannot guarantee
 normalization does not change the underlying fault in a test; however,
 the limited scope of rewrites should minimize the chance of fault
@@ -214,12 +214,13 @@ $a < b$ iff the index of action $a$ is lower
 than that of action $b$.  We compare steps with $<$ by comparing their
 actions --- $(i: a) < (j: b)$ iff $a < b$.  For a set or sequence of actions or steps, we define the $min$ of the
 set to be the lowest indexed action in the set, and use
-these to compare sets:  $s_1 < s_2$ iff $min(s_1) < min(s_2)$. For pools,
+these to compare sets:  $s_1 < s_2$ iff $min(s_1) < min(s_2)$. For
+pool instances,
 $p < p'$ if and only if $p$'s index is lower than the index for $p'$
 \emph{and} $p$ and $p'$ are from the same pool.
 
 The term $t[x \mapsto y]$ denotes the test t with all instances of $x$
-replaced by $y$.  Here, $x$ and $y$ can be actions, steps, or pools.
+replaced by $y$.  Here, $x$ and $y$ can be actions, steps, or pool instances.
 $t[x \leftrightarrow y]$ is similar, except that $x$ and $y$ are
 swapped.  Term $t(i,j)[x \mapsto y]$ is the same as $t[x \mapsto
 y]$, except that the replacement is only applied between steps $i$ and
@@ -242,8 +243,9 @@ lower-indexed action.
 $t \Rightarrow t(i,j)[p \mapsto p']$\\ 
 \-\ \ \ \emph{where} $p < p'$ and $0 \leq i < j <
 |t|$\\
-Covers the case when all appearances of an instance of a pool can be replaced with 
-a lower-indexed instance of that pool (possibly only within a range of steps).
+Covers the case when all appearances of an instance of a pool instance
+can be replaced with 
+a lower-indexed instance from that pool (possibly only within a range of steps).
 \item {\bf ReplaceMovePool:}
 $t \Rightarrow t_{\rightarrow i}(p')[p \mapsto p']$\\
 \-\ \ \ \emph{where} $p < p'$ and $0
@@ -287,7 +289,7 @@ also necessary to determine the order in which they are applied.  The
 order in our default implementation is the order above, with the
 modification that in practice the {\bf ReplacePool} and {\bf
   ReplaceMovePool} rewrites are checked in the same loop
-(e.g., for every possible replacement of a pool, both rules are
+(e.g., for every possible replacement of a pool instance, both rules are
 checked, in the order given above).  The core algorithm, assuming a set
 of ordered rewrite rules defines $C(t)$, is given as Algorithm
 \ref{simpalg}.  Here {\tt pred} is an arbitrary predicate indicating
@@ -409,7 +411,7 @@ loop is therefore $O(k^2n)$.  How many times can this inner loop run
 (e.g., how many times can the {\bf while} loop run)?  Each
 action can be replaced fewer than $n$ times, since each
 replacement (or at least one replacement in each rewrite,
-for the pool changes) must decrease the index of the action.  Steps
+for the pool instance changes) must decrease the index of the action.  Steps
 can be swapped fewer than $k$ times, obviously.  Each  {\bf
   ReduceAction} rewrite requires reducing the length of the
 test, giving it a total (not per-step, like the other bounds) bound of
@@ -545,7 +547,8 @@ delta-debugged file system test \cite{ICSEDiff,AMAI} would use an
 open file descriptor in a call, leading to the suspicion that the file
 had been corrupted, when in fact the file system's state was damaged,
 and the same operation on \emph{any} file would have failed.
-We therefore propose a more aggressive generalization: replacing a pool use with a \emph{fresh value}.
+We therefore propose a more aggressive generalization: replacing a
+pool instance use with a \emph{fresh value}.
 
 Consider the test in Figure \ref{fig:mislead}, produced by a
 TSTL harness for  TSTL itself\footnote{Since Python TSTL
@@ -586,10 +589,11 @@ sut0.normalize(test0,pred0)            \textcolor{black!60}{\# STEP 6}
 \end{figure}
 
 Formalizing this generalization requires additional notation.
-$U(a)$ is the set of pools \emph{used} in the action $a$ --- pools that
+$U(a)$ is the set of pool instances \emph{used} in the action $a$ ---
+pool instances that appear
 in the action, but not on the left-hand side of an assignment.
 $I(a,p)$ is a predicate that is true iff action $a$ stores a new value
-in pool $p$.  Finally, $t[+(a: i)]$ denotes test $t$ with the action
+in pool instance $p$.  Finally, $t[+(a: i)]$ denotes test $t$ with the action
 $a$ inserted at step $i$ and each step from $i$ onwards moved to a
 position one higher.
 
@@ -616,15 +620,16 @@ position one higher.
 In practice, the {\tt fresh} set returned should be pruned to avoid
 redundant actions.  It is not useful information that {\tt int0 = 1 ; int1 = 2; int0 = 1; f(int0)} fails if {\tt int0 = 1;
   int1 = 2; f(int0)} fails.  Redundancy elimination also needs to take
-into account the potential assignments to a pool from the {\tt
+into account the potential assignments to a pool instance from the {\tt
   replace} generalization, which are also redundant.  Furthermore, it
 is useful to distinguish between pools that are never modified, only
 assigned to, and pools that are modified without appearing on a
 left-hand side (LHS).  As an example, if an integer is used as an argument
-to a function, the pool value's last assignment is still valid and
+to a function, the pool instance's last assignment is still valid and
 should be omitted from ``fresh'' values, as redundant.  However,
 calling a function on an AVL tree may modify it, making an assignment
-non-redundant, even if it is the last appearance of that pool on the
+non-redundant, even if it is the last appearance of that pool instance
+on the
 LHS.
 We use the {\tt CONST} tag (see Figure \ref{fig:example}) to mark
 values than cannot be modified on the RHS.  Further extensions of the
@@ -633,7 +638,7 @@ fresh value for some object requires use of a complex constructor,
 values required to call the constructor can also be produced, if
 needed, recursively.  In our experiments so
 far, simple fresh value generation sufficed, as inputs to
-constructors were usually available in pools.  Knowing all possible
+constructors were usually available in the pools.  Knowing all possible
 fresh values is likely unimportant.
 
 %\subsection{Discussion}
