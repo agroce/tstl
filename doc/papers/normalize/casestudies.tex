@@ -28,16 +28,18 @@ benefits for human understanding would require a human study to fully evaluate.
 
 Our experimental subjects and results can be divided into three parts.  First, we studied simple programs
 with small failing tests, in order to use mutation analysis to
-thoroughly investigate {\bf RQ1} and {\bf RQ2} in the context of tests
-without a good fault signature.  Second, we studied
+thoroughly investigate {\bf RQ1-3}, especially in the context of tests
+without a good fault signature, where normalization is most needed to
+reduce failures to examine.  Second, we studied
 larger and more realistic programs with a large number of lengthy,
 complex failures, largely
 to provide more information on {\bf RQ4} (additional reduction beyond
 that provided by delta-debugging).  Finally, we examined a much smaller
 number of failures for subjects where each reduction or normalization
-required an extremely long time to complete.
+required an extremely long time to complete, and understanding
+individual tests is a difficult task.
 
-\subsection{Small Subjects: AVLTree and XML}
+\subsection{Mutation-Based Experiments}
 
 %\subsubsection{AVLTree}
 
@@ -47,8 +49,19 @@ simple Python AVL tree found on the web
   non-blank lines, by cloc \cite{cloc}.} and a
 simple XML parser with about 260 lines of code \cite{myxml}.  For both
 subjects, we produced mutants \cite{mutant} using the MutPy tool
-\cite{mutpy}, filtered the set to contain only mutants that produced
-at least 1 failing test in 1,000 tests.  We then used the filtered mutants
+\cite{mutpy}, then filtered the set to contain only mutants that produced
+at least 1 failing test in 1,000 tests.  We then used the filtered
+mutants to generate higher-order mutants (``pairs'') composed of two mutants,
+such that each of the mutants could be detected in isolation:  that
+is, there existed at least one failing test such that fixing the other
+mutant left the test still failing.  For AVL, there were 82 failing
+mutants (out of 228 total), from which we sampled 364 pairs
+(restricted to mutants modifying different source lines).  Of these,
+238 pairs had independently detectable faults.  For XML, only 5 of 357
+mutants generated were detectable due to a weak specification.  There were 9 pairs with independently
+detectable faults.
+
+\subsubsection{RQ1: Reduction in number of failures}
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{length}
@@ -57,8 +70,85 @@ at least 1 failing test in 1,000 tests.  We then used the filtered mutants
 \end{figure}
 
 Figure \ref{normeffect} shows the reduction in number of distinct
-failing tests produced by normalization and reduction
-(vs. reduction only) for a set of 82 mutants \cite{mutant} of AVLTree
+failing tests produced by reduction alone vs. reduction and
+normalization, for AVLTree and XML mutants; note the
+log-scale y-axis.  All
+differences are statistically significant by paired Wilcoxon test \cite{arcuri2014hitchhiker}, at $p
+< 0.05$.  For 38 of the 82 AVL single mutants, normalization was
+perfect (1 failure); for XML, only one mutant was perfectly
+normalized.  Normalization was perfect (1 or 2 failures\footnote{Yes,
+  in some cases, a single test case detects either fault unless both
+  are fixed.}) for 115 of the 238 AVLTree pairs, but none of the XML
+pairs.  Even when the improvement was perfect, it was usually quite dramatic, from about 500 failures on average per mutant or
+mutant pair for AVL and about
+100 for XML to less than 5 for AVL and less than 10 for XML.
+
+A second way to examine reduction in a multi-fault setting is to
+consider the mean number of tests a user must examine before seeing
+all faults \cite{PLDI13}.  For the AVL mutant pairs, a user must
+examine almost 20 tests (on average) before encountering at least
+one instance of both faults.  With normalization, this  drops
+to a mean of just 2 tests.  The difference is significant with
+$p\leq1.4\times10^{-6}$.  The
+difference in number of tests before encountering both faults in XML pairs
+was not statistically significant (for these 5 faults,
+failure rates are very similar, so hitting both is easy no matter how
+many failures there are; however, satisfying oneself that all faults
+have been seen is much harder with a very large number of tests to examine). 
+
+\subsubsection{RQ2: Slippage via normalization}
+
+Mutants also provided a way to evaluate the danger of
+normalization losing faults, {\bf RQ2}.  Faults can be lost when normalization
+changes a test failing due to one fault into a test failing
+due to a different fault, a problem known as ``slippage''
+\cite{PLDI13,slippage}.  The AVL and XML testers pose an interesting
+slippage challenge, as the failure signatures are not useful, and the tests
+for faults are likely to be very close to each other in the
+combinatorial space, due to the simplicity of the tested interfaces.
+Out of the 238 AVL mutant pairs, normalization produced tests
+exposing both faults for 80.7\% of pairs (19.3\% slippage at the
+suite level).  Interestingly, for 4 AVLTree pairs
+normalization took a set of reduced tests not capable of exposing
+both faults, and produced a smaller set of tests that \emph{was} capable
+of detecting both faults.  For XML pairs, the slippage rate was 12.5\%
+(of the 9 pairs, only 1 lost a fault, and in that case the faults were
+both syntactically and semantically very similar: within 1 line and
+with similar effects).
+
+Recall that of our 364 AVL mutant pairs, only 238 could be
+independently detected; in most cases this was due to reduction itself
+introducing slippage (in a few cases, one fault completely masks
+another; e.g., if the constructor always fails, {\tt insert} failures
+cannot be detected).  Slippage due to reduction itself is very rare for some SUTs but common
+for others (up to 23\% for Mozilla's JavaScript engine)
+\cite{PLDI13}.  For the AVLTree example, the slippage rate for
+reduction is almost 30\%, 10\% \emph{worse} than that for
+normalization; for XML, however, reduction alone never caused slippage.  Mitigation
+approaches for slippage during reduction \cite{slippage} should also
+apply to normalization.
+
+\subsubsection{RQ3: Normalization runtime}
+
+The mean cost to reduce an AVLTree test was 0.05 seconds; the mean cost for normalization was 0.38
+seconds.   For XML, the mean cost for reduction was 12.6 seconds vs.
+120.8 seconds for normalization.  Note that in all our results the cost of normalization is given on an
+already-reduced test, so the inputs for normalization are smaller than
+those for reduction; however, this is the expected use-case for
+normalization.  Comparing on equal-sized tests would simply involve
+adding the costs for reduction to those for normalization, as an
+additional step of normalization.  The criticality of caching
+for normalizing large numbers of tests is evident.  Out of 60,226
+normalizations performed in our full AVLTree mutant experiments,
+59,972 (99.6\%) resulted in a cache hit (most of these after a small
+number of normalization steps).  In fact, the total number of rewrites
+performed during the AVL mutant experiments was only 145,780, for a mean of only
+2.4 non-cache-hit rewrites of each test.  For XML, there were 3,829 cache hits over
+a total of 3,929 normalizations.
+
+\mycomment{ 
+
+a set of 82 mutants \cite{mutant} of AVLTree
 \cite{Hunter:2007} ({\bf RQ1}).  Of the 228 mutants produced by MutPy
 \cite{mutpy}, only these 82 produced at least 1 failure in 1,000 tests (other mutants were equivalent or caused failure at a lower
 rate).  Using reduction only, the mean number of distinct failures for
@@ -68,7 +158,6 @@ normalization produced only a single failure.
 Differences were statistically significant by paired Wilcoxon test with
 $p\leq1\times10^{-15}$\footnote{All $p$-values given below are for
   the same recommended \cite{arcuri2014hitchhiker} statistical test.}.
-
 
 AVLTree mutants also provided a way to evaluate the danger of
 normalization losing faults, {\bf RQ2}.  Faults can be lost when normalization
@@ -154,50 +243,30 @@ after a small number of normalization steps).  In fact, the total
 number of rewrites performed during the experiments was only 145,780,
 for a mean of only 2.4 non-cache-hit rewrites of each test.
 
-\subsection{XML Parser}
+}
 
-We also investigated {\bf RQ1-3} for a
-Python XML parser with about 260 lines of code \cite{myxml}, using one
+\subsection{Experiments Using Real Faults}
+
+\subsubsection{XML Parser}
+
+We also investigated one
 real fault, triggered by the empty tag ({\tt <>}), and one
-seeded fault triggered when adding two nodes with the same
-name.  A comment in the code indicates the seeded fault is realistic,
-and possibly existed in an earlier version of the code.  Running 1,000 tests
+seeded fault, triggered when adding two nodes with the same
+name, for the XML Parserl.  A comment in the code indicates the seeded fault is realistic,
+and probably existed in an earlier version of the code.  Running 1,000 tests
 produced 848 failing tests.  Without normalization, it took only
 37.45 seconds to execute and delta-debug all 1,000 tests.  The output was 717 distinct failing test
 cases.  Normalization increased the runtime to 354.7 seconds, but
 output only 5 failures (3 for the original fault and 2 for the seeded
 fault).  The XML parser also shows that normalization and generalization work for
 programs with string inputs defined by a grammar in TSTL, as well
-as for
-pure-API testing.
+as for pure-API testing.
 %reduced the number of failures to just 5: 3 
 %for the original fault and 2 for the seeded fault.
 %Generalization took < 5 seconds.
 
-In addition to these realistic faults, we performed the same
-mutation-based analysis as with AVLTree (Figure \ref{normeffect}). In
-this case, a weaker specification (no reference implementation)
-resulted in fault detection for only 5 of 357 mutants.  For these
-mutants, reduction alone produced a mean of 107.6 failures (median
-27); normalization reduced that to only 6.2 failures (median 7) ({\bf
-  RQ1}).  The difference was significant at the 95\% confidence level,
-($p=0.042$).  With mutant pairs, these numbers
-increased to 181.9 mean faults (median 175) with reduction only,
-compared to 7.7 mean faults (median 7) when using normalization ({\bf
-  RQ1}).  This difference was statistically significant, 
-$p=0.007$.  Normalization was perfect in only one case for
-the XML parser mutants, and perfect for no mutant pairs.  The
-difference in number of tests before encountering both faults
-was not statistically significant (for these 5 faults,
-failure rates are very similar, so hitting both is trivial).  For combined
-mutants, the slippage rate was only 12.5\% for the XML parser ({\bf
-  RQ2}).  That is, of the 9 viable mutant pairs, only 1 lost a fault,
-and in that case the faults were both semantically and syntactically
-very similar (within 1 line and with similar effects).  Reduction alone caused no slippage.  Adding normalization to reduction increased the runtime from
-a mean of 12.6 seconds to 120.8 seconds ({\bf RQ3}); there were 3,829 cache hits over
-a total of 3,929 normalizations.
 
-\subsection{TSTL}
+\subsubsection{TSTL}
 
 As noted in Section \ref{freshgen}, TSTL is used to test TSTL's own
 API interface (the code is about 2,700 LOC; a compiled SUT is
@@ -208,10 +277,34 @@ the latest version of TSTL, the cache-related problem shown in Figure
   predicate) may produce a headache in the TSTL user.}.
 Generating and reducing 100 tests for it required 1,090 seconds
 and produced 90 failures.  Normalization and generalization
-increased total runtime to 3,690 seconds, and produced just 2
+increased total runtime to 3,690 seconds, but only 2
 failures.
 
-\subsection{SymPy}
+
+\begin{table*}
+{\scriptsize
+\begin{tabular}{c|cccc|ccccc|ccccc}
+& \multicolumn{4}{c|}{Original} & \multicolumn{5}{c|}{Reduced} &
+                                                               \multicolumn{5}{c}{Normalized}
+  \\
+\hline
+SUT & \# Tests & Length & Actions/Test & Total \#Acts & \# Tests & Length
+                                     & Actions/Test & Total \#Acts
+  & Time  & \# Tests & Length & Actions/Test & Total \#Acts & Time \\
+\hline
+SymPy & 500 & 44.7 & 20.7& 50 & 500 & 9.98 & 8.1 & 50 & 19.7 & 114 &
+                                                                     5.48
+  & 5.28 & 32 & 594 \\
+SortedContainers & 168 & 80.8 & 14.4 & 95 & 168 & 13.2 & 7.4 & 27 & 0.09 & 2 & 6
+                              & 5 & 7 & 134.1 \\
+\hline
+\end{tabular}
+}
+\caption{Summary of results for SymPy and SortedContainers.}
+\label{sumreduction}
+\end{table*}
+
+\subsubsection{SymPy}
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{sympyd}
@@ -286,7 +379,7 @@ most individual faults.  The reduction in tests to examine
 is also shown, indirectly, by the fact that the ``boxes'' for
 normalized data are often simply lines because the tests are similar or identical.
 
-\subsection{SortedContainers}
+\subsubsection{SortedContainers}
 
 SortedContainers \cite{SortedContainers} is a popular Python library
 of about 2KLOC, that provides pure Python sorted containers that are as fast as C
@@ -308,7 +401,13 @@ different actions in tests before reduction, 27 in tests after
 reduction, and only 7 between the two normalized tests.  {\bf RQ4:} Reduction took a mean of 0.09 seconds, normalization a mean of 134.1
 seconds (median 0.06 vs. 57.0) (significant, $p\leq1\times10^{-28}$).  
 
-\subsection{NumPy}
+Table \ref{sumreduction} summarizes mean results for SymPy and
+SortedContainers, our primary results for large numbers of failing
+tests for real faults of complex programs where normalization is
+perhaps as useful for additional reduction beyond delta-debugging as
+it is for reducing the number of tests to examine.
+
+\subsubsection{NumPy}
 
 \begin{comment}
 \begin{figure}[t]
@@ -368,9 +467,8 @@ Our final two case studies provide little information on {\bf RQ1} and
 {\bf RQ2}; for these SUTs, failure rates are low enough or test
 reduction runtimes high enough that each failure is usually dealt with
 one-by-one.  However, the value of normalization and generalization
-for further reduction ({\bf RQ4}) and aiding in understanding tests ({\bf
-  RQ5}) is effectively shown by these complex programs.  They also provide
-results for {\bf RQ3} when even test reduction is expensive.
+for further reduction ({\bf RQ4}) and aiding in understanding tests is effectively shown by these complex programs.  They also provide
+results for {\bf RQ3} when even test \emph{reduction} is expensive.
 NumPy \cite{NumPy} is a widely used Python library that
 supports large, multi-dimensional matrices and provides a huge library
 of mathematical functions.  The SciPy library for scientific
@@ -442,7 +540,7 @@ assert (np.array\_equal(array0,array0))
 \label{numpynormgen}
 \end{figure}
 
-\subsection{Esri ArcPy}
+\subsubsection{Esri ArcPy}
 
 Esri is the single
 largest Geographic Information System (GIS) software vendor.  Esri's ArcGIS tools are widely
