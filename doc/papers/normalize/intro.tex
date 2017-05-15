@@ -50,9 +50,9 @@ the test fails.  Generalization uses automated experiments to discover
 a semantic neighborhood of failing tests.  E.g.,
 the value 1 assigned to {\tt int0} in step 0 is not essential.  It
 could be changed to any value in the range 5-20.  Similarly, the exact ordering of many steps in the test
-is inessential.  Finally, in step 9, instead of using the existing
+is inessential.  \mycomment{Finally, in step 9, instead of using the existing
 value of {\tt int1} (4), a fresh assignment could be inserted before
-the {\tt delete} call, setting {\tt int1} to 3 instead.  Changing any
+the {\tt delete} call, setting {\tt int1} to 3 instead.} Changing any
 of these aspects of the test (one at a time)
 will preserve failure.  Generalization shows 
 the user how a failure represents  a
