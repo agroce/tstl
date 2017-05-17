@@ -154,13 +154,13 @@ def main():
     else:
         pred = sandboxReplay
 
-    if config.coverage or config.coverMore:
+    if config.coverage or config.coverMore or (config.decompose and not config.noNormalize):
         print "EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION..."
         sut.replay(r,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         b = set(sut.currBranches())
         s = set(sut.currStatements())
         print "PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS"
-        if coverMore:
+        if config.coverMore:
             pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         else:
             pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
@@ -175,7 +175,7 @@ def main():
             rs = sut.reductions(r,pred,verbose=config.verbose,recursive=config.recursive,limit=config.limit,keepLast=config.keepLast)
         elif config.decompose:
             print "DECOMPOSING"
-            rs = sut.coverDecompose(r,verbose=config.verbose)
+            rs = sut.coverDecompose(r,verbose=config.verbose,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         print "REDUCED IN",time.time()-start,"SECONDS"
         if (not config.multiple) and (not config.decompose):
             print "NEW LENGTH",len(r)
@@ -211,7 +211,7 @@ def main():
         i = 0
         for r in rs:
             print "TEST #"+str(i)+":"
-            sut.saveTest(r,config.outfile+"."+str(i))
+            sut.saveTest(r,config.outfile+"."+str(i)+".test")
             sut.prettyPrintTest(r)
             print
             print "TEST WRITTEN TO",config.outfile+"."+str(i)
