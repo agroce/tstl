@@ -553,8 +553,9 @@ def saveTest(self, test, filename):
 
 def loadTest(self, filename):
     test = []
-    for l in open(filename):
-        test.append(self.playable(l[:-1]))
+    with open(filename) as f:
+        for l in f:
+            test.append(self.playable(l[:-1]))
     return test
 
 def playable(self, name):
@@ -590,9 +591,18 @@ def allEnabled(self, test):
         self.safely((name,guard,act))
     return True
 
-def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False, stopFail = True):
+def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False, stopFail = True, returnCov = False):
+    '''
+    Replays a test, either resetting first or extending current test (default is to restart).  Can either stop or keep going
+    on failure, ignore uncaught exceptions, throw them, and check or not check properties.  The returnCov setting adds a sequential
+    record of coverage by step as another element of a return tuple.
+    '''
     if not extend:
         self.restart()
+    if returnCov:
+        allS = set([])
+        allB = set([])
+        cov = []
     for (name, guard, act) in test:
         if verbose:
             print name
@@ -611,10 +621,20 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
                     pass
             else:
                 act()
-
         if checkProp:
             if (not self.check()) and stopFail:
                 return False
+        if returnCov:
+            s = set(self.currStatements())
+            b = set(self.currBranches())
+            newS = s - allS
+            newB = b - allB
+            if (len(newS) > 0) or (len(newB) > 0):
+                cov.append((newS,newB))
+            allS.update(s)
+            allB.update(b)            
+    if returnCov:
+        return (self.__failure == None, cov)
     return (self.__failure == None)
 
 def replayUntil(self, test, pred, catchUncaught = False, checkProp=False, stopFail = True):
@@ -1684,3 +1704,13 @@ def relax(self):
 
 def stopRelax(self):
     self.__relaxUsedRestriction = False
+
+def moduleFiles(self):
+    files = []
+    for m in self.__importModules:
+        try:
+            files.extend(m.__path__)
+        except AttributeError:
+            files.append(os.path.dirname(m.__file__))
+    return files
+        

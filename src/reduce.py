@@ -41,6 +41,8 @@ def parse_args():
                         help='Allow uncaught exceptions in actions (for coverage-based reduction).')
     parser.add_argument('--fast', action='store_true',
                         help="Try fast reduction (for nearly 1-minimal tests).")
+    parser.add_argument('--decompose', action='store_true',
+                        help="Perform decomposition by coverage (assumes coverage based reduction).  Produces multiple tests.")    
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Produce multiple reductions.")
     parser.add_argument('--recursive', type=int, default=1,
@@ -118,6 +120,14 @@ def main():
     
     sut = SUT.sut()
 
+    timeout = config.timeout
+
+    if not ((config.coverage) or (config.coverMore) or (config.decompose)):
+        try:
+            sut.stopCoverage()
+        except:
+            pass
+    
     R = None
     if config.random:
         R = random.Random()
@@ -159,25 +169,28 @@ def main():
     if not config.noReduce:
         start = time.time()
         print "REDUCING..."
-        if not config.multiple:
+        if (not config.multiple) and (not config.decompose):
             r = sut.reduce(r,pred,verbose=config.verbose,tryFast=config.fast,keepLast=config.keepLast,rgen=R)
-        else:
+        elif config.multiple:
             rs = sut.reductions(r,pred,verbose=config.verbose,recursive=config.recursive,limit=config.limit,keepLast=config.keepLast)
+        elif config.decompose:
+            print "DECOMPOSING"
+            rs = sut.coverDecompose(r,verbose=config.verbose)
         print "REDUCED IN",time.time()-start,"SECONDS"
-        if not config.multiple:
+        if (not config.multiple) and (not config.decompose):
             print "NEW LENGTH",len(r)
         else:
             print "NEW LENGTHS",map(len,rs)
     if not config.noAlpha:
         print "ALPHA CONVERTING..."
-        if not config.multiple:
+        if (not config.multiple) and (not config.decompose):
             r = sut.alphaConvert(r)
         else:
             rs = map(sut.alphaConvert, rs)
     if not config.noNormalize:
         start = time.time()
         print "NORMALIZING..."
-        if not config.multiple:
+        if (not config.multiple) and (not config.decompose):
             r = sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast)
         else:
             newrs = []
@@ -185,11 +198,11 @@ def main():
                 newrs.append(sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast))
             rs = newrs
         print "NORMALIZED IN",time.time()-start,"SECONDS"
-        if not config.multiple:
+        if (not config.multiple) and (not config.decompose):
             print "NEW LENGTH",len(r)
         else:
             print "NEW LENGTHS",map(len,rs)
-    if not config.multiple:
+    if (not config.multiple) and (not config.decompose):
         sut.saveTest(r,config.outfile)
         sut.prettyPrintTest(r)
         print

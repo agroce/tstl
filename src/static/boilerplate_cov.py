@@ -222,12 +222,47 @@ def coversMoreThan(self, test, catchUncaught=False, checkProp=False):
     self.replay(test,catchUncaught=catchUncaught,checkProp=checkProp)
     return self.coversMore(self.currStatements(), self.currBranches(), catchUncaught=catchUncaught, checkProp=checkProp)
 
-def moduleFiles(self):
-    files = []
-    for m in self.__importModules:
-        try:
-            files.extend(m.__path__)
-        except AttributeError:
-            files.append(os.path.dirname(m.__file__))
-    return files
-        
+def coverDecompose(self,test,verbose=False,catchUncaught=False,checkProp=False):
+    (result,coverages) = self.replay(test,returnCov=True,catchUncaught=catchUncaught,checkProp=checkProp)
+    tests = []
+    coverages.reverse()
+
+    allSCoverages = set([])
+    allBCoverages = set([])    
+    for (s,b) in coverages:
+        allSCoverages.update(set(s))
+        allBCoverages.update(set(b))
+
+    if verbose:
+        print "ORIGINAL TEST OF LENGTH",len(test),"COVERS",len(allSCoverages),"STATEMENTS AND",len(allBCoverages),"BRANCHES"
+
+    i = 1
+    while (len(allSCoverages) != 0) or (len(allBCoverages) != 0):
+        (sgoal,bgoal) = coverages[0]
+        if verbose:
+            print "CONSTRUCTING TEST #"+str(i),"WITH GOAL",len(sgoal),"STATEMENTS AND",len(bgoal),"BRANCHES"
+        t = self.reduce(test,self.coversAll(sgoal,bgoal,catchUncaught=catchUncaught,checkProp=checkProp),verbose=verbose)
+        tests.append(t)
+        self.replay(t)
+        currS = set(self.currStatements())
+        currB = set(self.currBranches())
+        allSCoverages.difference_update(currS)
+        allBCoverages.difference_update(currB)
+        if verbose:
+            print "NEW TEST OF LENGTH",len(t),"COVERS",len(currS),"STATEMENTS AND",len(currB),"BRANCHES"
+            print "REMAINING COVERAGE GOALS:",len(allSCoverages),"STATEMENTS,",len(allBCoverages),"BRANCHES"
+        newCoverages = []
+        for (s,b) in coverages:
+            newS = s.copy()
+            newB = b.copy()
+            newS.difference_update(currS)
+            newB.difference_update(currB)
+            if verbose and ((len(newS) != len(s)) or (len(newB) != len(b))):
+                print "GOAL WAS:",len(s),len(b)
+                print "NOW:",len(newS),len(newB)
+            if (len(newS) != 0) or (len(newB) != 0):
+                newCoverages.append((newS,newB))
+        coverages = newCoverages
+        i += 1
+    return tests
+            
