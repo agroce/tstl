@@ -155,7 +155,7 @@ and returns a test) such that: (1) if $t$ fails, $f(t)$ fails\footnote{Normaliza
 Such a function would define a true \emph{canonical form} for tests, where each underlying fault is uniquely represented by a single
 test.  In general, it seems clear that defining such a function
 $f$ is (at least) as difficult as automatic fault localization and
-repair, and thus undecidable.  Therefore, we aim at approximating the
+repair, and likely undecidable.  Therefore, we aim at approximating the
 goal, by providing a set of simple transformations such that: (1) $f$
 changes many tests to the same test, (2) $f$ has low probability of
 changing two tests failing for different reasons into the same test,
@@ -203,7 +203,7 @@ change (known as ``slippage'' \cite{PLDI13,slippage}).
 
 Figure \ref{fig:rewrite} shows the rewrite rules used in TSTL normalization.
 The notation in the rules is relatively simple.
-A \emph{step} is an action paired with an index indicating its
+A \emph{step} is an action paired with an number indicating its
 position in a test,
 where the first action is step 0, etc.; e.g., $(2: a)$ indicates the
 third step of the test is action $a$ (indexing is from 0). 
@@ -216,8 +216,9 @@ actions --- $(i: a) < (j: b)$ iff $a < b$.  For a set or sequence of actions or 
 set to be the lowest indexed action in the set, and use
 these to compare sets:  $s_1 < s_2$ iff $min(s_1) < min(s_2)$. For
 pool instances,
-$p < p'$ if and only if $p$'s index is lower than the index for $p'$
-\emph{and} $p$ and $p'$ are from the same pool.
+$p < p'$ if and only if $p$'s pool index is lower than that for $p'$
+\emph{and} $p$ and $p'$ are from the same pool.  For example, {\tt int0} $<$
+{\tt int3}, but {\tt avl0} $\not <$ {\tt int4}.
 
 The term $t[x \mapsto y]$ denotes the test t with all instances of $x$
 replaced by $y$.  Here, $x$ and $y$ can be actions, steps, or pool instances.
@@ -428,8 +429,8 @@ steps, and the rules are applied in an order that quickly converges on
 a normal form for many tests.  In our experiments, normalization
 was only very expensive when delta-debugging was also costly, and
 appeared to be worse than delta-debugging by a constant factor,
-somewhere in the range of 2-100x, usually close to 10x.  With multiple
-faults, normalization provides a quantifiable value in
+somewhere in the range of 2-100x.  With multiple
+faults, normalization provides a quantifiable compensating value in
 shorter time until all faults have been examined \cite{PLDI13}.
 
 %\subsubsection{Normalization Optimizations}

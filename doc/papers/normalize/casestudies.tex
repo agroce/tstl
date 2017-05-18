@@ -9,11 +9,10 @@ Python interface to Z3 \cite{z3}, but did not find faults thus far;
 normalization did help produce more comprehensible and uniform Z3
 quick tests \cite{icst2014}.
 
-These experiments are not intended to provide a full evaluation of
-normalization and generalization, but to establish the basic potential
+These experiments are intended to establish the basic potential
 value of
-the techniques, and some initial data on core research questions, over
-seven Python libraries ranging from small to large and complex.
+the techniques, and provide, for
+seven Python libraries ranging from small to large and complex, some initial data on research questions.
 These are:
 {\bf RQ1:} How effectively does normalization reduce the number of
 failures reported? {\bf RQ2:} How often does normalization lose
@@ -63,7 +62,7 @@ were required to sample each mutant at least twice.  Of these,
 238 pairs had independently detectable faults.  For XML, only 5 of 357
 mutants generated were detectable due to a weak specification.  There
 were thus only 9 pairs with independently
-detectable faults.
+detectable faults, and we evaluated all of these.
 
 \subsubsection{RQ1: Reduction in number of failures}
 
@@ -83,7 +82,7 @@ perfect (1 failure); for XML, only one mutant was perfectly
 normalized.  Normalization was perfect (1 or 2 failures\footnote{Yes,
   in some cases, a single test case detects either fault unless both
   are fixed.}) for 115 of the 238 AVLTree pairs, but none of the XML
-pairs.  Even when the improvement was perfect, it was usually quite dramatic, from about 500 failures on average per mutant or
+pairs.  Even when the result was not perfect, improvment was usually quite dramatic, from about 500 failures on average per mutant or
 mutant pair for AVL and about
 100 for XML to less than 5 for AVL and less than 10 for XML.
 
@@ -313,7 +312,8 @@ SortedContainers & 168 & 80.8 & 14.4 & 95 & 168 & 13.2 & 7.4 & 27 & 0.09 & 2 & 6
 
 SymPy \cite{SymPy} is a widely used open source pure Python library
 for symbolic mathematics.  SymPy is used by several other projects,
-has over 400 contributors, over 25,000 commits to date, and over
+has over 400 contributors, has over 25,000 commits to date, and consists
+of more than
 225KLOC.  The TSTL tester for SymPy focuses on core expressions and
 algebraic simplification, and covers about 15KLOC and 21,000 branches of
 the system.  Testing this core resulted in discovery of a number
@@ -558,7 +558,7 @@ with dozens of classes and hundreds of functions.  Most of the code involved in 
 functionality is the C++ source for ArcGIS itself (which is not
 available), but the released Python interface code alone is over 50KLOC.
 We have  discovered and reported six crash-inducing faults in
-ArcPy/ArcGIS.  
+ArcPy/ArcGIS \cite{tstlsttt}.  
 %It is critical to understand these
 %faults and the behaviors that trigger them to modify the harness to
 %avoid triggering these faults, while restricting other testing as
@@ -655,7 +655,7 @@ arcpy.SelectLayerByAttribute\_management
 \end{code}
 }
 \caption{Test with reduction-only for ArcPy.}
-%\vspace{-0.33in}
+\vspace{-0.15in}
 \label{esriorig}
 \end{figure}
 
