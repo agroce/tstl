@@ -36,7 +36,7 @@ delta-debugging to minimize tests before saving them, but we have
 also instructed {\tt tstl\_rt} to simply save the original test case {\tt
   --full}.  The unreduced test (which causes Python to enter an
 infinite recursion sequence) consists of 72 steps, saved in a
-non-executable, but basically human-readable, textual
+non-executable, technically (but not very) human-readable, textual
 format (in an automatically generated file name, based on the process ID).  This is not a very useful test, so we want to reduce
 it:
 
@@ -93,7 +93,7 @@ the current release than reported in that paper, due to the
 implementation of a useful heuristic for reducing nearly 1-minimal
 tests suggested by David R. MacIver \cite{MacIver}, the author of the Hypothesis tool.}.  By default, the TSTL random test generator
 reduces tests before saving them, and the standalone {\tt
-  tstl\_reduce} tool is use to normalize interesting tests.  Calling
+  tstl\_reduce} tool is used to normalize interesting tests.  Calling
 {\tt tstl\_rt} with the {\tt --normalize} option avoids going through
 the standalone tool.  Normalization here pays off by revealing that
 the use of a {\tt Rational} and exact numeric/symbol values are not
