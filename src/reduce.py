@@ -105,7 +105,7 @@ def sandboxReplay(test):
         print "TEST FAILS"
     print "SANDBOX RUN FAILS: TEST LENGTH NOW",len(test)
     bestreduce = open("lastreduction." + str(os.getpid()) + ".test",'w')
-    for l in open("tmptest.txt"):
+    for l in open(tmpName):
         bestreduce.write(l)
     bestreduce.close()
     return True
@@ -174,7 +174,7 @@ def main():
         elif config.multiple:
             rs = sut.reductions(r,pred,verbose=config.verbose,recursive=config.recursive,limit=config.limit,keepLast=config.keepLast)
         elif config.decompose:
-            print "DECOMPOSING"
+            print "DECOMPOSING..."
             rs = sut.coverDecompose(r,verbose=config.verbose,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         print "REDUCED IN",time.time()-start,"SECONDS"
         if (not config.multiple) and (not config.decompose):

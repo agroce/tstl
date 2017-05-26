@@ -79,10 +79,6 @@ def sandboxReplay(test):
     if not "--quietSandbox" in sys.argv:        
         print "TEST FAILS"
     print "SANDBOX RUN FAILS: TEST LENGTH NOW",len(test)
-    bestreduce = open("lastreduction." + str(os.getpid()) + ".test",'w')
-    for l in open("tmptest.txt"):
-        bestreduce.write(l)
-    bestreduce.close()
     return True
 
 def main():
