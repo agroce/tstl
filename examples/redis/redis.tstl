@@ -81,7 +81,7 @@ pool: <database> 5
 #<r>.touch(<key>) -- no support in redis-py
 <r>.ttl(<key>)
 <r>.type(<key>)
-#<r>.unlink(<key>) -- no support in redis-pu
+#<r>.unlink(<key>) -- no support in redis-py
 (<int,2> > 0) and (<int,2> < 3) -> <r>.wait(<int>,<int>)
 
 #lists
@@ -153,12 +153,14 @@ pool: <database> 5
 <r>.publish(<channel>,<val>)
 
 <pubsub> := <r>.pubsub()
-<pubsub>.subscribe(<channel>)
-<pubsub>.subscribe(<pattern>)
-{AttributeError} <pubsub>.get_message()
-<pubsub>.unsubscribe()
-<pubsub>.unsubscribe(<channel>)
-<pubsub>.unsubscribe(<pattern>)
+~<pubsub>.subscribe(<channel>)
+~<pubsub>.subscribe(<pattern>)
+{AttributeError} ~<pubsub>.get_message()
+~<pubsub>.unsubscribe()
+~<pubsub>.unsubscribe(<channel>)
+~<pubsub>.unsubscribe(<pattern>)
+
+# close is only operation that allows reset, to help with FD exhaustion problems
 <pubsub>.close() # without close, overwhelms FDs quickly; with close, overwhelms eventually
 
 #from here on, use pipes in place of connections
@@ -182,10 +184,10 @@ pool: <database> 5
 {redis.exceptions.ResponseError} <pipe>.renamenx(<key>,<key>)
 {redis.exceptions.ResponseError} <pipe>.restore(<key>,<int>,<dump>)
 {redis.exceptions.ResponseError} <pipe>.sort(<key>)
-#<pipe>.touch(<key>) -- no support in redis-pu
+#<pipe>.touch(<key>) -- no support in redis-py
 <pipe>.ttl(<key>)
 <pipe>.type(<key>)
-#<pipe>.unlink(<key>) -- no support in redis-pu
+#<pipe>.unlink(<key>) -- no support in redis-py
 (<int,2> > 0) and (<int,2> < 3) -> <pipe>.wait(<int>,<int>)
 
 #lists
