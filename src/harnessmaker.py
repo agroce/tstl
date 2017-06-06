@@ -44,13 +44,15 @@ def parse_args():
                         help='Name of the class representing the SUT (default = sut)')
     parser.add_argument('-n', '--noCover', action='store_true',
                         help='Disable generating coverage collection support.  Faster testing, but no coverage info!')
-    parser.add_argument('-r', '--coverreload', action='store_true',
+    parser.add_argument('-r', '--coverReload', action='store_true',
                         help='Generate coverage for module reload behavior.')
-    parser.add_argument('-i', '--coverinit', action='store_true',
+    parser.add_argument('-i', '--coverInit', action='store_true',
                         help='Generate coverage for SUT initialization behavior.')
-    parser.add_argument('-R', '--defaultreplay', action='store_true',
+    parser.add_argument('-e', '--enumerateEnabled', action='store_true',
+                        help='Enumerate enabled actions instead of trying to find one, useful when |actions| typically >> |enabled|.')    
+    parser.add_argument('-R', '--defaultReplay', action='store_true',
                         help='Backtracking defaults to replay method.')
-    parser.add_argument('-a', '--ignoreangles', action='store_true',
+    parser.add_argument('-a', '--ignoreAngles', action='store_true',
                         help='Do not use angle brackets as TSTL markers, for use with some languages.')
     parser.add_argument('-s', '--stats', action='store_true',
                         help='Enable statistics on each action.  Slows exection considerably.')
@@ -93,7 +95,7 @@ def make_config(pargs, parser):
     return nt_config   
     
 def preprocess_angle_brackets(line):
-    if config.ignoreangles:
+    if config.ignoreAngles:
         return line
     repLine = line.replace("<[","%[")
     repLine = repLine.replace("]>","]%")
@@ -326,7 +328,7 @@ def genInitialization():
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "_used[" + str(x) + "] = True"
             genCode.append(s + "\n")
-    if (not config.noCover) and config.coverinit:
+    if (not config.noCover) and config.coverInit:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     if firstInit:
         genCode.append("# BEGIN INITIALIZATION CODE\n")
@@ -337,7 +339,7 @@ def genInitialization():
     if firstInit:
         genCode.append("# END INITIALIZATION CODE\n")
         firstInit = False    
-    if (not config.noCover) and config.coverinit:
+    if (not config.noCover) and config.coverInit:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
 
@@ -1158,7 +1160,7 @@ def main():
     for f in featureSet:
         genCode.append(baseIndent + 'self.__features.append(r"' + f + '")\n')
 
-    if not config.defaultreplay:
+    if not config.defaultReplay:
         genCode.append(baseIndent + "self.__replayBacktrack = False\n")
     else:
         genCode.append(baseIndent + "self.__replayBacktrack = True\n")
@@ -1210,6 +1212,10 @@ def main():
     genCode.append(baseIndent + "self.__propCode = {}\n")
     genCode.append(baseIndent + 'self.__orderings["<<RESTART>>"] = -1\n')
     genCode.append(baseIndent + "self.__log = None\n")
+    if config.enumerateEnabled:
+        genCode.append(baseIndent + "self.__enumerateEnabled = True\n")
+    else:
+        genCode.append(baseIndent + "self.__enumerateEnabled = False\n")        
     genCode.append(baseIndent + "self.__verboseActions = False\n")    
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
@@ -1276,7 +1282,7 @@ def main():
         #genCode.append(baseIndent + "self.__currStatements = set()\n")
         #genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         #genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
-        if config.coverreload:
+        if config.coverReload:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     genCode.append("# BEGIN RELOAD CODE\n")
     for l in import_modules:
@@ -1286,7 +1292,7 @@ def main():
     #    s = baseIndent + l
     #    genCode.append(s)
     genCode.append("# END RELOAD CODE\n")        
-    if (not config.noCover) and config.coverreload:
+    if (not config.noCover) and config.coverReload:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
     genInitialization()

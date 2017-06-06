@@ -204,7 +204,10 @@ def highLowClassProbs(self,rgen, P = 0.5, file = None, highProb = 0.9):
     return probs
 
 def randomEnabledClassProbs(self,rgen,probs):
-    acts = self.__actions
+    if self.__enumerateEnabled:
+        enableds = self.enabled()
+    else:
+        enableds = None            
     a = None
     while a == None:
         r = rgen.random()
@@ -215,7 +218,7 @@ def randomEnabledClassProbs(self,rgen,probs):
             if p > r:
                 ac = tac
                 break
-        a = self.randomEnabled(rgen,actFilter = lambda act:self.actionClass(act) == ac)
+        a = self.randomEnabled(rgen,actFilter = lambda act:self.actionClass(act) == ac, enabledActs=enableds)
         if a == None:
             if len(probs) == 1:
                 return None
@@ -231,13 +234,21 @@ def randomEnabledClassProbs(self,rgen,probs):
                 break
     return a
 
-def randomEnabled(self,rgen,actFilter=None):
+def setEnumerateEnabled(self,bval):
+    self.__enumerateEnabled = bval
+
+def randomEnabled(self,rgen,actFilter=None,enabledActs=None):
     """
     Return a random enabled action, or None if no such action can be produced, based on a provided random generator
     """
-    acts = self.__actions
+    if enabledActs != None:
+        acts = list(enabledActs)
+    else:
+        acts = self.__actions
     if filter != None:
         acts = filter(actFilter,acts)
+    if self.__enumerateEnabled:
+        return rgen.choice(filter(lambda (s, g, a): g(), acts))
     a = None
     while a == None:
         if len(acts) == 1:
@@ -261,6 +272,8 @@ def randomEnableds(self,rgen,n):
 
     retActs = []
     acts = self.__actions
+    if self.__enumerateEnabled:
+        acts = self.enabled()    
     while len(retActs) < n:
         if len(acts) == 1:
             p = 0
@@ -282,6 +295,8 @@ def randomEnabledPred(self,rgen,n,pred):
 
     tries = 0
     acts = self.__actions
+    if self.__enumerateEnabled:
+        acts = self.enabled()
     a = None
     lastSafe = None
     while tries < n:
