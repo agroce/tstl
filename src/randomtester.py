@@ -65,7 +65,11 @@ def parse_args():
     parser.add_argument('--progress', action='store_true',
                         help="Turn on progress report.")
     parser.add_argument('--timedProgress', type=int, default=30,
-                        help="Turn on progress reports at x second intervals (default = 30 seconds).")        
+                        help="Turn on progress reports at x second intervals (default = 30 seconds).")
+    parser.add_argument('--enumerateEnabled', action='store_true',
+                        help="Instead of guessing enabled actions, enumerate them; can speed testing greatly for cases where almost all actions are usually disabled.")
+    parser.add_argument('--noEnumerateEnabled', action='store_true',
+                        help="Turn off enumeration of enabled actions in SUTs compiled to default to that behavior.")
     parser.add_argument('-k', '--keepLast', action='store_true',
                         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument('--swarmP', type=float, default=0.5,
@@ -549,6 +553,18 @@ def main():
             sut.stopCoverage()
         except:
             pass
+
+    if config.enumerateEnabled:
+        try:
+            sut.setEnumerateEnabled(True)
+        except:
+            pass
+
+    if config.noEnumerateEnabled:
+        try:
+            sut.setEnumerateEnabled(False)
+        except:
+            pass        
         
     if config.verboseActions:
         sut.verbose(True)
