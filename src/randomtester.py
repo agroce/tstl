@@ -489,15 +489,14 @@ def collectExploitable():
             reducePool.append((list(sut.test()),set(sut.newBranches()),set(sut.newStatements())))
 
 def printStatus(elapsed,step=None):
-    global sut
+    global sut, nops
     print "TEST #"+str(ntests),
     if step != None:
         print "STEP #"+str(step),
     print "("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),
     if not config.noCover:
-        print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]"
-    else:
-        print
+        print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]",
+    print nops, "TOTAL ACTIONS (" + str(nops/elapsed) + "/s)"
     sys.stdout.flush()
         
 def main():
