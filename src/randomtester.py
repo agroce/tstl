@@ -138,6 +138,8 @@ def parse_args():
                         help="Do not alpha convert failing tests.")        
     parser.add_argument('--compareFails', action='store_true',
                         help="Compare all failing tests.")
+    parser.add_argument('--noSwarmDependencies', action='store_true',
+                        help="[EXPERIMENTAL] This forces swarm to not use dependencies.  Not so much experimental as just a bad idea.")
     parser.add_argument('--genDepth', type=int, default=None,
                         help = "[EXPERIMENTAL] Generalization depth for cloud overlap comparisons (default = None).")
     parser.add_argument('--stutter', type=float, default=None,
@@ -704,7 +706,7 @@ def main():
         ntests += 1
 
         if config.swarm:
-            sut.standardSwarm(R,classProb=swarmClassProbs,P=config.swarmP)
+            sut.standardSwarm(R,classProb=swarmClassProbs,P=config.swarmP, noDependencies=config.noSwarmDependencies)
             if config.progress:
                 print "CONFIG:",(sut.swarmConfig())
 
@@ -740,7 +742,7 @@ def main():
                 sys.stdout.flush()
             if (config.swarmSwitch != None) and (s in switches):
                 if config.highLowSwarm == None:
-                    sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+                    sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP, noDependencies=config.noSwarmDependencies)
                     if config.progress:
                         print "NEW CONFIG:",(sut.swarmConfig())                    
                 else:
@@ -748,7 +750,7 @@ def main():
 
             if (config.swarmLength != None) and (((s + 1) % config.swarmLength) == 0):
                 if config.highLowSwarm == None:
-                    sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP)
+                    sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP, noDependencies=config.noSwarmDependencies)
                     if config.progress:
                         print "NEW CONFIG:",(sut.swarmConfig())                    
                 else:

@@ -248,7 +248,10 @@ def randomEnabled(self,rgen,actFilter=None,enabledActs=None):
     if filter != None:
         acts = filter(actFilter,acts)
     if self.__enumerateEnabled:
-        return rgen.choice(filter(lambda (s, g, a): g(), acts))
+        try:
+            return rgen.choice(filter(lambda (s, g, a): g(), acts))
+        except IndexError:
+            return None
     a = None
     while a == None:
         if len(acts) == 1:
@@ -490,7 +493,7 @@ def readProbFile(self, file, returnList=False):
         l.append((classProb[k],k))
     return l
     
-def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None):
+def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None, noDependencies = False):
     """
     Enables all actions, then sets a swarm configuration based on rgen, P = probability of enabling an action class,
     file is a file (format action %%%% probability) giving probabilities for inclusion)
@@ -510,7 +513,11 @@ def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None):
                 newEnabled.append(c)
     if newEnabled == []:
         newEnabled.append(rgen.choice(self.__actionClasses))
+
     changed = True
+    if noDependencies:
+        changed = False
+    
     while changed:
         changed = False
         
