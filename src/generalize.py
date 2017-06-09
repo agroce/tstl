@@ -87,7 +87,7 @@ def main():
 
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print('Reducing using config={}'.format(config))
+    print('Generalizing using config={}'.format(config))
 
     sut = SUT.sut()
 
