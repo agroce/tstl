@@ -1,0 +1,82 @@
+@import pyfakefs.fake_filesystem
+@import os
+@import shutil
+
+<@
+def newFakeOS():
+    fs = pyfakefs.fake_filesystem.FakeFilesystem()
+    if os.path.exists('/Volumes/ramdisk/test'):
+        shutil.rmtree('/Volumes/ramdisk/test')
+    os.mkdir('/Volumes/ramdisk/test')
+    fs.CreateDirectory('/Volumes')	
+    fs.CreateDirectory('/Volumes/ramdisk')
+    fs.CreateDirectory('/Volumes/ramdisk/test')
+    fakeOS = pyfakefs.fake_filesystem.FakeOsModule(fs)
+    return fakeOS
+@>
+
+pool: <os> 1 REF
+pool: <fd> 5 REF
+pool: <stat> 5 REF
+
+pool: <path> 5
+
+pool: <component> 5
+
+pool: <str> 5
+
+finally: <os>.close(<fd>)
+
+<component> := <["alpha","beta","gamma","delta","epsilon"]>
+
+<path> := "/Volumes/ramdisk/test"
+<path> := <path> + "/" + <component>
+
+<str> := ""
+<str> := <str> + <['a'..'z']>
+<str> := <str> + " "
+
+<os> := newFakeOS()
+
+{IOError,OSError,TypeError} ~<os>.mkdir(<path>)
+{IOError,OSError,AttributeError} ~<os>.makedirs(<path>)
+
+# symlinks have lots of issues, some handled by guard
+#{IOError,OSError,TypeError,AttributeError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
+{IOError,OSError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
+
+# Guard needed due to bug in pyfakefs
+{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC) 
+
+{OSError} ~<os>.close(<fd>)
+{OSError} ~<os>.write(~<fd>,<str>)
+
+{OSError} ~<os>.fstat(~<fd>)
+
+{OSError} ~<os>.remove(<path>)
+
+{OSError} <path,1> != "/Volumes/ramdisk/test" -> ~<os>.rmdir(<path>)
+# Guard needed so you don't delete the "root" of the tested FS
+{OSError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
+
+{OSError} sorted(~<os>.listdir(<path>))
+
+{OSError} ~<os>.stat(<path>)
+{OSError} ~<os>.lstat(<path>)
+
+{OSError} ~<os>.path.isdir(<path>)
+{OSError} ~<os>.path.isfile(<path>)
+{OSError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
+os.path.exists(<path>)
+os.path.dirname(<path>)
+                   
+reference: newFakeOS\(\) ==> os
+
+compare: listdir
+
+compare: isdir
+compare: isfile
+#compare: getsize -- not compared to avoid bug
+compare: exists
+compare: dirname
+
