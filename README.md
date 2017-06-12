@@ -43,7 +43,10 @@ on Software Testing and Analsysis (ISSTA) 2015 papers at
 http://www.cs.cmu.edu/~agroce/nfm15.pdf and
 http://www.cs.cmu.edu/~agroce/issta15.pdf, with some implementation
 details or concepts that are not present in the more up-to-date and
-complete paper.
+complete paper.  There is a more recent paper descrbing the "normalization"
+idea in more detail, http://www.cs.cmu.edu/~agroce/issta17.pdf, as well as a
+tool paper describing how to use TSTL's test manipulation commands 
+(http://www.cs.cmu.edu/~agroce/issta17tool.pdf).
 
 The NFM and ISSTA papers use an early version of TSTL syntax, which marks
 pools and TSTL constructs with % signs.  "Modern" TSTL uses <> by
