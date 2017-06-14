@@ -127,13 +127,10 @@ def main():
         if checkRefs:
             if t.getRefCode(name) != None:
                 for r in t.getRefCode(name):
-                    if t.getOkExceptions(name) == "":
-                        outf.write(t.prettyName(r) + "\n")
-                    else:
-                        outf.write("try:\n")                
-                        outf.write("  " + t.prettyName(r) + "\n")
-                        outf.write("except (" + t.getOkExceptions(name) + "):\n")
-                        outf.write("  pass\n")                    
+                    outf.write("try:\n")                
+                    outf.write("  " + t.prettyName(r) + "\n")
+                    outf.write("except:\n")
+                    outf.write("  pass\n")                    
         if checkProps:
             outf.write("check()\n")
         if makeRegression:
