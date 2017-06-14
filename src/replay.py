@@ -9,6 +9,30 @@ sys.path.append(current_working_dir)
 
 import sut as SUT
 
+def trace_lines(frame, event, arg):
+    if event != 'line':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    print '   %s line %s' % (func_name, line_no)
+    sys.stdout.flush()
+
+def trace_calls(frame, event, arg):
+    if event != 'call':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name == 'write':
+        # Ignore write() calls from print statements
+        return
+    line_no = frame.f_lineno
+    filename = co.co_filename
+    print 'Call to %s on line %s of %s' % (func_name, line_no, filename)
+    sys.stdout.flush()    
+    return trace_lines
+    
 def main():
 
     if "--help" in sys.argv:
@@ -20,6 +44,7 @@ def main():
         print "--coverage:     report code coverage"        
         print "--internal:     report detailed code coverage information"
         print "--html:         produce HTML report on coverage"
+        print "--trace:        trace lines executed (does not work with SUTs compiled with coverage)"
         sys.exit(0)
     
     if not (("--coverage" in sys.argv) or ("--internal" in sys.argv)):
@@ -66,15 +91,21 @@ def main():
         name = l[:-1]
         if name == "<<RESTART>>":
             #print "RESTART"
-            rout.write("RESTART\n")
+            rout.write("<<RESTART>>\n")
+            rout.flush()
             sut.restart()
         else:
             if verbose:
                 print "STEP #"+str(i)+":",
-            rout.write("STEP " + str(i) + ": " + name + "\n")
+            rout.write(l)
+            rout.flush()
             action = sut.playable(name)
             if action[1](): # check the guard
+                if "--trace" in sys.argv:
+                    sys.settrace(trace_calls)
                 stepOk = sut.safely(action)
+                if "--trace" in sys.argv:
+                    sys.settrace(None)
                 if not stepOk:
                     print "FAILED STEP"
                     print sut.failure()
