@@ -1097,13 +1097,10 @@ def main():
 
         genCode.append("\n")
 
-        if newC[:-1] in allNames:
-            if allNames[newC[:-1]] != newCguard:
-                print "ERROR: TSTL does not allow two instances of the same action with different guards:"
-                print "action:",newC[:-1],"guard:",newCguard
-                sys.exit(1)
-        else:
-            allNames[newC[:-1]] = newCguard
+        while (newC[:-1] in allNames) and (allNames[newC[:-1]] != newCguard):
+            newC = newC[:-1] + " " + newC[-1]
+
+        allNames[newC[:-1]] = newCguard
         
         d = "self.__actions.append(("
         d += "'''" + newC[:-1] +" ''',"
