@@ -363,7 +363,9 @@ def buildActivePool():
                     print "REDUCING POOL TEST FROM",len(t),"STEPS...",
                 r = sut.reduce(t,sut.coversAll(ss,bs,checkProp=not(config.noCheck)),verbose=False)
                 if config.verbose or config.verboseExploit:            
-                    print "TO",len(r),"STEPS"
+                    print "TO",len(r),"STEPS:"
+                    sut.prettyPrintTest(r)
+                    print
                 sut.replay(r)
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
                 # Have to make sure if we got some new coverage out of this it's in the coverage map
@@ -427,7 +429,7 @@ def buildActivePool():
                 
     if config.verbose or config.verboseExploit:
         print 'FULL POOL SIZE',len(fullPool)+len(hintPool),'ACTIVE POOL SIZE',len(activePool)
-    if (config.verbose or config.verboseExploit) and (len(activePool) < 10):
+    if (config.verbose or config.verboseExploit) and (len(activePool) < 10) and (len(activePool) > 0):
         print "ACTIVE POOL:"
         for t in activePool:
             print "="*30
@@ -439,16 +441,16 @@ def tryExploit():
         buildActivePool()
         if len(activePool) == 0:
             return
-        if config.verboseExploit or config.verbose:
-            print "EXPLOITING STORED TEST"
         et = R.choice(activePool)
+        if config.verboseExploit or config.verbose:
+            print "EXPLOITING STORED TEST ENDING IN",sut.prettyName(et[-1][0])        
         if R.random() < config.Pmutate:
             if config.verboseExploit or config.verbose:
                 print "MUTATING EXPLOITED TEST"
             if R.random() < config.Pcrossover:
-                if config.verboseExploit or config.verbose:
-                    print "USING CROSSOVER"                
                 et2 = R.choice(activePool)
+                if config.verboseExploit or config.verbose:
+                    print "CROSSOVER WITH TEST ENDING IN",sut.prettyName(et2[-1][0])                          
                 et = sut.crossover(et,et2,R)
             else:
                 et = sut.mutate(et,R)
@@ -492,13 +494,15 @@ def collectExploitable():
             reducePool.append((list(sut.test()),set(sut.newBranches()),set(sut.newStatements())))
 
 def printStatus(elapsed,step=None):
-    global sut, nops
+    global sut, nops, activePool, fullPool
     print "TEST #"+str(ntests),
     if step != None:
         print "STEP #"+str(step),
     print "("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),
     if not config.noCover:
         print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]",
+    if (config.exploit != None) and (config.verbose or config.verboseExploit):
+        print "[ POOLS: full",len(fullPool),"active",len(activePool),"]"
     print nops, "TOTAL ACTIONS (" + str(nops/elapsed) + "/s)"
     sys.stdout.flush()
         
