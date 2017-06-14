@@ -177,7 +177,7 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail, newCov = False):
-    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount
+    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount,fulltest
     test = list(test)
     sys.stdout.flush()
     if not newCov:
@@ -434,6 +434,7 @@ def buildActivePool():
             sut.prettyPrintTest(t)
             
 def tryExploit():
+    global fulltest, currtest
     if R.random() < config.exploit:
         buildActivePool()
         if len(activePool) == 0:
@@ -502,7 +503,7 @@ def printStatus(elapsed,step=None):
     sys.stdout.flush()
         
 def main():
-    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests
+    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest
     global failFileCount
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
     global hintPool, hintValueCounts
