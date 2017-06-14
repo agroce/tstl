@@ -1,0 +1,70 @@
+@import subprocess
+@import time
+
+# This won't work unless you have Haskell installed on your system
+
+<@
+cache = {}
+hits = 0
+largest = 0
+
+def wrapNeg(i):
+    if i < 0:
+       return "(" + str(i) + ")"
+    else:
+	return str(i)
+
+def evalCheck(expr):
+    global cache, hits, largest
+    if expr in cache:
+       hits += 1
+       return True
+    stime = time.time()
+    v = eval(expr)
+    elapsed = time.time()-stime
+    stime = time.time()
+    hv = heval(expr)
+    helapsed = time.time()-stime
+    if v != hv:
+       print "EXPRESSION:",expr
+       print "  Python evaluated to:",v
+       print "  Haskell evaluated to:",hv
+       return False
+    cache[expr] = True
+    if len(expr) > largest:
+       largest = len(expr)
+    print "NEW EXPR: len:",len(expr),"Python:",elapsed,"Haskell:",helapsed
+    print "CACHE SIZE:",len(cache),"LARGEST EXPR:",largest
+    return True
+
+def heval(s):
+    global cache, hits, largest
+    if s in cache:
+       hits += 1
+       return cache[s]
+    hs = s.replace("/"," `div` ")
+    p = subprocess.Popen(['ghci'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    output, output_err = p.communicate(hs)
+    for l in output.split("\n"):
+    	if l.find("Prelude> ") == 0:
+	   return int(l.split("Prelude> ")[1])
+@>
+
+pool: <expr> 10
+pool: <int> 10
+
+<int> := 0
+<int> := -1
+<int> := 1
+<int> += 1
+<int> *= 10
+<int> -= 1
+
+<expr> := wrapNeg(<int>)
+<expr> := "(" + <expr> + ")"
+<expr> := <expr> + " + " + <expr>
+<expr> := <expr> + " - " + <expr>
+<expr> := <expr> + " * " + <expr>
+#<expr> := <expr> + " / " + <expr>
+
+property: evalCheck(<expr>)
