@@ -502,7 +502,7 @@ def printStatus(elapsed,step=None):
     if not config.noCover:
         print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]",
     if (config.exploit != None) and (config.verbose or config.verboseExploit):
-        print "[ POOLS: full",len(fullPool),"active",len(activePool),"]"
+        print "[ POOLS: full",len(fullPool),"active",len(activePool),"]",
     print nops, "TOTAL ACTIONS (" + str(nops/elapsed) + "/s)"
     sys.stdout.flush()
         
