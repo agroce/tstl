@@ -62,9 +62,9 @@ def sortListMultiply(l,v):
     l.sort()
 
 def sortListMultiAdd(l,el):
-    for i in list(el):
-        sortListAdd(l,i)
-
+    l.extend(el)
+    l.sort()
+    
 def sortListDiscard(l,i):
     try:
         l.remove(i)
