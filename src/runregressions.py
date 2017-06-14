@@ -45,6 +45,10 @@ def main():
 
     if "--noCover" in sys.argv:
         nocover = True
+        try:
+            sut.stopCoverage()
+        except:
+            pass
     if "--verbose" in sys.argv:
         verbose = True
     if "--noCheck" in sys.argv:

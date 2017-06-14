@@ -46,13 +46,25 @@ def main():
         print "--html:         produce HTML report on coverage"
         print "--trace:        trace lines executed (does not work with SUTs compiled with coverage)"
         sys.exit(0)
-    
+
+    sut = SUT.sut()
+        
     if not (("--coverage" in sys.argv) or ("--internal" in sys.argv)):
         try:
             sut.stopCoverage()
         except:
             pass
 
+    if ("--trace" in sys.argv):
+        goodToTrace = False
+        try:
+            sut.stopCoverage()
+        except:
+            goodToTrace = True
+        if not goodToTrace:
+            print "CANNOT TRACE WHEN SUT IS COMPILED WITH COVERAGE.  REBUILD WITH --noCover"
+            sys.exit(1)
+        
     rout = open("replay.out",'w')
 
     file = sys.argv[1]
@@ -80,7 +92,6 @@ def main():
         else:
             lastWasHtml = False
                 
-    sut = SUT.sut()
     sut.restart()
     if logLevel != None:
         sut.setLog(logLevel)
