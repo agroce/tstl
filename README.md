@@ -7,7 +7,7 @@ at https://github.com/flipturnapps/TSTL-Java.
 
 TSTL produces a simple, universal interface for test generators to use
 -- it essentially turns a definition of valid tests into a graph with
-transitions, backtrack, replay, automatic reduction, and code coverage support.
+transitions, supporting exploration, backtrack, test replay, test reduction, and code coverage analysis.
 
 TSTL is not purely an academic toy: it's been used to find (and, thus, usually, fix) 
 real faults in real code, including ESRI's ArcPy (http://desktop.arcgis.com/en/arcmap/latest/analyze/arcpy/what-is-arcpy-.htm), sortedcontainers (https://github.com/grantjenks/sorted_containers),
@@ -71,6 +71,7 @@ application/library to be tested.
 Installation
 ------------
 
+You can grab a recent (but not always the latest) tstl more easily using pip.  `pip install tstl` should work fine.  If you want something even more recent you can:
 
     git clone https://github.com/agroce/tstl.git
     cd tstl
