@@ -1,0 +1,23 @@
+# the little "die hard 3" problem
+
+# This could be encoded a few other ways; you could remove the init and it still works,
+# and (if you leave the init) you could get rid of the ":=" on the emptying actions.
+# The := just shrinks the state-space a bit, since it is pretty pointless to empty an
+# already empty jug (and you know they start empty thanks to the init).
+
+pool: <big> 1
+pool: <small> 1
+
+init: <big> = 0
+init: <small> = 0
+
+<big> = 5                                           # FILL BIG
+<small> = 3                                         # FILL SMALL
+
+<big> := 0                                          # EMPTY BIG
+<small> := 0                                        # EMPTY SMALL
+
+p = min(<big>,(3-<small>)); <big>-=p; <small>+=p    # BIG INTO SMALL
+p = min(<small>,(5-<big>)); <small>-=p; <big>+=p    # SMALL INTO BIG
+
+property: <big> != 4
