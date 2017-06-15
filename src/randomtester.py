@@ -401,9 +401,14 @@ def buildActivePool():
             meanStatement = sum(statementCoverageCount.values()) / (len(statementCoverageCount) * 1.0)
         else:
             meanStatement = 0.0
-        #print "MEAN BRANCH",meanBranch,"MEAN STATEMENT",meanStatement
         bThreshold = meanBranch * config.exploitCeiling
         sThreshold = meanStatement * config.exploitCeiling
+        if config.verbose or config.verboseExploit:
+            print "MEAN BRANCH",meanBranch,"THRESHOLD",bThreshold,"/ MEAN STATEMENT",meanStatement,"THRESHOLD",sThreshold
+            print len(filter(lambda x:x <= bThreshold, branchCoverageCount.values())),
+            print "BRANCHES OF INTEREST OUT OF",len(branchCoverageCount),
+            print len(filter(lambda x:x <= sThreshold, statementCoverageCount.values())),
+            print "/ STATEMENTS OF INTEREST OUT OF",len(statementCoverageCount)
         for (t,bs,ss) in fullPool:
             added = False
             for b in bs:
