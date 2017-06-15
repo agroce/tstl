@@ -71,6 +71,7 @@ application/library to be tested.
 Installation
 ------------
 
+You can grab a recent (but not always the latest) tstl more easily using pip.  `pip install tstl` should work fine.  If you want something even more recent you can:
 
     git clone https://github.com/agroce/tstl.git
     cd tstl
