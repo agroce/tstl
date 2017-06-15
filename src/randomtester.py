@@ -406,9 +406,9 @@ def buildActivePool():
         if config.verbose or config.verboseExploit:
             print "MEAN BRANCH",meanBranch,"THRESHOLD",bThreshold,"/ MEAN STATEMENT",meanStatement,"THRESHOLD",sThreshold
             print len(filter(lambda x:x <= bThreshold, branchCoverageCount.values())),
-            print "BRANCHES OF INTEREST OUT OF",len(branchCoverageCount),
+            print "BRANCHES OF INTEREST OUT OF",len(branchCoverageCount),"/",
             print len(filter(lambda x:x <= sThreshold, statementCoverageCount.values())),
-            print "/ STATEMENTS OF INTEREST OUT OF",len(statementCoverageCount)
+            print "STATEMENTS OF INTEREST OUT OF",len(statementCoverageCount)
         for (t,bs,ss) in fullPool:
             added = False
             for b in bs:
