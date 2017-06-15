@@ -9,6 +9,11 @@ TSTL produces a simple, universal interface for test generators to use
 -- it essentially turns a definition of valid tests into a graph with
 transitions, backtrack, replay, automatic reduction, and code coverage support.
 
+TSTL is not purely an academic toy: it's been used to find (and, thus, usually, fix) 
+real faults in real code, including sortedcontainers (https://github.com/grantjenks/sorted_containers),
+gmpy2 (https://github.com/aleaxit/gmpy), sympy (http://www.sympy.org/en/index.html),
+and Python itself (https://bugs.python.org/issue27870).
+
 Some of you may be asking: "How does TSTL differ from the Hypothesis
 https://hypothesis.readthedocs.io/en/latest/ testing tool?"  There are a few
 answers.  First, TSTL is probably much less polished than Hypothesis,
