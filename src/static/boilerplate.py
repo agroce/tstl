@@ -1381,7 +1381,7 @@ def swapPools(self,test,p1,p2,after=0):
     newTest = map(lambda x: self.__names[x], newTest)
     return tPrefix+newTest
 
-def alphaConvert(self, test):
+def alphaConvert(self, test, verbose = False):
     """
     This ONLY performs renaming of pools to lowest values possible; it CAN in theory cause worse normalization.
     """
@@ -1392,6 +1392,8 @@ def alphaConvert(self, test):
         for p in self.__pools:
             count[p] = 0
         for s in test:
+            if "=" not in s[0]:
+                continue
             lhs = s[0].split(" = ")[0]
             lhsp = self.poolUses(lhs)
             for (p,n) in lhsp:
@@ -1399,7 +1401,8 @@ def alphaConvert(self, test):
                 if count[basep] < int(n):
                     p1new = p
                     p2new = p.replace(n,str(count[basep]))
-                    #print "REPLACING",p1new,"WITH",p2new
+                    if verbose:
+                        print "REPLACING",p1new,"WITH",p2new
                     newTest = map(lambda x: x[0].replace(p1new,"!!P1NEW!!"), test)
                     newTest = map(lambda x: x.replace(p2new,p1new), newTest)
                     newTest = map(lambda x: x.replace("!!P1NEW!!",p2new), newTest)
