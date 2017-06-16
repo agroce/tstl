@@ -19,9 +19,9 @@ log: 0 <expr>
 <v> := sympy.Symbol(<['x'..'z']>)
 <v> := sympy.Symbol(<['e'..'l']>,positive=True)
 
-<expr> := sympy.Rational(<c>,<c>)
-<expr> := <v>
 <expr> := <c>
+<expr> := <v>
+<expr> := sympy.Rational(<c>,<c>)
 
 <term> := <c> * <v> ** <c>
 <poly> := <term>
@@ -64,7 +64,7 @@ log: 0 <expr>
 {ValueError} <expr> := sympy.factor(<expr>)
 <expr> := sympy.collect(<expr>,<expr>)
 <expr> := sympy.cancel(<expr>)
-{PolynomialError} <expr> := sympy.apart(<expr>)
+{sympy.PolynomialError} <expr> := sympy.apart(<expr>)
 
 <expr> := sympy.trigsimp(<expr>)
 <expr> := sympy.expand_trig(<expr>)
