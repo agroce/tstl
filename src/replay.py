@@ -36,11 +36,12 @@ def trace_calls(frame, event, arg):
 def main():
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--coverage] [--internal] [--html directory]"
+        print "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--trace]"
         print "Options:"
         print "--noCheck:      do not run property checks"
         print "--logging:      set the logging level for the test"
         print "--verbose:      run with verbose action output"
+        print "--showActions:      run with verbose action output"        
         print "--coverage:     report code coverage"        
         print "--internal:     report detailed code coverage information"
         print "--html:         produce HTML report on coverage"
@@ -101,6 +102,8 @@ def main():
     for l in open(file):
         name = l[:-1]
         if name == "<<RESTART>>":
+            if "--showActions" in sys.argv:
+                print "<<RESTART>>"
             #print "RESTART"
             rout.write("<<RESTART>>\n")
             rout.flush()
@@ -111,6 +114,8 @@ def main():
             rout.write(l)
             rout.flush()
             action = sut.playable(name)
+            if "--showActions" in sys.argv:
+                print sut.prettyName(action[0])
             if action[1](): # check the guard
                 if "--trace" in sys.argv:
                     sys.settrace(trace_calls)
