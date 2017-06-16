@@ -1733,11 +1733,20 @@ def stopRelax(self):
     self.__relaxUsedRestriction = False
 
 def moduleFiles(self):
+    # This code is not very robust, tried to find locations for code coverage and avoid system library code
     files = []
     for m in self.__importModules:
         try:
             files.extend(m.__path__)
         except AttributeError:
-            files.append(os.path.dirname(m.__file__))
+            f = m.__file__
+            if f.find("python2.7") != -1:
+                # if it is a library file, grab the entire directory
+                f = os.path.dirname(m.__file__)
+                if f.split("/")[-1] in ["python2.7", "lib-dynload"]:
+                    # In general don't report coverage on Python core modules
+                    continue
+            files.append(f.replace(".pyc",".py"))
+    print "FILES:",files
     return files
         

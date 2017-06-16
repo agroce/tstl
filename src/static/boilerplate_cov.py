@@ -243,7 +243,7 @@ def coverDecompose(self,test,verbose=False,catchUncaught=False,checkProp=False):
             print "CONSTRUCTING TEST #"+str(i),"WITH GOAL",len(sgoal),"STATEMENTS AND",len(bgoal),"BRANCHES"
         t = self.reduce(test,self.coversAll(sgoal,bgoal,catchUncaught=catchUncaught,checkProp=checkProp),verbose=verbose)
         tests.append(t)
-        self.replay(t)
+        self.replay(t,catchUncaught=catchUncaught,checkProp=checkProp)
         currS = set(self.currStatements())
         currB = set(self.currBranches())
         allSCoverages.difference_update(currS)
