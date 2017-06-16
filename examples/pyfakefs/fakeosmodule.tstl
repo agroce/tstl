@@ -27,6 +27,8 @@ pool: <str> 5
 
 finally: <os>.close(<fd>)
 
+<os> := newFakeOS()
+
 <component> := <["alpha","beta","gamma","delta","epsilon"]>
 
 <path> := "/Volumes/ramdisk/test"
@@ -36,18 +38,16 @@ finally: <os>.close(<fd>)
 <str> := <str> + <['a'..'z']>
 <str> := <str> + " "
 
-<os> := newFakeOS()
-
-{IOError,OSError} ~<os>.mkdir(<path>)
-{IOError,OSError} ~<os>.makedirs(<path>)
+{IOError,OSError,AttributeError,TypeError} ~<os>.mkdir(<path>)
+{IOError,OSError,AttributeError,TypeError} ~<os>.makedirs(<path>)
 
 # symlinks have lots of issues, some handled by guard
-# {IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) ->
-{IOError,OSError} ~<os>.symlink(<path>,<path>)
-{IOError,OSError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
+#{IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
+# {IOError,OSError} ~<os>.symlink(<path>,<path>)
+{IOError,OSError,TypeError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
 
 # Guard needed due to bug in pyfakefs
-{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC) 
+{IOError,TypeError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC) 
 
 {OSError} ~<os>.close(<fd>)
 {OSError} ~<os>.write(~<fd>,<str>)
@@ -56,7 +56,7 @@ finally: <os>.close(<fd>)
 
 {OSError} ~<os>.remove(<path>)
 
-{OSError} <path,1> != "/Volumes/ramdisk/test" -> ~<os>.rmdir(<path>)
+{OSError,TypeError} <path,1> != "/Volumes/ramdisk/test" -> ~<os>.rmdir(<path>)
 # Guard needed so you don't delete the "root" of the tested FS
 {OSError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
 
@@ -65,19 +65,37 @@ finally: <os>.close(<fd>)
 {OSError} ~<os>.stat(<path>)
 {OSError} ~<os>.lstat(<path>)
 
+{OSError} ~<os>.readlink(<path>)
+
+{OSError,AttributeError,RuntimeError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
+
+{OSError} ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)
+
 {OSError} ~<os>.path.isdir(<path>)
-{OSError} ~<os>.path.isfile(<path>)
+{OSError,TypeError} ~<os>.path.isfile(<path>)
+{OSError,TypeError} ~<os>.path.isabs(<path>)
+{OSError,TypeError} ~<os>.path.islink(<path>)
 {OSError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
-os.path.exists(<path>)
+
+os.path.abspath(<path>)
 os.path.dirname(<path>)
-                   
+os.path.exists(<path>)
+os.path.lexists(<path>)
+
 reference: newFakeOS\(\) ==> os
 
 compare: listdir
+compare: readlink
+
+compare: abspath
+compare: dirname
+compare: exists
 
 compare: isdir
 compare: isfile
-compare: getsize 
-compare: exists
-compare: dirname
+
+compare: isabs
+compare: islink
+
+#compare: getsize
 
