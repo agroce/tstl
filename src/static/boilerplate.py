@@ -1747,6 +1747,5 @@ def moduleFiles(self):
                     # In general don't report coverage on Python core modules
                     continue
             files.append(f.replace(".pyc",".py"))
-    print "FILES:",files
     return files
         
