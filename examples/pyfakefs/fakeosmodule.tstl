@@ -38,11 +38,12 @@ finally: <os>.close(<fd>)
 
 <os> := newFakeOS()
 
-{IOError,OSError,TypeError} ~<os>.mkdir(<path>)
-{IOError,OSError,AttributeError} ~<os>.makedirs(<path>)
+{IOError,OSError} ~<os>.mkdir(<path>)
+{IOError,OSError} ~<os>.makedirs(<path>)
 
 # symlinks have lots of issues, some handled by guard
-#{IOError,OSError,TypeError,AttributeError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
+# {IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) ->
+{IOError,OSError} ~<os>.symlink(<path>,<path>)
 {IOError,OSError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
 
 # Guard needed due to bug in pyfakefs
@@ -59,7 +60,7 @@ finally: <os>.close(<fd>)
 # Guard needed so you don't delete the "root" of the tested FS
 {OSError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
 
-{OSError} sorted(~<os>.listdir(<path>))
+{IOError,OSError} sorted(~<os>.listdir(<path>))
 
 {OSError} ~<os>.stat(<path>)
 {OSError} ~<os>.lstat(<path>)
@@ -76,7 +77,7 @@ compare: listdir
 
 compare: isdir
 compare: isfile
-#compare: getsize -- not compared to avoid bug
+compare: getsize 
 compare: exists
 compare: dirname
 
