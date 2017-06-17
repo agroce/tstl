@@ -66,38 +66,38 @@ finally: <os>.close(<fd>)
 # Guard needed due to bug in pyfakefs
 {IOError,TypeError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC) 
 
-{OSError} ~<os>.close(<fd>)
-{OSError} ~<os>.write(~<fd>,<str>)
+{OSError,TypeError} ~<os>.close(<fd>)
+{OSError,TypeError} ~<os>.write(~<fd>,<str>)
 
-{OSError} ~<os>.fstat(~<fd>)
+{OSError,TypeError} ~<os>.fstat(~<fd>)
 
-{OSError} ~<os>.remove(<path>)
+{OSError,TypeError} ~<os>.remove(<path>)
 
 {OSError,TypeError} <path,1> != "/Volumes/ramdisk/test" -> ~<os>.rmdir(<path>)
 # Guard needed so you don't delete the "root" of the tested FS
 {OSError,TypeError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
 
-{IOError,OSError} sorted(~<os>.listdir(<path>))
+{IOError,OSError,TypeError} sorted(~<os>.listdir(<path>))
 
-{OSError} ~<os>.stat(<path>)
-{OSError} ~<os>.lstat(<path>)
+{OSError,TypeError} ~<os>.stat(<path>)
+{OSError,TypeError} ~<os>.lstat(<path>)
 
-{OSError} ~<os>.readlink(<path>)
+{OSError,TypeError} ~<os>.readlink(<path>)
 
 #{OSError,AttributeError,RuntimeError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
 
-{OSError} ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)
+{OSError,TypeError} ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)
 
-{OSError} ~<os>.path.isdir(<path>)
+{OSError,TypeError} ~<os>.path.isdir(<path>)
 {OSError,TypeError} ~<os>.path.isfile(<path>)
 {OSError,TypeError} ~<os>.path.isabs(<path>)
 {OSError,TypeError} ~<os>.path.islink(<path>)
-{OSError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
+{OSError,TypeError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
 
-~<os>.path.abspath(<path>)
-~<os>.path.dirname(<path>)
-~<os>.path.exists(<path>)
-~<os>.path.lexists(<path>)
+{OSError,TypeError} ~<os>.path.abspath(<path>)
+{OSError,TypeError} ~<os>.path.dirname(<path>)
+{OSError,TypeError} ~<os>.path.exists(<path>)
+{OSError,TypeError} ~<os>.path.lexists(<path>)
 
 ~<glmod>.glob(<pglob>)
 
