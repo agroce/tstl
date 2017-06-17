@@ -6,8 +6,7 @@ implementation targets Python.  There is also a (beta) Java version,
 at https://github.com/flipturnapps/TSTL-Java.
 
 TSTL produces a simple, universal interface for test generators to use
--- it essentially turns a definition of valid tests into a graph with
-transitions, supporting exploration, backtrack, test replay, test reduction, and code coverage analysis.
+-- it essentially turns a definition of valid tests into a graph of system states with test actions and transitions; you, the tester, can largely ignore this, and view TSTL as a testing tool supporting test generation, test replay, test reduction, and code coverage analysis, with some sophisticated additions to pure random testing.
 
 TSTL is not purely an academic toy: it's been used to find (and, thus, usually, fix) 
 real faults in real code, including ESRI's ArcPy (http://desktop.arcgis.com/en/arcmap/latest/analyze/arcpy/what-is-arcpy-.htm), sortedcontainers (https://github.com/grantjenks/sorted_containers),
