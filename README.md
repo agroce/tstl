@@ -30,7 +30,7 @@ built for.  So, if you're testing a sorting implementation, Hypothesis
 is almost certainly much better.  If you're testing something like a
 file system, you might want to look into TSTL.  If you're testing a
 parser that takes a string as input, both tools might be useful,
-depending on your situation.
+depending on your situation.  One additional difference is that TSTL has considerable built-in support for performing differential/reference testing, where your SUT is compared to a reference implementation, possibly with some code to handle expected differences.
 
 The similarity is that both TSTL and Hypothesis don't look like
 traditional unit testing.  They instead let you define the idea of a
