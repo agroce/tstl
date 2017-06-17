@@ -1,6 +1,8 @@
 @import pyfakefs.fake_filesystem
+@import pyfakefs.fake_filesystem_glob
 @import os
 @import shutil
+@import glob
 
 <@
 def newFakeOS():
@@ -13,9 +15,14 @@ def newFakeOS():
     fs.CreateDirectory('/Volumes/ramdisk/test')
     fakeOS = pyfakefs.fake_filesystem.FakeOsModule(fs)
     return fakeOS
+
+def newFakeGlob(fakeos):
+    fakeGlob = pyfakefs.fake_filesystem_glob.FakeGlobModule(fakeos.filesystem)
+    return fakeGlob
 @>
 
 pool: <os> 1 REF
+pool: <glmod> 1 REF
 pool: <fd> 5 REF
 pool: <stat> 5 REF
 
@@ -23,16 +30,26 @@ pool: <path> 5
 
 pool: <component> 5
 
+pool: <pglob> 5
+
 pool: <str> 5
 
 finally: <os>.close(<fd>)
 
 <os> := newFakeOS()
+<glmod> := newFakeGlob(<os>)
 
-<component> := <["alpha","beta","gamma","delta","epsilon"]>
+<component> := <["alpha","beta","gamma","delta","epsilon","a","b","c","d","e","f","g","h","omega","lambda","phi"]>
 
 <path> := "/Volumes/ramdisk/test"
 <path> := <path> + "/" + <component>
+
+<pglob> := <path>
+<pglob> := <pglob>.replace(<component>,"*")
+<pglob> := <pglob>.replace(<component>,"*",1)
+<pglob> := <pglob>.replace(<component>,"?")
+<pglob> := <pglob>.replace(<component>,"?",1)
+<pglob> := <pglob>.replace("?","??",1)
 
 <str> := ""
 <str> := <str> + <['a'..'z']>
@@ -58,7 +75,7 @@ finally: <os>.close(<fd>)
 
 {OSError,TypeError} <path,1> != "/Volumes/ramdisk/test" -> ~<os>.rmdir(<path>)
 # Guard needed so you don't delete the "root" of the tested FS
-{OSError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
+{OSError,TypeError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
 
 {IOError,OSError} sorted(~<os>.listdir(<path>))
 
@@ -67,7 +84,7 @@ finally: <os>.close(<fd>)
 
 {OSError} ~<os>.readlink(<path>)
 
-{OSError,AttributeError,RuntimeError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
+#{OSError,AttributeError,RuntimeError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
 
 {OSError} ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)
 
@@ -77,12 +94,15 @@ finally: <os>.close(<fd>)
 {OSError,TypeError} ~<os>.path.islink(<path>)
 {OSError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
 
-os.path.abspath(<path>)
-os.path.dirname(<path>)
-os.path.exists(<path>)
-os.path.lexists(<path>)
+~<os>.path.abspath(<path>)
+~<os>.path.dirname(<path>)
+~<os>.path.exists(<path>)
+~<os>.path.lexists(<path>)
+
+~<glmod>.glob(<pglob>)
 
 reference: newFakeOS\(\) ==> os
+reference: newFakeGlob\(.*\) ==> glob
 
 compare: listdir
 compare: readlink
@@ -99,3 +119,4 @@ compare: islink
 
 #compare: getsize
 
+compare: glob
