@@ -11,7 +11,7 @@ transitions, supporting exploration, backtrack, test replay, test reduction, and
 
 TSTL is not purely an academic toy: it's been used to find (and, thus, usually, fix) 
 real faults in real code, including ESRI's ArcPy (http://desktop.arcgis.com/en/arcmap/latest/analyze/arcpy/what-is-arcpy-.htm), sortedcontainers (https://github.com/grantjenks/sorted_containers),
-gmpy2 (https://github.com/aleaxit/gmpy), sympy (http://www.sympy.org/en/index.html), 
+gmpy2 (https://github.com/aleaxit/gmpy), sympy (http://www.sympy.org/en/index.html), pyfakefs (https://github.com/jmcgeheeiv/pyfakefs),
 and Python itself (https://bugs.python.org/issue27870).
 
 Some of you may be asking: "How does TSTL differ from the Hypothesis
