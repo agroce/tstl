@@ -1,8 +1,6 @@
 @import pyfakefs.fake_filesystem
-@import pyfakefs.fake_filesystem_glob
 @import os
 @import shutil
-@import glob
 
 <@
 def newFakeOS():
@@ -16,93 +14,94 @@ def newFakeOS():
     fakeOS = pyfakefs.fake_filesystem.FakeOsModule(fs)
     return fakeOS
 
-def newFakeGlob(fakeos):
-    fakeGlob = pyfakefs.fake_filesystem_glob.FakeGlobModule(fakeos.filesystem)
-    return fakeGlob
+def displayTree(w,osmodule):
+    if osmodule == os:
+       return
+    paths = []
+    biggest = 0
+    for p in w:
+        theDir = p[0]
+        paths.append(theDir)
+        for f in p[2]:
+            fp = theDir + "/" + f
+            s = osmodule.path.getsize(fp)
+            paths.append((fp,s))
+            if s > biggest:
+                biggest = s
+    if (len(paths) > 5) and (biggest > 10):
+       print paths
 @>
 
 pool: <os> 1 REF
-pool: <glmod> 1 REF
-pool: <fd> 5 REF
+pool: <fd> 1 REF
 pool: <stat> 5 REF
 
 pool: <path> 5
 
 pool: <component> 5
 
-pool: <pglob> 5
-
 pool: <str> 5
 
 finally: <os>.close(<fd>)
 
 <os> := newFakeOS()
-<glmod> := newFakeGlob(<os>)
 
 <component> := <["alpha","beta","gamma","delta","epsilon","a","b","c","d","e","f","g","h","omega","lambda","phi"]>
 
 <path> := "/Volumes/ramdisk/test"
 <path> := <path> + "/" + <component>
 
-<pglob> := <path>
-<pglob> := <pglob>.replace(<component>,"*")
-<pglob> := <pglob>.replace(<component>,"*",1)
-<pglob> := <pglob>.replace(<component>,"?")
-<pglob> := <pglob>.replace(<component>,"?",1)
-<pglob> := <pglob>.replace("?","??",1)
-
 <str> := ""
 <str> := <str> + <['a'..'z']>
 <str> := <str> + " "
 
-{IOError,OSError,AttributeError,TypeError} ~<os>.mkdir(<path>)
-{IOError,OSError,AttributeError,TypeError} ~<os>.makedirs(<path>)
+{IOError,OSError} ~<os>.mkdir(<path>)
+{IOError,OSError} ~<os>.makedirs(<path>)
 
 # symlinks have lots of issues, some handled by guard
 #{IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
-# {IOError,OSError} ~<os>.symlink(<path>,<path>)
-{IOError,OSError,TypeError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
+#{IOError,OSError} ~<os>.symlink(<path>,<path>)
+{IOError,OSError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
 
 # Guard needed due to bug in pyfakefs
-{IOError,TypeError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC) 
+{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC) 
 
-{OSError,TypeError} ~<os>.close(<fd>)
-{OSError,TypeError} ~<os>.write(~<fd>,<str>)
+{OSError} ~<os>.close(<fd>)
+{OSError} ~<os>.write(~<fd>,<str>)
 
-{OSError,TypeError} ~<os>.fstat(~<fd>)
+{OSError} ~<os>.fstat(~<fd>)
 
-{OSError,TypeError} ~<os>.remove(<path>)
+{OSError} ~<os>.remove(<path>)
 
-{OSError,TypeError} <path,1> != "/Volumes/ramdisk/test" -> ~<os>.rmdir(<path>)
+{OSError} <path,1> != "/Volumes/ramdisk/test" -> ~<os>.rmdir(<path>)
 # Guard needed so you don't delete the "root" of the tested FS
-{OSError,TypeError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
+{OSError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
 
-{IOError,OSError,TypeError} sorted(~<os>.listdir(<path>))
+{IOError,OSError} sorted(~<os>.listdir(<path>))
 
-{OSError,TypeError} ~<os>.stat(<path>)
-{OSError,TypeError} ~<os>.lstat(<path>)
+{OSError} ~<os>.stat(<path>)
+{OSError} ~<os>.lstat(<path>)
 
-{OSError,TypeError} ~<os>.readlink(<path>)
+{OSError} ~<os>.readlink(<path>)
 
 #{OSError,AttributeError,RuntimeError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
 
-{OSError,TypeError} ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)
+{OSError} len([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)])
 
-{OSError,TypeError} ~<os>.path.isdir(<path>)
-{OSError,TypeError} ~<os>.path.isfile(<path>)
-{OSError,TypeError} ~<os>.path.isabs(<path>)
-{OSError,TypeError} ~<os>.path.islink(<path>)
-{OSError,TypeError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
+#{OSError, TypeError, AttributeError} displayTree(~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>), ~<os>)
 
-{OSError,TypeError} ~<os>.path.abspath(<path>)
-{OSError,TypeError} ~<os>.path.dirname(<path>)
-{OSError,TypeError} ~<os>.path.exists(<path>)
-{OSError,TypeError} ~<os>.path.lexists(<path>)
+{OSError} ~<os>.path.isdir(<path>)
+{OSError} ~<os>.path.isfile(<path>)
+{OSError} ~<os>.path.isabs(<path>)
+{OSError} ~<os>.path.islink(<path>)
+{OSError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
 
-~<glmod>.glob(<pglob>)
+{OSError} ~<os>.path.abspath(<path>)
+{OSError} ~<os>.path.dirname(<path>)
+{OSError} ~<os>.path.exists(<path>)
+{OSError} ~<os>.path.lexists(<path>)
 
 reference: newFakeOS\(\) ==> os
-reference: newFakeGlob\(.*\) ==> glob
 
 compare: listdir
 compare: readlink
@@ -117,6 +116,6 @@ compare: isfile
 compare: isabs
 compare: islink
 
-#compare: getsize
+compare: getsize\(
 
-compare: glob
+compare: walk
