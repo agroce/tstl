@@ -1745,10 +1745,11 @@ def moduleFiles(self):
             f = m.__file__
             if f.find("python2.7") != -1:
                 # if it is a library file, grab the entire directory
-                f = os.path.dirname(m.__file__)
-                if f.split("/")[-1] in ["python2.7", "lib-dynload"]:
-                    # In general don't report coverage on Python core modules
+                dirf = os.path.dirname(m.__file__)
+                if dirf.split("/")[-1] in ["python2.7", "lib-dynload"]:
                     continue
-            files.append(f.replace(".pyc",".py"))
+                f = dirf
+            else:
+                files.append(f.replace(".pyc",".py"))
     return files
         
