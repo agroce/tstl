@@ -30,6 +30,12 @@ def displayTree(w,osmodule):
                 biggest = s
     if (len(paths) > 5) and (biggest > 10):
        print paths
+
+def sortWalk(l):
+    newList = []
+    for (p,l1,l2) in l:
+        newList.append((p,sorted(l1),sorted(l2)))
+    return sorted(newList,key=lambda x:x[0])
 @>
 
 pool: <os> 1 REF
@@ -84,22 +90,24 @@ finally: <os>.close(<fd>)
 
 {OSError} ~<os>.readlink(<path>)
 
-#{OSError,AttributeError,RuntimeError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
+#{OSError} (<path,1> != <path,2>) and not(~<os>.path.isdir(<path,1>)) and not (~<os>.path.isdir(<path,2>)) -> ~<os>.rename(<path>,<path>)
 
-{OSError} len([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)])
+{OSError} sortWalk([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)])
 
 #{OSError, TypeError, AttributeError} displayTree(~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>), ~<os>)
+
+{OSError} ~<os>.path.exists(<path>)
+{OSError} ~<os>.path.lexists(<path>)
 
 {OSError} ~<os>.path.isdir(<path>)
 {OSError} ~<os>.path.isfile(<path>)
 {OSError} ~<os>.path.isabs(<path>)
 {OSError} ~<os>.path.islink(<path>)
+
 {OSError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
 
 {OSError} ~<os>.path.abspath(<path>)
 {OSError} ~<os>.path.dirname(<path>)
-{OSError} ~<os>.path.exists(<path>)
-{OSError} ~<os>.path.lexists(<path>)
 
 reference: newFakeOS\(\) ==> os
 
