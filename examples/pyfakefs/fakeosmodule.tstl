@@ -48,6 +48,8 @@ pool: <component> 5
 
 pool: <str> 5
 
+pool: <bytes> 5
+
 finally: <os>.close(<fd>)
 
 <os> := newFakeOS()
@@ -56,6 +58,9 @@ finally: <os>.close(<fd>)
 
 <path> := "/Volumes/ramdisk/test"
 <path> := <path> + "/" + <component>
+
+<bytes> := 1
+<bytes> += 1
 
 <str> := ""
 <str> := <str> + <['a'..'z']>
@@ -70,10 +75,14 @@ finally: <os>.close(<fd>)
 {IOError,OSError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
 
 # Guard needed due to bug in pyfakefs
-{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC) 
+{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
+{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_WRONLY | os.O_APPEND)
+{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
+{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDWR)
 
 {OSError} ~<os>.close(<fd>)
-{OSError} ~<os>.write(~<fd>,<str>)
+{IOError,OSError} ~<os>.write(~<fd>,<str>)
+{IOError,OSError} ~<os>.read(~<fd>,<bytes>)
 
 {OSError} ~<os>.fstat(~<fd>)
 
@@ -112,7 +121,7 @@ finally: <os>.close(<fd>)
 reference: newFakeOS\(\) ==> os
 
 compare: listdir
-compare: readlink
+compare: read
 
 compare: abspath
 compare: dirname
