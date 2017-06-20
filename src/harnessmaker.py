@@ -976,6 +976,8 @@ def main():
         if comparing:
             checkRaised = True
             checkRefRaised = True
+        newC = newC.replace("; result = result","")
+        refC = refC.replace("; result_REF = result_REF","")        
 
         beforeSig = afterSig = checkSig = ""
         if expectCode:
