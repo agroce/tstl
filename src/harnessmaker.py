@@ -52,6 +52,10 @@ def parse_args():
                         help='Enumerate enabled actions instead of trying to find one, useful when |actions| typically >> |enabled|.')    
     parser.add_argument('-R', '--defaultReplay', action='store_true',
                         help='Backtracking defaults to replay method.')
+    parser.add_argument('--forceRefExceptionMatch', action='store_true',
+                        help='Exceptions must match (basic type, not message) with reference.')
+    parser.add_argument('--forceStrongRefExceptionMatch', action='store_true',
+                        help='Exceptions must match message with reference.')        
     parser.add_argument('-a', '--ignoreAngles', action='store_true',
                         help='Do not use angle brackets as TSTL markers, for use with some languages.')
     parser.add_argument('-s', '--stats', action='store_true',
@@ -917,6 +921,11 @@ def main():
 
         checkRaised = False
         checkRefRaised = False
+
+        if config.forceRefExceptionMatch or config.forceStrongRefExceptionMatch:
+            checkRaised = True
+            checkRefRaised = True
+        
         postCode = None
         if newC.find(" => ") > -1:
             postCodeSplit = newC.split(" => ")
@@ -1075,8 +1084,13 @@ def main():
                 genCode.append(baseIndent + baseIndent + "except: pass\n")
             if postCode and checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
+            if config.forceStrongRefExceptionMatch:
+                genCode.append(baseIndent + "assert (raised == refRaised)\n")
+            elif config.forceRefExceptionMatch:
+                genCode.append(baseIndent + "assert (type(raised) == type(refRaised))\n")                
             if comparing:
-                genCode.append(baseIndent + "assert (raised == None) == (refRaised == None)\n")
+                if (not config.forceRefExceptionMatch) and not (config.forceStrongRefExceptionMatch):
+                    genCode.append(baseIndent + "assert (raised == None) == (refRaised == None)\n")
                 genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
         genCode.append(baseIndent + "if self.__verboseActions: print '='*50\n")                                      
