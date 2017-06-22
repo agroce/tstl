@@ -38,6 +38,8 @@ def sortWalk(l):
     return sorted(newList,key=lambda x:x[0])
 @>
 
+source: /Users/alex/pyfakefs/pyfakefs/fake_filesystem.py
+
 pool: <os> 1 REF
 pool: <fd> 1 REF
 pool: <stat> 5 REF
@@ -70,9 +72,9 @@ finally: <os>.close(<fd>)
 {IOError,OSError} ~<os>.makedirs(<path>)
 
 # symlinks have lots of issues, some handled by guard
-#{IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
+{IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
 #{IOError,OSError} ~<os>.symlink(<path>,<path>)
-{IOError,OSError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
+#{IOError,OSError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
 
 # Guard needed due to bug in pyfakefs
 {IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
@@ -99,9 +101,9 @@ finally: <os>.close(<fd>)
 
 {OSError} ~<os>.readlink(<path>)
 
-#{OSError} (<path,1> != <path,2>) and not(~<os>.path.isdir(<path,1>)) and not (~<os>.path.isdir(<path,2>)) -> ~<os>.rename(<path>,<path>)
+#{IOError,OSError} not(~<os>.path.isdir(<path,1>)) and not (~<os>.path.isdir(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.rename(<path>,<path>)
 
-{OSError} sortWalk([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)])
+#{OSError} sortWalk([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)])
 
 #{OSError, TypeError, AttributeError} displayTree(~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>), ~<os>)
 
