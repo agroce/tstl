@@ -384,7 +384,7 @@ def buildActivePool():
                     print "TO",len(r),"STEPS:"
                     sut.prettyPrintTest(r)
                     print
-                sut.replay(r,checkProp=not(config.noCheck)))
+                sut.replay(r,checkProp=not(config.noCheck),catchUncaught=True)
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
                 # Have to make sure if we got some new coverage out of this it's in the coverage map
                 # Also need to make sure quickTests know about it
