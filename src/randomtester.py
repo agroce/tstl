@@ -610,6 +610,7 @@ def main():
             if fn >= quickCount:
                 quickCount = fn + 1
             t = sut.loadTest(f)
+            allQuickTests.append(t)
             sut.replay(t,catchUncaught=True,checkProp=(not config.noCheck))
             # quick tests are obviously good sources for exploitation
             if (config.exploit != None) and (not config.noCoverageExploit):
