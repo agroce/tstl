@@ -177,7 +177,7 @@ def make_config(pargs, parser):
     return nt_config   
 
 def handle_failure(test, msg, checkFail, newCov = False):
-    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount,fulltest
+    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount,fulltest, allQuickTests
     test = list(test)
     sys.stdout.flush()
     if not newCov:
@@ -188,6 +188,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         print "TRACEBACK:"
         traceback.print_tb(f[2],file=sys.stdout)
         sut.saveTest(test,config.output.replace(".test",".full.test"))
+        covHandler = None
     else:
         print "Handling new coverage for quick testing"
         snew = sut.newCurrStatements()
@@ -293,12 +294,29 @@ def handle_failure(test, msg, checkFail, newCov = False):
             outname += ("." + str(failFileCount))
             failFileCount += 1
         if config.quickTests and newCov:
+            allQuickTests.append(list(test))
+            sut.replay(test,checkProp=not(config.noCheck))
+            anyNewCov = False
             for s in sut.allStatements():
                 if s not in beforeReduceS:
-                    print "NEW STATEMENT FROM REDUCTION",s
+                    #print "NEW STATEMENT DURING REDUCTION",s
+                    if (s not in sut.currStatements()):
+                            #print "STATEMENT FOUND THEN LOST DURING REDUCTION"
+                            anyNewCov = True
             for b in sut.allBranches():
                 if b not in beforeReduceB:
-                    print "NEW BRANCH FROM REDUCTION",b
+                    #print "NEW BRANCH DURING REDUCTION",b
+                    if (s not in sut.currBranches()):
+                            #print "BRANCH FOUND THEN LOST DURING REDUCTION"
+                            anyNewCov = True                    
+            if anyNewCov:
+                print "** NEW COVERAGE DURING REDUCTION NOT PRESERVED, CLEARING COVERAGE AND REPLAYING QUICK TESTS **"
+                print "BEFORE REPLAY, BRANCHES:",len(sut.allBranches()),"STATEMENTS:",len(sut.allStatements())
+                sut.resetCov()
+                for q in allQuickTests:
+                    sut.replay(q,checkProp=not(config.noCheck))
+                print "AFTER REPLAY, BRANCHES:",len(sut.allBranches()),"STATEMENTS:",len(sut.allStatements())                    
+                
             outname = "quick" + str(quickCount) + ".test"
             quickCount += 1
         print
@@ -339,7 +357,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         else:
             print "NO FAILURE!"
     sys.stdout.flush()
-    if config.multiple:
+    if (not newCov) and config.multiple:
         if (test in map(lambda x:x[0], failures)) or (test in cloudFailures) or cloudMatch:
             print "NEW FAILURE IS IDENTICAL TO PREVIOUSLY FOUND FAILURE, NOT STORING"
             repeatCount += 1
@@ -366,7 +384,7 @@ def buildActivePool():
                     print "TO",len(r),"STEPS:"
                     sut.prettyPrintTest(r)
                     print
-                sut.replay(r)
+                sut.replay(r,checkProp=not(config.noCheck)))
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
                 # Have to make sure if we got some new coverage out of this it's in the coverage map
                 # Also need to make sure quickTests know about it
@@ -442,6 +460,7 @@ def buildActivePool():
             
 def tryExploit():
     global fulltest, currtest
+    ok = True
     if R.random() < config.exploit:
         buildActivePool()
         if len(activePool) == 0:
@@ -459,17 +478,18 @@ def tryExploit():
                 et = sut.crossover(et,et2,R)
             else:
                 et = sut.mutate(et,R)
-        sut.replay(et)
         if config.total:
-            for a in sut.test():
+            for a in et:
                 fulltest.write(a[0] + "\n")
                 fulltest.flush()
         if config.replayable:
             currtest.close()
             currtest = open("currtest.test",'w')
-            for a in sut.test():
+            for a in et:
                 currtest.write(a[0] + "\n")
-                currtest.flush()
+                currtest.flush()                
+        ok = sut.replay(et,checkProp=not(config.noCheck),catchUncaught=config.uncaught)
+    return ok
             
 def collectExploitable():
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool,hintValueCounts
@@ -516,6 +536,7 @@ def main():
     global failFileCount
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
     global hintPool, hintValueCounts
+    global allQuickTests
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -529,6 +550,7 @@ def main():
     failCount = 0
     failFileCount = 0
     quickCount = 0
+    allQuickTests = []
     repeatCount = 0
     failures = []
     cloudFailures = []
@@ -741,11 +763,17 @@ def main():
         if config.replayable:
             currtest = open("currtest.test",'w')
 
-        if (config.exploit != None) and ((time.time() - start) > config.startExploit):
-            tryExploit()
-
         testFailed = False
-            
+
+        if (config.exploit != None) and ((time.time() - start) > config.startExploit):
+            exploitOk = tryExploit()
+            if not exploitOK:
+                testFailed = True
+                handle_failure(sut.test(), "FAILURE DURING MUTATION", False)
+                if not config.multiple:
+                    print "STOPPING TESTING DUE TO FAILED TEST"
+                break                
+
         for s in xrange(0,config.depth):
             if config.verbose:
                 print "GENERATING STEP",s,
