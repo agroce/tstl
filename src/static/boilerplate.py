@@ -772,7 +772,7 @@ def testCandidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False):
+def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -782,6 +782,9 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
 
     tryFast means that instead of the binary search, reduce assumes the test is already close to 1-minimal (e.g., from normalization)
     and skips right to the smallest granularity, searching for a close-by 1-minimal test.
+
+    testHandler is an optional function to pass in.  It can do things like check for new coverage from a candidate run, and collect
+    such tests for quick testing or GA-based exploration.
     """
     try:
         test_before_reduce(self)
@@ -819,6 +822,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
             if verbose == "VERY":
                 print "Trying candidate of length",len(tc+addLast)
             v = pred(tc + addLast)
+            if testHandler != None:
+                testHandler()
             if amplify:
                 if v > currBest:
                     currBest = v
