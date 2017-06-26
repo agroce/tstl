@@ -768,7 +768,7 @@ def main():
 
         if (config.exploit != None) and ((time.time() - start) > config.startExploit):
             exploitOk = tryExploit()
-            if not exploitOK:
+            if not exploitOk:
                 testFailed = True
                 handle_failure(sut.test(), "FAILURE DURING MUTATION", False)
                 if not config.multiple:
