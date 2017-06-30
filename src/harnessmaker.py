@@ -4,6 +4,8 @@
 # Research performed at Oregon State University, Corvallis, Oregon
 # See NASA Formal Methods 2015 paper, "A Little Language for Testing" for
 # core concepts behind TSTL; note language definition has changed, however.
+#
+# Current language syntax based on ideas from Josie Holmes.
 
 import sys
 import argparse
@@ -526,6 +528,7 @@ def main():
     initSet = []
     firstInit = True
     propSet = []
+    assumeSet = []
     ignoredExcepts = []
     refSet = []
     constSet = []
@@ -558,6 +561,8 @@ def main():
             autoPrefix = "pool: "
         elif cs[0] == "properties:":
             autoPrefix = "property: "
+        elif cs[0] == "assumptions:":
+            autoPrefix = "assume: "            
         elif cs[0] == "logs:":
             autoPrefix = "log: "
         elif cs[0] == "hints:":
@@ -588,6 +593,8 @@ def main():
             hintSet.append(c.replace("hint: ",""))            
         elif cs[0] == "property:":
             propSet.append(c.replace("property: ",""))
+        elif cs[0] == "assume:":
+            assumeSet.append(c.replace("assume: ",""))            
         elif cs[0] == "exception:":
             ignoredExcepts.append(c.replace("exception: ",""))            
         elif cs[0] == "pool:":
@@ -692,6 +699,7 @@ def main():
     # ------------------------------------------ #
     code = expandPool(code,trackOriginal=True)
     propSet = expandPool(propSet)
+    assumeSet = expandPool(assumeSet)    
     initSet = expandPool(initSet)
     finallySet = expandPool(finallySet)
     logSet = expandPool(logSet)
@@ -704,6 +712,7 @@ def main():
 
     code = expandRange(code,trackOriginal=True)
     propSet = expandRange(propSet)
+    assumeSet = expandRange(assumeSet)    
     initSet = expandRange(initSet)
     finallySet = expandRange(finallySet)    
     logSet = expandRange(logSet)
@@ -744,6 +753,12 @@ def main():
         for c in finallySet:
             newFinallys.append(c.replace(p + " ", poolPrefix + p.replace("%","")))
         finallySet = newFinallys
+
+    for p in poolSet:
+        newAssumes = []
+        for c in assumeSet:
+            newAssumes.append(c.replace(p + " ", poolPrefix + p.replace("%","")))
+        assumeSet = newAssumes        
 
     for p in poolSet:
         newLogs = []
@@ -997,7 +1012,9 @@ def main():
         genCode.append("def " + act + "(self):\n")
         genCode.append(baseIndent + "'''\n")
         genCode.append(baseIndent + prettyName(poolSet,newC[:-1]) + "\n")
-        genCode.append(baseIndent + "'''\n")        
+        genCode.append(baseIndent + "'''\n")
+        if assumeSet != []:
+            genCode.append(baseIndent + "if not self.checkAssumptions(): return\n")
         d = "self.__test.append(("
         d += "'''" + newC[:-1] +" ''',"
         d += "self." + guard + ","
@@ -1233,6 +1250,7 @@ def main():
     genCode.append(baseIndent + "self.__verboseActions = False\n")    
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
+    genCode.append(baseIndent + "self.__assumptionViolated = None\n")    
     genCode.append(baseIndent + "self.__noReassigns = False\n")
     genCode.append(baseIndent + "self.__safeSafelyMode = False\n")    
     genCode.append(baseIndent + "self.__simplifyCache = {}\n")
@@ -1264,8 +1282,13 @@ def main():
     for d in actDefs:
         genCode.append(baseIndent + d + "\n")
     genCode.append(baseIndent + "self.__actions_backup = list(self.__actions)\n")
+    genCode.append(baseIndent + "self.__actions_assume_backup = list(self.__actions)\n")    
 
     genCode.append("def restart(self):\n")
+    if assumeSet != []:
+            genCode.append(baseIndent + "if self.__assumptionViolated != None:\n")
+            genCode.append(baseIndent + baseIndent + "self.enableAllAssume()\n")            
+            genCode.append(baseIndent + "self.__assumptionViolated = None\n")    
     if finallySet != []:
         for f in finallySet:
             genCode.append(baseIndent + "try:\n")
@@ -1423,6 +1446,19 @@ def main():
         n += 1
     genCode.append(baseIndent + "self.__test = copy.copy(old[-1])\n")
 
+    if len(assumeSet) != 0:
+        genCode.append("def checkAssumptions(self):\n")
+        genCode.append(baseIndent + "self.__assumptionViolated = None\n")        
+        for p in assumeSet:
+            genCode.append(baseIndent + "try: assumeResult = " + p)
+            genCode.append(baseIndent + "except: assumeResult = True\n")
+            genCode.append(baseIndent + "if not assumeResult:\n")
+            genCode.append(baseIndent + baseIndent + "print '** ASSUMPTION VIOLATED:',self.prettyName(''' " + p[:-1] + " '''),'**'\n")
+            genCode.append(baseIndent + baseIndent + "self.__actions = []\n")
+            genCode.append(baseIndent + baseIndent + "self.__assumptionViolated = ''' " + p[:-1] + " '''\n")
+            genCode.append(baseIndent + baseIndent + "return False\n")
+        genCode.append(baseIndent + "return True\n")
+    
     genCode.append("def check(self):\n")
     if (propSet != []) or (len(poolType) > 0):
         genCode.append(baseIndent + "try:\n")

@@ -426,6 +426,14 @@ def enableAll(self):
     """
     self.__swarmConfig = None
     self.__actions = self.__actions_backup
+    self.__actions_assume_backup = list(self.__actions_backup)
+
+def enableAllAssume(self):
+    
+    """
+    Enable all actions, but restricted by current swarm set
+    """
+    self.__actions = self.__actions_assume_backup    
 
 def objCodeLOCs(self,obj,context):
     LOCs = []
@@ -560,6 +568,7 @@ def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None, noDependen
         if self.actionClass(a) in newEnabled:
             enabledActions.append(a)
     self.__actions = enabledActions
+    self.__actions_assume_backup = list(self.__actions)
 
 def swarmConfig(self):
     return self.__swarmConfig
