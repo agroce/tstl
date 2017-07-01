@@ -810,7 +810,10 @@ def main():
         guard = genGuard()
 
         guardCode = "True"
-        guardConds = []
+        if assumeSet == []:
+            guardConds = []
+        else:
+            guardConds = ["(self.__assumptionViolated == None)"]
 
         changes = []
 

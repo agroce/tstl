@@ -835,7 +835,7 @@ def main():
                     lastInterval = thisInterval
                     sys.stdout.flush()
             if a == None:
-                print "TERMINATING TEST DUE TO NO ENABLED ACTIONS"
+                print "TERMINATING TEST DUE TO NO ENABLED ACTIONS, AT LENGTH",len(sut.test())
                 break                
             if tryStutter:
                 print "STUTTERING WITH",a[0]
