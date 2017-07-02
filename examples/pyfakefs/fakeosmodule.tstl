@@ -70,8 +70,7 @@ finally: <os>.close(<fd>)
 {OSError} ~<os>.close(<fd>)
 {IOError,OSError} ~<os>.write(~<fd>,<str>)
 {IOError,OSError} ~<os>.read(~<fd>,<bytes>)
-
-{OSError} ~<os>.fstat(~<fd>)
+{OSError} <stat> := ~<os>.fstat(~<fd>)
 
 {OSError} ~<os>.remove(<path>)
 
@@ -81,8 +80,12 @@ finally: <os>.close(<fd>)
 
 {IOError,OSError} sorted(~<os>.listdir(<path>))
 
-{OSError} ~<os>.stat(<path>)
-{OSError} ~<os>.lstat(<path>)
+{OSError} <stat> := ~<os>.stat(<path>)
+{OSError} <stat> := ~<os>.lstat(<path>)
+
+<stat>.st_mode
+<stat>.st_nlink
+<stat>.st_size
 
 {OSError} ~<os>.readlink(<path>)
 
@@ -108,17 +111,15 @@ reference: newFakeOS\(\) ==> os
 
 compare: listdir
 compare: read
-
 compare: abspath
 compare: dirname
 compare: exists
-
 compare: isdir
 compare: isfile
-
 compare: isabs
 compare: islink
-
 compare: getsize\(
-
 compare: walk
+
+# handles all stat fields
+compare: st_
