@@ -14,28 +14,18 @@ def newFakeOS():
     fakeOS = pyfakefs.fake_filesystem.FakeOsModule(fs)
     return fakeOS
 
-def displayTree(w,osmodule):
-    if osmodule == os:
-       return
-    paths = []
-    biggest = 0
-    for p in w:
-        theDir = p[0]
-        paths.append(theDir)
-        for f in p[2]:
-            fp = theDir + "/" + f
-            s = osmodule.path.getsize(fp)
-            paths.append((fp,s))
-            if s > biggest:
-                biggest = s
-    if (len(paths) > 5) and (biggest > 10):
-       print paths
-
 def sortWalk(l):
     newList = []
     for (p,l1,l2) in l:
         newList.append((p,sorted(l1),sorted(l2)))
     return sorted(newList,key=lambda x:x[0])
+
+def tooManyLevels(p,osmod):
+    try:
+        osmod.path.isdir(p)
+    except OSError as e:
+        return "Too many levels of symbolic links" in str(e)
+    return False
 @>
 
 source: /Users/alex/pyfakefs/pyfakefs/fake_filesystem.py
@@ -51,6 +41,8 @@ pool: <component> 5
 pool: <str> 5
 
 pool: <bytes> 5
+
+assume: not tooManyLevels(<path>,<os>)
 
 finally: <os>.close(<fd>)
 
@@ -72,15 +64,15 @@ finally: <os>.close(<fd>)
 {IOError,OSError} ~<os>.makedirs(<path>)
 
 # symlinks have lots of issues, some handled by guard
-{IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
-#{IOError,OSError} ~<os>.symlink(<path>,<path>)
-#{IOError,OSError} not os.path.isdir(<path,1>) -> ~<os>.link(<path>,<path>)
+# {IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
+{IOError,OSError} ~<os>.symlink(<path>,<path>)
+{IOError,OSError} ~<os>.link(<path>,<path>)
 
 # Guard needed due to bug in pyfakefs
-{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
-{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_WRONLY | os.O_APPEND)
-{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
-{IOError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDWR)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_WRONLY | os.O_APPEND)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDWR)
 
 {OSError} ~<os>.close(<fd>)
 {IOError,OSError} ~<os>.write(~<fd>,<str>)
@@ -101,11 +93,10 @@ finally: <os>.close(<fd>)
 
 {OSError} ~<os>.readlink(<path>)
 
-#{IOError,OSError} not(~<os>.path.isdir(<path,1>)) and not (~<os>.path.isdir(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.rename(<path>,<path>)
+# The guard avoids the known error in OS X rename on 10.12.5
+#{IOError,OSError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
 
-#{OSError} sortWalk([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>)])
-
-#{OSError, TypeError, AttributeError} displayTree(~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[True,False]>), ~<os>)
+{OSError} sortWalk([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[False]>)])
 
 {OSError} ~<os>.path.exists(<path>)
 {OSError} ~<os>.path.lexists(<path>)
