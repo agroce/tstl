@@ -28,18 +28,13 @@ def tooManyLevels(p,osmod):
     return False
 @>
 
-source: /Users/alex/pyfakefs/pyfakefs/fake_filesystem.py
-
-pool: <os> 1 REF
-pool: <fd> 1 REF
+pool: <os> 1 REF # Only one OS instance!  Don't change this!
+pool: <fd> 1 REF # eventually we'll allow multiple open FDs at once, but pyfakefs is not ready yet
 pool: <stat> 5 REF
 
 pool: <path> 5
-
 pool: <component> 5
-
 pool: <str> 5
-
 pool: <bytes> 5
 
 assume: not tooManyLevels(<path>,<os>)
@@ -53,7 +48,7 @@ finally: <os>.close(<fd>)
 <path> := "/Volumes/ramdisk/test"
 <path> := <path> + "/" + <component>
 
-<bytes> := 1
+<bytes> := 0
 <bytes> += 1
 
 <str> := ""
@@ -63,12 +58,10 @@ finally: <os>.close(<fd>)
 {IOError,OSError} ~<os>.mkdir(<path>)
 {IOError,OSError} ~<os>.makedirs(<path>)
 
-# symlinks have lots of issues, some handled by guard
-# {IOError,OSError} os.path.exists(<path,1>) and os.path.exists(os.path.dirname(<path,2>)) and not (<path,1> == <path,2>) -> ~<os>.symlink(<path>,<path>)
 {IOError,OSError} ~<os>.symlink(<path>,<path>)
 {IOError,OSError} ~<os>.link(<path>,<path>)
 
-# Guard needed due to bug in pyfakefs
+# Guard needed due to reading directories being unspecified behavior
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_WRONLY | os.O_APPEND)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
@@ -94,7 +87,7 @@ finally: <os>.close(<fd>)
 {OSError} ~<os>.readlink(<path>)
 
 # The guard avoids the known error in OS X rename on 10.12.5
-#{IOError,OSError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
+{IOError,OSError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
 
 {OSError} sortWalk([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[False]>)])
 
