@@ -36,6 +36,7 @@ pool: <path> 5
 pool: <component> 5
 pool: <str> 5
 pool: <bytes> 5
+pool: <mode> 5
 
 assume: not tooManyLevels(<path>,<os>)
 
@@ -51,6 +52,15 @@ finally: <os>.close(<fd>)
 <bytes> := 0
 <bytes> += 1
 
+<mode> := os.O_CREAT
+<mode> := os.O_WRONLY
+<mode> := os.O_TRUNC
+<mode> := os.O_APPEND
+<mode> := os.O_RDONLY
+<mode> := os.O_EXCL
+<mode> := os.O_RDWR
+<mode> := <mode> | <mode>
+
 <str> := ""
 <str> := <str> + <['a'..'z']>
 <str> := <str> + " "
@@ -58,7 +68,7 @@ finally: <os>.close(<fd>)
 {IOError,OSError} ~<os>.mkdir(<path>)
 {IOError,OSError} ~<os>.makedirs(<path>)
 
-{IOError,OSError} ~<os>.symlink(<path>,<path>)
+#{IOError,OSError} ~<os>.symlink(<path>,<path>)
 {IOError,OSError} ~<os>.link(<path>,<path>)
 
 # Guard needed due to reading directories being unspecified behavior
@@ -67,10 +77,13 @@ finally: <os>.close(<fd>)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDWR)
 
+# Also allow arbitrary mode opens, but less frequently than typical useful combinations
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, <mode>)
+
 {OSError} ~<os>.close(<fd>)
 {IOError,OSError} ~<os>.write(~<fd>,<str>)
 {IOError,OSError} ~<os>.read(~<fd>,<bytes>)
-{OSError} <stat> := ~<os>.fstat(~<fd>)
+#{OSError} <stat> := ~<os>.fstat(~<fd>)
 
 {OSError} ~<os>.remove(<path>)
 
@@ -80,8 +93,8 @@ finally: <os>.close(<fd>)
 
 {IOError,OSError} sorted(~<os>.listdir(<path>))
 
-{OSError} <stat> := ~<os>.stat(<path>)
-{OSError} <stat> := ~<os>.lstat(<path>)
+#{OSError} <stat> := ~<os>.stat(<path>)
+#{OSError} <stat> := ~<os>.lstat(<path>)
 
 <stat>.st_mode
 <stat>.st_nlink
