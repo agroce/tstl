@@ -1,6 +1,7 @@
 @import pyfakefs.fake_filesystem
 @import os
 @import shutil
+@import stat
 
 <@
 def newFakeOS():
@@ -21,6 +22,10 @@ def sortWalk(l):
     return sorted(newList,key=lambda x:x[0])
 
 def tooManyLevels(p,osmod):
+    # Exactly matching the real OS' symbolic link limit is difficult, so if you hit link limit in pyfakefs, just
+    # start a new test.  Monitor the output to make sure this isn't happening immediately, and never happens when
+    # symlinks are not turned on!
+    
     try:
         osmod.path.isdir(p)
     except OSError as e:
@@ -68,7 +73,7 @@ finally: <os>.close(<fd>)
 {IOError,OSError} ~<os>.mkdir(<path>)
 {IOError,OSError} ~<os>.makedirs(<path>)
 
-#{IOError,OSError} ~<os>.symlink(<path>,<path>)
+{IOError,OSError} ~<os>.symlink(<path>,<path>)
 {IOError,OSError} ~<os>.link(<path>,<path>)
 
 # Guard needed due to reading directories being unspecified behavior
@@ -83,7 +88,7 @@ finally: <os>.close(<fd>)
 {OSError} ~<os>.close(<fd>)
 {IOError,OSError} ~<os>.write(~<fd>,<str>)
 {IOError,OSError} ~<os>.read(~<fd>,<bytes>)
-#{OSError} <stat> := ~<os>.fstat(~<fd>)
+{OSError} <stat> := ~<os>.fstat(~<fd>)
 
 {OSError} ~<os>.remove(<path>)
 
@@ -93,12 +98,12 @@ finally: <os>.close(<fd>)
 
 {IOError,OSError} sorted(~<os>.listdir(<path>))
 
-#{OSError} <stat> := ~<os>.stat(<path>)
-#{OSError} <stat> := ~<os>.lstat(<path>)
+{OSError} <path,1> != "/Volumes/ramdisk/test" -> <stat> := ~<os>.stat(<path>)
+{OSError} <path,1> != "/Volumes/ramdisk/test" -> <stat> := ~<os>.lstat(<path>)
 
 <stat>.st_mode
-<stat>.st_nlink
-<stat>.st_size
+not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_nlink
+not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_size
 
 {OSError} ~<os>.readlink(<path>)
 
