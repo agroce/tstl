@@ -57,14 +57,18 @@ finally: <os>.close(<fd>)
 <bytes> := 0
 <bytes> += 1
 
-<mode> := os.O_CREAT
-<mode> := os.O_WRONLY
-<mode> := os.O_TRUNC
-<mode> := os.O_APPEND
-<mode> := os.O_RDONLY
-<mode> := os.O_EXCL
-<mode> := os.O_RDWR
-<mode> := <mode> | <mode>
+
+# Below code allows us to test arbitrary mode combinations; however pyfakefs is proiritizing
+# sensible open combinations
+
+#<mode> := os.O_CREAT
+#<mode> := os.O_WRONLY
+#<mode> := os.O_TRUNC
+#<mode> := os.O_APPEND
+#<mode> := os.O_RDONLY
+#<mode> := os.O_EXCL
+#<mode> := os.O_RDWR
+#<mode> := <mode> | <mode>
 
 <str> := ""
 <str> := <str> + <['a'..'z']>
@@ -78,12 +82,17 @@ finally: <os>.close(<fd>)
 
 # Guard needed due to reading directories being unspecified behavior
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC | os.O_EXCL)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_EXCL)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT)
+#{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_EXCL)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_WRONLY | os.O_APPEND)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDWR)
 
 # Also allow arbitrary mode opens, but less frequently than typical useful combinations
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, <mode>)
+#{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, <mode>)
 
 {OSError} ~<os>.close(<fd>)
 {IOError,OSError} ~<os>.write(~<fd>,<str>)
@@ -101,7 +110,8 @@ finally: <os>.close(<fd>)
 {OSError} <path,1> != "/Volumes/ramdisk/test" -> <stat> := ~<os>.stat(<path>)
 {OSError} <path,1> != "/Volumes/ramdisk/test" -> <stat> := ~<os>.lstat(<path>)
 
-<stat>.st_mode
+# Not testing mode equivalence for now
+#<stat>.st_mode
 not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_nlink
 not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_size
 
@@ -110,6 +120,7 @@ not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_size
 # The guard avoids the known error in OS X rename on 10.12.5
 {IOError,OSError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
 
+# followlinks True causes some symlink related issues that are not worth pursuing right now
 {OSError} sortWalk([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[False]>)])
 
 {OSError} ~<os>.path.exists(<path>)
