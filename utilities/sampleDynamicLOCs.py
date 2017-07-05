@@ -40,12 +40,25 @@ print "CONSTRUCTING ESTIMATE FOR",numClasses,"CLASSES"
 start = time.time()
 TIMEOUT = int(sys.argv[1])
 
+if len(sys.argv) < 4:
+    LENGTH = 1000000000000000
+else:
+    LENGTH = int(sys.argv[3])    
+
 while (time.time()-start < TIMEOUT):
+    if len(SUT.test()) > LENGTH:
+        print "RESTARING DUE TO LENGTH REQUIREMENT"
+        SUT.restart()
     if len(actLOCs) < numClasses:
         act = SUT.randomEnabledPred(R,N,lambda act:SUT.actionClass(act) not in actLOCs)
     else:
         act = SUT.randomEnabled(R)
+    if act == None:
+        print "RESTARTING DUE TO NO ACTIONS AVAILABLE"
+        SUT.restart()
+        continue
     c = SUT.actionClass(act)
+    print "TRYING:",c
     if c not in actLOCs:
         print "ACTION:",c
         lastLOCs = 0
