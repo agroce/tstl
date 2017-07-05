@@ -636,7 +636,7 @@ def main():
     if config.profile:
         profileTime = {}
         profileCount = {}
-        for a in set(map(sut.actionClass, sut.actions())):
+        for a in sut.actionClasses():
             profileTime[a] = 0.0
             profileCount[a] = 0
         
