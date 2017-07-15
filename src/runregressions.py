@@ -62,7 +62,9 @@ def main():
         sut.verbose(True)
 
     anyFailed = False
-        
+
+    noNewCover = []
+    
     stime = time.time()
     for f in files:
         print "RUNNING TEST",f
@@ -72,12 +74,15 @@ def main():
             ok = sut.replay(t, checkProp=(not ignoreProps))
         except Exception as e:
             print "EXCEPTION RAISED:",e
+        if not nocover:
+            if (len(sut.newCurrBranches()) == 0) and (len(sut.newCurrStatements()) == 0):
+                noNewCover.append(f)
         if running:
-            if sut.newBranches() != set([]):
-                for b in sut.newBranches():
+            if sut.newCurrBranches() != set([]):
+                for b in sut.newCurrBranches():
                     print "New branch:",b
-            if sut.newStatements() != set([]):
-                for s in sut.newStatements():
+            if sut.newCurrStatements() != set([]):
+                for s in sut.newCurrStatements():
                     print "New statement:",s
         if not ok:
             print "TEST",f,"FAILED:"
@@ -96,5 +101,10 @@ def main():
     if htmlOut != None:
         sut.htmlReport(htmlOut)
 
+    if (not nocover) and (len(noNewCover) > 0):
+        for f in noNewCover:
+            print "TEST",f,"REDUNDANT WITH RESPECT TO COVERAGE"
+        
     if not anyFailed:
         print "ALL TESTS SUCCESSFUL"
+
