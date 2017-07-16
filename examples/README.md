@@ -1,15 +1,15 @@
 Notable examples are:
 
-  AVL:  this is basic enough to form a good starting point
+  * AVL:  this is basic enough to form a good starting point
 
 More interesting are complex harnesses for real systems:
 
-  * pyfakefs
+  * pyfakefs: detected numerous faults, good example of sophisticated reference testing
 
-  * sympy
-
+  * sortedcontainers: found real bugs, another good reference testing example
+  
+  * sympy: detected real bugs
+  
   * redis
-
-  * sortedcontainers
 
   * simplejson
