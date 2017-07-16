@@ -1,17 +1,15 @@
-TSTL Examples:
-
 Notable examples are:
 
-AVL:  this is basic enough to form a good starting point
+  AVL:  this is basic enough to form a good starting point
 
 More interesting are complex harnesses for real systems:
 
-pyfakefs
+  * pyfakefs
 
-sympy
+  * sympy
 
-redis
+  * redis
 
-sortedcontainers
+  * sortedcontainers
 
-simplejson
+  * simplejson
