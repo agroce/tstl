@@ -18,6 +18,8 @@ More interesting are complex harnesses for real systems:
   
   * C: construction of strings as inputs
   
+  * z3: testing the famous SMT solver's Python interface
+  
   * redis
 
   * simplejson
