@@ -15,6 +15,14 @@ def newFakeOS():
     fakeOS = pyfakefs.fake_filesystem.FakeOsModule(fs)
     return fakeOS
 
+def newFakeOpener(osmod):
+    return pyfakefs.fake_filesystem.FakeFileOpen(osmod.filesystem)
+
+def newOpener(osmod):
+    def openF(path):
+        return open(path)
+    return openF
+
 def sortWalk(l):
     newList = []
     for (p,l1,l2) in l:
@@ -34,8 +42,11 @@ def tooManyLevels(p,osmod):
 @>
 
 pool: <os> 1 REF # Only one OS instance!  Don't change this!
-pool: <fd> 1 REF # eventually we'll allow multiple open FDs at once, but pyfakefs is not ready yet
+pool: <fd> 5 REF # eventually we'll allow multiple open FDs at once, but pyfakefs is not ready yet
 pool: <stat> 5 REF
+
+pool: <opener> 1 REF
+pool: <file> 5 REF
 
 pool: <path> 5
 pool: <component> 5
@@ -46,13 +57,14 @@ pool: <mode> 5
 assume: not tooManyLevels(<path>,<os>)
 
 finally: <os>.close(<fd>)
+finally: <file>.close()
 
 <os> := newFakeOS()
 
 <component> := <["alpha","beta","gamma","delta","epsilon","a","b","c","d","e","f","g","h","omega","lambda","phi"]>
 
 <path> := "/Volumes/ramdisk/test"
-<path> := <path> + "/" + <component>
+<path> += "/" + <component>
 
 <bytes> := 0
 <bytes> += 1
@@ -71,8 +83,8 @@ finally: <os>.close(<fd>)
 #<mode> := <mode> | <mode>
 
 <str> := ""
-<str> := <str> + <['a'..'z']>
-<str> := <str> + " "
+<str> += <['a'..'z']>
+<str> += " "
 
 {IOError,OSError} ~<os>.mkdir(<path>)
 {IOError,OSError} ~<os>.makedirs(<path>)
@@ -81,12 +93,12 @@ finally: <os>.close(<fd>)
 {IOError,OSError} ~<os>.link(<path>,<path>)
 
 # Guard needed due to reading directories being unspecified behavior
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
+#{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC | os.O_EXCL)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_EXCL)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT)
-#{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_EXCL)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_EXCL)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_WRONLY | os.O_APPEND)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDWR)
@@ -119,6 +131,7 @@ not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_size
 
 # The guard avoids the known error in OS X rename on 10.12.5
 {IOError,OSError} <path,2>.find(<path,1>) != 0 -> ~<os>.rename(<path>,<path>)
+#{IOError,OSError} ~<os>.rename(<path>,<path>)
 
 # followlinks True causes some symlink related issues that are not worth pursuing right now
 {OSError} sortWalk([p for p in ~<os>.walk(<path>,topdown=<[True,False]>,followlinks=<[False]>)])
@@ -136,7 +149,21 @@ not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_size
 {OSError} ~<os>.path.abspath(<path>)
 {OSError} ~<os>.path.dirname(<path>)
 
+<opener> := newFakeOpener(~<os>)
+
+{OSError,IOError} <file> := ~<opener>(<path>)
+
+{IOError,OSError} ~<file>.write(<str>)
+{ValueError} ~<file>.read(<bytes>)
+{ValueError} ~<file>.readline()
+{ValueError} ~<file>.readlines()
+{StopIteration} ~<file>.next()
+~<file>.flush()
+
+<file>.close()
+
 reference: newFakeOS\(\) ==> os
+reference: newFakeOpener ==> newOpener
 
 compare: listdir
 compare: read
