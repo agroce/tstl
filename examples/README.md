@@ -1,8 +1,13 @@
-Examples of Using TSTL
+TSTL Examples:
 
-Note: syntax varies, but all should compile with latest TSTL
+Notable examples are:
 
-Directories:
+AVL:  this is basic enough to form a good starting point
 
-AVL		Simple AVL tree, best basic examples.  avlblocks.tstl is latest syntax for TSTL
-numpy		
+More interesting are complex harnesses for real systems:
+
+pyfakefs
+sympy
+redis
+sortedcontainers
+simplejson
