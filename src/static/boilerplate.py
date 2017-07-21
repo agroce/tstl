@@ -625,8 +625,8 @@ def allEnabled(self, test):
 def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False, stopFail = True, returnCov = False):
     '''
     Replays a test, either resetting first or extending current test (default is to restart).  Can either stop or keep going
-    on failure, ignore uncaught exceptions, throw them, and check or not check properties.  The returnCov setting adds a sequential
-    record of coverage by step as another element of a return tuple.
+    on failure, catch and notify about uncaught exceptions or throw them, and check or not check properties.  The returnCov setting 
+    adds a sequential record of coverage by step as another element of a return tuple.
     '''
     if not extend:
         self.restart()
@@ -651,7 +651,13 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
                         return False
                     pass
             else:
-                act()
+                try:
+                    act()
+                except KeyboardInterrupt as e:
+                    raise e
+                except Exception as e:
+                    self.__failure = sys.exc_info()
+                    raise e
         if checkProp:
             if (not self.check()) and stopFail:
                 return False
