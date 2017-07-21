@@ -487,8 +487,13 @@ def tryExploit():
             currtest = open("currtest.test",'w')
             for a in et:
                 currtest.write(a[0] + "\n")
-                currtest.flush()                
-        ok = sut.replay(et,checkProp=not(config.noCheck),catchUncaught=config.uncaught)
+                currtest.flush()
+        try:
+            ok = sut.replay(et,checkProp=not(config.noCheck),catchUncaught=config.uncaught)
+        except KeyboardInterrupt as e:
+            raise e
+        except:
+            return False
     return ok
             
 def collectExploitable():
