@@ -464,7 +464,7 @@ def tryExploit():
     if R.random() < config.exploit:
         buildActivePool()
         if len(activePool) == 0:
-            return
+            return ok
         et = R.choice(activePool)
         if config.verboseExploit or config.verbose:
             print "EXPLOITING STORED TEST ENDING IN",sut.prettyName(et[-1][0])        
