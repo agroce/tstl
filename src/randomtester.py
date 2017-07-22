@@ -778,7 +778,9 @@ def main():
                 handle_failure(sut.test(), "FAILURE DURING MUTATION", False)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
-                break                
+                    break
+                else:
+                    continue
 
         for s in xrange(0,config.depth):
             if config.verbose:
