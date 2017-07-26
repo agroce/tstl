@@ -34,6 +34,8 @@ def parse_args():
                         help="Generalize tests.")
     parser.add_argument('-n', '--noCover', action='store_true',
                         help="Don't produce a coverage report at the end.")
+    parser.add_argument('--postCover',action='store_true',
+                        help="No coverage during test generation/execution; compute coverage at end.  Adds runtime, for experiments on lightweight methods.")    
     parser.add_argument('--html', type=str, default=None,
                         help="Write HTML report (directory to write to, None/no html report by default).")    
     parser.add_argument('-m', '--maxTests', type=int, default=-1,
@@ -178,6 +180,9 @@ def make_config(pargs, parser):
 
 def handle_failure(test, msg, checkFail, newCov = False):
     global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount,fulltest, allQuickTests
+    global allTheTests
+    if config.postCover:
+        allTheTests.append(list(test))
     test = list(test)
     sys.stdout.flush()
     if not newCov:
@@ -529,7 +534,7 @@ def printStatus(elapsed,step=None):
     if step != None:
         print "STEP #"+str(step),
     print "("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),
-    if not config.noCover:
+    if (not config.noCover) and (not config.postCover):
         print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]",
     if (config.exploit != None) and (config.verbose or config.verboseExploit):
         print "[ POOLS: full",len(fullPool),"active",len(activePool),"]",
@@ -542,6 +547,7 @@ def main():
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
     global hintPool, hintValueCounts
     global allQuickTests
+    global allTheTests
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -586,7 +592,7 @@ def main():
         sut.relax()
 
     # MAJOR SPEED GAIN:  IF NOT MEASURING COVERGE, NO NEED TO RECOMPILE, JUST RUN --noCover
-    if config.noCover:
+    if config.noCover or config.postCover:
         try:
             sut.stopCoverage()
         except:
@@ -634,7 +640,10 @@ def main():
         print "EXECUTION TIME:",time.time()-sqrtime
         print "BRANCH COVERAGE:",len(sut.allBranches())
         print "STATEMENT COVERAGE:",len(sut.allStatements())        
-                            
+
+    if config.postCover:
+        allTheTests = []
+        
     if config.logging != None:
         sut.setLog(config.logging)
 
@@ -951,6 +960,9 @@ def main():
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
 
+        if config.postCover:
+            allTheTests.append(list(sut.test()))
+
         if (config.computeFeatureStats):
             for act in sut.swarmConfig():
                 if act in featureStatsA:
@@ -1113,7 +1125,15 @@ def main():
 
     if config.total:
         fulltest.close()
-        
+
+    if config.postCover:
+        sut.startCoverage()
+        for postt in allTheTests:
+            try:
+                sut.replay(postt,checkProp=(not config.noCheck))
+            except:
+                pass
+                        
     if not config.noCover:
         sut.restart()
         print sut.report(config.coverFile),"PERCENT COVERED"
@@ -1208,7 +1228,7 @@ def main():
             sortAs = sorted(quickAnalysisSCounts[s].keys(),key=lambda x: quickAnalysisSCounts[s][x],reverse=True)
             for a in sortAs:
                 print a,str(round(quickAnalysisSCounts[s][a]/(statementCoverageCount[s]*1.0)*100,2))+"%"                           
-            
+
     print time.time()-start, "TOTAL RUNTIME"
     print ntests, "EXECUTED"
     print nops, "TOTAL TEST OPERATIONS"

@@ -343,12 +343,24 @@ def crossover(self,test1,test2,rgen,twoPoint=False):
     else:
         t2 = test1
         t1 = test2
-    p1 = rgen.randrange(1,len(t1))
-    p2 = rgen.randrange(0,len(t2))
+    if len(t1) > 1:
+        p1 = rgen.randrange(1,len(t1))
+    else:
+        p1 = 1
+    if len(t2) > 0:
+        p2 = rgen.randrange(0,len(t2))
+    else:
+        p2 = 0
     newTest = t1[:p1]
     if twoPoint:
-        p3 = rgen.randrange(p1,len(t1))
-        p4 = rgen.randrange(p2,len(t2))
+        if len(t1) > 1:
+            p3 = rgen.randrange(p1,len(t1))
+        else:
+            p3 = 1
+        if len(t2) > 0:
+            p4 = rgen.randrange(p2,len(t2))
+        else:
+            p4 = 0
         newTest.extend(t2[p2:p4])
         newTest.extend(t1[p3:])
     else:
@@ -438,16 +450,19 @@ def enableAllAssume(self):
 def objCodeLOCs(self,obj,context):
     LOCs = []
     for o in inspect.getmembers(obj):
-        if inspect.isfunction(o[1]) or inspect.ismethod(o[1]):
-            if o[0] == "__init__":
-                LOCs.append((context[-1],len(inspect.getsourcelines(o[1])[0]), context))
-            LOCs.append((o[0],len(inspect.getsourcelines(o[1])[0]), context))
-        if inspect.isclass(o[1]):
-            if o[1] == object:
-                continue
-            if o[1] == type:
-                continue
-            LOCs.extend(self.objCodeLOCs(o[1],context + [o[0]]))
+        try:
+            if inspect.isfunction(o[1]) or inspect.ismethod(o[1]):
+                if o[0] == "__init__":
+                    LOCs.append((context[-1],len(inspect.getsourcelines(o[1])[0]), context))
+                LOCs.append((o[0],len(inspect.getsourcelines(o[1])[0]), context))
+            if inspect.isclass(o[1]):
+                if o[1] == object:
+                    continue
+                if o[1] == type:
+                    continue
+                LOCs.extend(self.objCodeLOCs(o[1],context + [o[0]]))
+        except:
+            pass
     return LOCs
     
 def codeLOCs(self):
