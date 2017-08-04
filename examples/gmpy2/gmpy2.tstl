@@ -17,8 +17,8 @@ def int_clear_bit(value, bit):
     return value & ~(1<<bit)
 @>
 
-pool: <val> 10 REF
-pool: <pval> 10
+pool: <val> 5 REF
+pool: <pval> 5
 
 log: 1 <val>
 
@@ -78,6 +78,7 @@ log: 1 <val>
 (<val,3> >= 0) and (type(int(<val,3>)) == int) -> <val> = mpz_set_bit(<val>,<val>)
 (<val,3> >= 0) and (type(int(<val,3>)) == int) -> <val> = mpz_clear_bit(<val>,<val>)
 
+reference: gmpy2.mpz ==> int
 reference: mpz ==> int
 
 property: str(<val>) == str(REF:<val,1>)
