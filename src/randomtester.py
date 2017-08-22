@@ -764,8 +764,6 @@ def main():
                 classP.append((config.LOCBaseline/num0,c))
             else:
                 classP.append((classLOCVals[c]/totalLOCs,c))
-        for (p,c) in classP:
-            print c,"-->",p
         
     if config.probs != None:
         classP = sut.readProbFile(config.probs,returnList=True)
