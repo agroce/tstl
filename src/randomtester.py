@@ -7,6 +7,7 @@ import traceback
 import argparse
 import glob
 import datetime
+import inspect
 from collections import namedtuple
 
 # Appending current working directory to sys.path
@@ -88,10 +89,14 @@ def parse_args():
                         help="How long a swarm config persists (only relevant with --swarmSwitch).")
     parser.add_argument('--probs', type=str, default=None,
                         help="Guide testing by an action class probability file.")
-    parser.add_argument('--LOCProbs', action='store_true',
-                        help="Guide testing by approximate relative lines of top-level code called by actions.")
+    parser.add_argument('--generateLOC', type=str, default=None,
+                        help="Generate LOC data file to bias testing by LOC estimates for actions.")
+    parser.add_argument('--biasLOC', type=str, default=None,
+                        help="Read LOC data file to bias testing by LOC estimates for actions.")
     parser.add_argument('--LOCBaseline', type=float, default=0.2,
-                        help="Baseline probability for actions that do not seem to call any SUT code.")  
+                        help="Baseline probability for actions that do not call any SUT code (default 0.2).")      
+    parser.add_argument('--LOCProbs', action='store_true',
+                        help="Guide testing by approximate relative lines of top-level code called by actions.  Note: much less effective than generateLOC/biasLOC in most cases")
     parser.add_argument('--markov', type=str, default=None,
                         help="Guide testing by a Markov model file.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
@@ -177,6 +182,22 @@ def make_config(pargs, parser):
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
     return nt_config   
+
+
+def traceLOC(frame,event,arg):
+    global lastLOCs,lastFuncs,verbose
+    if event != "call":
+        return traceLOC
+    co = frame.f_code
+    n = co.co_name
+    if (n, co.co_filename) in lastFuncs:
+        return traceLOC
+    lastFuncs[(n,co.co_filename)] = True
+    if co.co_filename == SUT.__file__.replace(".pyc",".py"):
+        return traceLOC
+    loc = len(inspect.getsourcelines(co)[0])
+    lastLOCs += loc
+    return traceLOC
 
 def handle_failure(test, msg, checkFail, newCov = False):
     global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount,fulltest, allQuickTests
@@ -548,6 +569,7 @@ def main():
     global hintPool, hintValueCounts
     global allQuickTests
     global allTheTests
+    global lastLOCs, lastFuncs
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -603,7 +625,7 @@ def main():
             sut.setEnumerateEnabled(True)
         except:
             pass
-
+        
     if config.noEnumerateEnabled:
         try:
             sut.setEnumerateEnabled(False)
@@ -695,6 +717,12 @@ def main():
 
     checkResult = True
 
+    if config.generateLOC != None:
+        if not config.noCover:
+            print "ERROR: cannot use --generateLOC without --noCover, instrumentations interfere with each other"
+            sys.exit(255)
+        actLOCs = {}
+    
     if config.total:
         fulltest = open("fulltest.test",'w')
 
@@ -715,6 +743,30 @@ def main():
     else:
         swarmClassProbs = None
 
+    if config.biasLOC != None:
+        classLOCVals = {}
+        for c in sut.actionClasses():
+            classLOCVals[c] = 0.0
+        totalLOCs = 0.0
+        num0 = 0.0
+        for l in open(config.biasLOC):
+            ls = l.split(" %%%% ")
+            c = ls[0]
+            loc = float(ls[1])
+            totalLOCs += loc
+            classLOCVals[c] = loc
+        classP = []
+        for c in sut.actionClasses():
+            if classLOCVals[c] == 0.0:
+                num0 += 1
+        for c in sut.actionClasses():
+            if classLOCVals[c] == 0.0:
+                classP.append((config.LOCBaseline/num0,c))
+            else:
+                classP.append((classLOCVals[c]/totalLOCs,c))
+        for (p,c) in classP:
+            print c,"-->",p
+        
     if config.probs != None:
         classP = sut.readProbFile(config.probs,returnList=True)
 
@@ -871,7 +923,18 @@ def main():
                 quickClassCounts[sut.actionClass(a)] += 1
             if config.showActions:
                 print "STEP #"+str(s),sut.prettyName(a[0])
+            if config.generateLOC != None:
+                lastLOCs = 0
+                lastFuncs = {}
+                sys.settrace(traceLOC)
             stepOk = sut.safely(a)
+            if config.generateLOC != None:
+                sys.settrace(None)
+                aclass = sut.actionClass(a)
+                if aclass not in actLOCs:
+                    actLOCs[aclass] = [lastLOCs]
+                else:
+                    actLOCs[aclass].append(lastLOCs)
             thisOpTime = time.time()-startOp
             nops += 1
             if config.profile:
@@ -1270,6 +1333,11 @@ def main():
                             elif test1[k] != test2[k]:
                                 print "STEP",k,test1[k][0],"-->",test2[k][0]
 
+    if config.generateLOC != None:
+        with open(config.generateLOC,'w') as f:
+            for c in actLOCs:
+                f.write(c + " %%%% " + str(float(sum(actLOCs[c])) / len(actLOCs[c])) + "\n")
+        
     if config.profile:
         print "ACTION PROFILE:"
         for a in sut.actionClasses():
