@@ -185,7 +185,7 @@ def make_config(pargs, parser):
 
 
 def traceLOC(frame,event,arg):
-    global lastLOCs,lastFuncs,verbose
+    global lastLOCs,lastFuncs
     if event != "call":
         return traceLOC
     co = frame.f_code
@@ -195,7 +195,12 @@ def traceLOC(frame,event,arg):
     lastFuncs[(n,co.co_filename)] = True
     if co.co_filename == SUT.__file__.replace(".pyc",".py"):
         return traceLOC
-    loc = len(inspect.getsourcelines(co)[0])
+    try:
+        loc = len(inspect.getsourcelines(co)[0])
+    except KeyboardInterrupt as e:
+        raise e
+    except:
+        loc = 0
     lastLOCs += loc
     return traceLOC
 
