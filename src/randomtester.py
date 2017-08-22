@@ -90,9 +90,9 @@ def parse_args():
     parser.add_argument('--probs', type=str, default=None,
                         help="Guide testing by an action class probability file.")
     parser.add_argument('--generateLOC', type=str, default=None,
-                        help="Generate LOC data file to bias testing by LOC estimates for actions.")
+                        help="Generate LOC data file to bias testing by LOC estimates for actions.  Parameter is the filename.")
     parser.add_argument('--biasLOC', type=str, default=None,
-                        help="Read LOC data file to bias testing by LOC estimates for actions.")
+                        help="Read LOC data file to bias testing by LOC estimates for actions.  Uses files produced by --generateLOC.  Any file of the same structure (action class / LOC count pairs, with ' %%%% ' separating) will work, however.")
     parser.add_argument('--LOCBaseline', type=float, default=0.2,
                         help="Baseline probability for actions that do not call any SUT code (default 0.2).")      
     parser.add_argument('--LOCProbs', action='store_true',
