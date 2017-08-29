@@ -99,6 +99,8 @@ def parse_args():
                         help="Guide testing by approximate relative lines of top-level code called by actions.  Note: much less effective than generateLOC/biasLOC in most cases")
     parser.add_argument('--markov', type=str, default=None,
                         help="Guide testing by a Markov model file.")
+    parser.add_argument('--markovP', type=float, default=1.0,
+                        help="Probability to guide action choice by Markov model.")    
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
     parser.add_argument('-X', '--startExploit', type=int, default=0,
@@ -876,7 +878,7 @@ def main():
                         print "TRYING TO STUTTER DUE TO COVERAGE GAIN"
                         tryStutter = True
             else:
-                if config.markov == None:
+                if (config.markov == None) or (R.random() > config.markovP):
                     if (config.highLowSwarm == None) and (config.probs == None) and (not config.LOCProbs):
                         a = sut.randomEnabled(R)
                     else:
