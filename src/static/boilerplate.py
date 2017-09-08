@@ -367,7 +367,7 @@ def crossover(self,test1,test2,rgen,twoPoint=False):
         newTest.extend(t2[p2:])
     return newTest
         
-def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,checkProp=True,initial=None,timeout=None):
+def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,checkProp=True,initial=None,timeout=None,stopWhen=None):
     '''
     Allows generation of fixed length tests using either a default generator (pure random testing), or using a simple
     generator that only takes the current test step as input (generator) or a complex stateful generator (sgenerator).
@@ -390,6 +390,9 @@ def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,ch
         state = initial
     self.restart()
     for i in xrange(0,size):
+        if stopWhen != None:
+            if stopWhen():
+                return (list(self.test()), noFailure)
         if sgenerator == None:
             ok = self.safely(genF(i))
         else:
@@ -398,15 +401,15 @@ def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,ch
         if not ok:
             noFailure = False
             if stopFail:
-                return (self.test(), False)
+                return (list(self.test()), False)
         if checkProp:
             if not self.check():
                 noFailure = False
                 if stopFail:
-                    return (self.test(), False)
+                    return (list(self.test()), False)
         if timeout != None:
             if (time.time() - stime) > timeout:
-                return (self.test(), noFailure)
+                return (list(self.test()), noFailure)
     return (list(self.test()), noFailure)
 
 def features(self):
@@ -802,7 +805,7 @@ def testCandidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None, findLocations = False):
+def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None, findLocations = False, noResetSplit = False):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -875,9 +878,12 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
                 if stopFound:
                     return (tc + addLast)
                 tb = tc
-                if not tryFast:
+                if not noResetSplit:
                     n = 2
                 else:
+                    if n > len(tb):
+                        n = len(tb)
+                if tryFast:
                     n = len(tb)
                 if pruneGuards:
                     self.restart()
