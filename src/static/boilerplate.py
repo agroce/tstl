@@ -802,7 +802,7 @@ def testCandidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None):
+def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None, findLocations = False):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -826,6 +826,14 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
 
     if amplify:
         currBest = pred(test)
+
+    if findLocations:
+        ntest = []
+        i = 0
+        for (name,guard,act) in test:
+            ntest.append((name,guard,act,i))
+            i += 1
+        test = ntest
     
     if keepLast:
         tb = test[:-1]
@@ -851,7 +859,10 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
         for tc in c:
             if verbose == "VERY":
                 print "Trying candidate of length",len(tc+addLast)
-            v = pred(tc + addLast)
+            if not findLocations:
+                v = pred(tc + addLast)
+            else:
+                v = pred(map(lambda x: (x[0],x[1],x[2]), tc+addLast))
             if testHandler != None:
                 testHandler()
             if amplify:
@@ -900,7 +911,10 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
                 test_after_reduce(self)
             except:
                 pass
-            v = pred([] + addLast)
+            if not findLocations:
+                v = pred(tc + addLast)
+            else:
+                v = pred(map(lambda x: (x[0],x[1],x[2]), tc+addLast))            
             if amplify:
                 if v > currBest:
                     v = True
@@ -1116,7 +1130,8 @@ def numReassigns(self, test):
         i += 1
     return len(reuses)
 
-def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
+def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None,
+                         alwaysTryFast = True):
     if verbose == "VERY":
         print "STARTING REDUCE LENGTH STEP"
     # Replace any action with another action, if that allows test to be further reduced
@@ -1134,7 +1149,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = False, ve
                     continue
                 testC = test[0:i] + [self.__names[name2]] + test[i+1:]
                 if (self.numReassigns(testC) <= reassignCount) and pred(testC):
-                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast, verbose=verbose,tryFast=True)
+                    rtestC = self.reduce(testC, pred, pruneGuards, keepLast, verbose=verbose,tryFast=alwaysTryFast)
                     if len(rtestC) < len(test):
                         if verbose:
                             print "NORMALIZER: RULE ReduceAction: STEP",i,name1,"-->",name2,"REDUCING LENGTH FROM",len(test),"TO",len(rtestC)
@@ -1454,7 +1469,7 @@ def alphaConvert(self, test, verbose = False):
     return test
     
 def normalize(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
-              noReassigns = False, useCache = True):
+              noReassigns = False, useCache = True, alwaysTryFast = True):
     """
     Attempts to produce a normalized test case
     """
@@ -1488,14 +1503,14 @@ def normalize(self, test, pred, pruneGuards = False, keepLast = False, verbose =
         simplifiers = [self.reduceLengthStep, self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep]
     elif speed == "ONEREDUCE":
         # Runs one attempt at length reduction before normal simplification, without reduction step
-        (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit)
+        (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose, checkEnabled, distLimit, alwaysTryFast=alwaysTryFast)
         if changed:
             stest = self.captureReplay(test)
             history.append(stest)
         simplifiers = [self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep]
     elif speed == "MEDIUM":
         # Runs one attempt at length reduction before normal simplification
-        (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose)
+        (changed, test) = self.reduceLengthStep(test, pred, pruneGuards, keepLast, verbose, alwaysTryFast=alwaysTryFast)
         if changed:
             stest = self.captureReplay(test)
             history.append(stest)
