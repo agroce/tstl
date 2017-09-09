@@ -805,7 +805,7 @@ def testCandidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None, findLocations = False, noResetSplit = False, safeReduce = False):
+def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None, findLocations = False, noResetSplit = False, safeReduce = False):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -961,7 +961,7 @@ def tryCompose(tests, pred, pruneGuards = False, keepLast = False, verbose = Tru
     newt = newt * combs
     return reduce(newt, pred, pruneGuards, keepLast, verbose, rgen, amplify)
             
-def reductions(self, test, pred, pruneGuards = False, keepLast = False, verbose=True, recursive=1, useClasses=True, limit = None):
+def reductions(self, test, pred, pruneGuards = True, keepLast = False, verbose=True, recursive=1, useClasses=True, limit = None):
     # use recursive = -1 for infinite recursion (all tests)
     r = self.reduce(test, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose)
     reductions = [r]
@@ -1066,7 +1066,7 @@ def powerset(self,iterable):
     xs = list(iterable)
     return chain.from_iterable(combinations(xs,n) for n in range(len(xs)+1) )
 
-def reduceEssentials(self, test, original, pred, pruneGuards = False, keepLast = False):
+def reduceEssentials(self, test, original, pred, pruneGuards = True, keepLast = False):
     possibleRemove = test
     if keepLast:
         possibleRemove = test[:-1]
@@ -1159,7 +1159,7 @@ def numReassigns(self, test):
         i += 1
     return len(reuses)
 
-def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None,
+def reduceLengthStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None,
                          alwaysTryFast = True):
     if verbose == "VERY":
         print "STARTING REDUCE LENGTH STEP"
@@ -1185,7 +1185,7 @@ def reduceLengthStep(self, test, pred, pruneGuards = False, keepLast = False, ve
                         return (True, rtestC)
     return (False, test)
 
-def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
+def replaceAllStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING REPLACE ALL STEP"    
     # Replace all occurrences of an action with a simpler action
@@ -1210,7 +1210,7 @@ def replaceAllStep(self, test, pred, pruneGuards = False, keepLast = False, verb
                     return (True, testC)
     return (False, test)
 
-def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
+def replacePoolStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING REPLACE POOL STEP"        
     # Replace pools with lower-numbered pools
@@ -1274,7 +1274,7 @@ def replacePoolStep(self, test, pred, pruneGuards = False, keepLast = False, ver
     return (False, test)
 
 
-def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
+def replaceSingleStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING REPLACE SINGLE STEP"        
     # Replace any single action with a lower-numbered action
@@ -1297,7 +1297,7 @@ def replaceSingleStep(self, test, pred, pruneGuards = False, keepLast = False, v
                     return (True, testC)
     return (False, test)
 
-def swapPoolStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
+def swapPoolStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING SWAP POOL STEP"        
     # Swap two pool uses in between two positions, if this lowers the minimal action ordering between them
@@ -1364,7 +1364,7 @@ def coversUnique(self, val, catchUncaught=False):
         return val in uv
     return coverPred
 
-def noReassignStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
+def noReassignStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if not self.__noReassigns:
         return (False, test)
     
@@ -1414,7 +1414,7 @@ def noReassignStep(self, test, pred, pruneGuards = False, keepLast = False, verb
             
     return (False, test)
 
-def swapActionOrderStep(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
+def swapActionOrderStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
         print "STARTING SWAP ACTION ORDER STEP"        
     # Try to swap any out-of-order actions
@@ -1497,7 +1497,7 @@ def alphaConvert(self, test, verbose = False):
                 break
     return test
     
-def normalize(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
+def normalize(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
               noReassigns = False, useCache = True, alwaysTryFast = True):
     """
     Attempts to produce a normalized test case
@@ -1655,7 +1655,7 @@ def freshSimpleVariants(self, name, previous, replacements):
     freshSimples = sorted(freshSimples,key = lambda x:self.__orderings[x[0][0]])
     return freshSimples
 
-def generalize(self, test, pred, pruneGuards = False, keepLast = False, verbose = False, checkEnabled = False, distLimit = None,
+def generalize(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None,
                returnCollect = False, collected = None, depth = 0, silent=False, targets = None, fresh=True):
 
     #print self.__consts
