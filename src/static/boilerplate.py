@@ -75,7 +75,8 @@ def pools(self):
 
 def prettyPrintTest(self, test, columns=80):
     i = 0
-    for (s,_,_) in test:
+    for a in test:
+        s = a[0]
         steps = "# STEP " + str(i)
         print self.prettyName(s).ljust(columns - len(steps),' '),steps
         i += 1
@@ -429,9 +430,12 @@ def disable(self,f):
     Disable an action by name.
     """
     newActions = []
-    for (name, act, guard) in self.__actions:
+    for a in self.__actions:
+        name = a[0]
+        guard = a[1]
+        act = a[2]
         if not re.match(f, name):
-            newActions.append((name, act, guard))
+            newActions.append((name, guard, act))
     self.__actions = newActions
 
 def enableAll(self):
@@ -634,7 +638,10 @@ def warning(self):
     return self.__warning
 
 def allEnabled(self, test):
-    for (name, guard, act) in test:
+    for a in test:
+        name = a[0]
+        guard = a[1]
+        act = a[2]
         if not guard():
             return False
         self.safely((name,guard,act))
@@ -652,7 +659,10 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
         allS = set([])
         allB = set([])
         cov = []
-    for (name, guard, act) in test:
+    for a in test:
+        name = a[0]
+        guard = a[1]
+        act = a[2]
         if verbose:
             print name
         if guard():
@@ -698,8 +708,11 @@ def replayUntil(self, test, pred, catchUncaught = False, checkProp=False, stopFa
     if pred():
         return newt
 
-    for (name, guard, act) in test:
-
+    for a in test:
+        name = a[0]
+        guard = a[1]
+        act = a[2]
+        
         newt.append((name, guard, act))
         if guard():
             if catchUncaught:
@@ -744,6 +757,8 @@ def fails(self, test, verbose=False, failure=None):
     except KeyboardInterrupt as e:
         raise e    
     except:
+        if verbose:
+            print "Got exception during replay!"
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True
         else:
@@ -833,7 +848,10 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
     if findLocations:
         ntest = []
         i = 0
-        for (name,guard,act) in test:
+        for a in test:
+            name = a[0]
+            guard = a[1]
+            act = a[2]
             ntest.append((name,guard,act,i))
             i += 1
         test = ntest
