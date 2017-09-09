@@ -868,6 +868,7 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
             rgen.shuffle(c)
         reduced = False
         removePos = -1
+        truePos = -1
         for tc in c:
             removePos += 1
             if verbose == "VERY":
@@ -893,10 +894,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
                 else:
                     if n > len(tb):
                         n = len(tb)
-                if tryFast:
-                    n = len(tb)
-                    truePos = (lastRemove + removePos) % len(tb)
-                    lastRemove = truePos
+                if verbose:
+                    print "Reduced test length to",len(tb+addLast)
                 if pruneGuards:
                     self.restart()
                     newtb = []
@@ -909,10 +908,17 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
                                 raise e                                
                             except:
                                 pass
+                    if verbose:
+                        if len(newtb) < len(tb):
+                            print "Guard pruning reduced test length to",len(newtb+addLast)
                     tb = newtb
+                if tryFast:
+                    n = len(tb)
+                    truePos = (lastRemove + removePos) % len(tb)
+                    lastRemove = truePos
+                    if verbose:
+                        print "check #",truePos,removePos,lastRemove                     
                 reduced = True
-                if verbose:
-                    print "Reduced test length to",len(tb+addLast),"check #",truePos,removePos,lastRemove
                 break
         if not reduced:
             if (n == len(tb)):
