@@ -805,7 +805,7 @@ def testCandidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None, findLocations = False, noResetSplit = False):
+def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = True, rgen = None, amplify = False, stopFound = False, tryFast=False, testHandler = None, findLocations = False, noResetSplit = False, safeReduce = False):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -844,22 +844,32 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
     else:
         tb = test
         addLast = []
-    if not tryFast:
-        n = 2
-    else:
+
+    n = 2
+    
+    if tryFast:
         n = len(tb)
+
+    lastRemove = 0
+        
     count = 0
     stests = {}
     while True:
-        stest = self.captureReplay(tb)
-        assert ((stest,n) not in stests)
-        stests[(stest,n)] = True
+        if verbose or safeReduce:
+            # We only perform a sanity check to avoid infinite loops if verbose or if safeReduce is True
+            stest = self.captureReplay(tb)
+            assert ((stest,n,lastRemove) not in stests)
+            stests[(stest,n,lastRemove)] = True
         count += 1
         c = self.testCandidates(tb, n)
+        if lastRemove > 0:
+            c = c[lastRemove:] + c[:lastRemove]
         if rgen:
             rgen.shuffle(c)
         reduced = False
+        removePos = -1
         for tc in c:
+            removePos += 1
             if verbose == "VERY":
                 print "Trying candidate of length",len(tc+addLast)
             if not findLocations:
@@ -885,6 +895,8 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
                         n = len(tb)
                 if tryFast:
                     n = len(tb)
+                    truePos = (lastRemove + removePos) % len(tb)
+                    lastRemove = truePos
                 if pruneGuards:
                     self.restart()
                     newtb = []
@@ -900,10 +912,10 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
                     tb = newtb
                 reduced = True
                 if verbose:
-                    print "Reduced test length to",len(tb+addLast)
+                    print "Reduced test length to",len(tb+addLast),"check #",truePos,removePos,lastRemove
                 break
         if not reduced:
-            if n == len(tb):
+            if (n == len(tb)):
                 try:
                     test_after_reduce(self)
                 except:
@@ -912,6 +924,11 @@ def reduce(self, test, pred, pruneGuards = False, keepLast = False, verbose = Tr
             n = min(n*2, len(tb))
             if verbose:
                 print "Failed to reduce, increasing granularity to",n
+        elif False and (not reduced) and tryFast and (lastRemove != 0):
+            if verbose:
+                print "Trying a pass from the beginning, was at position",lastRemove
+            lastRemove = 0
+            n = len(tb)
         elif len(tb) == 1:
             try:
                 test_after_reduce(self)
