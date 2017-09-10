@@ -69,6 +69,8 @@ def parse_args():
                         help="Turn on progress report.")
     parser.add_argument('--timedProgress', type=int, default=30,
                         help="Turn on progress reports at x second intervals (default = 30 seconds).")
+    parser.add_argument('--ddmin', action='store_true',
+                        help="Use standard binary-search-like ddmin instead of greedy single-step method.")
     parser.add_argument('--enumerateEnabled', action='store_true',
                         help="Instead of guessing enabled actions, enumerate them; can speed testing greatly for cases where almost all actions are usually disabled.")
     parser.add_argument('--noEnumerateEnabled', action='store_true',
@@ -267,7 +269,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         print "REDUCING..."
         startReduce = time.time()
         original = test
-        test = sut.reduce(test, failProp, True, keepLast = config.keepLast)
+        test = sut.reduce(test, failProp, True, keepLast = config.keepLast, tryFast = not config.ddmin)
         if not newCov:
             sut.saveTest(test,config.output.replace(".test",".reduced.test"))        
         print "Reduced test has",len(test),"steps"
@@ -280,7 +282,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         sut.prettyPrintTest(test)
         if config.essentials:
             print "FINDING ESSENTIAL ELEMENTS OF REDUCED TEST"
-            (canRemove, cannotRemove) = sut.reduceEssentials(test, original, failProp, True, keepLast = config.keepLast)
+            (canRemove, cannotRemove) = sut.reduceEssentials(test, original, failProp, True, keepLast = config.keepLast, tryFast = not config.ddmin)
             print len(canRemove),len(cannotRemove)
             for (c,reducec) in canRemove:
                 print "CAN BE REMOVED:",map(lambda x:x[0], c)
@@ -290,7 +292,8 @@ def handle_failure(test, msg, checkFail, newCov = False):
         if config.normalize:
             startSimplify = time.time()
             print "NORMALIZING..."
-            test = sut.normalize(test, failProp, True, keepLast = config.keepLast, verbose = True, speed = config.speed, noReassigns = config.noReassign, useCache=False)
+            test = sut.normalize(test, failProp, True, keepLast = config.keepLast, verbose = True, speed = config.speed, noReassigns = config.noReassign, useCache=False,
+                                 tryFast=not config.ddmin)
             print "Normalized test has",len(test),"steps"
             print "NORMALIZED IN",time.time()-startSimplify,"SECONDS"
             sut.saveTest(test,config.output.replace(".test",".normalized.test"))
@@ -412,7 +415,7 @@ def buildActivePool():
             for (t,bs,ss) in reducePool:
                 if config.verbose or config.verboseExploit:
                     print "REDUCING POOL TEST FROM",len(t),"STEPS...",
-                r = sut.reduce(t,sut.coversAll(ss,bs,checkProp=not(config.noCheck)),verbose=False)
+                r = sut.reduce(t,sut.coversAll(ss,bs,checkProp=not(config.noCheck)),verbose=False,tryFast=not config.ddmin)
                 if config.verbose or config.verboseExploit:            
                     print "TO",len(r),"STEPS:"
                     sut.prettyPrintTest(r)
@@ -1001,7 +1004,7 @@ def main():
                         print "ANALYZING NEW UNIQUE VALUE:",u
                     else:
                         continue
-                    r = sut.reduce(currTest, sut.coversUnique(u), keepLast=False)
+                    r = sut.reduce(currTest, sut.coversUnique(u), keepLast=False, tryFast = not config.ddmin)
                     rc = map(sut.actionClass, r)
                     sut.replay(r)
                     for ru in sut.uniqueVals():
@@ -1096,7 +1099,7 @@ def main():
                     branchCoverageCount[b] = 0
                     quickAnalysisReducedB[b] = 0                    
                 branchCoverageCount[b] += 1
-                r = sut.reduce(currTest,sut.coversBranches([b]),keepLast=False)
+                r = sut.reduce(currTest,sut.coversBranches([b]),keepLast=False, tryFast=not config.ddmin)
                 print "REDUCED FROM",clen,"TO",len(r)
                 sys.stdout.flush()
                 sut.replay(r)
@@ -1139,7 +1142,7 @@ def main():
                     quickAnalysisReducedS[s] = 0
                 statementCoverageCount[s] += 1                
                 print "ANALYZING STATEMENT",s
-                r = sut.reduce(currTest,sut.coversStatements([s]),keepLast=False)
+                r = sut.reduce(currTest,sut.coversStatements([s]),keepLast=False, tryFast=not config.ddmin)
                 print "REDUCED FROM",clen,"TO",len(r)
                 sys.stdout.flush()
                 sut.replay(r)

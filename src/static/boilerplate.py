@@ -934,7 +934,7 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
                     n = len(tb)
                     truePos = (lastRemove + removePos) % len(tb)
                     lastRemove = truePos
-                    if verbose:
+                    if verbose == "VERY":
                         print "check #",truePos,removePos,lastRemove                     
                 reduced = True
                 break

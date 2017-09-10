@@ -39,8 +39,8 @@ def parse_args():
                         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument('--uncaught', action='store_true',
                         help='Allow uncaught exceptions in actions (for coverage-based reduction).')
-    parser.add_argument('--fast', action='store_true',
-                        help="Try fast reduction (for nearly 1-minimal tests).")
+    parser.add_argument('--ddmin', action='store_true',
+                        help="Use standard binary-search-like delta-debugging, not greedy one-step method.")
     parser.add_argument('--decompose', action='store_true',
                         help="Perform decomposition by coverage (assumes coverage based reduction).  Produces multiple tests.")    
     parser.add_argument('-M', '--multiple', action='store_true',
@@ -170,9 +170,9 @@ def main():
         start = time.time()
         print "REDUCING..."
         if (not config.multiple) and (not config.decompose):
-            r = sut.reduce(r,pred,verbose=config.verbose,tryFast=config.fast,keepLast=config.keepLast,rgen=R)
+            r = sut.reduce(r,pred,verbose=config.verbose,tryFast=not config.ddmin,keepLast=config.keepLast,rgen=R)
         elif config.multiple:
-            rs = sut.reductions(r,pred,verbose=config.verbose,recursive=config.recursive,limit=config.limit,keepLast=config.keepLast)
+            rs = sut.reductions(r,pred,verbose=config.verbose,recursive=config.recursive,limit=config.limit,keepLast=config.keepLast,tryFast=not config.ddmin)
         elif config.decompose:
             print "DECOMPOSING..."
             rs = sut.coverDecompose(r,verbose=config.verbose,checkProp=not config.noCheck,catchUncaught=config.uncaught)
@@ -191,11 +191,11 @@ def main():
         start = time.time()
         print "NORMALIZING..."
         if (not config.multiple) and (not config.decompose):
-            r = sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast)
+            r = sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast,tryFast=not config.ddmin)
         else:
             newrs = []
             for r in rs:
-                newrs.append(sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast))
+                newrs.append(sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast,tryFast=not config.ddmin))
             rs = newrs
         print "NORMALIZED IN",time.time()-start,"SECONDS"
         if (not config.multiple) and (not config.decompose):
