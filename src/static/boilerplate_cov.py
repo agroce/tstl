@@ -94,7 +94,7 @@ def report(self, filename):
     outf = open(filename,'w')
     r = -1
     try:
-        r = self.__cov.report(morfs=self.__modules, file=outf)
+        r = self.__cov.report(morfs=self.__modules, file=outf, show_missing=True)
     finally:
         outf.close()
         return r
@@ -106,7 +106,7 @@ def htmlReport(self, dir):
     r = -1
     try:
         r = self.__cov.html_report(morfs=self.__modules, directory=dir,
-                                      title="TSTL Coverage Report")
+                                      title="TSTL Coverage Report",show_missing=True)
     finally:
         return r
 

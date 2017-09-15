@@ -374,7 +374,7 @@ def main():
     baseIndent = "    "
 
     if "-v" in sys.argv or "--version" in sys.argv:
-        print "TSTL, version 1.0.19"
+        print "TSTL, version 1.1.0"
         print "Documentation at https://github.com/agroce/tstl"
         sys.exit(0)
         
@@ -1205,13 +1205,14 @@ def main():
         for s in sourceSet:
             covc += '"' + s + '",'
         if len(sourceSet) > 0:
-            covc = covc[:-1] + "] + self.moduleFiles()"
+            covc = covc[:-1] + "] + self.modulePaths(),"
         else:
-            covc = covc + "self.moduleFiles()"
+            covc += "self.modulePaths(),"
+        covc += "include=self.moduleFiles(),"
         genCode.append(covc)
         if config.pylib:
-            genCode.append(",cover_pylib=True")
-        genCode.append(",omit='sut.py'")
+            genCode.append(",cover_pylib=True,")
+        genCode.append("omit='sut.py'")
         genCode.append(")\n")
         genCode.append(baseIndent + "self.__cov._warn_no_data = False\n")
         genCode.append(baseIndent + "self.__collectCov = True\n")

@@ -1832,21 +1832,33 @@ def relax(self):
 def stopRelax(self):
     self.__relaxUsedRestriction = False
 
-def moduleFiles(self):
+def modulePaths(self):
     # This code is not very robust, tried to find locations for code coverage and avoid system library code
+    paths = []
+    for m in self.__importModules:
+        try:
+            paths.extend(m.__path__)
+        except AttributeError:
+            continue
+    return paths
+
+def moduleFiles(self):
     files = []
     for m in self.__importModules:
         try:
-            files.extend(m.__path__)
+            t = m.__path__
         except AttributeError:
             f = m.__file__
             if f.find("python2.7") != -1:
                 # if it is a library file, grab the entire directory
                 dirf = os.path.dirname(m.__file__)
+                # Ignore Python system files!
                 if dirf.split("/")[-1] in ["python2.7", "lib-dynload"]:
                     continue
                 f = dirf
             else:
-                files.append(f.replace(".pyc",".py"))
+                try:
+                    files.append(f.__name__)
+                except AttributeError:
+                    continue
     return files
-        
