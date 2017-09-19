@@ -426,10 +426,6 @@ def buildActivePool():
                     print
                 sut.replay(r,checkProp=not(config.noCheck),catchUncaught=True)
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
-                for b in sut.currBranches():
-                    print "  COVERS BRANCH:",b
-                for s in sut.currStatements():
-                    print "  COVERS STATEMENT:",s  
                 # Have to make sure if we got some new coverage out of this it's in the coverage map
                 # Also need to make sure quickTests know about it
                 # Some statistics may be inaccurate, though
@@ -446,7 +442,12 @@ def buildActivePool():
                         newStatements.add(s)
                         statementCoverageCount[s] = 1
                     else:
-                        statementCoverageCount[s] += 1                     
+                        statementCoverageCount[s] += 1
+                if config.verbose or config.verboseExploit:
+                    for b in sut.currBranches():
+                        print "  COVERS BRANCH:",b,branchCoverageCount[b]
+                    for s in sut.currStatements():
+                        print "  COVERS STATEMENT:",s,statementCoverageCount[s]                   
                 if len(newBranches) > 0 or len(newStatements) > 0:
                     sut.newCurrStatements().update(newStatements)
                     sut.newCurrBranches().update(newBranches)
@@ -466,8 +467,8 @@ def buildActivePool():
         bThreshold = meanBranch * config.exploitCeiling
         sThreshold = meanStatement * config.exploitCeiling
         if config.verbose or config.verboseExploit:
-            branchInt = filter(lambda x:x[1] <= bThreshold, branchCoverageCount)
-            statementInt = filter(lambda x:x[1] <= sThreshold, statementCoverageCount)
+            branchInt = filter(lambda x:x[1] <= bThreshold, branchCoverageCount.items())
+            statementInt = filter(lambda x:x[1] <= sThreshold, statementCoverageCount.items())
             print "MEAN BRANCH",meanBranch,"THRESHOLD",bThreshold,"/ MEAN STATEMENT",meanStatement,"THRESHOLD",sThreshold
             print len(branchInt),
             print "BRANCHES OF INTEREST OUT OF",len(branchCoverageCount)
