@@ -426,6 +426,10 @@ def buildActivePool():
                     print
                 sut.replay(r,checkProp=not(config.noCheck),catchUncaught=True)
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
+                for b in sut.currBranches():
+                    print "  COVERS BRANCH:",b
+                for s in sut.currStatements():
+                    print "  COVERS STATEMENT:",s  
                 # Have to make sure if we got some new coverage out of this it's in the coverage map
                 # Also need to make sure quickTests know about it
                 # Some statistics may be inaccurate, though
@@ -462,11 +466,17 @@ def buildActivePool():
         bThreshold = meanBranch * config.exploitCeiling
         sThreshold = meanStatement * config.exploitCeiling
         if config.verbose or config.verboseExploit:
+            branchInt = filter(lambda x:x[1] <= bThreshold, branchCoverageCount)
+            statementInt = filter(lambda x:x[1] <= sThreshold, statementCoverageCount)
             print "MEAN BRANCH",meanBranch,"THRESHOLD",bThreshold,"/ MEAN STATEMENT",meanStatement,"THRESHOLD",sThreshold
-            print len(filter(lambda x:x <= bThreshold, branchCoverageCount.values())),
-            print "BRANCHES OF INTEREST OUT OF",len(branchCoverageCount),"/",
-            print len(filter(lambda x:x <= sThreshold, statementCoverageCount.values())),
+            print len(branchInt),
+            print "BRANCHES OF INTEREST OUT OF",len(branchCoverageCount)
+            for (bi,ci) in branchInt:
+                print bi,ci
+            print len(statementInt),
             print "STATEMENTS OF INTEREST OUT OF",len(statementCoverageCount)
+            for (si,ci) in statementInt:
+                print si,ci
         for (t,bs,ss) in fullPool:
             added = False
             for b in bs:
