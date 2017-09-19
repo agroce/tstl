@@ -105,8 +105,10 @@ def parse_args():
                         help="Probability to guide action choice by Markov model.")    
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
-    parser.add_argument('-X', '--startExploit', type=int, default=0,
-                        help="Time at which exploitation starts.")
+    parser.add_argument('--startExploit', type=float, default=0.0,
+                        help="Time at which exploitation starts (default 0.0, LOWER BOUND: this plus startExploitStall must hold).")
+    parser.add_argument('--startExploitStall', type=int, default=0,
+                        help="Number of no-new-coverage tests at which exploitation starts (default 0, LOWER BOUND: this plus startExploit must hold).")    
     parser.add_argument("--verboseExploit",action='store_true',
                         help="Exploitation is verbose (info on pool, etc.).")    
     parser.add_argument("--reducePool",action='store_true',
@@ -138,9 +140,11 @@ def parse_args():
     parser.add_argument('--profile', action='store_true',
                         help="Profile actions.")
     parser.add_argument('--stopWhenBranches', type=int, default=None,
-                        help="Stop when branch coverage exceeds a given target value.")
+                        help="Stop when branch coverage exceeds a given target value (default None).")
     parser.add_argument('--stopWhenStatements', type=int, default=None,
-                        help="Stop when statement coverage exceeds a given target value.")    
+                        help="Stop when statement coverage exceeds a given target value (default None).")
+    parser.add_argument('--stopWhenNoCoverage', type=int, default=None,
+                        help="Stop there has been no additional coverage for this many tests (default None).")        
     parser.add_argument('--verboseActions', action='store_true',
                         help="Make test actions verbose.")
     parser.add_argument('--showActions', action='store_true',
@@ -560,13 +564,15 @@ def collectExploitable():
             reducePool.append((list(sut.test()),set(sut.newBranches()),set(sut.newStatements())))
 
 def printStatus(elapsed,step=None):
-    global sut, nops, activePool, fullPool
+    global sut, nops, activePool, fullPool, testsWithNoNewCoverage
     print "TEST #"+str(ntests),
     if step != None:
         print "STEP #"+str(step),
     print "("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(),
     if (not config.noCover) and (not config.postCover):
         print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]",
+        if testsWithNoNewCoverage > 0:
+            print "(no cov+ for",testsWithNoNewCoverage,"tests)",
     if (config.exploit != None) and (config.verbose or config.verboseExploit):
         print "[ POOLS: full",len(fullPool),"active",len(activePool),"]",
     print nops, "TOTAL ACTIONS (" + str(nops/elapsed) + "/s)"
@@ -580,6 +586,7 @@ def main():
     global allQuickTests
     global allTheTests
     global lastLOCs, lastFuncs
+    global testsWithNoNewCoverage
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -805,6 +812,9 @@ def main():
     if config.verbose:
         print "ABOUT TO START TESTING"
         sys.stdout.flush()
+
+    testsWithNoNewCoverage = 0
+    neverExploited = True
         
     while (config.maxTests == -1) or (ntests < config.maxTests):
         if config.verbose:
@@ -840,7 +850,10 @@ def main():
 
         testFailed = False
 
-        if (config.exploit != None) and ((time.time() - start) > config.startExploit):
+        if (config.exploit != None) and (((time.time() - start) >= config.startExploit) and (testsWithNoNewCoverage >= config.startExploitStall)):
+            if neverExploited:
+                print "** STARTING EXPLOITATION OF TESTS AT TIME",time.time()-start,"AFTER",testsWithNoNewCoverage,"TESTS WITH NO NEW COVERAGE **"
+                neverExploited = False
             exploitOk = tryExploit()
             if not exploitOk:
                 testFailed = True
@@ -851,6 +864,7 @@ def main():
                 else:
                     continue
 
+        anyNewCoverage = False
         for s in xrange(0,config.depth):
             if config.verbose:
                 print "GENERATING STEP",s,
@@ -957,6 +971,9 @@ def main():
                 collectExploitable()                
             if (not config.uncaught) and (not stepOk):
                 testFailed = True
+                if not config.noCover:
+                    if (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.currNewStatements())) > 0):
+                        anyNewCoverage = True
                 handle_failure(sut.test(), "UNCAUGHT EXCEPTION", False)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
@@ -971,6 +988,9 @@ def main():
                     
             if not checkResult:
                 testFailed = True
+                if not config.noCover:
+                    if (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.currNewStatements())) > 0):
+                        anyNewCoverage = True                
                 handle_failure(sut.test(), "PROPERLY VIOLATION", True)
                 if not config.multiple:
                     print "STOPPING TESTING DUE TO FAILED TEST"
@@ -1031,6 +1051,11 @@ def main():
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
 
+        if not config.noCover and (anyNewCoverage or (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0)):
+            testsWithNoNewCoverage = 0
+        else:
+            testsWithNoNewCoverage += 1
+            
         if config.postCover:
             allTheTests.append(list(sut.test()))
 
@@ -1182,6 +1207,10 @@ def main():
             printStatus(elapsed)                
         if (not config.multiple) and (failCount > 0):
             break
+        if (config.stopWhenNoCoverage != None):
+            if testsWithNoNewCoverage >= config.stopWhenNoCoverage:
+                print "STOPPING TESTING DUE TO LACK OF NEW COVERAGE FOR",testsWithNoNewCoverage,"TESTS"
+                break      
         if (config.stopWhenBranches != None):
             if len(sut.allBranches()) >= config.stopWhenBranches:
                 print "STOPPING TESTING DUE TO REACHING BRANCH COVERAGE TARGET"
