@@ -408,7 +408,7 @@ Then you use that generated file to guide testing:
 
 `tstl_rt --biasLOC sut.loc`
 
-It's also a good idea, for fast effective testing, to turn off coverage with `--noCover`.  This isn't so great if you are looking to see if your tests cover your code well, but for pedal-to-the-metal bug-hunting, it is often the way to go.
+It's also a good idea, for faster testing (since the power of random testing is partly in generating huge numbers of tests every minute), to turn off code coverage collection with `--noCover`.  This isn't so great if you are looking to see if your tests cover your code well, but for pedal-to-the-metal bug-hunting, it is often the way to go.
 
 You can also try a "genetic algorithms" approach guided by coverage, that exploits "high coverage" tests:
 
