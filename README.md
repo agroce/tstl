@@ -408,6 +408,16 @@ Then you use that generated file to guide testing:
 
 `tstl_rt --biasLOC sut.loc`
 
+It's also a good idea, for fast effective testing, to turn off coverage with `--noCover`.  This isn't so great if you are looking to see if your tests cover your code well, but for pedal-to-the-metal bug-hunting, it is often the way to go.
+
+You can also try a "genetic algorithms" approach guided by coverage, that exploits "high coverage" tests:
+
+`tstl_rt --exploit 0.8 --Pmutate 0.5`
+
+Adding `--reducePool` sometimes also improves the performance of this method.
+
+You can tune the exploit and mutate parameters to see if they improve results.  You can even combine lines-of-code bias with the `exploit` approach and/or swarm testing.  Sometimes testing benefits from having all three!  Unfortunately, using `--exploit` does mean you can't get away with `--noCover` to avoid the overhead of computing code coverage.
+
 Developer Info
 --------------
 
