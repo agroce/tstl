@@ -397,6 +397,17 @@ What about tests that fail by entering an infinite loop?  The same technique as 
 
 Finally, how do you integrate TSTL testing with more conventional approaches, e.g., pytest?  The file `test_tstl_regressions.py` in the examples directory shows one way.  If you add all your TSTL tests of interest to a `tstl_tests` directory under the directory where `sut.py` lives, you can make pytest run all your TSTL tests.  Perhaps more interestingly, this file also wraps a simple caller that forces 60 seconds of random testing to be executed by pytest, as a sanity check.  You can tweak the configuration of the random testing easily -- often, adding "--swarm" is a good idea.
 
+Hints for Better Testing
+-----
+
+Sometimes just doing `tstl_rt` or even `tstl_rt --swarm` isn't enough.  There are other options for improving testing.  A particularly powerful one in many cases is using the size of functions in terms of lines-of-code to guide testing.  To do this, you first let TSTL determine the sizes:
+
+`tstl_rt --generateLOC sut.loc --timeout 120`
+
+Then you use that generated file to guide testing:
+
+`tstl_rt --biasLOC sut.loc`
+
 Developer Info
 --------------
 
