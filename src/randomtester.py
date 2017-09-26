@@ -144,7 +144,13 @@ def parse_args():
     parser.add_argument('--stopWhenStatements', type=int, default=None,
                         help="Stop when statement coverage exceeds a given target value (default None).")
     parser.add_argument('--stopWhenNoCoverage', type=int, default=None,
-                        help="Stop there has been no additional coverage for this many tests (default None).")        
+                        help="Stop there has been no additional coverage for this many tests (default None).")
+    parser.add_argument('--trackMaxCoverage', type=str, default=None,
+                        help="Track test with highest branch/statement (tiebreaker) coverage and store in this file (default None).")
+    parser.add_argument('--maxMustHitStatement', type=str, default=None,
+                        help="Best coverage test must hit this statement (default None).")
+    parser.add_argument('--maxMustHitBranch', type=str, default=None,
+                        help="Best coverage test must hit this branch (default None).")        
     parser.add_argument('--verboseActions', action='store_true',
                         help="Make test actions verbose.")
     parser.add_argument('--showActions', action='store_true',
@@ -693,6 +699,10 @@ def main():
 
     if config.postCover:
         allTheTests = []
+
+    if config.trackMaxCoverage:
+        bestCov = (0,0)
+        bestTest = []
         
     if config.logging != None:
         sut.setLog(config.logging)
@@ -1062,6 +1072,27 @@ def main():
                 print "STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test())
                 break
 
+        if config.trackMaxCoverage:
+            thisCov = (len(sut.currBranches()),len(sut.currStatements()))
+            if thisCov > bestCov:
+                covOk = True
+                if config.maxMustHitStatement:
+                    hits = map(lambda x:x[0] + ":" + str(x[1]),sut.currStatements())
+                    if config.maxMustHitStatement not in hits:
+                        if config.verbose:
+                            print "NEW COVERAGE BEST",thisCov,"BUT DID NOT HIT STATEMENT",config.maxMustHitStatement
+                        covOk = False
+                if config.maxMustHitBranch:
+                    hits = map(lambda x:x[0] + ":" + str(x[1][0]) + "-" + str(x[1][1]),sut.currBranches())
+                    if config.maxMustHitBranch not in hits:
+                        if config.verbose:
+                            print "NEW COVERAGE BEST",thisCov,"BUT DID NOT HIT BRANCH",config.maxMustHitBranch
+                        covOk = False
+                if covOk:
+                    print "NEW BEST COVERAGE TEST:",thisCov
+                    bestTest = list(sut.test())
+                    bestCov = thisCov
+            
         if not config.noCover and (anyNewCoverage or (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0)):
             testsWithNoNewCoverage = 0
         else:
@@ -1385,7 +1416,11 @@ def main():
         with open(config.generateLOC,'w') as f:
             for c in actLOCs:
                 f.write(c + " %%%% " + str(float(sum(actLOCs[c])) / len(actLOCs[c])) + "\n")
-        
+
+    if config.trackMaxCoverage:
+        print "Writing best coverage test with coverage",bestCov,"to",config.trackMaxCoverage
+        sut.saveTest(bestTest,config.trackMaxCoverage)
+                
     if config.profile:
         print "ACTION PROFILE:"
         for a in sut.actionClasses():
