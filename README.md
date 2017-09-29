@@ -441,4 +441,10 @@ Who is responsible for TSTL?
 
 - Pooria Azimi added the `<int,1>` notation, which turns out to be one of the most important changes, and eliminated the need for the exceedingly awkward way of handling binding via Python functions and commit point based guards.  Without this, you really don't have a useful TSTL.
 
+- My (Alex's) other graduate students (Amin Alipour, Rahul Gopinath, Arpit Christi, Chaoqiang Zhang, Shalini Shamasunder) and almost-mine graduate student (Iftekhar Ahmed) contributed to the general intellectual climate in which TSTL was born.
+
+- Students in CS 499 at Northern Arizona University and CS 362, 562, and 569 at Oregon State University contributed a lot of ideas, and a few concrete language/tool changes or bug reports.  These are too numerous to mention, and in some cases I don't recall who asked "why do you do it that stupid way?" in class, and got me thinking that it was in fact a stupid way to do things.
+
 - Ned Batchelder, David R. MacIver, and John Regehr have no actual code in TSTL, but all contributed in significant ways to various implementation aspects, in ways that go beyond the general disclaimer that TSTL freely steals from the entire software testing (research) community.
+
+- The pyfakefs team (mrbean-bremen and jmcgeheeiv on github) really worked with me to test pyfakefs, which resulted in a number of nice improvements to TSTL and to differential testing in particular.
