@@ -441,4 +441,4 @@ Who is responsible for TSTL?
 
 - Pooria Azimi added the `<int,1>` notation, which turns out to be one of the most important changes, and eliminated the need for the exceedingly awkward way of handling binding via Python functions and commit point based guards.  Without this, you really don't have a useful TSTL.
 
-- Ned Batchelder, David R. MacIver, and John Regehr have no actual code in TSTL, but all contributed in significant ways to various implementation aspects, in ways that go beyond the general disclaimer that TSTL freely steals from the entire software testing community.
+- Ned Batchelder, David R. MacIver, and John Regehr have no actual code in TSTL, but all contributed in significant ways to various implementation aspects, in ways that go beyond the general disclaimer that TSTL freely steals from the entire software testing (research) community.
