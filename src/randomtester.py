@@ -280,7 +280,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
             failProp = sut.coversAll(snew,bnew,catchUncaught=True,checkProp=(not config.noCheck))            
         elif becauseBranchCov:
             targetSplit = config.stopWhenHitBranch.split(":")
-            bTarget = [(targetSplit[0],(int(targetSplit[1].split(",")[0]),int(targetSplit[1].split(",")[1])))]
+            bTarget = [(targetSplit[0],(int(targetSplit[1].split("-")[0]),int(targetSplit[1].split("-")[1])))]
             failProp = sut.coversBranches(bTarget,catchUncaught=True,checkProp=(not config.noCheck))
         elif becauseStatementCov:
             targetSplit = config.stopWhenHitStatement.split(":")
@@ -1040,6 +1040,24 @@ def main():
             
             elapsed = time.time() - start
 
+            if config.running:
+                if sut.newBranches() != set([]):
+                    print "ACTION:",sut.prettyName(a[0])
+                    for b in sut.newBranches():
+                        print elapsed,len(sut.allBranches()),"New branch",b
+                        sys.stdout.flush()
+                    sawNew = True
+                else:
+                    sawNew = False
+                if sut.newStatements() != set([]):
+                    print "ACTION:",sut.prettyName(a[0])
+                    for s in sut.newStatements():
+                        print elapsed,len(sut.allStatements()),"New statement",s
+                        sys.stdout.flush()
+                    sawNew = True
+                else:
+                    sawNew = False                
+            
             if config.stopWhenHitBranch:
                 testFailed = True
                 if not config.noCover:
@@ -1063,25 +1081,7 @@ def main():
                     if not config.multiple:
                         print "STOPPING TESTING DUE TO HITTING STATEMENT TARGET"
                     break
-            
-            if config.running:
-                if sut.newBranches() != set([]):
-                    print "ACTION:",sut.prettyName(a[0])
-                    for b in sut.newBranches():
-                        print elapsed,len(sut.allBranches()),"New branch",b
-                        sys.stdout.flush()
-                    sawNew = True
-                else:
-                    sawNew = False
-                if sut.newStatements() != set([]):
-                    print "ACTION:",sut.prettyName(a[0])
-                    for s in sut.newStatements():
-                        print elapsed,len(sut.allStatements()),"New statement",s
-                        sys.stdout.flush()
-                    sawNew = True
-                else:
-                    sawNew = False                
-
+           
             if config.uniqueValuesAnalysis:
                 uvals = sut.uniqueVals()
                 olds = sut.state()
