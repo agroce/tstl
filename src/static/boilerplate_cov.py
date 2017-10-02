@@ -140,10 +140,10 @@ def startCoverage(self):
 def stopCoverage(self):
     self.__collectCov = False    
 
-def coversBranches(self, branches, catchUncaught=False):
+def coversBranches(self, branches, catchUncaught=False, checkProp=False):
     def coverPred(test):
         try:
-            self.replay(test, catchUncaught)
+            self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except KeyboardInterrupt as e:
             raise e                  
         except:
@@ -155,10 +155,10 @@ def coversBranches(self, branches, catchUncaught=False):
         return True
     return coverPred
 
-def coversStatements(self, statements, catchUncaught=False):
+def coversStatements(self, statements, catchUncaught=False, checkProp=False):
     def coverPred(test):
         try:
-            self.replay(test, catchUncaught)
+            self.replay(test, catchUncaught=catchUncaught,checkProp=checkProp)
         except KeyboardInterrupt as e:
             raise e                  
         except:

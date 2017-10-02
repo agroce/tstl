@@ -145,12 +145,16 @@ def parse_args():
                         help="Stop when statement coverage exceeds a given target value (default None).")
     parser.add_argument('--stopWhenNoCoverage', type=int, default=None,
                         help="Stop there has been no additional coverage for this many tests (default None).")
+    parser.add_argument('--stopWhenHitBranch', type=str, default=None,
+                        help="Stop testing when given branch is hit (default None).")
+    parser.add_argument('--stopWhenHitStatement', type=str, default=None,
+                        help="Stop testing when given statement is hit (default None).")    
     parser.add_argument('--trackMaxCoverage', type=str, default=None,
                         help="Track test with highest branch/statement (tiebreaker) coverage and store in this file (default None).")
-    parser.add_argument('--maxMustHitStatement', type=str, default=None,
-                        help="Best coverage test must hit this statement (default None).")
     parser.add_argument('--maxMustHitBranch', type=str, default=None,
-                        help="Best coverage test must hit this branch (default None).")        
+                        help="Best coverage test must hit this branch (default None).")
+    parser.add_argument('--maxMustHitStatement', type=str, default=None,
+                        help="Best coverage test must hit this statement (default None).")    
     parser.add_argument('--verboseActions', action='store_true',
                         help="Make test actions verbose.")
     parser.add_argument('--showActions', action='store_true',
@@ -218,14 +222,14 @@ def traceLOC(frame,event,arg):
     lastLOCs += loc
     return traceLOC
 
-def handle_failure(test, msg, checkFail, newCov = False):
+def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = False, becauseStatementCov = False):
     global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount,fulltest, allQuickTests
     global allTheTests
     if config.postCover:
         allTheTests.append(list(test))
     test = list(test)
     sys.stdout.flush()
-    if not newCov:
+    if (not newCov) and (not becauseBranchCov) and (not becauseStatementCov):
         failCount += 1
         print msg
         f = sut.failure()
@@ -234,6 +238,14 @@ def handle_failure(test, msg, checkFail, newCov = False):
         traceback.print_tb(f[2],file=sys.stdout)
         sut.saveTest(test,config.output.replace(".test",".full.test"))
         covHandler = None
+    elif becauseBranchCov:
+        failCount += 1 # Use same mechanism as handling failures
+        print "HIT BRANCH:",config.stopWhenHitBranch
+        sut.saveTest(test,config.output.replace(".test",".full.test"))        
+    elif becauseStatementCov:
+        failCount += 1 # Use same mechanism as handling failures
+        print "HIT STATEMENT:",config.stopWhenHitStatement
+        sut.saveTest(test,config.output.replace(".test",".full.test"))             
     else:
         print "Handling new coverage for quick testing"
         snew = sut.newCurrStatements()
@@ -264,7 +276,18 @@ def handle_failure(test, msg, checkFail, newCov = False):
     print "Original test has",len(test),"steps"
     cloudMatch = False
     if not config.full:
-        if not checkFail:
+        if newCov:
+            failProp = sut.coversAll(snew,bnew,catchUncaught=True,checkProp=(not config.noCheck))            
+        elif becauseBranchCov:
+            targetSplit = config.stopWhenHitBranch.split(":")
+            bTarget = [(targetSplit[0],(int(targetSplit[1].split(",")[0]),int(targetSplit[1].split(",")[1])))]
+            failProp = sut.coversBranches(bTarget,catchUncaught=True,checkProp=(not config.noCheck))
+        elif becauseStatementCov:
+            targetSplit = config.stopWhenHitStatement.split(":")
+            sTarget = [(targetSplit[0],int(targetSplit[1]))]
+            failProp = sut.coversStatements(sTarget,catchUncaught=True,checkProp=(not config.noCheck))
+            assert failProp(test)
+        elif not checkFail:
             if config.noExceptionMatch:
                 failProp = sut.fails
             else:
@@ -274,8 +297,6 @@ def handle_failure(test, msg, checkFail, newCov = False):
                 failProp = sut.failsCheck
             else:
                 failProp = lambda x: sut.failsCheck(x,failure=f)
-        if newCov:
-            failProp = sut.coversAll(snew,bnew,catchUncaught=True,checkProp=(not config.noCheck))
         print "REDUCING..."
         startReduce = time.time()
         original = test
@@ -385,7 +406,7 @@ def handle_failure(test, msg, checkFail, newCov = False):
         i += 1
     if not config.verboseActions:
         sut.verbose(False)
-    if not newCov:
+    if (not newCov) and (not becauseBranchCov) and (not becauseStatementCov):
         if config.localize:
             for s in sut.currStatements():
                 if s not in localizeSFail:
@@ -1010,7 +1031,7 @@ def main():
             if not checkResult:
                 testFailed = True
                 if not config.noCover:
-                    if (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.currNewStatements())) > 0):
+                    if (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0):
                         anyNewCoverage = True                
                 handle_failure(sut.test(), "PROPERLY VIOLATION", True)
                 if not config.multiple:
@@ -1018,6 +1039,31 @@ def main():
                 break
             
             elapsed = time.time() - start
+
+            if config.stopWhenHitBranch:
+                testFailed = True
+                if not config.noCover:
+                    if (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0):
+                        anyNewCoverage = True                  
+                hits = map(lambda x:x[0] + ":" + str(x[1][0]) + "-" + str(x[1][1]),sut.currBranches())
+                if config.stopWhenHitBranch in hits:
+                    handle_failure(sut.test(), "HIT BRANCH TARGET", False, becauseBranchCov=True)
+                    if not config.multiple:
+                        print "STOPPING TESTING DUE TO HITTING BRANCH TARGET"
+                    break
+                    
+            if config.stopWhenHitStatement:
+                testFailed = True
+                if not config.noCover:
+                    if (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0):
+                        anyNewCoverage = True                  
+                hits = map(lambda x:x[0] + ":" + str(x[1]),sut.currStatements())
+                if config.stopWhenHitStatement in hits:
+                    handle_failure(sut.test(), "HIT STATEMENT TARGET", False, becauseStatementCov=True)
+                    if not config.multiple:
+                        print "STOPPING TESTING DUE TO HITTING STATEMENT TARGET"
+                    break
+            
             if config.running:
                 if sut.newBranches() != set([]):
                     print "ACTION:",sut.prettyName(a[0])
