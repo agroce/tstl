@@ -1,0 +1,53 @@
+@import pystan
+
+<@
+schools_code = """
+data {
+    int<lower=0> J; // number of schools
+    real y[J]; // estimated treatment effects
+    real<lower=0> sigma[J]; // s.e. of effect estimates
+}
+parameters {
+    real mu;
+    real<lower=0> tau;
+    real eta[J];
+}
+transformed parameters {
+    real theta[J];
+    for (j in 1:J)
+    theta[j] = mu + tau * eta[j];
+}
+model {
+    eta ~ normal(0, 1);
+    y ~ normal(theta, sigma);
+}
+"""
+schools_dat = {'J': 8,
+               'y': [28,  8, -3,  7, -1,  1, 18, 12],
+               'sigma': [15, 10, 16, 11,  9, 11, 10, 18]}
+@>
+
+pool: <code> 1
+pool: <mutated> 5
+
+pool: <model> 5
+
+pool: <pos> 5
+pool: <inc> 5
+pool: <mutant> 5
+
+<code> := schools_code
+
+<inc> := <[1..20]>
+
+<pos> := 0
+(<pos>+<inc,1>) < len(<code>) -> <pos> += <inc>
+<pos> := len(<code>) / 2
+<mutant> := chr(<[0..255]>)
+
+<mutated> := <code>[:<pos>] + <mutant> + <code>[<pos>+1:]
+<mutated> := <mutated>[:<pos>] + <mutant> + <mutated>[<pos>+1:]
+
+print <mutated>
+
+{ValueError} <model> := pystan.StanModel(model_code=<mutated>)
