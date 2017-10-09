@@ -1014,7 +1014,7 @@ def main():
             if (not config.uncaught) and (not stepOk):
                 testFailed = True
                 if not config.noCover:
-                    if (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.currNewStatements())) > 0):
+                    if (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0):
                         anyNewCoverage = True
                 handle_failure(sut.test(), "UNCAUGHT EXCEPTION", False)
                 if not config.multiple:
