@@ -19,9 +19,7 @@ def newFakeOpener(osmod):
     return pyfakefs.fake_filesystem.FakeFileOpen(osmod.filesystem)
 
 def newOpener(osmod):
-    def openF(path):
-        return open(path)
-    return openF
+    return open
 
 def sortWalk(l):
     newList = []
@@ -42,11 +40,11 @@ def tooManyLevels(p,osmod):
 @>
 
 pool: <os> 1 REF # Only one OS instance!  Don't change this!
-pool: <fd> 5 REF # eventually we'll allow multiple open FDs at once, but pyfakefs is not ready yet
+pool: <fd> 2 REF # eventually we'll allow multiple open FDs at once, but pyfakefs is not ready yet
 pool: <stat> 5 REF
 
 pool: <opener> 1 REF
-pool: <file> 5 REF
+pool: <file> 1 REF
 
 pool: <path> 5
 pool: <component> 5
@@ -60,15 +58,15 @@ finally: <os>.close(<fd>)
 finally: <file>.close()
 
 <os> := newFakeOS()
+#<opener> := newFakeOpener(~<os>)
 
-<component> := <["alpha","beta","gamma","delta","epsilon","a","b","c","d","e","f","g","h","omega","lambda","phi"]>
+<component> := <["alpha","beta","gamma","Alpha","Beta","Gamma","a","b","c","d","e","f","g","omega","lambda","phi",""]>
 
 <path> := "/Volumes/ramdisk/test"
 <path> += "/" + <component>
 
 <bytes> := 0
 <bytes> += 1
-
 
 # Below code allows us to test arbitrary mode combinations; however pyfakefs is proiritizing
 # sensible open combinations
@@ -93,7 +91,7 @@ finally: <file>.close()
 {IOError,OSError} ~<os>.link(<path>,<path>)
 
 # Guard needed due to reading directories being unspecified behavior
-#{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
+{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC | os.O_EXCL)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY)
 {IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_EXCL)
@@ -149,18 +147,28 @@ not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_size
 {OSError} ~<os>.path.abspath(<path>)
 {OSError} ~<os>.path.dirname(<path>)
 
-<opener> := newFakeOpener(~<os>)
-
 {OSError,IOError} <file> := ~<opener>(<path>)
+{OSError,IOError} <file> := ~<opener>(<path>,'r')
+{OSError,IOError} <file> := ~<opener>(<path>,'w')
+{OSError,IOError} <file> := ~<opener>(<path>,'a')
+#{OSError,IOError} <file> := ~<opener>(<path>,'r+')
+#{OSError,IOError} <file> := ~<opener>(<path>,'w+')
+#{OSError,IOError} <file> := ~<opener>(<path>,'a+')
+#{OSError,IOError} <file> := ~<opener>(<path>,'rw')  Not supported by pyfakefs?
 
-{IOError,OSError} ~<file>.write(<str>)
-{ValueError} ~<file>.read(<bytes>)
-{ValueError} ~<file>.readline()
-{ValueError} ~<file>.readlines()
-{StopIteration} ~<file>.next()
-~<file>.flush()
+{OSError,IOError,ValueError} ~<file>.write(<str>)
+{OSError,IOError,ValueError} ~<file>.read()
+{OSError,IOError,ValueError} ~<file>.read(<bytes>)
+{OSError,IOError,ValueError} ~<file>.readline()
+{OSError,IOError,ValueError} ~<file>.readline(<bytes>)
+{OSError,IOError,ValueError} ~<file>.readlines()
+{StopIteration,ValueError,IOError} ~<file>.next()
+{OSError,IOError,ValueError} ~<file>.truncate()
+{OSError,ValueError} ~<file>.seek(<bytes>)
+#{OSError,ValueError} ~<file>.tell()
+{OSError,ValueError} ~<file>.flush()
 
-<file>.close()
+{OSError,ValueError} <file>.close()
 
 reference: newFakeOS\(\) ==> os
 reference: newFakeOpener ==> newOpener
@@ -179,3 +187,7 @@ compare: walk
 
 # handles all stat fields
 compare: st_
+
+compare: tell
+
+
