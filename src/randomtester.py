@@ -708,7 +708,7 @@ def main():
                 seq = t[i:i+3]
                 if (len(seq) < 3) and (len(t) > 3):
                     continue
-                provenance = map(lambda a:(a[0],a[1],a[2],f),seq)
+                provenance = map(lambda a:(a[0],a[1],a[2],f+":"+str(i)+"-"+str(i+2)),seq)
                 sequences.append(provenance)
         print len(sequences),"SEQUENCES"
                                      
