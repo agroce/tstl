@@ -102,7 +102,13 @@ def parse_args():
     parser.add_argument('--markov', type=str, default=None,
                         help="Guide testing by a Markov model file.")
     parser.add_argument('--markovP', type=float, default=1.0,
-                        help="Probability to guide action choice by Markov model.")    
+                        help="Probability to guide action choice by Markov model.")
+    parser.add_argument('--sequencesFromTests', type=str, default=None,
+                        help="Construct tests from subsequences of a collection of existing tests (glob pattern for tests, default None).")
+    parser.add_argument('--sequenceP', type=float, default=1.0,
+                        help="Probability to guide action choice by sequence.")                            
+    parser.add_argument('--sequenceSize', type=int, default=3,
+                        help="Minimum size of a sequence (that is not an entire test) from the tests in the directory for --sequencesFromTests (default 3).")    
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
     parser.add_argument('--startExploit', type=float, default=0.0,
@@ -689,6 +695,23 @@ def main():
         
     if config.verboseActions:
         sut.verbose(True)
+
+    if config.sequencesFromTests:
+        testsForSequences = []
+        print "READING TESTS..."
+        for f in glob.glob(config.sequencesFromTests):
+            testsForSequences.append((sut.loadTest(f),f))
+        print "READ",len(testsForSequences),"TESTS"
+        sequences = []
+        for (t,f) in testsForSequences:
+            for i in xrange(0,len(t)):
+                seq = t[i:i+3]
+                if (len(seq) < 3) and (len(t) > 3):
+                    continue
+                provenance = map(lambda a:(a[0],a[1],a[2],f),seq)
+                sequences.append(provenance)
+        print len(sequences),"SEQUENCES"
+                                     
         
     if config.readQuick:
         print "REPLAYING QUICK TESTS"
@@ -907,6 +930,13 @@ def main():
                     continue
 
         anyNewCoverage = False
+
+        currentSequence = None
+        
+        if config.sequencesFromTests:
+            currentSequence = R.choice(sequences)
+            currentSequencePos = 0
+            
         for s in xrange(0,config.depth):
             if config.verbose:
                 print "GENERATING STEP",s,
@@ -930,7 +960,20 @@ def main():
             startGuard = time.time()
             tryStutter = (a != None) and (a[1]()) and ((config.stutter != None) or config.greedyStutter)
 
-            if tryStutter:
+            if (currentSequence != None) and (R.random() < config.sequenceP):
+                a = None
+                while a == None:
+                    if currentSequencePos < len(currentSequence):
+                        a = currentSequence[currentSequencePos]
+                        currentSequencePos += 1
+                    else:
+                        currentSequence = R.choice(sequences)
+                        a = currentSequence[0]
+                        currentSequencePos = 1                        
+                    if not (a[1]()):
+                        # Not enabled, move to next step in the sequence
+                        a = None
+            elif tryStutter:
                 if (config.stutter == None) or (R.random() > config.stutter):
                     tryStutter = False
                 if (config.greedyStutter) and sawNew:
@@ -1464,6 +1507,8 @@ def main():
                 f.write(c + " %%%% " + str(float(sum(actLOCs[c])) / len(actLOCs[c])) + "\n")
 
     if config.trackMaxCoverage:
+        print "BEST COVERAGE TEST:"
+        sut.prettyPrintTest(bestTest)        
         print "Writing best coverage test with coverage",bestCov,"to",config.trackMaxCoverage
         sut.saveTest(bestTest,config.trackMaxCoverage)
                 

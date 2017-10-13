@@ -78,6 +78,8 @@ def prettyPrintTest(self, test, columns=80):
     for a in test:
         s = a[0]
         steps = "# STEP " + str(i)
+        if len(a) > 3:  # NOW ALLOW ANNOTATIONS!
+            steps += "  ;;; " + a[3]
         print self.prettyName(s).ljust(columns - len(steps),' '),steps
         i += 1
 
@@ -596,7 +598,13 @@ def swarmConfig(self):
     return self.__swarmConfig
     
 def serializable(self, step):
-    return step[0]
+    ser = step[0]
+    if len(step) > 3:
+        ser += ";;;"+step[3]
+    return ser
+
+def annotate(self,text):
+    self.__test[-1] = tuple(list(self.__test[-1])+[text])
 
 def saveTest(self, test, filename):
     outf = open(filename,'w')
@@ -612,7 +620,12 @@ def loadTest(self, filename):
     return test
 
 def playable(self, name):
-    return self.__names[name]
+    if ";;;" in name:
+        annotateSplit = name.split(";;;")
+        rname = annotateSplit[0]
+        return tuple(list(self.__names[rname])+[annotateSplit[1]])
+    else:
+        return self.__names[name]
 
 def setDebugSafelyMode(self, mode):
     self.__safeSafelyMode = mode
@@ -629,6 +642,9 @@ def safely(self, act):
     except:
         self.__failure = sys.exc_info()
         return False
+    finally:
+        if len(act) > 3:
+            self.annotate(act[3])
     return True
 
 def failure(self):
