@@ -108,7 +108,9 @@ def parse_args():
     parser.add_argument('--sequenceP', type=float, default=1.0,
                         help="Probability to guide action choice by sequence.")                            
     parser.add_argument('--sequenceSize', type=int, default=3,
-                        help="Minimum size of a sequence (that is not an entire test) from the tests in the directory for --sequencesFromTests (default 3).")    
+                        help="Minimum size of a sequence (that is not an entire test) from the tests in the directory for --sequencesFromTests (default 3).")
+    parser.add_argument('--useQuickSequences', action='store_true',
+                        help="Use standard binary-search-like ddmin instead of greedy single-step method.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
     parser.add_argument('--startExploit', type=float, default=0.0,
@@ -368,6 +370,17 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
             failFileCount += 1
         if config.quickTests and newCov:
             allQuickTests.append(list(test))
+            outname = "quick" + str(quickCount) + ".test"            
+            if config.sequencesFromTests != None:
+                nseq = 0
+                for i in xrange(0,len(test)):
+                    seq = test[i:i+config.sequenceSize]
+                    if (len(seq) < config.sequenceSize) and (len(test) > config.sequenceSize):
+                        continue
+                    provenance = map(lambda a:(a[0],a[1],a[2],outname+":"+str(i)+"-"+str(i+2)),seq)
+                    nseq += 1
+                    sequences.append(provenance)
+                print "ADDED",nseq,"NEW SEQUENCES"
             sut.replay(test,checkProp=not(config.noCheck))
             anyNewCov = False
             for s in sut.allStatements():
@@ -390,7 +403,6 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
                     sut.replay(q,checkProp=not(config.noCheck))
                 print "AFTER REPLAY, BRANCHES:",len(sut.allBranches()),"STATEMENTS:",len(sut.allStatements())                    
                 
-            outname = "quick" + str(quickCount) + ".test"
             quickCount += 1
         print
         print "SAVING TEST AS",outname
@@ -631,6 +643,7 @@ def main():
     global allTheTests
     global lastLOCs, lastFuncs
     global testsWithNoNewCoverage
+    global sequences
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
