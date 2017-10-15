@@ -604,7 +604,7 @@ def serializable(self, step):
     return ser
 
 def annotate(self,text):
-    self.__test[-1] = tuple(list(self.__test[-1])+[text])
+    self.__test[-1] = self.__test[-1]+(text,)
 
 def saveTest(self, test, filename):
     outf = open(filename,'w')
@@ -623,7 +623,7 @@ def playable(self, name):
     if ";;;" in name:
         annotateSplit = name.split(";;;")
         rname = annotateSplit[0]
-        return tuple(list(self.__names[rname])+[annotateSplit[1]])
+        return self.__names[rname]+(annotateSplit[1],)
     else:
         return self.__names[name]
 
