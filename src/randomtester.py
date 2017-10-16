@@ -110,7 +110,7 @@ def parse_args():
     parser.add_argument('--sequenceSize', type=int, default=3,
                         help="Minimum size of a sequence (that is not an entire test) from the tests in the directory for --sequencesFromTests (default 3).")
     parser.add_argument('--useQuickSequences', action='store_true',
-                        help="Use standard binary-search-like ddmin instead of greedy single-step method.")
+                        help="New quick tests add sequences.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
     parser.add_argument('--startExploit', type=float, default=0.0,
