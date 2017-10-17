@@ -68,7 +68,11 @@ def main():
     stime = time.time()
     for f in files:
         print "RUNNING TEST",f
-        t = sut.loadTest(f)
+        try:
+            t = sut.loadTest(f)
+        except KeyError:
+            print "INVALID TEST, SKIPPING..."
+            continue
         ok = False
         try:
             ok = sut.replay(t, checkProp=(not ignoreProps))
