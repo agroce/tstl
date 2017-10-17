@@ -12,7 +12,7 @@ def abstraction(s):
 
 seedFiles = sys.argv[1]
 test = sys.argv[2]
-newTest = sys.argv[3]
+newTestName = sys.argv[3]
 
 abstract = "--abstract" in sys.argv
 
@@ -43,7 +43,9 @@ while pos < len(t):
 
 print
 print
-    
+
+newTest = []
+
 pos = 1
 previous = possible[0]
 while pos < len(possible):
@@ -57,12 +59,18 @@ while pos < len(possible):
             ok = True
             previous = preImageReduce
         else:
-            print pos-1,"-",endPos-1,map(lambda x:x[0][1],previous)
+            print pos-1,"-",endPos-1,map(lambda x:(x[0][1],x[1]),previous)
             for i in xrange(pos-1,endPos):
                 print "    ",i,t[i][0]
+                if previous != []:
+                    annotation = previous[0][1]
+                else:
+                    annotation = ""
+                newTest.append(t[i]+(annotation,))
     previous = possible[endPos]
     pos = endPos + 1
-        
+
+sut.saveTest(newTest,newTestName)
     
     
         
