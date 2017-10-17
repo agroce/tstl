@@ -51,7 +51,7 @@ previous = possible[0]
 while pos < len(possible):
     endPos = pos
     ok = True
-    while ok:
+    while ok and (endPos < len(possible)):
         ok = False
         preImageReduce = filter(lambda x:(x[0],x[1]-1) in previous, possible[endPos])
         if len(preImageReduce) > 0:
@@ -61,13 +61,15 @@ while pos < len(possible):
         else:
             print pos-1,"-",endPos-1,map(lambda x:(x[0][1],x[1]),previous)
             for i in xrange(pos-1,endPos):
-                print "    ",i,t[i][0]
+                print "    ",i,t[i][0],
                 if previous != []:
-                    annotation = previous[0][1]
+                    annotation = previous[0][0][1] + ":" + str(previous[0][1]-((endPos-1)-i))
                 else:
                     annotation = ""
+                print "ANNOTATION:",annotation
                 newTest.append(t[i]+(annotation,))
-    previous = possible[endPos]
+    if endPos < len(possible):
+        previous = possible[endPos]
     pos = endPos + 1
 
 sut.saveTest(newTest,newTestName)
