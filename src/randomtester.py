@@ -377,8 +377,9 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
                     seq = test[i:i+config.sequenceSize]
                     if (len(seq) < config.sequenceSize) and (len(test) > config.sequenceSize):
                         continue
-                    provenance = map(lambda a:(a[0],a[1],a[2],outname+":"+str(i)+"-"+str(i+2)),seq)
-                    nseq += 1
+                    provenance = []
+                    for j in xrange(0,len(seq)):
+                        provenance.append(seq[j] + (outname + ":" + str(i+j),))
                     sequences.append(provenance)
                 print "ADDED",nseq,"NEW SEQUENCES"
             sut.replay(test,checkProp=not(config.noCheck))
@@ -718,10 +719,12 @@ def main():
         sequences = []
         for (t,f) in testsForSequences:
             for i in xrange(0,len(t)):
-                seq = t[i:i+3]
-                if (len(seq) < 3) and (len(t) > 3):
+                seq = t[i:i+config.sequenceSize]
+                if (len(seq) < config.sequenceSize) and (len(t) > config.sequenceSize):
                     continue
-                provenance = map(lambda a:(a[0],a[1],a[2],f+":"+str(i)+"-"+str(i+2)),seq)
+                provenance = []
+                for j in xrange(0,len(seq)):
+                    provenance.append(seq[j] + (f + ":" + str(i+j),))
                 sequences.append(provenance)
         print len(sequences),"SEQUENCES"
                                      
