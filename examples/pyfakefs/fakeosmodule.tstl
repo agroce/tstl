@@ -91,18 +91,18 @@ finally: <file>.close()
 {IOError,OSError} ~<os>.link(<path>,<path>)
 
 # Guard needed due to reading directories being unspecified behavior
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC | os.O_EXCL)
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY)
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_EXCL)
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT)
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_EXCL)
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_WRONLY | os.O_APPEND)
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
-{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDWR)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_TRUNC | os.O_EXCL)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_WRONLY | os.O_EXCL)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_CREAT | os.O_EXCL)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_WRONLY | os.O_APPEND)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDONLY)
+{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, os.O_RDWR)
 
 # Also allow arbitrary mode opens, but less frequently than typical useful combinations
-#{IOError,OSError} not os.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, <mode>)
+#{IOError,OSError} not ~<os>.path.isdir(<path,1>) -> <fd> := ~<os>.open(<path>, <mode>)
 
 {OSError} ~<os>.close(<fd>)
 {IOError,OSError} ~<os>.write(~<fd>,<str>)
@@ -142,7 +142,7 @@ not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_size
 {OSError} ~<os>.path.isabs(<path>)
 {OSError} ~<os>.path.islink(<path>)
 
-{OSError} not os.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
+{OSError} not ~<os>.path.isdir(<path,1>) -> ~<os>.path.getsize(<path>)
 
 {OSError} ~<os>.path.abspath(<path>)
 {OSError} ~<os>.path.dirname(<path>)
