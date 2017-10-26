@@ -133,7 +133,7 @@ def main():
         R = random.Random()
 
         if config.seed != None:
-            R.seed(seed)
+            R.seed(config.seed)
     
     r = sut.loadTest(config.infile)
 
