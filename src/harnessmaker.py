@@ -413,7 +413,7 @@ def main():
     
     inside_function = False         # Are we inside a function def, so need to consider PRE?
     function_code = []
-    anyPre = False
+    anyPRE = False
     continuedLine = False
     contLine = ""
     origContLine = ""
