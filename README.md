@@ -1,7 +1,7 @@
 TSTL: the Template Scripting Testing Language
 ===========================================
 
-TSTL is a "little" language that makes it easy to test software.  This
+TSTL is a "little"* language that makes it easy to test software.  This
 implementation targets Python.  There is also a (beta) Java version,
 at https://github.com/flipturnapps/TSTL-Java.
 
@@ -448,3 +448,8 @@ Who is responsible for TSTL?
 - Ned Batchelder, David R. MacIver, and John Regehr have no actual code in TSTL, but all contributed in significant ways to various implementation aspects, in ways that go beyond the general disclaimer that TSTL freely steals from the entire software testing (research) community.
 
 - The pyfakefs team (mrbean-bremen and jmcgeheeiv on github) really worked with me to test pyfakefs, which resulted in a number of nice improvements to TSTL and to differential testing in particular.
+
+
+
+
+* Do you actually remember that asterisk way up top?  The footnote is that TSTL _is_ a little language.  However, in another sense, it embeds all of Python which makes it pretty big.  It depends on how you think about it.
