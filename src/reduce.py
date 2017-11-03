@@ -195,6 +195,34 @@ def main():
         else:
             newrs = []
             for r in rs:
+                f = None
+
+                if config.matchException:
+                    print "EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING..."
+                    assert (sut.fails(r))
+                    f = sut.failure()
+                    print "ERROR:",f
+                    print "TRACEBACK:"
+                    traceback.print_tb(f[2],file=sys.stdout)
+                
+                if not config.sandbox:
+                    pred = (lambda x: sut.failsCheck(x,failure=f))
+                    if not config.noCheck:
+                        pred = (lambda x: sut.fails(x,failure=f))
+                else:
+                    pred = sandboxReplay
+
+                if config.coverage or config.coverMore or (config.decompose and not config.noNormalize):
+                    print "EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION..."
+                    sut.replay(r,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+                    b = set(sut.currBranches())
+                    s = set(sut.currStatements())
+                    print "PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS"
+                    if config.coverMore:
+                        pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+                    else:
+                        pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)                
+                    
                 newrs.append(sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast,tryFast=not config.ddmin))
             rs = newrs
         print "NORMALIZED IN",time.time()-start,"SECONDS"
