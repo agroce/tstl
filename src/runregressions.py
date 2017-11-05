@@ -61,6 +61,7 @@ def main():
     if verbose:
         sut.verbose(True)
 
+    failedTests = []
     anyFailed = False
 
     noNewCover = []
@@ -91,6 +92,7 @@ def main():
         if not ok:
             print "TEST",f,"FAILED:"
             print sut.failure()
+            failedTests.append(f)
             anyFailed = True
             if not keepGoing:
                 sys.exit(255)
@@ -111,4 +113,7 @@ def main():
         
     if not anyFailed:
         print "ALL TESTS SUCCESSFUL"
-
+    else:
+        print len(failedTests),"FAILED TESTS:",
+        for f in failedTests:
+            print "  ",f
