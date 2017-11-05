@@ -65,14 +65,19 @@ def main():
     anyFailed = False
 
     noNewCover = []
+
+    totalTests = 0
+    invalidTests = []
     
     stime = time.time()
     for f in files:
+        totalTests += 1
         print "RUNNING TEST",f
         try:
             t = sut.loadTest(f)
         except KeyError:
             print "INVALID TEST, SKIPPING..."
+            invalidTests.append(f)
             continue
         ok = False
         try:
@@ -110,10 +115,19 @@ def main():
     if (not nocover) and (len(noNewCover) > 0):
         for f in noNewCover:
             print "TEST",f,"REDUNDANT WITH RESPECT TO COVERAGE"
-        
+
+    print "EXECUTED",totalTests,"TESTS"
+
+    if len(invalidTests) > 0:
+        print len(invalidTests),"INVALID TESTS:"
+        for f in invalidTests:
+            print f,
+        print
+    
     if not anyFailed:
         print "ALL TESTS SUCCESSFUL"
     else:
-        print len(failedTests),"FAILED TESTS:",
+        print len(failedTests),"FAILED TESTS:"
         for f in failedTests:
-            print "  ",f
+            print f,
+        print
