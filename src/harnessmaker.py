@@ -1531,17 +1531,16 @@ def main():
         outf.write(baseIndent + c.replace("True and (","("))
 
     ######################## REQUIRED FOR PACKAGING TSTL ##########################
-    boilerplate = pkg_resources.resource_stream('src', 'static/boilerplate.py')
-    boilerplate_cov = pkg_resources.resource_stream('src', 'static/boilerplate_cov.py')
-    ###############################################################################
-
-    for l in boilerplate:
-        outf.write(baseIndent + l)
+    with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:    
+        for l in boilerplate:
+            outf.write(baseIndent + l)
 
     if not config.noCover:
-        for l in boilerplate_cov:
-            outf.write(baseIndent + l)    
-
+        with pkg_resources.resource_stream('src', 'static/boilerplate_cov.py') as boilerplate_cov:
+            for l in boilerplate_cov:
+                outf.write(baseIndent + l)    
+    ###############################################################################
+                
     outf.close()
 
 
