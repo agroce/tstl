@@ -1,0 +1,71 @@
+@import arrow
+
+pool: <val> 10
+pool: <zone> 5
+pool: <locale> 5
+
+pool: <span> 5
+
+pool: <time> 10
+pool: <range> 10
+
+<val> := 0
+<val> += 1
+<val> -= 1
+
+<zone> := 'US/Pacific'
+<zone> := 'US/Mountain'
+<zone> := 'US/Eastern'
+<zone> := 'US/Alaska'
+<zone> := 'US/Arizona'
+<zone> := 'Etc/Greenwich'
+<zone> := 'Europe/Rome'
+<zone> := 'Asia/Samarkand'
+<zone> := 'Australia/Brisbane'
+<zone> := 'Africa/Cairo'
+<zone> := 'Poland'
+<zone> := 'Turkey'
+<zone> := 'Singapore'
+
+<locale> := <[u'ar_eg', u'is_is', u'pt_br', u'fi_fi', u'sk_sk', u'mk_mk', u'tr', u'en_au', u'tl', u'th', u'nb_no', u'ru_ru', u'da_dk', u'de', u'it_it', u'da', u'uk_ua', u'el_gr', u'bn_in', u'hu_hu', u'pl_pl', u'en_ca', u'eo', u'en', u'bn_bd', u'ca_it', u'nn_no', u'eu', u'es', u'ru', u'zh_cn', u'rm', u'ro', u'ca_ad', u'be', u'en_be', u'bg', u'bn', u'zh_tw', u'en_jp', u'eo_xx', u'th_th', u'ja', u'fa_ir', u'en_za', u'he_il', u'bg_bg', u'el', u'ca', u'cs', u'zh', u'ro_ro', u'pt', u'de_at', u'pl', u'fr_fr', u'ko_kr', u'hu', u'nl_nl', u'hi', u'en_us', u'vi_vn', u'he', u'az_az', u'ml', u'mk', u'mr', u'es_es', u'ua', u'vi', u'is', u'it', u'ar', u'ca_fr', u'rm_ch', u'de_de', u'az', u'de_ch', u'nl', u'ca_es', u'nb', u'sv_se', u'ja_jp', u'eu_eu', u'sl_si', u'en_gb', u'fr', u'pt_pt', u'cs_cz', u'fa', u'tr_tr', u'fi', u'be_by', u'nn', u'ko', u'sv', u'sk', u'sl']>
+
+<span> := 'year'
+<span> := 'month'
+<span> := 'week'
+<span> := 'hour'
+<span> := 'minute'
+<span> := 'second'
+
+<time> := arrow.utcnow()
+<time> := arrow.now()
+<time> := <time>.to(<zone>)
+<time> := arrow.now(<zone>)
+<time> := arrow.get(<val>)
+
+<val,0> > 0 -> <time> := <time>.replace(year=<val>)
+(<val,1> >= 1) and (<val,1> <= 12) -> <time> := <time>.replace(month=<val>)
+<time> := <time>.replace(hours=<val>)
+<time> := <time>.replace(minutes=<val>)
+<time> := <time>.replace(seconds=<val>)
+<time> := <time>.replace(tzinfo=<zone>)
+
+<time> := <time>.floor(<span>)
+<time> := <time>.ceil(<span>)
+
+<time>.shift(years=<val>)
+<time>.shift(months=<val>)
+<time>.shift(weeks=<val>)
+<time>.shift(hours=<val>)
+<time>.shift(minutes=<val>)
+<time>.shift(seconds=<val>)
+
+<time>.format()
+<time>.timestamp
+<time>.humanize(locale=<locale>)
+<time>.datetime
+<time>.year
+
+<time>.span(<span>)
+
+<range> := arrow.Arrow.span_range(<span>,<time>,<time>)
+<time> := <range>.next()
