@@ -1,7 +1,7 @@
+from __future__ import print_function
+
 import sys
-import random
 import os
-import glob
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
@@ -13,9 +13,9 @@ import sut as SUT
 def main():
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_markov <outfile> <prefix size> <test files> [--notRaw]"
-        print "Options:"
-        print " --notRaw:      corpus files are not raw TSTL tests, but action classes"
+        print("Usage:  tstl_markov <outfile> <prefix size> <test files> [--notRaw]")
+        print("Options:")
+        print(" --notRaw:      corpus files are not raw TSTL tests, but action classes")
         sys.exit(0)
     
     sut = SUT.sut()
@@ -30,7 +30,7 @@ def main():
     n = int(sys.argv[2])
     outfile = sys.argv[1]
     corpfiles = sys.argv[3:]
-    corpfiles = filter(lambda x:x != "--notRaw", corpfiles)
+    corpfiles = [x for x in corpfiles if x != "--notRaw"]
 
     tests = []
     test = []
@@ -48,7 +48,7 @@ def main():
     chains = {}
 
     for t in tests:
-        for pos in xrange(n+1,len(t)):
+        for pos in range(n+1,len(t)):
             prefix = tuple(t[pos-n:pos])
             #print prefix,"==>",t[pos]
             if prefix not in chains:
@@ -59,7 +59,7 @@ def main():
     mout.write(str(n)+"\n")
 
     for c in chains:
-            print "PREFIX:",c
+            print("PREFIX:",c)
             mout.write("START CLASS\n")
             for ac in c:
                 mout.write(ac+"\n")
@@ -72,7 +72,7 @@ def main():
                             counts[suffix] = 0
                     counts[suffix] += 1
             for suffix in counts:
-                    print suffix,counts[suffix]/total
+                    print(suffix,counts[suffix]/total)
                     mout.write(str(counts[suffix]/total) + " %%%% "+suffix+"\n")
 
     mout.close()

@@ -7,6 +7,8 @@
 #
 # Current language syntax based on ideas from Josie Holmes.
 
+from __future__ import print_function
+
 import sys
 import argparse
 import os
@@ -94,7 +96,7 @@ def make_config(pargs, parser):
         raise ValueError('The output file is not specified.')
     
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -232,14 +234,14 @@ def expandRange(original,trackOriginal=False):
                     if c[lpos+2] == "'": # must be 'a'..'b' etc.
                         lowc = c[lpos+3:dotpos-1]
                         highc = c[dotpos+3:endpos-1]
-                        for x in xrange(ord(lowc),ord(highc)+1):
+                        for x in range(ord(lowc),ord(highc)+1):
                             if trackOriginal:
                                 originalCode[c.replace(rexp, "'" + chr(x) + "'", 1)] = oldCode
                             newVersion.append(c.replace(rexp, "'" + chr(x) + "'", 1))
                     else:
                         low = int(c[lpos+2:dotpos])
                         high = int(c[dotpos+2:endpos])
-                        for x in xrange(low,high+1):
+                        for x in range(low,high+1):
                             if trackOriginal:
                                 originalCode[c.replace(rexp, str(x), 1)] = oldCode
                             newVersion.append(c.replace(rexp, str(x), 1))
@@ -327,7 +329,7 @@ def genInitialization():
         s = baseIndent
         s += poolPrefix + p.replace("%","") + "_used = {}"
         genCode.append(s + "\n")
-        for x in xrange(0,poolSet[p]):
+        for x in range(0,poolSet[p]):
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "[" + str(x) + "] = None"
             genCode.append(s + "\n")    
@@ -374,15 +376,15 @@ def main():
     baseIndent = "    "
 
     if "-v" in sys.argv or "--version" in sys.argv:
-        print "TSTL, version 1.1.4"
-        print "Documentation at https://github.com/agroce/tstl"
+        print("TSTL, version 1.1.4")
+        print("Documentation at https://github.com/agroce/tstl")
         sys.exit(0)
         
 
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print('Generating harness core using config={}'.format(config))
+    print(('Generating harness core using config={}'.format(config)))
 
     if config.debug:
         from pprint import pprint
@@ -504,7 +506,7 @@ def main():
                 spos = l.find(" ")
                 times = int(l[1:spos]) 
                 originalCode[l[spos:]] = fileLine 
-                for n in xrange(0,times):
+                for n in range(0,times):
                     code.append(l[spos:])
             else:
                 originalCode[l] = fileLine[:-1]
@@ -548,7 +550,7 @@ def main():
     for c in code:
         fileCode = originalCode[c]
         if config.debug:
-            print "CODE:",c
+            print("CODE:",c)
         cs = c.split()
         if cs == []:
             continue
@@ -687,7 +689,7 @@ def main():
             pPercComma = "%" + pSub + ","            
             if (pAngle in rhs) or (pComma in rhs) or (pPerc in rhs) or (pPercComma in rhs):
                 if pSub in classDefs:
-                    fc = filter(lambda x:x != c, classDefs[pSub])
+                    fc = [x for x in classDefs[pSub] if x != c]
                     if fc != []:
                         dependencies[c].append(fc)
                 
@@ -921,11 +923,11 @@ def main():
             if b in warnedAbout:
                 continue
             warnedAbout.append(b)
-            print "*"*70
-            print "WARNING: did you forget to declare the pool",b.replace("%","")+"?"
-            print "first used in this code:"
-            print originalCode[corig]
-            print "*"*70            
+            print("*"*70)
+            print("WARNING: did you forget to declare the pool",b.replace("%","")+"?")
+            print("first used in this code:")
+            print(originalCode[corig])
+            print("*"*70)            
 
         
         interestingGuard = ""
@@ -979,9 +981,9 @@ def main():
             if p in refSet:
                 pRaw = poolPrefix + p.replace("%","")
                 refC = refC.replace(pRaw,pRaw+"_REF")
-                verboseRef = map(lambda x:x.replace(pRaw,pRaw+"_REF"), verboseRef)
+                verboseRef = [x.replace(pRaw,pRaw+"_REF") for x in verboseRef]
 
-        verboseRef = filter(lambda x:"_REF" in x, verboseRef)
+        verboseRef = [x for x in verboseRef if "_REF" in x]
 
         for base in referenceMap:
             if re.match(r"^[a-zA-Z_0-9]+$", refC):  # base is not a regex; treat it like a function name

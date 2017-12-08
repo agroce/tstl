@@ -31,6 +31,7 @@ setup(
       "Intended Audience :: Developers",
       "Development Status :: 4 - Beta",
       "Programming Language :: Python :: 2",
+      "Programming Language :: Python :: 3",
       ],
     install_requires=[
       'coverage',

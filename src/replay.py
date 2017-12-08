@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 import traceback
 import os
@@ -16,7 +18,7 @@ def trace_lines(frame, event, arg):
     func_name = co.co_name
     line_no = frame.f_lineno
     filename = co.co_filename
-    print '   %s line %s' % (func_name, line_no)
+    print('   %s line %s' % (func_name, line_no))
     sys.stdout.flush()
 
 def trace_calls(frame, event, arg):
@@ -29,23 +31,23 @@ def trace_calls(frame, event, arg):
         return
     line_no = frame.f_lineno
     filename = co.co_filename
-    print 'Call to %s on line %s of %s' % (func_name, line_no, filename)
+    print('Call to %s on line %s of %s' % (func_name, line_no, filename))
     sys.stdout.flush()    
     return trace_lines
     
 def main():
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--trace]"
-        print "Options:"
-        print "--noCheck:      do not run property checks"
-        print "--logging:      set the logging level for the test"
-        print "--verbose:      run with verbose action output"
-        print "--showActions:      run with verbose action output"        
-        print "--coverage:     report code coverage"        
-        print "--internal:     report detailed code coverage information"
-        print "--html:         produce HTML report on coverage"
-        print "--trace:        trace lines executed (does not work with SUTs compiled with coverage)"
+        print("Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--trace]")
+        print("Options:")
+        print("--noCheck:      do not run property checks")
+        print("--logging:      set the logging level for the test")
+        print("--verbose:      run with verbose action output")
+        print("--showActions:      run with verbose action output")        
+        print("--coverage:     report code coverage")        
+        print("--internal:     report detailed code coverage information")
+        print("--html:         produce HTML report on coverage")
+        print("--trace:        trace lines executed (does not work with SUTs compiled with coverage)")
         sys.exit(0)
 
     sut = SUT.sut()
@@ -63,7 +65,7 @@ def main():
         except:
             goodToTrace = True
         if not goodToTrace:
-            print "CANNOT TRACE WHEN SUT IS COMPILED WITH COVERAGE.  REBUILD WITH --noCover"
+            print("CANNOT TRACE WHEN SUT IS COMPILED WITH COVERAGE.  REBUILD WITH --noCover")
             sys.exit(1)
         
     rout = open("replay.out",'w')
@@ -103,19 +105,19 @@ def main():
         name = l[:-1]
         if name == "<<RESTART>>":
             if "--showActions" in sys.argv:
-                print "<<RESTART>>"
+                print("<<RESTART>>")
             #print "RESTART"
             rout.write("<<RESTART>>\n")
             rout.flush()
             sut.restart()
         else:
             if verbose:
-                print "STEP #"+str(i)+":",
+                print("STEP #"+str(i)+":", end=' ')
             rout.write(l)
             rout.flush()
             action = sut.playable(name)
             if "--showActions" in sys.argv:
-                print sut.prettyName(action[0])
+                print(sut.prettyName(action[0]))
             if action[1](): # check the guard
                 if "--trace" in sys.argv:
                     sys.settrace(trace_calls)
@@ -123,14 +125,14 @@ def main():
                 if "--trace" in sys.argv:
                     sys.settrace(None)
                 if not stepOk:
-                    print "FAILED STEP"
-                    print sut.failure()
+                    print("FAILED STEP")
+                    print(sut.failure())
                     traceback.print_tb(sut.failure()[2],file=sys.stdout)
                     if "--internal" in sys.argv:
                         sut.internalReport()
                         
                     if "--coverage" in sys.argv:
-                        print sut.report("coverage.out"),"PERCENT COVERED"    
+                        print(sut.report("coverage.out"),"PERCENT COVERED")    
 
                     if htmlOut != None:
                         sut.htmlReport(htmlOut)                        
@@ -138,14 +140,14 @@ def main():
             if not nocheck:
                 checkResult = sut.check()
                 if not checkResult:
-                    print "FAILED PROPERTY"
-                    print sut.failure()
+                    print("FAILED PROPERTY")
+                    print(sut.failure())
                     traceback.print_tb(sut.failure()[2],file=sys.stdout)
                     if "--internal" in sys.argv:
                         sut.internalReport()
                         
                     if "--coverage" in sys.argv:
-                        print sut.report("coverage.out"),"PERCENT COVERED"    
+                        print(sut.report("coverage.out"),"PERCENT COVERED")    
 
                     if htmlOut != None:
                         sut.htmlReport(htmlOut)
@@ -159,7 +161,7 @@ def main():
         sut.internalReport()
         
     if "--coverage" in sys.argv:
-        print sut.report("coverage.out"),"PERCENT COVERED"    
+        print(sut.report("coverage.out"),"PERCENT COVERED")    
 
     if htmlOut != None:
         sut.htmlReport(htmlOut)

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 import time
 import traceback
@@ -5,7 +7,6 @@ import argparse
 import os
 import subprocess
 import random
-import datetime
 from collections import namedtuple
 
 # Appending current working directory to sys.path
@@ -72,7 +73,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -81,7 +82,7 @@ def make_config(pargs, parser):
 def sandboxReplay(test):
     global timeout
     if not "--quietSandbox" in sys.argv:
-        print "ATTEMPTING SANDBOX REPLAY WITH",len(test),"STEPS"
+        print("ATTEMPTING SANDBOX REPLAY WITH",len(test),"STEPS")
     tmpName = "tmptest." + str(os.getpid()) + ".test"
     tmptest = open(tmpName,'w')
     for s in test:
@@ -95,15 +96,15 @@ def sandboxReplay(test):
     start = time.time()
     subprocess.call([cmd],shell=True)
     if not "--quietSandbox" in sys.argv:    
-        print "ELAPSED:",time.time()-start
+        print("ELAPSED:",time.time()-start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
             if not "--quietSandbox" in sys.argv:            
-                print "TEST SUCCEEDS"
+                print("TEST SUCCEEDS")
             return False
     if not "--quietSandbox" in sys.argv:        
-        print "TEST FAILS"
-    print "SANDBOX RUN FAILS: TEST LENGTH NOW",len(test)
+        print("TEST FAILS")
+    print("SANDBOX RUN FAILS: TEST LENGTH NOW",len(test))
     bestreduce = open("lastreduction." + str(os.getpid()) + ".test",'w')
     for l in open(tmpName):
         bestreduce.write(l)
@@ -116,7 +117,7 @@ def main():
 
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print('Reducing using config={}'.format(config))    
+    print(('Reducing using config={}'.format(config)))    
     
     sut = SUT.sut()
 
@@ -140,11 +141,11 @@ def main():
     f = None
     
     if config.matchException:
-        print "EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING..."
+        print("EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
         assert (sut.fails(r))
         f = sut.failure()
-        print "ERROR:",f
-        print "TRACEBACK:"
+        print("ERROR:",f)
+        print("TRACEBACK:")
         traceback.print_tb(f[2],file=sys.stdout)
 
     if not config.sandbox:
@@ -155,41 +156,41 @@ def main():
         pred = sandboxReplay
 
     if config.coverage or config.coverMore or (config.decompose and not config.noNormalize):
-        print "EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION..."
+        print("EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION...")
         sut.replay(r,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         b = set(sut.currBranches())
         s = set(sut.currStatements())
-        print "PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS"
+        print("PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS")
         if config.coverMore:
             pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         else:
             pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         
-    print "STARTING WITH TEST OF LENGTH",len(r)
+    print("STARTING WITH TEST OF LENGTH",len(r))
     if not config.noReduce:
         start = time.time()
-        print "REDUCING..."
+        print("REDUCING...")
         if (not config.multiple) and (not config.decompose):
             r = sut.reduce(r,pred,verbose=config.verbose,tryFast=not config.ddmin,keepLast=config.keepLast,rgen=R)
         elif config.multiple:
             rs = sut.reductions(r,pred,verbose=config.verbose,recursive=config.recursive,limit=config.limit,keepLast=config.keepLast,tryFast=not config.ddmin)
         elif config.decompose:
-            print "DECOMPOSING..."
+            print("DECOMPOSING...")
             rs = sut.coverDecompose(r,verbose=config.verbose,checkProp=not config.noCheck,catchUncaught=config.uncaught)
-        print "REDUCED IN",time.time()-start,"SECONDS"
+        print("REDUCED IN",time.time()-start,"SECONDS")
         if (not config.multiple) and (not config.decompose):
-            print "NEW LENGTH",len(r)
+            print("NEW LENGTH",len(r))
         else:
-            print "NEW LENGTHS",map(len,rs)
+            print("NEW LENGTHS",list(map(len,rs)))
     if not config.noAlpha:
-        print "ALPHA CONVERTING..."
+        print("ALPHA CONVERTING...")
         if (not config.multiple) and (not config.decompose):
             r = sut.alphaConvert(r)
         else:
-            rs = map(sut.alphaConvert, rs)
+            rs = list(map(sut.alphaConvert, rs))
     if not config.noNormalize:
         start = time.time()
-        print "NORMALIZING..."
+        print("NORMALIZING...")
         if (not config.multiple) and (not config.decompose):
             r = sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast,tryFast=not config.ddmin)
         else:
@@ -198,11 +199,11 @@ def main():
                 f = None
 
                 if config.matchException:
-                    print "EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING..."
+                    print("EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
                     assert (sut.fails(r))
                     f = sut.failure()
-                    print "ERROR:",f
-                    print "TRACEBACK:"
+                    print("ERROR:",f)
+                    print("TRACEBACK:")
                     traceback.print_tb(f[2],file=sys.stdout)
                 
                 if not config.sandbox:
@@ -213,11 +214,11 @@ def main():
                     pred = sandboxReplay
 
                 if config.coverage or config.coverMore or (config.decompose and not config.noNormalize):
-                    print "EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION..."
+                    print("EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION...")
                     sut.replay(r,checkProp=not config.noCheck,catchUncaught=config.uncaught)
                     b = set(sut.currBranches())
                     s = set(sut.currStatements())
-                    print "PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS"
+                    print("PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS")
                     if config.coverMore:
                         pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
                     else:
@@ -225,25 +226,25 @@ def main():
                     
                 newrs.append(sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast,tryFast=not config.ddmin))
             rs = newrs
-        print "NORMALIZED IN",time.time()-start,"SECONDS"
+        print("NORMALIZED IN",time.time()-start,"SECONDS")
         if (not config.multiple) and (not config.decompose):
-            print "NEW LENGTH",len(r)
+            print("NEW LENGTH",len(r))
         else:
-            print "NEW LENGTHS",map(len,rs)
+            print("NEW LENGTHS",list(map(len,rs)))
     if (not config.multiple) and (not config.decompose):
         sut.saveTest(r,config.outfile)
         sut.prettyPrintTest(r)
-        print
-        print "TEST WRITTEN TO",config.outfile     
+        print()
+        print("TEST WRITTEN TO",config.outfile)     
     else:
         i = 0
         for r in rs:
-            print "TEST #"+str(i)+":"
+            print("TEST #"+str(i)+":")
             sut.saveTest(r,config.outfile+"."+str(i)+".test")
             sut.prettyPrintTest(r)
-            print
-            print "TEST WRITTEN TO",config.outfile+"."+str(i)
-            print
+            print()
+            print("TEST WRITTEN TO",config.outfile+"."+str(i))
+            print()
             i += 1
             
     

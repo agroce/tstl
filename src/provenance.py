@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 import sut
 import glob
@@ -20,13 +22,13 @@ seeds = []
 for f in glob.glob(seedFiles):
     t = sut.loadTest(f)
     if abstract:
-        t = map(abstraction,t)
+        t = list(map(abstraction,t))
     seeds.append((t,f))
 
 original = sut.loadTest(test)
 t = list(original)
 if abstract:
-    t = map(abstraction,t)
+    t = list(map(abstraction,t))
 
 pos = 0
 
@@ -34,15 +36,15 @@ possible = []
 while pos < len(t):
     relevant = []
     for seed in seeds:
-        for i in xrange(0,len(seed[0])):
+        for i in range(0,len(seed[0])):
             if seed[0][i][0] == t[pos][0]:
                 relevant.append((seed,i))
-    print pos,t[pos][0],map(lambda x:(x[0][1],x[1]),relevant)
+    print(pos,t[pos][0],[(x[0][1],x[1]) for x in relevant])
     pos += 1
     possible.append(relevant)
 
-print
-print
+print()
+print()
 
 newTest = []
 
@@ -53,20 +55,20 @@ while pos < len(possible):
     ok = True
     while ok and (endPos < len(possible)):
         ok = False
-        preImageReduce = filter(lambda x:(x[0],x[1]-1) in previous, possible[endPos])
+        preImageReduce = [x for x in possible[endPos] if (x[0],x[1]-1) in previous]
         if len(preImageReduce) > 0:
             endPos += 1
             ok = True
             previous = preImageReduce
         else:
-            print pos-1,"-",endPos-1,map(lambda x:(x[0][1],x[1]),previous)
-            for i in xrange(pos-1,endPos):
-                print "    ",i,t[i][0],
+            print(pos-1,"-",endPos-1,[(x[0][1],x[1]) for x in previous])
+            for i in range(pos-1,endPos):
+                print("    ",i,t[i][0], end=' ')
                 if previous != []:
                     annotation = previous[0][0][1] + ":" + str(previous[0][1]-((endPos-1)-i))
                 else:
                     annotation = ""
-                print "ANNOTATION:",annotation
+                print("ANNOTATION:",annotation)
                 newTest.append(t[i]+(annotation,))
     if endPos < len(possible):
         previous = possible[endPos]

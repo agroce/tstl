@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sut as SUT
 import sys
 import random
@@ -29,9 +31,9 @@ def main():
     
     count = 0
     sut.standardSwarm(R)
-    print sut.swarmConfig()
+    print(sut.swarmConfig())
     totalPaths = int(math.pow(len(sut.actions()),depth))
-    print totalPaths,"UPPER BOUND ON POSSIBLE TESTS"
+    print(totalPaths,"UPPER BOUND ON POSSIBLE TESTS")
     while count < totalPaths:
         sut.restart()
         path = []
@@ -55,7 +57,7 @@ def main():
                     break
             a = sut.randomEnabled(R)
             if a == None:
-                print "DEADLOCK!"
+                print("DEADLOCK!")
                 break
             path.append(a)
             #takenPath[sut.captureReplay(path)] += 1
@@ -65,22 +67,22 @@ def main():
             allTakenClass[sut.actionClass(a)] += 1            
             ok = sut.safely(a)
             if not ok:
-                print "FALIURE IN TEST",count
+                print("FALIURE IN TEST",count)
                 sut.saveTest(path,"failure.exhaust." + pid + ".test")                
                 sut.prettyPrintTest(path)
-                print sut.failure()
+                print(sut.failure())
                 sys.exit(255)
             if not ("--noCheck" in sys.argv):
                 okCheck = sut.check()
                 if not okCheck:
-                    print "PROPERTY VIOLATION IN TEST",count
+                    print("PROPERTY VIOLATION IN TEST",count)
                     sut.saveTest(path,"failure.exhaust." + pid + ".test")
                     sut.prettyPrintTest(path)
-                    print sut.failure()
+                    print(sut.failure())
                     sys.exit(255)
             i += 1
         if ("--ultraVerbose" in sys.argv):
-            print "="*25
+            print("="*25)
             sut.prettyPrintTest(path)
         p = sut.captureReplay(path)
         if p in takenFull:
@@ -89,23 +91,23 @@ def main():
         epoch = int((time.time()-start)/2)
         if epoch > lastEpoch:
             lastEpoch = epoch
-            print time.time()-start,"ELAPSED",count,"TESTS",repeats,"REPEATS",
+            print(time.time()-start,"ELAPSED",count,"TESTS",repeats,"REPEATS", end=' ')
             if not ("--noCover" in sys.argv):
-                print "[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]",
-            print
+                print("[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]", end=' ')
+            print()
             if ("--verbose" in sys.argv):
-                print "*"*50
-                print "PATH #",count
+                print("*"*50)
+                print("PATH #",count)
                 sut.prettyPrintTest(path)
-                print
-                print "COUNTS:"
-                print "="*20
-                for c in sorted(allTakenClass.keys(),key = lambda ac: allTakenClass[ac]):
-                    print c,allTakenClass[c]
-                print "="*20                
-                for a in sorted(allTaken.keys(),key = lambda act: allTaken[act]):
-                    print a,allTaken[a]
+                print()
+                print("COUNTS:")
+                print("="*20)
+                for c in sorted(list(allTakenClass.keys()),key = lambda ac: allTakenClass[ac]):
+                    print(c,allTakenClass[c])
+                print("="*20)                
+                for a in sorted(list(allTaken.keys()),key = lambda act: allTaken[act]):
+                    print(a,allTaken[a])
 
-    print repeats,"TOTAL REPEATED TESTS",len(takenFull),"DISTINCT TESTS"
+    print(repeats,"TOTAL REPEATED TESTS",len(takenFull),"DISTINCT TESTS")
 
 main()
