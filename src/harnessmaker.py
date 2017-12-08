@@ -393,6 +393,8 @@ def main():
     outf = open(config.output,'w')
 
     # Handle raw python, imports
+    outf.write("from __future__ import print_function\n")
+    outf.write("import copy\n")    
     outf.write("import copy\n")
     outf.write("import traceback\n")
     outf.write("import inspect\n")    
@@ -1031,12 +1033,12 @@ def main():
             genCode.append(baseIndent + "raised = None\n");
         genCode.append(baseIndent + "if self.__verboseActions:\n")
         genCode.append(baseIndent + baseIndent + "__bV = {}\n")        
-        genCode.append(baseIndent + baseIndent + "print 'ACTION:',self.prettyName('''" + newC[:-1] + " ''')\n")
+        genCode.append(baseIndent + baseIndent + "print ('ACTION:',self.prettyName('''" + newC[:-1] + " '''))\n")
         for p in forVerbose:
-            genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + ")\n")
+            genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
             genCode.append(baseIndent + baseIndent + "except: pass\n")
         for p in verboseRef:
-            genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + ")\n")
+            genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
             genCode.append(baseIndent + baseIndent + "except: pass\n")            
         if not config.noCover:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
@@ -1060,15 +1062,15 @@ def main():
 
         if okExcepts != "":
             genCode.append(baseIndent + "except (" + okExcepts + ") as raised:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED EXPECTED EXCEPTION:',type(raised),raised\n")
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
             
         if warnExcepts != "":
             genCode.append(baseIndent + "except (" + warnExcepts + ") as raised:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED WARNING EXCEPTION:',type(raised),raised\n")            
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED WARNING EXCEPTION:',type(raised),raised)\n")            
             genCode.append(baseIndent + baseIndent + "self.__warning = raised\n")            
 
         genCode.append(baseIndent + "except Exception as raised:\n")
-        genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'RAISED EXCEPTION:',type(raised),raised\n")            
+        genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXCEPTION:',type(raised),raised)\n")            
         genCode.append(baseIndent + baseIndent + "raise\n")                    
             
         genCode.append(baseIndent + "finally:\n")
@@ -1081,7 +1083,7 @@ def main():
             for p in forVerbose:
                 genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
                 genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print '=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + ")\n")                        
+                genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")                        
                 genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
   
         if not config.noCover:
@@ -1092,17 +1094,17 @@ def main():
         
         if refC != newC:
             genCode.append(baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION:',self.prettyName('''"+refC[:-1]+" ''')\n")            
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('REFERENCE ACTION:',self.prettyName('''"+refC[:-1]+" '''))\n")            
             genCode.append(baseIndent + baseIndent + refC)
             genCode.append(baseIndent + "except KeyboardInterrupt:\n")
             genCode.append(baseIndent + baseIndent + "raise\n")            
             genCode.append(baseIndent + "except Exception as refRaised:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print 'REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised\n")                        
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised)\n")                        
             genCode.append(baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
                 genCode.append(baseIndent + baseIndent + "try:\n")
                 genCode.append(baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print '=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + ")\n") 
+                genCode.append(baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n") 
                 genCode.append(baseIndent + baseIndent + "except: pass\n")
             if postCode and checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
@@ -1115,7 +1117,7 @@ def main():
                     genCode.append(baseIndent + "assert (raised == None) == (refRaised == None)\n")
                 genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
-        genCode.append(baseIndent + "if self.__verboseActions: print '='*50\n")                                      
+        genCode.append(baseIndent + "if self.__verboseActions: print ('='*50)\n")                                      
         if logSet != []:
             genCode.append(baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
         for ch in changes:

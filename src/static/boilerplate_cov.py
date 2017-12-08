@@ -45,7 +45,7 @@ def internalReport(self):
                     print("WARNING:",a,"VISITED BUT MISSING FROM COVERAGEDATA")
         for a in adata:
             if (src_file,a) not in self.__allBranches:
-                print("WARNING:",a,"IN COVERAGEDATA BUT NOT IN TSTL COVERAGE")
+                print ("WARNING:",a,"IN COVERAGEDATA BUT NOT IN TSTL COVERAGE")
         ldata = list(set(self.__oldCovData.lines(src_file)))
         print(src_file,"LINES:",len(ldata),sorted(ldata))
         for (f,l) in self.__allStatements:

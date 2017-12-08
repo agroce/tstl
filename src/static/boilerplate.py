@@ -9,8 +9,6 @@ Examples
 t.enabled()
 t.actions()
 """
-from __future__ import print_function
-
 
 def setReplayBacktrack(self, val):
     self.__replayBacktrack = val
