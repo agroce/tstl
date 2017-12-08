@@ -1460,7 +1460,7 @@ def main():
             genCode.append(baseIndent + "try: assumeResult = " + p)
             genCode.append(baseIndent + "except: assumeResult = True\n")
             genCode.append(baseIndent + "if not assumeResult:\n")
-            genCode.append(baseIndent + baseIndent + "print '** ASSUMPTION VIOLATED:',self.prettyName(''' " + p[:-1] + " '''),'**'\n")
+            genCode.append(baseIndent + baseIndent + "print ('** ASSUMPTION VIOLATED:',self.prettyName(''' " + p[:-1] + " '''),'**')\n")
             genCode.append(baseIndent + baseIndent + "self.__actions = []\n")
             genCode.append(baseIndent + baseIndent + "self.__assumptionViolated = ''' " + p[:-1] + " '''\n")
             genCode.append(baseIndent + baseIndent + "return False\n")
