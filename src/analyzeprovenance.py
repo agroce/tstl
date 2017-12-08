@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import glob
 import sys
 import sut
@@ -30,38 +32,38 @@ sources =  {}
 for f in set(highLevel.keys()):
     sources[f] = sut.loadTest(f)
                 
-print "DETAILED PROVENANCE SUMMARY:"
+print("DETAILED PROVENANCE SUMMARY:")
                 
-lsrcs = sorted(lowLevel.keys(), key=lambda x:len(lowLevel[x]))
+lsrcs = sorted(list(lowLevel.keys()), key=lambda x:len(lowLevel[x]))
 
-print
-print
-print "BY ACTION CLASS:"
+print()
+print()
+print("BY ACTION CLASS:")
 
 classes = {}
 for s in lsrcs:
     ss = s.split(":")
     srcAct = sources[ss[0]][int(ss[1])]
-    print s,len(lowLevel[s]),sut.prettyName(srcAct[0])
+    print(s,len(lowLevel[s]),sut.prettyName(srcAct[0]))
     c = sut.actionClass(srcAct)
     if c in classes:
         classes[c].extend(lowLevel[s])
     else:
         classes[c] = lowLevel[s]
 
-csrcs = sorted(classes.keys(),key=lambda x:len(classes[x]))
+csrcs = sorted(list(classes.keys()),key=lambda x:len(classes[x]))
 
 for c in csrcs:
-    print c,len(classes[c])
+    print(c,len(classes[c]))
 
     
-print
-print
+print()
+print()
     
-print "FILE LEVEL PROVENANCE SUMMARY:"
+print("FILE LEVEL PROVENANCE SUMMARY:")
 
-hsrcs = sorted(highLevel.keys(), key=lambda x:len(highLevel[x]))
+hsrcs = sorted(list(highLevel.keys()), key=lambda x:len(highLevel[x]))
 
 for s in hsrcs:
-    print s,len(highLevel[s])
+    print(s,len(highLevel[s]))
 

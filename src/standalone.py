@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 import os
 
@@ -11,13 +13,13 @@ import sut as SUT
 def main():
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_standalone <test file> <output Python file> [<sut file>] [--noCheck] [--noRefs] [--regression] [--verbose]"
-        print "  default for <sut file> is sut.py"
-        print "Options:"
-        print " --noCheck:      do not include property checks"
-        print " --noRefs:       do not include reference actions"
-        print " --regression:   produce a regression test that captures values"
-        print " --verbose:      produce a verbose test that shows actions taken"
+        print("Usage:  tstl_standalone <test file> <output Python file> [<sut file>] [--noCheck] [--noRefs] [--regression] [--verbose]")
+        print("  default for <sut file> is sut.py")
+        print("Options:")
+        print(" --noCheck:      do not include property checks")
+        print(" --noRefs:       do not include reference actions")
+        print(" --regression:   produce a regression test that captures values")
+        print(" --verbose:      produce a verbose test that shows actions taken")
         sys.exit(0)
     
     testFile = sys.argv[1]
@@ -42,16 +44,16 @@ def main():
         newStr = newStr.replace(" != None", '" in globals()')    
         return newStr.replace("# CHECK POOL INIT","")
 
-        print "STR=",str
+        print("STR=",str)
         condBegin = str.find("(")
         theCheck = str[condBegin+1:str.find(" != None):")]
-        print theCheck
+        print(theCheck)
         strNew = str[:condBegin+1] + '"' + theCheck + '"' + str[str.find(" != None):"):]
-        print strNew
+        print(strNew)
         strNew = strNew.replace(" != None"," in globals()")
-        print strNew    
+        print(strNew)    
         strNew = strNew.replace("# CHECK POOL INIT","")
-        print strNew
+        print(strNew)
         return strNew
 
     outf = open(outFile,'w')

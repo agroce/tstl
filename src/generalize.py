@@ -1,10 +1,11 @@
+from __future__ import print_function
+
 import sys
 import time
 import os
 import subprocess
 import traceback
 import argparse
-import datetime
 from collections import namedtuple
 
 # Appending current working directory to sys.path
@@ -49,7 +50,7 @@ def make_config(pargs, parser):
     """
     pdict = pargs.__dict__
     # create a namedtuple object for fast attribute lookup
-    key_list = pdict.keys()
+    key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
@@ -58,7 +59,7 @@ def make_config(pargs, parser):
 def sandboxReplay(test):
     global timeout
     if not "--quietSandbox" in sys.argv:
-        print "ATTEMPTING SANDBOX REPLAY WITH",len(test),"STEPS"
+        print("ATTEMPTING SANDBOX REPLAY WITH",len(test),"STEPS")
     tmpName = "tmptest." + str(os.getpid()) + ".test"
     tmptest = open(tmpName,'w')
     for s in test:
@@ -72,15 +73,15 @@ def sandboxReplay(test):
     start = time.time()
     subprocess.call([cmd],shell=True)
     if not "--quietSandbox" in sys.argv:    
-        print "ELAPSED:",time.time()-start
+        print("ELAPSED:",time.time()-start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
             if not "--quietSandbox" in sys.argv:            
-                print "TEST SUCCEEDS"
+                print("TEST SUCCEEDS")
             return False
     if not "--quietSandbox" in sys.argv:        
-        print "TEST FAILS"
-    print "SANDBOX RUN FAILS: TEST LENGTH NOW",len(test)
+        print("TEST FAILS")
+    print("SANDBOX RUN FAILS: TEST LENGTH NOW",len(test))
     return True
 
 def main():
@@ -89,7 +90,7 @@ def main():
 
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print('Generalizing using config={}'.format(config))
+    print(('Generalizing using config={}'.format(config)))
 
     sut = SUT.sut()
 
@@ -106,11 +107,11 @@ def main():
     f = None
     
     if config.matchException:
-        print "RUNNING TO OBTAIN FAILURE FOR EXCEPTION MATCHING..."
+        print("RUNNING TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
         assert (sut.fails(t))
         f = sut.failure()
-        print "ERROR:",f
-        print "TRACEBACK:"
+        print("ERROR:",f)
+        print("TRACEBACK:")
         traceback.print_tb(f[2],file=sys.stdout)
     
     if not config.sandbox:
@@ -121,15 +122,15 @@ def main():
         pred = sandboxReplay
 
     if config.coverage:
-        print "EXECUTING TEST TO OBTAIN COVERAGE..."
+        print("EXECUTING TEST TO OBTAIN COVERAGE...")
         sut.replay(t,checkPropcheckProp=not config.noCheck,catchUncaught=config.uncaught)
         b = set(sut.currBranches())
         s = set(sut.currStatements())
-        print "PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS"
+        print("PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS")
         pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
 
-    print "GENERALIZING..."
+    print("GENERALIZING...")
     start = time.time()
     sut.generalize(t,pred,verbose=config.verbose,fresh=not config.noFresh,keepLast=config.keepLast)
-    print "GENERALIZED IN",time.time()-start,"SECONDS"
+    print("GENERALIZED IN",time.time()-start,"SECONDS")
     

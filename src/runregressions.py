@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 import time
 import os
@@ -12,14 +14,14 @@ import sut as SUT
 def main():
     
     if "--help" in sys.argv:
-        print "Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running]"
-        print "Options:"
-        print " --noCheck:      do not run property checks"
-        print " --html:         output an HTML coverage report to the chosen directory"
-        print " --noCover:      do not compute code coverage"
-        print " --verbose:      make actions verbose"
-        print " --running:      give a running report on code coverage"
-        print " --keepGoing:    don't stop on failed test"
+        print("Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running]")
+        print("Options:")
+        print(" --noCheck:      do not run property checks")
+        print(" --html:         output an HTML coverage report to the chosen directory")
+        print(" --noCover:      do not compute code coverage")
+        print(" --verbose:      make actions verbose")
+        print(" --running:      give a running report on code coverage")
+        print(" --keepGoing:    don't stop on failed test")
         sys.exit(0)
     
     sut = SUT.sut()
@@ -72,62 +74,62 @@ def main():
     stime = time.time()
     for f in files:
         totalTests += 1
-        print "RUNNING TEST",f
+        print("RUNNING TEST",f)
         try:
             t = sut.loadTest(f)
         except KeyError:
-            print "INVALID TEST, SKIPPING..."
+            print("INVALID TEST, SKIPPING...")
             invalidTests.append(f)
             continue
         ok = False
         try:
             ok = sut.replay(t, checkProp=(not ignoreProps))
         except Exception as e:
-            print "EXCEPTION RAISED:",e
+            print("EXCEPTION RAISED:",e)
         if not nocover:
             if (len(sut.newCurrBranches()) == 0) and (len(sut.newCurrStatements()) == 0):
                 noNewCover.append(f)
         if running:
             if sut.newCurrBranches() != set([]):
                 for b in sut.newCurrBranches():
-                    print "New branch:",b
+                    print("New branch:",b)
             if sut.newCurrStatements() != set([]):
                 for s in sut.newCurrStatements():
-                    print "New statement:",s
+                    print("New statement:",s)
         if not ok:
-            print "TEST",f,"FAILED:"
-            print sut.failure()
+            print("TEST",f,"FAILED:")
+            print(sut.failure())
             failedTests.append(f)
             anyFailed = True
             if not keepGoing:
                 sys.exit(255)
-        print time.time()-stime,"ELAPSED"
+        print(time.time()-stime,"ELAPSED")
         if not nocover:
-            print "STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches())
+            print("STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches()))
 
     if not nocover:
         sut.internalReport()
-        print sut.report("coverage.out"),"PERCENT COVERED"    
+        print(sut.report("coverage.out"),"PERCENT COVERED")    
 
     if htmlOut != None:
         sut.htmlReport(htmlOut)
 
     if (not nocover) and (len(noNewCover) > 0):
         for f in noNewCover:
-            print "TEST",f,"REDUNDANT WITH RESPECT TO COVERAGE"
+            print("TEST",f,"REDUNDANT WITH RESPECT TO COVERAGE")
 
-    print "EXECUTED",totalTests,"TESTS"
+    print("EXECUTED",totalTests,"TESTS")
 
     if len(invalidTests) > 0:
-        print len(invalidTests),"INVALID TESTS:"
+        print(len(invalidTests),"INVALID TESTS:")
         for f in invalidTests:
-            print f,
-        print
+            print(f, end=' ')
+        print()
     
     if not anyFailed:
-        print "ALL TESTS SUCCESSFUL"
+        print("ALL TESTS SUCCESSFUL")
     else:
-        print len(failedTests),"FAILED TESTS:"
+        print(len(failedTests),"FAILED TESTS:")
         for f in failedTests:
-            print f,
-        print
+            print(f, end=' ')
+        print()

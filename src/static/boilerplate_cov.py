@@ -33,33 +33,33 @@ def silenceCoverage(self):
     self.__cov._warn_no_data = False
                                 
 def internalReport(self):
-    print "TSTL INTERNAL COVERAGE REPORT:"
+    print("TSTL INTERNAL COVERAGE REPORT:")
     if self.__oldCovData == None:
         return
     for src_file in self.__oldCovData.measured_files():
         adata = self.__oldCovData.arcs(src_file)
-        print src_file,"ARCS:",len(adata),sorted(adata)
+        print(src_file,"ARCS:",len(adata),sorted(adata))
         for (f,a) in self.__allBranches:
             if f == src_file:
                 if a not in adata:
-                    print "WARNING:",a,"VISITED BUT MISSING FROM COVERAGEDATA"
+                    print("WARNING:",a,"VISITED BUT MISSING FROM COVERAGEDATA")
         for a in adata:
             if (src_file,a) not in self.__allBranches:
-                print "WARNING:",a,"IN COVERAGEDATA BUT NOT IN TSTL COVERAGE"
+                print("WARNING:",a,"IN COVERAGEDATA BUT NOT IN TSTL COVERAGE")
         ldata = list(set(self.__oldCovData.lines(src_file)))
-        print src_file,"LINES:",len(ldata),sorted(ldata)
+        print(src_file,"LINES:",len(ldata),sorted(ldata))
         for (f,l) in self.__allStatements:
             if f == src_file:
                 if l not in ldata:
-                    print "WARNING:",l,"VISITED BUT MISSING FROM COVERAGEDATA"
+                    print("WARNING:",l,"VISITED BUT MISSING FROM COVERAGEDATA")
         for l in ldata:
             if (src_file,l) not in self.__allStatements:
-                print "WARNING",l,"IN COVERAGEDATA BUT NOT IN TSTL COVERAGE"
+                print("WARNING",l,"IN COVERAGEDATA BUT NOT IN TSTL COVERAGE")
     for (f,l) in self.__allStatements:
         if f not in self.__oldCovData.measured_files():
-            print "WARNING:",(f,l),"IS NOT IN COVERAGEDATA"
-    print "TSTL BRANCH COUNT:",len(self.__allBranches)                
-    print "TSTL STATEMENT COUNT:",len(self.__allStatements)
+            print("WARNING:",(f,l),"IS NOT IN COVERAGEDATA")
+    print("TSTL BRANCH COUNT:",len(self.__allBranches))                
+    print("TSTL STATEMENT COUNT:",len(self.__allStatements))
                 
 def cleanCov(self):
     self.__newBranches = set()
@@ -234,13 +234,13 @@ def coverDecompose(self,test,verbose=False,catchUncaught=False,checkProp=False):
         allBCoverages.update(set(b))
 
     if verbose:
-        print "ORIGINAL TEST OF LENGTH",len(test),"COVERS",len(allSCoverages),"STATEMENTS AND",len(allBCoverages),"BRANCHES"
+        print("ORIGINAL TEST OF LENGTH",len(test),"COVERS",len(allSCoverages),"STATEMENTS AND",len(allBCoverages),"BRANCHES")
 
     i = 1
     while (len(allSCoverages) != 0) or (len(allBCoverages) != 0):
         (sgoal,bgoal) = coverages[0]
         if verbose:
-            print "CONSTRUCTING TEST #"+str(i),"WITH GOAL",len(sgoal),"STATEMENTS AND",len(bgoal),"BRANCHES"
+            print("CONSTRUCTING TEST #"+str(i),"WITH GOAL",len(sgoal),"STATEMENTS AND",len(bgoal),"BRANCHES")
         t = self.reduce(test,self.coversAll(sgoal,bgoal,catchUncaught=catchUncaught,checkProp=checkProp),verbose=verbose)
         tests.append(t)
         self.replay(t,catchUncaught=catchUncaught,checkProp=checkProp)
@@ -249,8 +249,8 @@ def coverDecompose(self,test,verbose=False,catchUncaught=False,checkProp=False):
         allSCoverages.difference_update(currS)
         allBCoverages.difference_update(currB)
         if verbose:
-            print "NEW TEST OF LENGTH",len(t),"COVERS",len(currS),"STATEMENTS AND",len(currB),"BRANCHES"
-            print "REMAINING COVERAGE GOALS:",len(allSCoverages),"STATEMENTS,",len(allBCoverages),"BRANCHES"
+            print("NEW TEST OF LENGTH",len(t),"COVERS",len(currS),"STATEMENTS AND",len(currB),"BRANCHES")
+            print("REMAINING COVERAGE GOALS:",len(allSCoverages),"STATEMENTS,",len(allBCoverages),"BRANCHES")
         newCoverages = []
         for (s,b) in coverages:
             newS = s.copy()
@@ -258,8 +258,8 @@ def coverDecompose(self,test,verbose=False,catchUncaught=False,checkProp=False):
             newS.difference_update(currS)
             newB.difference_update(currB)
             if verbose and ((len(newS) != len(s)) or (len(newB) != len(b))):
-                print "GOAL WAS:",len(s),len(b)
-                print "NOW:",len(newS),len(newB)
+                print("GOAL WAS:",len(s),len(b))
+                print("NOW:",len(newS),len(newB))
             if (len(newS) != 0) or (len(newB) != 0):
                 newCoverages.append((newS,newB))
         coverages = newCoverages

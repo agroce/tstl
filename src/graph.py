@@ -6,7 +6,7 @@ import os
 def breakByNumber(s):
     breaks = []
     curr = ""
-    for c in xrange(0,len(s)):
+    for c in range(0,len(s)):
         if curr == "":
             curr += s[c]
         elif (s[c] in ['0','1','2','3','4','5','6','7','8','9']) == (curr[-1] in ['0','1','2','3','4','5','6','7','8','9']):
@@ -60,7 +60,7 @@ def merge(s1,s2):
         return None
     merged = ""
     diverged = False
-    for i in xrange(len(b1)):
+    for i in range(len(b1)):
         if b1[i] == b2[i]:
             merged += b1[i]
         elif not diverged:
@@ -134,7 +134,7 @@ import sut as SUT
 def main():
 
     if "--help" in sys.argv:
-        print "Usage:  tstl_graph <outfile> <depth> <width> [<seed>] [<traces> (default 1)] [<skip> (default none)]"
+        print("Usage:  tstl_graph <outfile> <depth> <width> [<seed>] [<traces> (default 1)] [<skip> (default none)]")
         sys.exit(0)
     
     outfile = sys.argv[1]
@@ -152,11 +152,11 @@ def main():
     else:
         skiplen = -1
 
-    print "Producing graph of",traces,"traces with depth",depth,"and width",k,"starting from",skiplen
+    print("Producing graph of",traces,"traces with depth",depth,"and width",k,"starting from",skiplen)
 
     dot = Digraph(comment="Depth " + str(depth))
 
-    for i in xrange(0,traces):
+    for i in range(0,traces):
         d = 0
         s = 0
         state = str(i) + "\<init\>"
@@ -186,10 +186,10 @@ def main():
             nexta = t.enabled()
             act = random.choice(nexta)
             aname = t.prettyName(act[0])
-            nexts = map(lambda a: t.prettyName(a[0]), nexta)
+            nexts = [t.prettyName(a[0]) for a in nexta]
             eqnexts = nexts
             eqnexts = collapse(eqnexts)
-            eqnexts = filter(lambda x: x != aname, eqnexts)
+            eqnexts = [x for x in eqnexts if x != aname]
             random.shuffle(eqnexts)
             eqnexts = eqnexts[-(k-1):]
             mid = len(eqnexts) / 2
