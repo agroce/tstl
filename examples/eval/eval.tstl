@@ -26,15 +26,15 @@ def evalCheck(expr):
     hv = heval(expr)
     helapsed = time.time()-stime
     if v != hv:
-       print "EXPRESSION:",expr
-       print "  Python evaluated to:",v
-       print "  Haskell evaluated to:",hv
+       print("EXPRESSION:",expr)
+       print("  Python evaluated to:",v)
+       print("  Haskell evaluated to:",hv)
        return False
     cache[expr] = True
     if len(expr) > largest:
        largest = len(expr)
-    print "NEW EXPR: len:",len(expr),"Python:",elapsed,"Haskell:",helapsed
-    print "CACHE SIZE:",len(cache),"LARGEST EXPR:",largest
+    print("NEW EXPR: len:",len(expr),"Python:",elapsed,"Haskell:",helapsed)
+    print("CACHE SIZE:",len(cache),"LARGEST EXPR:",largest)
     return True
 
 def heval(s):

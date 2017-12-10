@@ -7,11 +7,11 @@ def newBoard():
     return b
 
 def printBoard(b):
-    print "GAME STATE:"
+    print("GAME STATE:")
     for i in xrange(0,3):
         for j in xrange(0,3):
-            print b[(i,j)],
-        print
+            print(b[(i,j)], end='')
+        print()
 
 def winner(b):
     # horizontal
@@ -77,6 +77,6 @@ pool: <Oy> 1
 (~<turn> == "X") and (~<board> [(<Xx>,<Xy>)] == "-") -> ~<board> [(<Xx>,<Xy>)] = "X"; printBoard(~<board>); ~<turn> = "O"
 (~<turn> == "O") and (~<board> [(<Ox>,<Oy>)] == "-") -> ~<board> [(<Ox>,<Oy>)] = "O"; printBoard(~<board>); ~<turn> = "X"
 
-deadlock(~<board>) -> print "TIE!  STARTING NEW GAME"; <board> = newBoard()
+deadlock(~<board>) -> print("TIE!  STARTING NEW GAME"); <board> = newBoard()
 
 property: winner(<board>) == None

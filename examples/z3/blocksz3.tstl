@@ -56,4 +56,4 @@ actions:
 
 str(<solver,1>.check()) == "sat" -> <model> := <solver>.model()
 
-print "<model,1> = ",<model>
+print("<model,1> = ",<model>)

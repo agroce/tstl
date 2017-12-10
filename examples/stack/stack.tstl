@@ -12,4 +12,4 @@ not <stack,1>.isEmpty() -> <value> := <stack>.pop()
 {IndexError} <value> := <stack>.peek() 
 not <stack,1>.isEmpty() -> <value> := <stack>.peek()
 <value> := <stack>.size
-print str(<stack>)
+print(str(<stack>))

@@ -5,19 +5,19 @@
 
 <@
 def cleanupFiles():
-    print "CLEANING UP"
+    print("CLEANING UP")
     # First get rid of modified files
     for f in glob.glob("C:\\Arctmp\\*"):
         try:
             shutil.rmtree(f)
         except:
-            print "UNABLE TO REMOVE:",f
+            print("UNABLE TO REMOVE:",f)
     # Now remove the old directory
     for i in xrange(0,1000000):
         new_workspace = "C:\\Arctmp\\workspace." + str(i)
         if not os.path.exists(new_workspace):
             break             
-    print "NEW WORKSPACE IS",new_workspace
+    print("NEW WORKSPACE IS",new_workspace)
     # Now move in fresh copies
     shutil.copytree("C:\\Arcbase",new_workspace)
     arcpy.env.workspace = new_workspace
@@ -34,8 +34,8 @@ def fcsInGdb(gdb):
 
 def report():
     return
-    print arcpy.env.workspace
-    print arcpy.GetMessages()
+    print(arcpy.env.workspace)
+    print(arcpy.GetMessages())
 @>
 
 pool: <layerfilelist> 2
@@ -247,7 +247,7 @@ len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 
 {arcpy.ExecuteError} arcpy.CheckGeometry_management(<featureclass>,~<table>); report()
 
-#print arcpy.GetMessages(); report()
+#print(arcpy.GetMessages()); report()
 
 #{arcpy.ExecuteError} arcpy.Delete_management(<featureclass>); report()
 
