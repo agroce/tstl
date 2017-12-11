@@ -4,14 +4,16 @@
 @import stat
 
 <@
+
+IS_WIN = sys.platform == 'win32'
+ROOT_PATH = 'R:\\test' if IS_WIN else '/Volumes/ramdisk/test'
+
 def newFakeOS():
     fs = pyfakefs.fake_filesystem.FakeFilesystem()
-    if os.path.exists('/Volumes/ramdisk/test'):
-        shutil.rmtree('/Volumes/ramdisk/test')
-    os.mkdir('/Volumes/ramdisk/test')
-    fs.CreateDirectory('/Volumes')	
-    fs.CreateDirectory('/Volumes/ramdisk')
-    fs.CreateDirectory('/Volumes/ramdisk/test')
+    if os.path.exists(ROOT_PATH):
+        shutil.rmtree(ROOT_PATH)
+    os.mkdir(ROOT_PATH)
+    fs.CreateDirectory(ROOT_PATH)
     fakeOS = pyfakefs.fake_filesystem.FakeOsModule(fs)
     return fakeOS
 
@@ -62,13 +64,13 @@ finally: <file>.close()
 
 <component> := <["alpha","beta","gamma","Alpha","Beta","Gamma","a","b","c","d","e","f","g","omega","lambda","phi",""]>
 
-<path> := "/Volumes/ramdisk/test"
-<path> += "/" + <component>
+<path> := ROOT_PATH
+<path> += os.path.sep + <component>
 
 <bytes> := 0
 <bytes> += 1
 
-# Below code allows us to test arbitrary mode combinations; however pyfakefs is proiritizing
+# Below code allows us to test arbitrary mode combinations; however pyfakefs is prioritizing
 # sensible open combinations
 
 #<mode> := os.O_CREAT
@@ -111,14 +113,14 @@ finally: <file>.close()
 
 {OSError} ~<os>.remove(<path>)
 
-{OSError} <path,1> != "/Volumes/ramdisk/test" -> ~<os>.rmdir(<path>)
+{OSError} <path,1> != ROOT_PATH -> ~<os>.rmdir(<path>)
 # Guard needed so you don't delete the "root" of the tested FS
-{OSError} len(os.listdir("/Volumes/ramdisk/test")) > 1 -> ~<os>.removedirs(<path>)
+{OSError} len(os.listdir(ROOT_PATH)) > 1 -> ~<os>.removedirs(<path>)
 
 {IOError,OSError} sorted(~<os>.listdir(<path>))
 
-{OSError} <path,1> != "/Volumes/ramdisk/test" -> <stat> := ~<os>.stat(<path>)
-{OSError} <path,1> != "/Volumes/ramdisk/test" -> <stat> := ~<os>.lstat(<path>)
+{OSError} <path,1> != ROOT_PATH -> <stat> := ~<os>.stat(<path>)
+{OSError} <path,1> != ROOT_PATH -> <stat> := ~<os>.lstat(<path>)
 
 # Not testing mode equivalence for now
 #<stat>.st_mode
