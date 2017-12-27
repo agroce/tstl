@@ -145,7 +145,7 @@ len(<bexpr,2>) < 50 -> <bexpr> := "!" + <bexpr>
 
 <state> := State()
 
-print <program,1>; parse_code(<program>,<state>)
+print(<program,1>); parse_code(<program>,<state>)
 
 #property: "if" not in <program>
 #property: "while" not in <program>

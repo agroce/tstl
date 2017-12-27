@@ -3,12 +3,12 @@
 
 <@
 def prettyPrintTest(sut, test):
-    print "PRETTY PRINTING TEST"    
+    print("PRETTY PRINTING TEST")
     if test == None:
        return
     i = 0
     for s in test:
-    	print "STEP",i,sut.prettyName(s[0])
+    	print("STEP",i,sut.prettyName(s[0]))
 	i += 1
 @>
 
@@ -58,7 +58,7 @@ init: <last> = "None = None"
 
 len(<actionlist,1>) > 0 -> <action> := <actionlist>[0]
 
-if (<action,1> [1] ()): newLast = <action,1> [0]; print "ACTIONS",newLast, "LAST:",<last,1>; assert (("__result" in newLast) or (" = " not in newLast) or (newLast.split(" = ")[0] != <last>.split(" = ")[0])); <last> = newLast; <sut>.safely(<action>)
+if (<action,1> [1] ()): newLast = <action,1> [0]; print("ACTIONS",newLast, "LAST:",<last,1>); assert (("__result" in newLast) or (" = " not in newLast) or (newLast.split(" = ")[0] != <last>.split(" = ")[0])); <last> = newLast; <sut>.safely(<action>)
 <sut>.restart(); <last> = "None = None"
 
 #<pred> := <sut>.fails

@@ -10,7 +10,7 @@ def cleanupFiles():
         try:
             os.remove(f)
         except:
-            print "UNABLE TO REMOVE:",f
+            print("UNABLE TO REMOVE:",f)
     # Now move in fresh copies
     for f in glob.glob("C:\\Arcbase\\*"):
         shutil.copy(f, f.replace("Arcbase","arctmp"))
@@ -118,17 +118,17 @@ len(<transformlist,1>) >= 1 -> <transform> := <transformlist> [0]
 len(<fieldlist,1>) >= 1 -> <fieldname> := <fieldlist> [0].name
 <fieldlist> = <fieldlist> [1:]
 
-{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(<featureclass>, <newlayer>); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(<featureclass>, <newlayer>); print(arcpy.GetMessages())
 
-{arcpy.ExecuteError} arcpy.Project_management(<featureclass>, <featureclass>, <spatialref>, <transform>); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.Project_management(<featureclass>, <featureclass>, <spatialref>, <transform>); print(arcpy.GetMessages())
 
-{arcpy.ExecuteError} arcpy.AddField_management(<featureclass>,<fieldname>,<fieldtype>); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.AddField_management(<featureclass>,<fieldname>,<fieldtype>); print(arcpy.GetMessages())
 
-{arcpy.ExecuteError} arcpy.DeleteField_management(<featureclass>,<fieldname>); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.DeleteField_management(<featureclass>,<fieldname>); print(arcpy.GetMessages())
 
-{arcpy.ExecuteError} arcpy.Buffer_analysis(<featureclass>,<featureclass>,<bufferdist>); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.Buffer_analysis(<featureclass>,<featureclass>,<bufferdist>); print(arcpy.GetMessages())
 
-{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,<overlaptype>,<newlayer>); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(<newlayer>,<overlaptype>,<newlayer>); print(arcpy.GetMessages())
 
-{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(<newlayer>,<selectiontype>,' "' + <fieldname> + '" ' + <op> + <val>); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(<newlayer>,<selectiontype>,' "' + <fieldname> + '" ' + <op> + <val>); print(arcpy.GetMessages())
 

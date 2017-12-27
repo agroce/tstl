@@ -3,13 +3,13 @@
 <@
 def displayResults(sorttime,sortcalls,sortedtime,sortedcalls):
     if sortcalls > 0:
-       print "SORT AVG:", sorttime/sortcalls,
+       print("SORT AVG:", sorttime/sortcalls, end='')
     else:
-	print "SORT AVG: N/A",
+	   print("SORT AVG: N/A", end='')
     if sortedcalls > 0:
-       print "SORTED AVG:", sortedtime/sortedcalls
+       print("SORTED AVG:", sortedtime/sortedcalls)
     else:
-	print "SORTED AVG: N/A"
+	   print("SORTED AVG: N/A")
 @>
 
 pool: <list> 4
@@ -40,8 +40,8 @@ len(~<list,1>) < 1000 -> ~<list> = ~<list> + ~<list>
 
 <count> := 0
 
-print "LENGTH",len(<list>)
+print("LENGTH",len(<list>))
 
-len(<list,1>) > 1000 -> ~<count> += 1; <sortcalls> += 1; <sortedcalls> += 1; start = time.time(); sorted(<list>); <sortedtotaltime> = (time.time() - start); start = time.time(); <list,1>.sort(); <sorttotaltime> = (time.time() - start); print "DATAPOINT", ~<count>, <sortedtotaltime>,<sorttotaltime>
+len(<list,1>) > 1000 -> ~<count> += 1; <sortcalls> += 1; <sortedcalls> += 1; start = time.time(); sorted(<list>); <sortedtotaltime> = (time.time() - start); start = time.time(); <list,1>.sort(); <sorttotaltime> = (time.time() - start); print("DATAPOINT", ~<count>, <sortedtotaltime>,<sorttotaltime>)
 
 

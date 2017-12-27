@@ -394,7 +394,13 @@ def main():
 
     # Handle raw python, imports
     outf.write("from __future__ import print_function\n")
-    outf.write("import copy\n")    
+    outf.write("try:\n")
+    outf.write("    from importlib import reload\n")
+    outf.write("except ImportError:\n")
+    outf.write("    try:\n")
+    outf.write("        from imp import reload\n")
+    outf.write("    except ImportError:\n")
+    outf.write("        pass\n")
     outf.write("import copy\n")
     outf.write("import traceback\n")
     outf.write("import inspect\n")    
@@ -1511,12 +1517,12 @@ def main():
                 genCode.append(baseIndent + baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p))
                 if okExcepts != "":
                     genCode.append(baseIndent + baseIndent + baseIndent + "except (" + okExcepts + ") as raised:\n")
-                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print 'PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised\n")                
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
             else:
                 genCode.append (baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p))
                 if okExcepts != "":
                     genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as raised:\n")
-                    genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print 'PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised\n")                
+                    genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
                 
         genCode.append(baseIndent + baseIndent + "# END CHECK CODE\n")
         genCode.append(baseIndent + "except KeyboardInterrupt as e:\n")
@@ -1535,14 +1541,19 @@ def main():
         outf.write(baseIndent + c.replace("True and (","("))
 
     ######################## REQUIRED FOR PACKAGING TSTL ##########################
+    is_py3 = sys.version_info[0] > 2
     with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:    
         for l in boilerplate:
+            if is_py3:
+                l = l.decode()
             outf.write(baseIndent + l)
 
     if not config.noCover:
         with pkg_resources.resource_stream('src', 'static/boilerplate_cov.py') as boilerplate_cov:
             for l in boilerplate_cov:
-                outf.write(baseIndent + l)    
+                if is_py3:
+                    l = l.decode()
+                outf.write(baseIndent + l)
     ###############################################################################
                 
     outf.close()

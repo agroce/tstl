@@ -827,7 +827,7 @@ def logPrint(self, name, code, text, after):
 def testCandidates(self, t, n):
     # Fix so that if n means removal is single items, you just return all the relevant removals
     candidates = []
-    s = len(t) / n
+    s = int(len(t) / n)
     if (s == 1):
         n = len(t)
     for i in range(0,n):

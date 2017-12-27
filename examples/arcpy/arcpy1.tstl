@@ -14,7 +14,7 @@ def cleanupFiles():
         try:
             os.remove(f)
         except:
-            print "UNABLE TO REMOVE:",f
+            print("UNABLE TO REMOVE:",f)
     # Now move in fresh copies
     for f in glob.glob("C:\\Arcbase\\*"):
         shutil.copy(f, f.replace("Arcbase","arctmp"))
@@ -140,14 +140,14 @@ len(%TRANSFORMLIST,1%) >= 1 -> %TRANSFORM% := %TRANSFORMLIST% [0]
 len(%FIELDLIST,1%) >= 1 -> %FIELDNAME% := %FIELDLIST% [0].name
 %FIELDLIST% = %FIELDLIST% [1:]
 
-{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(%FEATURECLASS%, %NEWLAYER%); print arcpy.GetMessages()
-{arcpy.ExecuteError} arcpy.Project_management(%FEATURECLASS%, %FEATURECLASS%, %SPATIALREF%, %TRANSFORM%); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.MakeFeatureLayer_management(%FEATURECLASS%, %NEWLAYER%); print(arcpy.GetMessages())
+{arcpy.ExecuteError} arcpy.Project_management(%FEATURECLASS%, %FEATURECLASS%, %SPATIALREF%, %TRANSFORM%); print(arcpy.GetMessages()
 
-{arcpy.ExecuteError} arcpy.AddField_management(%FEATURECLASS%,%FIELDNAME%,%FIELDTYPE%); print arcpy.GetMessages()
-{arcpy.ExecuteError} arcpy.DeleteField_management(%FEATURECLASS%,%FIELDNAME%); print arcpy.GetMessages()
-{arcpy.ExecuteError} arcpy.Buffer_analysis(%FEATURECLASS%,%FEATURECLASS%,%BUFFERDIST%); print arcpy.GetMessages()
-{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(%NEWLAYER%,%OVERLAPTYPE%,%NEWLAYER%); print arcpy.GetMessages()
-{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(%NEWLAYER%,%SELECTIONTYPE%,' "' + %FIELDNAME% + '" ' + %OP% + %VAL%); print arcpy.GetMessages()
+{arcpy.ExecuteError} arcpy.AddField_management(%FEATURECLASS%,%FIELDNAME%,%FIELDTYPE%); print(arcpy.GetMessages())
+{arcpy.ExecuteError} arcpy.DeleteField_management(%FEATURECLASS%,%FIELDNAME%); print(arcpy.GetMessages())
+{arcpy.ExecuteError} arcpy.Buffer_analysis(%FEATURECLASS%,%FEATURECLASS%,%BUFFERDIST%); print(arcpy.GetMessages())
+{arcpy.ExecuteError} arcpy.SelectLayerByLocation_management(%NEWLAYER%,%OVERLAPTYPE%,%NEWLAYER%); print(arcpy.GetMessages())
+{arcpy.ExecuteError} arcpy.SelectLayerByAttribute_management(%NEWLAYER%,%SELECTIONTYPE%,' "' + %FIELDNAME% + '" ' + %OP% + %VAL%); print(arcpy.GetMessages())
 
 #%LAYER%.visible = True
 #%LAYER%.visible = False

@@ -48,6 +48,6 @@ pool: <mutant> 5
 <mutated> := <code>[:<pos>] + <mutant> + <code>[<pos>+1:]
 <mutated> := <mutated>[:<pos>] + <mutant> + <mutated>[<pos>+1:]
 
-print <mutated>
+print(<mutated>)
 
 {ValueError} <model> := pystan.StanModel(model_code=<mutated>)

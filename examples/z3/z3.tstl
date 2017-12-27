@@ -46,12 +46,12 @@ pool: <boolexpr> 8
 <formula> = z3.Not(~<formula>)
 <formula> = z3.Implies(~<formula>,~<formula>)
 
-print "CLEARING <solver,1>" ; <solver> := z3.Solver()
+print("CLEARING <solver,1>") ; <solver> := z3.Solver()
 
-print "<solver,1>:", ; print <solver>.check()
-print "<solver,1>: ADDING", <formula,1> ; ~<solver>.add(<formula>)
+print("<solver,1>:", end='') ; print(<solver>.check())
+print("<solver,1>: ADDING", <formula,1>) ; ~<solver>.add(<formula>)
 
-str(<solver,1>.check()) == "sat" -> print "<model,1> = <solver,1>.model()" ; <model> := <solver>.model()
+str(<solver,1>.check()) == "sat" -> print("<model,1> = <solver,1>.model()") ; <model> := <solver>.model()
 
-print "<model,1> = ", <model>
+print("<model,1> = ", <model>)
 
