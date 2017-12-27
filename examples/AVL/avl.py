@@ -1,4 +1,5 @@
 #import random, math
+from __future__ import print_function
 
 outputdebug = False 
 
