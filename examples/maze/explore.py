@@ -11,7 +11,15 @@ seen.append(sut.state())
 
 i = 0
 
+PATIENCE = 20
+
+bored = 0
+
 while True:
+    if bored > PATIENCE:
+        sut.restart()
+        seen = []
+        seen.append(sut.state())
     old = sut.state()
     act = sut.randomEnabled(R)
     ok = sut.safely(act)
@@ -22,8 +30,10 @@ while True:
         sys.exit(0)
     new = sut.state()[:-1]
     if new in seen:
+        bored += 1
         sut.backtrack(old)
     else:
+        bored = 0
         seen.append(new)
         i += 1
         print i,len(seen),sut.prettyName(act[0])
