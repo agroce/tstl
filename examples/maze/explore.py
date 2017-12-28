@@ -20,6 +20,7 @@ while True:
         sut.restart()
         seen = []
         seen.append(sut.state())
+        i = 0
     old = sut.state()
     act = sut.randomEnabled(R)
     ok = sut.safely(act)
