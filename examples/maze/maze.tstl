@@ -4,6 +4,10 @@ pool: <pos> 1
 
 <pos> := maze.start
 
-~<pos> = maze.tryMove(<['U','D','R','L']>, ~<pos>)
+~<pos> = maze.tryMove('U', ~<pos>)
+~<pos> = maze.tryMove('D', ~<pos>)
+~<pos> = maze.tryMove('R', ~<pos>)
+~<pos> = maze.tryMove('L', ~<pos>)
+~<pos> = maze.tryMove('x', ~<pos>)
 
 
