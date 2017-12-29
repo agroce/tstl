@@ -65,7 +65,9 @@ def parse_args():
     parser.add_argument('-s', '--stats', action='store_true',
                         help='Enable statistics on each action.  Slows exection considerably.')
     parser.add_argument('-p', '--pylib', action='store_true',
-                        help='Add if you need to test something in the standard Python library.  Will blow up coverage!')            
+                        help='Add if you need to test something in the standard Python library.  Will blow up coverage!')
+    parser.add_argument('--noReload', action='store_true',
+                        help='Do not reload module on each restart.  For testing modules with broken reload (e.g. TensorFlow)')    
 
     # Useful to print internal variables iteratively
     parser.add_argument('--debug', dest='debug', action='store_true', help='Toggle debug mode on')
@@ -1336,8 +1338,9 @@ def main():
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     genCode.append("# BEGIN RELOAD CODE\n")
     for l in import_modules:
-        s = baseIndent + 'reload({})\n'.format(l)
-        genCode.append(s)
+        if not config.noReload:
+            s = baseIndent + 'reload({})\n'.format(l)
+            genCode.append(s)
     #for l in import_froms:
     #    s = baseIndent + l
     #    genCode.append(s)
