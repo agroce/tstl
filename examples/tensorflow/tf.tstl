@@ -1,0 +1,57 @@
+@import tensorflow as tf
+@from tensorflow.python.framework.errors_impl import InvalidArgumentError
+@from tensorflow.python.framework.errors_impl import FailedPreconditionError
+
+#NOTE:  you need to compile this with --noReload for it to work, reload on TensorFlow
+#is currently broken (not our problem, a bug to be reported)
+
+pool: <int> 5
+pool: <float> 5
+
+pool: <session> 1
+pool: <handle> 1
+
+pool: <opt> 5
+
+pool: <node> 5
+pool: <name> 5
+
+<int> := 0
+<int> += 1
+<int> -= 1
+<int> *= <int>
+<int> += <int>
+<int> := -(<int>)
+
+<float> := float(<int>)
+<float,3> != 0 -> <float> := <float>/<float>
+
+<name> := <['a'..'z']>
+
+<opt> := tf.train.GradientDescentOptimizer(<float>)
+
+<node> := tf.Variable([<float>], dtype=tf.float32)
+<node> := tf.constant(<float>)
+{TypeError} <node> := tf.add(<node>,<node>)
+{TypeError} <node> := tf.subtract(<node>,<node>)
+{TypeError} <node> := tf.multiply(<node>,<node>)
+{TypeError} <node> := tf.divide(<node>,<node>)
+{TypeError} <node> := tf.square(<node>)
+{TypeError} <node> := tf.reduce_sum(<node>)
+<node> := tf.placeholder(tf.float32,name=<name>)
+{TypeError} <node> := <node> * <float>
+{TypeError} <node> := <node> + <float>
+{TypeError} <node> := <node> - <float>
+{ValueError,AttributeError} <node> := <opt>.minimize(<node>)
+{AttributeError} <node> := tf.assign(<node>,[<float>])
+
+
+<handle> := tf.global_variables_initializer()
+
+<session> := tf.Session()
+
+print (<node>)
+{TypeError,InvalidArgumentError,FailedPreconditionError} print (<session>.run([<node>,<node>]))
+{TypeError,InvalidArgumentError,FailedPreconditionError} print (<session>.run(<node>, {<name> : <float>}))
+{TypeError,InvalidArgumentError,FailedPreconditionError} print (<session>.run(<handle>))
+
