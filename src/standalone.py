@@ -8,7 +8,8 @@ import os
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-import sut as SUT
+if not "--help" in sys.argv:
+    import sut as SUT
 
 def main():
 
@@ -65,6 +66,8 @@ def main():
     reloadCode = []
     initCode = []
 
+    outf.write("from __future__ import print_function\n\n")
+    
     for l in open(sutFile):
         if "END STANDALONE CODE" in l:
             startPrelim = False
@@ -116,7 +119,7 @@ def main():
         if makeRegression:
             t.safely(t.playable(name))
         if verbose:
-            outf.write("print '''" + t.prettyName(name) + "'''\n")
+            outf.write("print ('''" + t.prettyName(name) + "''')\n")
         if t.getOkExceptions(name) == "":
             outf.write(t.prettyName(name) + "\n")
         else:
@@ -153,5 +156,5 @@ def main():
                         outf.write("assert (repr(" + absFun + "("+pname+')) == (' + repr(repr(vals[i])) + '))\n')
 
 
-    outf.write('\n\nprint "TEST COMPLETED SUCCESSFULLY"\n')
+    outf.write('\n\nprint ("TEST COMPLETED SUCCESSFULLY")\n')
     outf.close()

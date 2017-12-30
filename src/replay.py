@@ -9,7 +9,8 @@ import os
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-import sut as SUT
+if not "--help" in sys.argv:
+    import sut as SUT
 
 def trace_lines(frame, event, arg):
     if event != 'line':
