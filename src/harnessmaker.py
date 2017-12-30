@@ -13,7 +13,7 @@ import sys
 import argparse
 import os
 import re
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 
 # For packaging harnessmaker to tstl package
 import pkg_resources
@@ -22,7 +22,7 @@ import pkg_resources
 # These variables will be modified when needed
 
 config = None
-poolSet = {}
+poolSet = OrderedDict()
 poolType = {}
 initSet = []
 finallySet = []
@@ -1069,16 +1069,19 @@ def main():
             genCode.append(baseIndent + baseIndent + "assert __check_res == True, \" check of (%s) for before and after values (%s) and (%s) failed\" % (\"" + expectCode + "\", __before_res, __after_res)\n")
 
         if okExcepts != "":
-            genCode.append(baseIndent + "except (" + okExcepts + ") as raised:\n")
+            genCode.append(baseIndent + "except (" + okExcepts + ") as exc:\n")
+            genCode.append(baseIndent + baseIndent + "raised = exc\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
             
         if warnExcepts != "":
-            genCode.append(baseIndent + "except (" + warnExcepts + ") as raised:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED WARNING EXCEPTION:',type(raised),raised)\n")            
+            genCode.append(baseIndent + "except (" + warnExcepts + ") as exc:\n")
+            genCode.append(baseIndent + baseIndent + "raised = exc\n")
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED WARNING EXCEPTION:',type(raised),raised)\n")
             genCode.append(baseIndent + baseIndent + "self.__warning = raised\n")            
 
-        genCode.append(baseIndent + "except Exception as raised:\n")
-        genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXCEPTION:',type(raised),raised)\n")            
+        genCode.append(baseIndent + "except Exception as exc:\n")
+        genCode.append(baseIndent + baseIndent + "raised = exc\n")
+        genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXCEPTION:',type(raised),raised)\n")
         genCode.append(baseIndent + baseIndent + "raise\n")                    
             
         genCode.append(baseIndent + "finally:\n")
@@ -1106,8 +1109,9 @@ def main():
             genCode.append(baseIndent + baseIndent + refC)
             genCode.append(baseIndent + "except KeyboardInterrupt:\n")
             genCode.append(baseIndent + baseIndent + "raise\n")            
-            genCode.append(baseIndent + "except Exception as refRaised:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised)\n")                        
+            genCode.append(baseIndent + "except Exception as exc:\n")
+            genCode.append(baseIndent + baseIndent + "refRaised = exc\n")
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised)\n")
             genCode.append(baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
                 genCode.append(baseIndent + baseIndent + "try:\n")
@@ -1122,7 +1126,7 @@ def main():
                 genCode.append(baseIndent + "assert (type(raised) == type(refRaised))\n")                
             if comparing:
                 if (not config.forceRefExceptionMatch) and not (config.forceStrongRefExceptionMatch):
-                    genCode.append(baseIndent + "assert (raised == None) == (refRaised == None)\n")
+                    genCode.append(baseIndent + "assert raised is None == refRaised is None\n")
                 genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
         genCode.append(baseIndent + "if self.__verboseActions: print ('='*50)\n")                                      
@@ -1519,12 +1523,14 @@ def main():
                 genCode.append(pr)
                 genCode.append(baseIndent + baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p))
                 if okExcepts != "":
-                    genCode.append(baseIndent + baseIndent + baseIndent + "except (" + okExcepts + ") as raised:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + "except (" + okExcepts + ") as exc:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "raised = exc\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
             else:
                 genCode.append (baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p))
                 if okExcepts != "":
-                    genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as raised:\n")
+                    genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as exc:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + "raised = exc\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
                 
         genCode.append(baseIndent + baseIndent + "# END CHECK CODE\n")
