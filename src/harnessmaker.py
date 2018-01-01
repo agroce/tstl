@@ -1126,7 +1126,7 @@ def main():
                 genCode.append(baseIndent + "assert (type(raised) == type(refRaised))\n")                
             if comparing:
                 if (not config.forceRefExceptionMatch) and not (config.forceStrongRefExceptionMatch):
-                    genCode.append(baseIndent + "assert raised is None == refRaised is None\n")
+                    genCode.append(baseIndent + "assert (raised is None) == (refRaised is None)\n")
                 genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
         genCode.append(baseIndent + "if self.__verboseActions: print ('='*50)\n")                                      
