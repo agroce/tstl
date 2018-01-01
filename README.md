@@ -70,16 +70,15 @@ application/library to be tested.
 Installation
 ------------
 
-You can grab a recent (but not always the latest) tstl more easily using pip.  `pip install tstl` should work fine.  If you want something even more recent you can:
+You can grab a recent (but not always the latest) tstl most easily using pip.  `pip install tstl` should work fine.  If you want something even more recent you can:
 
     git clone https://github.com/agroce/tstl.git
     cd tstl
     python setup.py install
     # Might need to do a sudo on the last step if not using virtualenv
 
-Note that TSTL expects a Python 2.7 version, not Python 3.0.
-Eventually we'll release a 3.0+ version, but right now the Python
-center-of-mass seems to still be in 2.7.  Also, you probably want to
+Note that TSTL expects a Python 2.7 version, is developed/tested that way, and is not well-tested yet with Python 3.0+.
+However, in theory it should work ok, thanks to mrbean-bremen.  Also, you probably want to
 install (pip will do the trick) Ned Batchelder's coverage.py
 (https://coverage.readthedocs.io).  Feel free to be careful and use virtualenv or whatever.  If you're planning to test anything that touches the filesystem, or might touch the filesystem, or could do bad things if you found a nasty bug, I suggest using a virtual machine for testing, in fact.
 
@@ -447,7 +446,7 @@ Who is responsible for TSTL?
 
 - Ned Batchelder, David R. MacIver, and John Regehr have no actual code in TSTL, but all contributed in significant ways to various implementation aspects, in ways that go beyond the general disclaimer that TSTL freely steals from the entire software testing (research) community.
 
-- The pyfakefs team (mrbean-bremen and jmcgeheeiv on github) really worked with me to test pyfakefs, which resulted in a number of nice improvements to TSTL and to differential testing in particular.
+- The pyfakefs team (mrbean-bremen and jmcgeheeiv on github) really worked with me to test pyfakefs, which resulted in a number of nice improvements to TSTL and to differential testing in particular.  More recently, mrbean-bremen has taken the lead in making TSTL compatible with Python 3, which seems to mostly be done now!
 
 
 
