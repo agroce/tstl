@@ -156,6 +156,8 @@ def parse_args():
                         help="Stop when statement coverage exceeds a given target value (default None).")
     parser.add_argument('--stopWhenNoCoverage', type=int, default=None,
                         help="Stop there has been no additional coverage for this many tests (default None).")
+    parser.add_argument('--stopTestWhenNoCoverage', type=int, default=None,
+                        help="Stop test when there has been no additional coverage for this many steps (default None).")    
     parser.add_argument('--stopWhenHitBranch', type=str, default=None,
                         help="Stop testing when given branch is hit (default None).")
     parser.add_argument('--stopWhenHitStatement', type=str, default=None,
@@ -624,7 +626,7 @@ def collectExploitable():
             reducePool.append((list(sut.test()),set(sut.newBranches()),set(sut.newStatements())))
 
 def printStatus(elapsed,step=None):
-    global sut, nops, activePool, fullPool, testsWithNoNewCoverage
+    global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage
     print("TEST #"+str(ntests), end=' ')
     if step != None:
         print("STEP #"+str(step), end=' ')
@@ -647,6 +649,7 @@ def main():
     global allTheTests
     global lastLOCs, lastFuncs
     global testsWithNoNewCoverage
+    global stepsWithNoNewCoverage    
     global sequences
     
     parsed_args, parser = parse_args()
@@ -904,6 +907,9 @@ def main():
         if config.verbose:
             print("STARTING TEST",ntests)
             sys.stdout.flush()
+        stepsWithNoNewCoverage = 0
+        lastCurrBranches = 0
+        lastCurrStatements = 0
         ntests += 1
 
         if config.swarm:
@@ -1179,6 +1185,21 @@ def main():
             if elapsed > config.timeout:
                 print("STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test()))
                 break
+
+            if config.stopTestWhenNoCoverage:
+                if anyNewCoverage:
+                    stepsWithNoNewCoverage = 0
+                else:
+                    if len(sut.currBranches()) > lastCurrBranches:
+                        stepsWithNoNewCoverage = 0
+                    elif len(sut.currStatements()) > lastCurrStatements:
+                        stepsWithNoNewCoverage = 0
+                    else:
+                        stepsWithNoNewCoverage += 1
+                    lastCurrBranches = len(sut.currBranches())
+                    lastCurrStatements = len(sut.currBranches())
+                if stepsWithNoNewCoverage >= config.stopTestWhenNoCoverage:
+                    print("STOPPING TEST DUE TO NO NEW COVERAGE FOR",config.stopTestWhenNoCoverage,"STEPS; TERMINATED AT LENGTH",len(sut.test()))
 
         if config.trackMaxCoverage:
             thisCov = (len(sut.currBranches()),len(sut.currStatements()))
