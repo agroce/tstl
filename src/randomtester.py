@@ -56,6 +56,8 @@ def parse_args():
                         help='Do not check properties.')
     parser.add_argument('--uncaught', action='store_true',
                         help='Allow uncaught exceptions in actions.')
+    parser.add_argument('--checkDeterminism', action='store_true',
+                        help='Check determinism of pool objects.')    
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage (save a test for each newly reached coverage target).")
     parser.add_argument('--readQuick', action='store_true',
@@ -199,6 +201,7 @@ def parse_args():
     parser.add_argument('--relax', action='store_true',
                         help="[EXPERIMENTAL] Use relaxed semantics (not recommended for even experts, really).")    
     parsed_args = parser.parse_args(sys.argv[1:])
+
     return (parsed_args, parser)
 
 def make_config(pargs, parser):
@@ -904,6 +907,9 @@ def main():
     neverExploited = True
         
     while (config.maxTests == -1) or (ntests < config.maxTests):
+        if config.checkDeterminism:
+            trajectory = []
+        
         if config.verbose:
             print("STARTING TEST",ntests)
             sys.stdout.flush()
@@ -1060,6 +1066,10 @@ def main():
                 lastFuncs = {}
                 sys.settrace(traceLOC)
             stepOk = sut.safely(a)
+            
+            if config.checkDeterminism:
+                trajectory.append(sut.state()[:-1])
+                
             if config.generateLOC != None:
                 sys.settrace(None)
                 aclass = sut.actionClass(a)
@@ -1201,6 +1211,23 @@ def main():
                 if stepsWithNoNewCoverage >= config.stopTestWhenNoCoverage:
                     print("STOPPING TEST DUE TO NO NEW COVERAGE FOR",config.stopTestWhenNoCoverage,"STEPS; TERMINATED AT LENGTH",len(sut.test()))
 
+        if config.checkDeterminism and not testFailed:
+            replayTest = list(sut.test())
+            replayi = 0
+            sut.restart()
+            nondeterministic = False
+            for s in replayTest:
+                sut.safely(s)
+                if not (sut.state()[:-1] == trajectory[replayi]):
+                    nondeterministic = True
+                    break
+                replayi += 1
+            if nondeterministic:
+                print ("TEST WAS NOT DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
+                sut.saveTest(replayTest[:replayi+1],"ndfail.test")
+                break
+                
+                    
         if config.trackMaxCoverage:
             thisCov = (len(sut.currBranches()),len(sut.currStatements()))
             if thisCov > bestCov:
