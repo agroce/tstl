@@ -1099,6 +1099,10 @@ def main():
         genCode.append(baseIndent + baseIndent + "raise\n")                    
             
         genCode.append(baseIndent + "finally:\n")
+        genCode.append(baseIndent + baseIndent + "try: self.__raised = raised\n")
+        genCode.append(baseIndent + baseIndent + "except: pass\n")
+        for ch in changes:
+            genCode.append(baseIndent + baseIndent + ch + "\n")        
         if postCode and checkRaised and not (checkRefRaised):
             genCode.append(baseIndent + baseIndent + "assert " + postCode + "\n")
         genCode.append(baseIndent + baseIndent + "try: test_after_each(self)\n")
@@ -1126,6 +1130,9 @@ def main():
             genCode.append(baseIndent + "except Exception as exc:\n")
             genCode.append(baseIndent + baseIndent + "refRaised = exc\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised)\n")
+            genCode.append(baseIndent + "try: self.__refRaised = refRaised\n")
+            genCode.append(baseIndent + "except: pass\n")        
+            
             genCode.append(baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
                 genCode.append(baseIndent + baseIndent + "try:\n")
@@ -1140,18 +1147,12 @@ def main():
                 genCode.append(baseIndent + "assert (type(raised) == type(refRaised))\n")                
             if comparing:
                 if (not config.forceRefExceptionMatch) and not (config.forceStrongRefExceptionMatch):
-                    genCode.append(baseIndent + "assert (self.raised is None) == (refRaised is None)\n")
+                    genCode.append(baseIndent + "assert (raised is None) == (refRaised is None)\n")
                 genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
-        genCode.append(baseIndent + baseIndent + "try: self.__raised = raised\n")
-        genCode.append(baseIndent + baseIndent + "except: pass\n")
-        genCode.append(baseIndent + baseIndent + "try: self.__refRaised = refRaised\n")
-        genCode.append(baseIndent + baseIndent + "except: pass\n")        
-        genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('='*50)\n")                                      
+        genCode.append(baseIndent + "if self.__verboseActions: print ('='*50)\n")                                      
         if logSet != []:
-            genCode.append(baseIndent + baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
-        for ch in changes:
-            genCode.append(baseIndent + baseIndent + ch + "\n")
+            genCode.append(baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
 
         for g in guardConds:
             guardCode += " and (" + g + ")"
