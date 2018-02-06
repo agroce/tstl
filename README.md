@@ -44,13 +44,13 @@ journal paper in STTT:
 https://github.com/agroce/tstl/blob/master/doc/papers/STTTjournal/maintstl.pdf.
 There are also NASA Formal Methods (NFM) and International Symposium
 on Software Testing and Analsysis (ISSTA) 2015 papers at
-http://www.cs.cmu.edu/~agroce/nfm15.pdf and
-http://www.cs.cmu.edu/~agroce/issta15.pdf, with some implementation
+http://www.cefns.nau.edu/~adg326/nfm15.pdf and
+http://www.cefns.nau.edu/~adg326/issta15.pdf, with some implementation
 details or concepts that are not present in the more up-to-date and
 complete paper.  There is a more recent paper descrbing the "normalization"
-idea in more detail, http://www.cs.cmu.edu/~agroce/issta17.pdf, as well as a
+idea in more detail, http://www.cefns.nau.edu/~adg326/issta17.pdf, as well as a
 tool paper describing how to use TSTL's test manipulation commands 
-(http://www.cs.cmu.edu/~agroce/issta17tool.pdf).
+(http://www.cefns.nau.edu/~adg326/issta17tool.pdf).
 
 The NFM and ISSTA papers use an early version of TSTL syntax, which marks
 pools and TSTL constructs with % signs.  "Modern" TSTL uses <> by
@@ -192,7 +192,7 @@ For many (but not all!) programs, a more powerful alternative to
 simple random testing is to use swarm testing, which restricts the
 actions in each individual test (e.g., insert but no delete, or find
 but no inorder traversals) (see
-http://www.cs.cmu.edu/~agroce/issta12.pdf).
+http://www.cefns.nau.edu/~adg326/issta12.pdf).
 
     ~/tstl/examples/AVL$ tstl_rt --timeout 30 --swarm
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=True, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
