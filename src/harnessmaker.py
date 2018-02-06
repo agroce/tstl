@@ -59,7 +59,9 @@ def parse_args():
     parser.add_argument('--forceRefExceptionMatch', action='store_true',
                         help='Exceptions must match (basic type, not message) with reference.')
     parser.add_argument('--forceStrongRefExceptionMatch', action='store_true',
-                        help='Exceptions must match message with reference.')        
+                        help='Exceptions must match message with reference.')
+    parser.add_argument('--checkFailureDeterminism', action='store_true',
+                        help='Check that failures are deterministic.')            
     parser.add_argument('-a', '--ignoreAngles', action='store_true',
                         help='Do not use angle brackets as TSTL markers, for use with some languages.')
     parser.add_argument('-s', '--stats', action='store_true',
@@ -324,6 +326,8 @@ def genInitialization():
     genCode.append(baseIndent + "self.__test = []\n")
     genCode.append(baseIndent + "self.__failure = None\n")
     genCode.append(baseIndent + "self.__warning = None\n")
+    genCode.append(baseIndent + "self.__raised = None\n")
+    genCode.append(baseIndent + "self.__refRaised = None\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%","") + " = {}"
@@ -1035,6 +1039,8 @@ def main():
         d += "self." + guard + ","
         d += "self." + act + "))\n"
         genCode.append(baseIndent + d)
+        genCode.append(baseIndent + "self.__raised = None\n")
+        genCode.append(baseIndent + "self.__refRaised = None\n")        
         if logSet != []:
             genCode.append(baseIndent + "self.log('''" + newC[:-1] + "''')\n")
         if checkRaised:
@@ -1072,7 +1078,15 @@ def main():
             genCode.append(baseIndent + "except (" + okExcepts + ") as exc:\n")
             genCode.append(baseIndent + baseIndent + "raised = exc\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
-            
+            if config.checkFailureDeterminism:
+                genCode.append(baseIndent + baseIndent + "failedAgain = False\n")
+                genCode.append(baseIndent + baseIndent + "try:\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + newC)
+                genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as exc2:\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "failedAgain = True\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXPECTED EXCEPTION:',type(raised),raised,'ON RETRY ALSO')\n")
+                genCode.append(baseIndent + baseIndent + "if self.__verboseActions and not failedAgain: print ('DID NOT RAISE EXPECTED EXCEPTION ON RETRY')\n")                                
+                genCode.append(baseIndent + baseIndent + "assert failedAgain, 'Action did not fail on second attempt.'\n")
         if warnExcepts != "":
             genCode.append(baseIndent + "except (" + warnExcepts + ") as exc:\n")
             genCode.append(baseIndent + baseIndent + "raised = exc\n")
@@ -1121,19 +1135,23 @@ def main():
             if postCode and checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
             if config.forceStrongRefExceptionMatch:
-                genCode.append(baseIndent + "assert (raised == refRaised)\n")
+                genCode.append(baseIndent + "assert (raised == self.refRaised)\n")
             elif config.forceRefExceptionMatch:
                 genCode.append(baseIndent + "assert (type(raised) == type(refRaised))\n")                
             if comparing:
                 if (not config.forceRefExceptionMatch) and not (config.forceStrongRefExceptionMatch):
-                    genCode.append(baseIndent + "assert (raised is None) == (refRaised is None)\n")
+                    genCode.append(baseIndent + "assert (self.raised is None) == (refRaised is None)\n")
                 genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
-        genCode.append(baseIndent + "if self.__verboseActions: print ('='*50)\n")                                      
+        genCode.append(baseIndent + baseIndent + "try: self.__raised = raised\n")
+        genCode.append(baseIndent + baseIndent + "except: pass\n")
+        genCode.append(baseIndent + baseIndent + "try: self.__refRaised = refRaised\n")
+        genCode.append(baseIndent + baseIndent + "except: pass\n")        
+        genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('='*50)\n")                                      
         if logSet != []:
-            genCode.append(baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
+            genCode.append(baseIndent + baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
         for ch in changes:
-            genCode.append(baseIndent + ch + "\n")
+            genCode.append(baseIndent + baseIndent + ch + "\n")
 
         for g in guardConds:
             guardCode += " and (" + g + ")"

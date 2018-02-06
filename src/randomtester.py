@@ -57,7 +57,7 @@ def parse_args():
     parser.add_argument('--uncaught', action='store_true',
                         help='Allow uncaught exceptions in actions.')
     parser.add_argument('--checkDeterminism', action='store_true',
-                        help='Check determinism of pool objects.')    
+                        help='Check determinism of pool objects.')
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage (save a test for each newly reached coverage target).")
     parser.add_argument('--readQuick', action='store_true',
