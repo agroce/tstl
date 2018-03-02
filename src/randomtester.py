@@ -10,6 +10,7 @@ import argparse
 import glob
 import datetime
 import inspect
+import copy
 from collections import namedtuple
 
 # Appending current working directory to sys.path
@@ -642,7 +643,23 @@ def printStatus(elapsed,step=None):
         print("[ POOLS: full",len(fullPool),"active",len(activePool),"]", end=' ')
     print(nops, "TOTAL ACTIONS (" + str(nops/elapsed) + "/s)")
     sys.stdout.flush()
-        
+
+def trajectoryItem():
+    global sut
+    ss = sut.shallowState()
+    o = sut.opaque()
+    ti = {}
+    for (name, vals) in ss:
+        if name in o:
+            continue
+        ti[name] = {}
+        for v in vals:
+            try:
+                ti[name][v] = copy.deepcopy(vals[v])
+            except:
+                ti[name][v] = "UNABLE TO COPY"
+    return ti
+    
 def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest
     global failFileCount
@@ -1068,7 +1085,7 @@ def main():
             stepOk = sut.safely(a)
             
             if config.checkDeterminism:
-                trajectory.append(sut.state()[:-1])
+                trajectory.append(trajectoryItem())
                 
             if config.generateLOC != None:
                 sys.settrace(None)
@@ -1211,23 +1228,14 @@ def main():
                 if stepsWithNoNewCoverage >= config.stopTestWhenNoCoverage:
                     print("STOPPING TEST DUE TO NO NEW COVERAGE FOR",config.stopTestWhenNoCoverage,"STEPS; TERMINATED AT LENGTH",len(sut.test()))
 
+        if not config.noCover and (anyNewCoverage or (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0)):
+            testsWithNoNewCoverage = 0
+        else:
+            testsWithNoNewCoverage += 1
+
         if config.checkDeterminism and not testFailed:
-            replayTest = list(sut.test())
-            replayi = 0
-            sut.restart()
-            nondeterministic = False
-            for s in replayTest:
-                sut.safely(s)
-                if not (sut.state()[:-1] == trajectory[replayi]):
-                    nondeterministic = True
-                    break
-                replayi += 1
-            if nondeterministic:
-                print ("TEST WAS NOT DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
-                sut.saveTest(replayTest[:replayi+1],"ndfail.test")
-                break
-                
-                    
+            replayTest = list(sut.test()) # grab the test before quick tests or something else disturbs it
+
         if config.trackMaxCoverage:
             thisCov = (len(sut.currBranches()),len(sut.currStatements()))
             if thisCov > bestCov:
@@ -1248,11 +1256,6 @@ def main():
                     print("NEW BEST COVERAGE TEST:",thisCov)
                     bestTest = list(sut.test())
                     bestCov = thisCov
-            
-        if not config.noCover and (anyNewCoverage or (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0)):
-            testsWithNoNewCoverage = 0
-        else:
-            testsWithNoNewCoverage += 1
             
         if config.postCover:
             allTheTests.append(list(sut.test()))
@@ -1396,15 +1399,47 @@ def main():
 
         if config.throughput:
             print("THROUGHPUT:",nops/(time.time()-start),"ACTIONS/SECOND")
+
         if config.replayable:
             currtest.close()
+            
         if config.quickTests:
             if (sut.newCurrBranches() != set([])) or (sut.newCurrStatements() != set([])):
                 handle_failure(sut.test(), "NEW COVERAGE", False, newCov=True)
         if config.progress:
-            printStatus(elapsed)                
+            printStatus(elapsed)
+            
         if (not config.multiple) and (failCount > 0):
             break
+
+        if config.checkDeterminism and not testFailed:
+            replayi = 0
+            sut.restart()
+            nondeterministic = False
+            for s in replayTest:
+                sut.safely(s)
+                ti = trajectoryItem()
+                try:
+                    if not (ti == trajectory[replayi]):
+                        for p in ti:
+                            if ti[p] != trajectory[replayi][p]:
+                                for pv in ti[p]:
+                                    if ti[p][pv] != trajectory[replayi][p][pv]:
+                                        sut.prettyPrintTest(replayTest[:replayi+1])
+                                        print ("MISMATCH IN REPLAY VALUE:")
+                                        print ("   ",sut.prettyName(p+"["+str(pv)+"]"),":",ti[p][pv],"VS.",trajectory[replayi][p][pv])
+                        nondeterministic = True
+                        break
+                except KeyboardInterrupt as e:
+                    raise e
+                except Exception as e:
+                    print ("WARNING:",e)
+                replayi += 1
+            if nondeterministic:
+                print ("TEST WAS NOT DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
+                sut.saveTest(replayTest[:replayi+1],"ndfail.test")
+                break
+                
         if (config.stopWhenNoCoverage != None):
             if testsWithNoNewCoverage >= config.stopWhenNoCoverage:
                 print("STOPPING TESTING DUE TO LACK OF NEW COVERAGE FOR",testsWithNoNewCoverage,"TESTS")

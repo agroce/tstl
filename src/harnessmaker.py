@@ -1439,7 +1439,9 @@ def main():
         
     genCode.append("def state(self):\n")
     genCode.append(baseIndent + "if self.__replayBacktrack:\n")
-    genCode.append(baseIndent + baseIndent + "return self.captureReplay(self.__test)\n")    
+    genCode.append(baseIndent + baseIndent + "return self.captureReplay(self.__test)\n")
+
+    '''
     st = baseIndent + "return [ "
     for p in poolSet:
         st += "copy.deepcopy(" + poolPrefix + p.replace("%","") + "),"
@@ -1448,6 +1450,15 @@ def main():
     if len(poolSet) > 0:
         st += ","
     genCode.append(st + "copy.copy(self.__test)]\n")
+    '''
+
+    genCode.append(baseIndent + "st = []\n")
+    for p in poolSet:
+        genCode.append(baseIndent + "try: st.append(copy.deepcopy(" + poolPrefix + p.replace("%","") + "))\n")
+        genCode.append(baseIndent + 'except: st.append("UNABLE TO COPY")\n')
+        genCode.append(baseIndent + "st.append(copy.deepcopy(" + poolPrefix + p.replace("%","") + "_used))\n")
+    genCode.append(baseIndent + "st.append(copy.copy(self.__test))\n")
+    genCode.append(baseIndent + "return st\n")
 
     genCode.append("def shallowState(self):\n")
     st = baseIndent + "return [ "
