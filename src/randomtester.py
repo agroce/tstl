@@ -652,6 +652,8 @@ def trajectoryItem():
     for (name, vals) in ss:
         if name in o:
             continue
+        if name.replace("_REF","") in o: # Assume if pool is opaque, so is reference
+            continue
         ti[name] = {}
         for v in vals:
             try:
