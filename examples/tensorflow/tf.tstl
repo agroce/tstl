@@ -25,7 +25,7 @@ pool: <name> 5
 <int> += <int>
 <int> := -(<int>)
 
-<float> := float(<int>)
+{OverflowError} <float> := float(<int>)
 <float,3> != 0 -> <float> := <float>/<float>
 
 <name> := <['a'..'z']>
