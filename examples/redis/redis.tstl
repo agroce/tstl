@@ -179,7 +179,7 @@ pool: <database> 5
 <pipe>.persist(<key>)
 <pipe>.pexpire(<key>,<int>)
 <pipe>.pttl(<key>)
-<key> := #<pipe>.randomkey()
+<pipe>.randomkey()
 {redis.exceptions.ResponseError} <pipe>.rename(<key>,<key>)
 {redis.exceptions.ResponseError} <pipe>.renamenx(<key>,<key>)
 {redis.exceptions.ResponseError} <pipe>.restore(<key>,<int>,<dump>)
