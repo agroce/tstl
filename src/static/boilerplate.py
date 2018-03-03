@@ -675,7 +675,7 @@ def allEnabled(self, test):
         self.safely((name,guard,act))
     return True
 
-def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False, stopFail = True, returnCov = False):
+def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False, stopFail = True, returnCov = False, delay = None):
     '''
     Replays a test, either resetting first or extending current test (default is to restart).  Can either stop or keep going
     on failure, catch and notify about uncaught exceptions or throw them, and check or not check properties.  The returnCov setting 
@@ -696,27 +696,22 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
         if guard():
             if verbose:
                 print("EXECUTING")
-            if catchUncaught:
-                try:
-                    act()
-                except KeyboardInterrupt as e:
-                    raise e                    
-                except:
-                    self.__failure = sys.exc_info()
+            try:
+                act()
+            except KeyboardInterrupt as e:
+                raise e                    
+            except Exception as e:
+                self.__failure = sys.exc_info()
+                if catchUncaught:
                     if stopFail:
                         return False
-                    pass
-            else:
-                try:
-                    act()
-                except KeyboardInterrupt as e:
+                else:
                     raise e
-                except Exception as e:
-                    self.__failure = sys.exc_info()
-                    raise e
-        if checkProp:
-            if (not self.check()) and stopFail:
-                return False
+            if checkProp:
+                if (not self.check()) and stopFail:
+                    return False
+            if delay != None:
+                time.sleep(delay)
         if returnCov:
             s = set(self.currStatements())
             b = set(self.currBranches())

@@ -3,6 +3,7 @@ from __future__ import print_function
 import sys
 import traceback
 import os
+import time
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
@@ -39,7 +40,7 @@ def trace_calls(frame, event, arg):
 def main():
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--trace]")
+        print("Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--delay secs] [--trace]")
         print("Options:")
         print("--noCheck:      do not run property checks")
         print("--logging:      set the logging level for the test")
@@ -48,6 +49,7 @@ def main():
         print("--coverage:     report code coverage")        
         print("--internal:     report detailed code coverage information")
         print("--html:         produce HTML report on coverage")
+        print("--delay:        delay to inject between steps")        
         print("--trace:        trace lines executed (does not work with SUTs compiled with coverage)")
         sys.exit(0)
 
@@ -85,6 +87,17 @@ def main():
             else:
                 lastWasLogging = False
 
+    delay = None
+    if "--delay" in sys.argv:
+        lastWasDelay = False
+        for l in sys.argv:
+            if lastWasDelay:
+                delay = float(l)
+            if l == "--delay":
+                lastWasDelay = True
+            else:
+                lastWasDelay = False
+                
     htmlOut = None
     lastWasHtml = False
     for f in sys.argv[1:]:
@@ -153,7 +166,9 @@ def main():
                     if htmlOut != None:
                         sut.htmlReport(htmlOut)
                         
-                    sys.exit(255)                
+                    sys.exit(255)
+            if delay != None:
+                time.sleep(delay)
         i += 1
 
     rout.write("TEST REPLAYED SUCCESSFULLY\n")

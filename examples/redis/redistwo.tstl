@@ -1,10 +1,10 @@
 @import redis
 
-init: r = redis.StrictRedis(host='localhost', port=6379, db=0); r.flushall()
+init: r = redis.StrictRedis(host='localhost', port=6379, db=0); r.flushall(); r = redis.StrictRedis(host='localhost', port=7777, db=0); r.flushall()
 
 finally: <pubsub>.close()
 
-pool: <r> 5 OPAQUE
+pool: <r> 5 REF
 
 pool: <string> 5
 pool: <int> 5
@@ -18,11 +18,11 @@ pool: <val> 5
 
 pool: <dump> 5
 
-pool: <pubsub> 5 OPAQUE
-pool: <channel> 5 OPAQUE
+pool: <pubsub> 5
+pool: <channel> 5
 pool: <pattern> 5
 
-pool: <pipe> 5 OPAQUE
+pool: <pipe> 5
 
 pool: <database> 5
 
@@ -68,10 +68,10 @@ pool: <database> 5
 <dump> := <r>.dump(<key>)
 <r>.exists(<key>)
 <r>.expire(<key>,<int>)
-<r>.pexpire(<key>,<int>)
 <r>.keys()
 {redis.exceptions.ResponseError} <r>.move(<key>,<database>)
 <r>.persist(<key>)
+<r>.pexpire(<key>,<int>)
 <r>.pttl(<key>)
 <key> := <r>.randomkey()
 {redis.exceptions.ResponseError} <r>.rename(<key>,<key>)
@@ -82,7 +82,7 @@ pool: <database> 5
 <r>.ttl(<key>)
 <r>.type(<key>)
 #<r>.unlink(<key>) -- no support in redis-py
-#(<int,2> > 0) and (<int,2> < 3) -> <r>.wait(<int>,<int>)
+(<int,2> > 0) and (<int,2> < 3) -> <r>.wait(<int>,<int>)
 
 #lists
 {redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <r>.blpop(<string>,<int>) # can't take int keys for some reason...
@@ -155,7 +155,7 @@ pool: <database> 5
 <pubsub> := <r>.pubsub()
 ~<pubsub>.subscribe(<channel>)
 ~<pubsub>.subscribe(<pattern>)
-{RuntimeError,AttributeError} ~<pubsub>.get_message()
+{AttributeError} ~<pubsub>.get_message()
 ~<pubsub>.unsubscribe()
 ~<pubsub>.unsubscribe(<channel>)
 ~<pubsub>.unsubscribe(<pattern>)
@@ -188,7 +188,7 @@ pool: <database> 5
 <pipe>.ttl(<key>)
 <pipe>.type(<key>)
 #<pipe>.unlink(<key>) -- no support in redis-py
-#(<int,2> > 0) and (<int,2> < 3) -> <pipe>.wait(<int>,<int>)
+(<int,2> > 0) and (<int,2> < 3) -> <pipe>.wait(<int>,<int>)
 
 #lists
 {redis.exceptions.ResponseError} (<int,1> > 0) and (<int,1> < 3) -> <pipe>.blpop(<string>,<int>) # can't take int keys for some reason...
@@ -242,3 +242,7 @@ pool: <database> 5
 {redis.exceptions.ResponseError} <pipe>.hsetnx(<key>,<key>,<val>)
 #{redis.exceptions.ResponseError} <pipe>.hstrlen(<key>,<key>)
 {redis.exceptions.ResponseError} <pipe>.hvals(<key>)
+
+reference: 6379 ==> 7777
+
+compare: len

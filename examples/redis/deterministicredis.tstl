@@ -156,7 +156,7 @@ pool: <database> 5
 <pubsub> := <r>.pubsub()
 ~<pubsub>.subscribe(<channel>)
 ~<pubsub>.subscribe(<pattern>)
-{AttributeError} ~<pubsub>.get_message()
+{AttributeError,RuntimeError} ~<pubsub>.get_message()
 ~<pubsub>.unsubscribe()
 ~<pubsub>.unsubscribe(<channel>)
 ~<pubsub>.unsubscribe(<pattern>)
