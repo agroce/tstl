@@ -8,10 +8,12 @@
 pool: <int> 5
 pool: <float> 5
 
-pool: <session> 1
-pool: <handle> 1
+pool: <result> 10
 
-pool: <opt> 5
+pool: <session> 1 OPAQUE
+pool: <handle> 1 OPAQUE
+
+pool: <opt> 5 OPAQUE
 
 pool: <node> 5
 pool: <name> 5
@@ -51,7 +53,7 @@ pool: <name> 5
 <session> := tf.Session()
 
 print (<node>)
-{TypeError,InvalidArgumentError,FailedPreconditionError} print (<session>.run([<node>,<node>]))
-{TypeError,InvalidArgumentError,FailedPreconditionError} print (<session>.run(<node>, {<name> : <float>}))
-{TypeError,InvalidArgumentError,FailedPreconditionError} print (<session>.run(<handle>))
+{TypeError,InvalidArgumentError,FailedPreconditionError} <result> := (<session>.run([tf.check_numerics(<node>,"bad node 1"),tf.check_numerics(<node>,"bad node 2")]))
+{TypeError,InvalidArgumentError,FailedPreconditionError} <result> := (<session>.run(tf.check_numerics(<node>,"bad node"), {<name> : <float>}))
+{TypeError,InvalidArgumentError,FailedPreconditionError} <result> := (<session>.run(<handle>))
 
