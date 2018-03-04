@@ -77,7 +77,7 @@ pool: <database> 5
 #<key> := <r>.randomkey()
 {redis.exceptions.ResponseError} <r>.rename(<key>,<key>)
 {redis.exceptions.ResponseError} <r>.renamenx(<key>,<key>)
-{redis.exceptions.ResponseError} <r>.restore(<key>,<int>,<dump>)
+{redis.exceptions.ResponseError} <r>.restore(<key>,0,<dump>)
 {redis.exceptions.ResponseError} <r>.sort(<key>)
 #<r>.touch(<key>) -- no support in redis-py
 <r>.ttl(<key>)
@@ -183,7 +183,7 @@ pool: <database> 5
 #<key> := #<pipe>.randomkey()
 {redis.exceptions.ResponseError} <pipe>.rename(<key>,<key>)
 {redis.exceptions.ResponseError} <pipe>.renamenx(<key>,<key>)
-{redis.exceptions.ResponseError} <pipe>.restore(<key>,<int>,<dump>)
+{redis.exceptions.ResponseError} <pipe>.restore(<key>,0,<dump>)
 {redis.exceptions.ResponseError} <pipe>.sort(<key>)
 #<pipe>.touch(<key>) -- no support in redis-py
 <pipe>.ttl(<key>)
