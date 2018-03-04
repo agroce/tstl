@@ -254,7 +254,6 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         print("TRACEBACK:")
         traceback.print_tb(f[2],file=sys.stdout)
         sut.saveTest(test,config.output.replace(".test",".full.test"))
-        covHandler = None
     elif becauseBranchCov:
         failCount += 1 # Use same mechanism as handling failures
         print("HIT BRANCH:",config.stopWhenHitBranch)
@@ -271,7 +270,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         bnew = sut.newCurrBranches()
         for b in bnew:
             print("NEW BRANCH",b)
-        trep = sut.replay(test,catchUncaught=True,checkProp=(not config.noCheck))
+        sut.replay(test,catchUncaught=True,checkProp=(not config.noCheck))
         sremove = []
         scov = sut.currStatements()
         for s in snew:
@@ -663,7 +662,7 @@ def trajectoryItem():
     return ti
     
 def main():
-    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest
+    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest, failCloud, allClouds
     global failFileCount
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
     global hintPool, hintValueCounts
@@ -803,7 +802,6 @@ def main():
             profileCount[a] = 0
         
     if config.markov != None:
-        nactions = len(sut.actions())
         mprobs = {}
         prefix = []
         probs = []
@@ -829,7 +827,6 @@ def main():
             else:
                 prefix.append(l[:-1])        
         
-    tacts = sut.actions()
     a = None
     sawNew = False
 
@@ -1513,7 +1510,6 @@ def main():
                 print(s)
         print("*" * 70)
         print("OVERALL ACTION ANALYSIS:")
-        totalTaken = sum(quickClassCounts.values())
         actSort = sorted(list(quickAnalysisRawCounts.keys()),key=lambda x: quickAnalysisCounts.get(x,0), reverse=True)
         for a in actSort:
             print("="*50)
