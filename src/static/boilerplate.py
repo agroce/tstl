@@ -810,6 +810,46 @@ def failsAny(self, test, verbose=False, failure=None):
         return False        
     return False    
 
+def nondeterministic(self,t,delay=1.0,delay0=None,tries=1):
+    """
+    Checks if a test behaves nondeterministically (in terms of final non-opaque pool values)
+    under an optional timing change.  Default is to run with no delay for an initial capture
+    of state, then run with a 1 second delay, and only run once.
+    """
+    self.replay(t,delay=delay0)
+    ss = self.shallowState()
+    o = self.opaque()
+    s0 = {}
+    for (name, vals) in ss:
+        if name in o:
+            continue
+        if name.replace("_REF","") in o: # Assume if pool is opaque, so is reference
+            continue
+        s0[name] = {}
+        for v in vals:
+            try:
+                s0[name][v] = copy.deepcopy(vals[v])
+            except:
+                s0[name][v] = "UNABLE TO COPY"
+    for i in range(0,tries):
+        self.replay(t,delay=delay)
+        ss = self.shallowState()
+        s1 = {}
+        for (name, vals) in ss:
+            if name in o:
+                continue
+            if name.replace("_REF","") in o: # Assume if pool is opaque, so is reference
+                continue
+            s1[name] = {}
+            for v in vals:
+                try:
+                    s1[name][v] = copy.deepcopy(vals[v])
+                except:
+                    s1[name][v] = "UNABLE TO COPY"    
+        if s0 != s1:
+            return True
+    return False
+
 def verbose(self, bool):
     self.__verboseActions = bool
 
