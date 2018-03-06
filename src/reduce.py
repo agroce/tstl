@@ -37,6 +37,14 @@ def parse_args():
                         help='Reduce with respect to maintaining code coverage, not failure.')
     parser.add_argument('--coverMore', action='store_true',                            
                         help='Only allow reductions that increase code coverage.')
+    parser.add_argument('--checkDeterminism', action='store_true',                            
+                        help='Reduce with respect to test being deterministic.')
+    parser.add_argument('--determinismDelay', type=float, default=1.0,                            
+                        help='Time delay for nondeterminism check.')
+    parser.add_argument('--determinismDelay0', type=float, default=None,                            
+                        help='Time delay for INITIAL run in nondeterminism check.')    
+    parser.add_argument('--determinismTries', type=int, default=1,                            
+                        help='Number of times to check for nondeterministic behavior.')            
     parser.add_argument('-k', '--keepLast', action='store_true',
                         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument('--uncaught', action='store_true',
@@ -166,7 +174,11 @@ def main():
             pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
         else:
             pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
-        
+
+    if config.checkDeterminism:
+        pred = (lambda t: sut.nondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
+                                                   delay0=config.determinismDelay0))
+            
     print("STARTING WITH TEST OF LENGTH",len(r))
     if not config.noReduce:
         start = time.time()
