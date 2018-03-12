@@ -97,6 +97,8 @@ def parse_args():
                         help="How long a swarm config persists (only relevant with --swarmSwitch).")
     parser.add_argument('--probs', type=str, default=None,
                         help="Guide testing by an action class probability file.")
+    parser.add_argument('--equalProbs', action='store_true',
+                        help="Force all action classes to have equal probabilities.")    
     parser.add_argument('--generateLOC', type=str, default=None,
                         help="Generate LOC data file to bias testing by LOC estimates for actions.  Parameter is the filename.")
     parser.add_argument('--biasLOC', type=str, default=None,
@@ -891,6 +893,12 @@ def main():
     if config.probs != None:
         classP = sut.readProbFile(config.probs,returnList=True)
 
+    if config.equalProbs:
+        P = 1.0 / len(sut.actionClasses())
+        classP = []
+        for ac in sut.actionClasses():
+            classP.append((P,ac))
+
     if config.LOCProbs:
         classP = sut.codeLOCProbs(baseline=config.LOCBaseline)
         
@@ -1028,7 +1036,7 @@ def main():
                         tryStutter = True
             else:
                 if (config.markov == None) or (R.random() > config.markovP):
-                    if (config.highLowSwarm == None) and (config.probs == None) and (not config.LOCProbs):
+                    if (config.highLowSwarm == None) and (config.probs == None) and (not config.LOCProbs) and (not config.equalProbs):
                         a = sut.randomEnabled(R)
                     else:
                         a = sut.randomEnabledClassProbs(R,classP)
