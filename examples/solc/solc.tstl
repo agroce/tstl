@@ -1,9 +1,22 @@
 @import solc
-@from testrpc.client import EthTesterClient
+@import testrpc.client
+@import testrpc.client.utils
+@import rlp.utils
+@import ethereum.utils
+@import ethereum.tester
 
 pool: <client> 1
+pool: <account> 1
 
-pool: <bin> 10
+pool: <bin> 10 REF
+
+pool: <txnHash> 10 REF
+pool: <txnReceipt> 10 REF
+pool: <contractAddress> 10 REF
+
+pool: <functionSig> 10
+
+pool: <callReturn> 10 REF
 
 pool: <idval> 10
 pool: <idnum> 10
@@ -20,10 +33,10 @@ pool: <contractParts> 5
 pool: <contractPart> 5
 
 pool: <functionDefinition> 5
-pool: <eventDefinition> 5
+#pool: <eventDefinition> 5
 
 pool: <functionParameters> 5
-pool: <eventParameters> 5
+#pool: <eventParameters> 5
 
 pool: <block> 5
 
@@ -36,14 +49,12 @@ pool: <expr> 5
 pool: <unaryOp> 5
 pool: <binaryOp> 5
 
-log: len(<contract>)
-
 <idval> := <[1..10]>
 ~<idval> += 1
 <idnum> := str(~<idval>)
 
 <contractId> := "c_" + <idnum>
-<eventId> := "e_" + <idnum>
+#<eventId> := "e_" + <idnum>
 <functionId> := "f_" + <idnum>
 <varId> := "v_" + <idnum>
 
@@ -52,16 +63,16 @@ log: len(<contract>)
 
 <contract> := "contract " + <contractId> + " { " + <contractParts> + " } "
 
-<contractParts> := ""
+#<contractParts> := ""
 <contractParts> := <contractPart>
 <contractParts> := <contractParts> + " " + <contractPart>
 
-<contractPart> := <functionDefinition>
-<contractPart> := <eventDefinition>
+"return " in <functionDefinition,1> -> <contractPart> := <functionDefinition>
+#<contractPart> := <eventDefinition>
 
-<functionDefinition> := "function " + <functionId> + " " + <functionParameters> + <block>
+<functionDefinition> := "function " + <functionId> + <functionParameters> + <block>
 
-<eventDefinition> := "event " + <eventId> + " " + <eventParameters> + " ;"
+#<eventDefinition> := "event " + <eventId> + " " + <eventParameters> + " ;"
 
 <functionParameters> := "()"
 
@@ -77,7 +88,7 @@ log: len(<contract>)
 <statement> := "break;"
 <statement> := "_;"
 <statement> := "throw;"
-<statement> := "return;"
+#<statement> := "return;"
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
 
@@ -114,6 +125,22 @@ log: len(<contract>)
 <binaryOp> := <["&&","||"]>
 <binaryOp> := <["<",">","<=",">=","==","!="]>
 
-<client> := EthTesterClient()
+<client> := testrpc.client.EthTesterClient()
+<account> := ~<client>.get_accounts()[0]
 
-{solc.exceptions.SolcError} <bin> := (solc.compile_source(<contract>)).values()[0]['bin']
+{solc.exceptions.SolcError} <bin> := (solc.compile_source(<contract>,optimize=True)).values()[0]['bin']
+
+<txnHash> := ~<client>.send_transaction(_from=~<account>, data=bytes(<bin>), value=0)
+<txnReceipt> := ~<client>.get_transaction_receipt(<txnHash>)
+<contractAddress> := <txnReceipt>['contractAddress']
+
+assert <contractAddress>
+
+<functionSig> := testrpc.client.utils.encode_data(ethereum.utils.sha3(<functionId>+"()")[:4])
+
+{ethereum.tester.TransactionFailed} <callReturn> := ~<client>.call(_from=<account>,to=<contractAddress>,data=<functionSig>)
+
+rlp.utils.big_endian_to_int(testrpc.client.utils.decode_hex(<callReturn>))
+
+reference: optimize=True ==> optimize=False
+compare: rlp.utils.big_endian_to_int
