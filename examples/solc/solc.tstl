@@ -1,0 +1,119 @@
+@import solc
+@from testrpc.client import EthTesterClient
+
+pool: <client> 1
+
+pool: <bin> 10
+
+pool: <idval> 10
+pool: <idnum> 10
+
+pool: <contractId> 5
+pool: <functionId> 5
+pool: <eventId> 5
+pool: <varId> 5
+
+pool: <varIds> 5
+
+pool: <contract> 5
+pool: <contractParts> 5
+pool: <contractPart> 5
+
+pool: <functionDefinition> 5
+pool: <eventDefinition> 5
+
+pool: <functionParameters> 5
+pool: <eventParameters> 5
+
+pool: <block> 5
+
+pool: <statements> 5
+pool: <statement> 5
+
+pool: <simpleStatement> 5
+
+pool: <expr> 5
+pool: <unaryOp> 5
+pool: <binaryOp> 5
+
+log: len(<contract>)
+
+<idval> := <[1..10]>
+~<idval> += 1
+<idnum> := str(~<idval>)
+
+<contractId> := "c_" + <idnum>
+<eventId> := "e_" + <idnum>
+<functionId> := "f_" + <idnum>
+<varId> := "v_" + <idnum>
+
+<varIds> := <varId>
+<varIds> := <varIds> + ", " + <varId>
+
+<contract> := "contract " + <contractId> + " { " + <contractParts> + " } "
+
+<contractParts> := ""
+<contractParts> := <contractPart>
+<contractParts> := <contractParts> + " " + <contractPart>
+
+<contractPart> := <functionDefinition>
+<contractPart> := <eventDefinition>
+
+<functionDefinition> := "function " + <functionId> + " " + <functionParameters> + <block>
+
+<eventDefinition> := "event " + <eventId> + " " + <eventParameters> + " ;"
+
+<functionParameters> := "()"
+
+<block> := "{ " + <statements> + " }"
+
+<statements> := ""
+<statements> := <statement>
+<statements> := <statements> + " " + <statement>
+
+<statement> := <block>
+
+<statement> := "continue;"
+<statement> := "break;"
+<statement> := "_;"
+<statement> := "throw;"
+<statement> := "return;"
+<statement> := "return " + <expr> + ";"
+<statement> := <simpleStatement> + ";"
+
+<statement> := "if (" + <expr> + ") " + <statement>
+<statement> := "if (" + <expr> + ") " + <statement> + " else " + <statement>
+
+<statement> := "while (" + <expr> + ") " + <statement>
+
+<statement> := "do " + <statement> + " while (" + <expr> + ")"
+
+<statement> := "for (" + <simpleStatement> + "; " + <expr> + "; " + <expr> + ") " + <statement>
+
+<simpleStatement> := <expr>
+<simpleStatement> := "var " + <varIds>
+<simpleStatement> := "var " + <varIds> + " = " + <expr>
+
+
+<expr> := <varId>
+<expr> := <unaryOp> + " " + <expr>
+<expr> := <expr> + " " + <binaryOp> + " " + <expr>
+<expr> := "(" + <expr> + ")"
+<expr> := <expr> + "++"
+<expr> := <expr> + "--"
+<expr> := <expr> + " ? " + <expr> + " : " + <expr>
+
+<expr> := str(<idval>)
+<expr> := "true"
+<expr> := "false"
+
+<unaryOp> := <["!","~","delete","++","--","+","-"]>
+
+<binaryOp> := <["+","-","*","/","%","**"]>
+<binaryOp> := <["&","|","^","<<",">>"]>
+<binaryOp> := <["&&","||"]>
+<binaryOp> := <["<",">","<=",">=","==","!="]>
+
+<client> := EthTesterClient()
+
+{solc.exceptions.SolcError} <bin> := (solc.compile_source(<contract>)).values()[0]['bin']
