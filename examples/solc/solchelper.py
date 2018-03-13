@@ -12,7 +12,7 @@ def fid(functionDef):
     end = functionDef.find("(")
     return functionDef[:end]
 
-def runTest(contract, optimize):
+def runTest(contract, optimize, verbose=False):
     client = EthTesterClient()
     a = client.get_accounts()[0]
     try:
@@ -22,10 +22,14 @@ def runTest(contract, optimize):
             print ("INTERNAL COMPILER ERROR WITH optimize =",optimize)
             print (e)
             return "INTERNAL COMPILER ERROR"
+        if verbose:
+            print (e)
         return ("COMPILATION FAILED", None)
     try:
         txnHash = client.send_transaction(_from = a, data = bytes(bin), value = 0)
     except TransactionFailed as e:
+        if verbose:
+            print (e)
         return ("SEND CONTRACT TRANSACTION FAILED", bytes(bin))
     txnReceipt = client.get_transaction_receipt(txnHash)
     contractAddress = txnReceipt['contractAddress']
@@ -33,14 +37,17 @@ def runTest(contract, optimize):
     try:
         val = client.call(_from = a, to = contractAddress, data = fsig)
     except TransactionFailed as e:
+        if verbose:
+            print ("CALL FAILURE:")
+            print (e)
         return ("CALL FAILED", bytes(bin))
     return (big_endian_to_int(decode_hex(val)), bytes(bin))
 
-def test(functions):
+def test(functions, verbose=False):
     # Expects to receive a set of function definitions with a top-level, no-parameter, function called f()
     contract = "contract c {" + functions + "}"
-    (resultOpt,binOpt) = runTest(contract, True)
-    (resultNoOpt,binNoOpt) = runTest(contract, False)
+    (resultOpt,binOpt) = runTest(contract, True, verbose=verbose)
+    (resultNoOpt,binNoOpt) = runTest(contract, False, verbose=verbose)
     if binOpt != binNoOpt:
         print ("BINARIES DIFFER",len(binOpt),"BYTES VS.",len(binNoOpt),"BYTES NON-OPTIMIZED")
     if resultOpt != resultNoOpt:

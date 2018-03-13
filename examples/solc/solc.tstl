@@ -35,8 +35,8 @@ pool: <binaryOp> 7
 <functionId> := <["g","h","i"]>
 <varId> := "v" + <idNum>
 
-<varIds> := <varId>
-<varIds> := <varIds> + ", " + <varId>
+<varIds> := ~<varId>
+<varIds> := <varIds> + ", " + ~<varId>
 
 <functions> := "function f() returns (int) " + <block>
 solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <functions> + chr(10) + chr(10) + <functionDefinition>
@@ -54,6 +54,11 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 <statement> := "break;"
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
+
+<statement> := "var " + <varId> + ";"
+<statement> := <varId> + "=" + <expr> + ";"
+<statement> := <varId> + "++;"
+<statement> := <varId> + "--;"
 
 <statement> := "if (" + <expr> + ")" + chr(10) + ~<statement> + chr(10)
 <statement> := "if (" + <expr> + ")" + chr(10) + ~<statement> + chr(10) + "else" + chr(10) + ~<statement> + chr(10)
