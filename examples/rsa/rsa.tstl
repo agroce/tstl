@@ -17,7 +17,7 @@ def breakStr(s,p):
 @>
 
 
-pool: <keypair> 5
+pool: <keypair> 5 OPAQUE
 pool: <plain> 5
 pool: <utf> 5
 pool: <encrypt> 5
