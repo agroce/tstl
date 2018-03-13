@@ -18,6 +18,10 @@ def runTest(contract, optimize):
     try:
         bin = compile_source(contract,optimize=optimize).values()[0]['bin']
     except SolcError as e:
+        if "Internal compiler error during compilation" in str(e):
+            print ("INTERNAL COMPILER ERROR WITH optimize =",optimize)
+            print (e)
+            return "INTERNAL COMPILER ERROR"
         return ("COMPILATION FAILED", None)
     try:
         txnHash = client.send_transaction(_from = a, data = bytes(bin), value = 0)
@@ -56,6 +60,9 @@ def test(functions):
         print ("RETURNED:",resultOpt)
     else:
         print (resultOpt,"FOR FUNCTIONS OF LENGTH",len(functions))
+    if (resultOpt == "INTERNAL COMPILER ERROR") or (resultNoOpt == "INTERNAL COMPILER ERROR"):
         print (functions)
+        assert False
+        
         
 
