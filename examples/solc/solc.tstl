@@ -32,18 +32,16 @@ pool: <binaryOp> 7
 ~<idVal> += 1
 <idNum> := str(~<idVal>)
 
-<functionId> := <["g","h","i","j","k","l"]>
+<functionId> := <["g","h","i"]>
 <varId> := "v" + <idNum>
 
 <varIds> := <varId>
 <varIds> := <varIds> + ", " + <varId>
 
-<functions> := <functionDefinition>
+<functions> := "function f() returns (int) " + <block>
 solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <functions> + chr(10) + chr(10) + <functionDefinition>
 
-<functionDefinition> := "function f() returns (int) " + <block>
 <functionDefinition> := "function " + <functionId> + "(int input) returns (int) " + <block>
-
 
 <block> := "{" + chr(10) + <statements> + chr(10) + "}" + chr(10)
 

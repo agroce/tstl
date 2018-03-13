@@ -56,5 +56,6 @@ def test(functions):
         print ("RETURNED:",resultOpt)
     else:
         print (resultOpt,"FOR FUNCTIONS OF LENGTH",len(functions))
+        print (functions)
         
 
