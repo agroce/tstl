@@ -12,7 +12,7 @@ def fid(functionDef):
     end = functionDef.find("(")
     return functionDef[:end]
 
-def test(contract, optimize):
+def runTest(contract, optimize):
     client = EthTesterClient()
     a = client.get_accounts()[0]
     try:
@@ -22,20 +22,23 @@ def test(contract, optimize):
     try:
         txnHash = client.send_transaction(_from = a, data = bytes(bin), value = 0)
     except TransactionFailed as e:
-        return ("TRANSACTION FAILED", bytes(bin))
+        return ("SEND CONTRACT TRANSACTION FAILED", bytes(bin))
     txnReceipt = client.get_transaction_receipt(txnHash)
     contractAddress = txnReceipt['contractAddress']
     fsig = encode_data(sha3("f()")[:4])
-    val = client.call(_from = a, to = contractAddress, data = fsig)
+    try:
+        val = client.call(_from = a, to = contractAddress, data = fsig)
+    except TransactionFailed as e:
+        return ("CALL FAILED", bytes(bin))
     return (big_endian_to_int(decode_hex(val)), bytes(bin))
 
-def differentialTest(functions):
+def test(functions):
     # Expects to receive a set of function definitions with a top-level, no-parameter, function called f()
     contract = "contract c {" + functions + "}"
-    (resultOpt,binOpt) = test(contract, True)
-    (resultNoOpt,binNoOpt) = test(contract, False)
+    (resultOpt,binOpt) = runTest(contract, True)
+    (resultNoOpt,binNoOpt) = runTest(contract, False)
     if binOpt != binNoOpt:
-        print ("BINARIES DIFFER")
+        print ("BINARIES DIFFER",len(binOpt),"BYTES VS.",len(binNoOpt),"BYTES NON-OPTIMIZED")
     if resultOpt != resultNoOpt:
         print ("*"*80)
         print ("MISMATCH:")
@@ -47,10 +50,11 @@ def differentialTest(functions):
         print ("NON-OPTIMIZED VALUE:",resultNoOpt)
         print ("*"*80)        
         assert False
-    if resultOpt not in ["COMPILATION FAILED", "TRANSACTION FAILED"]:
+    if resultOpt not in ["COMPILATION FAILED", "SEND CONTRACT TRANSACTION FAILED", "CALL FAILED"]:
         print ("SUCCESSFULLY TESTED:")
         print (functions)
         print ("RETURNED:",resultOpt)
     else:
         print (resultOpt,"FOR FUNCTIONS OF LENGTH",len(functions))
+        
 

@@ -1,33 +1,34 @@
 @import solchelper
 
-pool: <functions> 4
+pool: <functions> 7
+pool: <tested> 1
 
-pool: <idVal> 4
-pool: <idNum> 4
+pool: <idVal> 7
+pool: <idNum> 7
 
-pool: <functionId> 4
-pool: <varId> 4
+pool: <functionId> 7
+pool: <varId> 7
 
-pool: <varIds> 4
+pool: <varIds> 7
 
-pool: <functionDefinition> 4
+pool: <functionDefinition> 7
 
-pool: <functionParameters> 4
+pool: <functionParameters> 7
 
-pool: <block> 4
+pool: <block> 7
 
-pool: <statements> 4
-pool: <statement> 4
+pool: <statements> 7
+pool: <statement> 7
 
-pool: <simpleStatement> 4
+pool: <simpleStatement> 7
 
-pool: <num> 4
+pool: <num> 7
 
-pool: <expr> 4
-pool: <unaryOp> 4
-pool: <binaryOp> 4
+pool: <expr> 7
+pool: <unaryOp> 7
+pool: <binaryOp> 7
 
-<idVal> := <[1..4]>
+<idVal> := <[1..7]>
 ~<idVal> += 1
 <idNum> := str(~<idVal>)
 
@@ -95,4 +96,6 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 <binaryOp> := <["&&","||"]>
 <binaryOp> := <["<",">","<=",">=","==","!="]>
 
-"function f()" in <functions,1> -> solchelper.differentialTest(<functions>) #ESSENTIAL
+<tested> := []
+
+("function f()" in <functions,1>) and (<functions,1> not in <tested,1>) -> ~<tested>.append(<functions>); solchelper.test(<functions,1>) #ESSENTIAL
