@@ -1,41 +1,18 @@
-@import solc
-@import testrpc.client
-@import testrpc.client.utils
-@import ethereum.utils
-@import ethereum.tester
+@import solchelper
 
-pool: <client> 1
-pool: <account> 1
+pool: <functions> 10
 
-pool: <bin> 1 REF
+pool: <idVal> 10
+pool: <idNum> 10
 
-pool: <txnHash> 1 REF
-pool: <txnReceipt> 1 REF
-pool: <contractAddress> 1 REF
-
-pool: <functionSig> 10
-
-pool: <callReturn> 1 REF
-
-pool: <idval> 10
-pool: <idnum> 10
-
-pool: <contractId> 5
 pool: <functionId> 5
-pool: <eventId> 5
 pool: <varId> 5
 
 pool: <varIds> 5
 
-pool: <contract> 5
-pool: <contractParts> 5
-pool: <contractPart> 5
-
 pool: <functionDefinition> 5
-#pool: <eventDefinition> 5
 
 pool: <functionParameters> 5
-#pool: <eventParameters> 5
 
 pool: <block> 5
 
@@ -44,66 +21,59 @@ pool: <statement> 5
 
 pool: <simpleStatement> 5
 
+pool: <num> 5
+
 pool: <expr> 5
 pool: <unaryOp> 5
 pool: <binaryOp> 5
 
-<idval> := <[1..10]>
-~<idval> += 1
-<idnum> := str(~<idval>)
+<idVal> := <[1..10]>
+~<idVal> += 1
+<idNum> := str(~<idVal>)
 
-<contractId> := "c_" + <idnum>
-#<eventId> := "e_" + <idnum>
-<functionId> := "f_" + <idnum>
-<varId> := "v_" + <idnum>
+<functionId> := <["f","g","h","i","j","k","l"]>
+<varId> := "v_" + <idNum>
 
 <varIds> := <varId>
 <varIds> := <varIds> + ", " + <varId>
 
-<contract> := "contract " + <contractId> + " { " + <contractParts> + " } "
-
-#<contractParts> := ""
-<contractParts> := <contractPart>
-<contractParts> := <contractParts> + " " + <contractPart>
-
-"return " in <functionDefinition,1> -> <contractPart> := <functionDefinition>
-#<contractPart> := <eventDefinition>
+<functions> := <functionDefinition>
+solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <functions> + chr(10) + chr(10) + <functionDefinition>
 
 <functionDefinition> := "function " + <functionId> + <functionParameters> + <block>
 
-#<eventDefinition> := "event " + <eventId> + " " + <eventParameters> + " ;"
-
 <functionParameters> := "()"
 
-<block> := "{ " + <statements> + " }"
+<block> := "{" + chr(10) + <statements> + chr(10) + "}" + chr(10)
 
-<statements> := ""
-<statements> := <statement>
-<statements> := ~<statements> + " " + <statement>
+<statements> := <statement> + chr(10)
+<statements> := ~<statements> + <statement> + chr(10)
 
 <statement> := ~<block>
 
 <statement> := "continue;"
 <statement> := "break;"
-<statement> := "_;"
 <statement> := "throw;"
-#<statement> := "return;"
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
 
-<statement> := "if (" + <expr> + ") " + ~<statement>
-<statement> := "if (" + <expr> + ") " + ~<statement> + " else " + ~<statement>
+<statement> := "if (" + <expr> + ")" + chr(10) + ~<statement> + chr(10)
+<statement> := "if (" + <expr> + ")" + chr(10) + ~<statement> + chr(10) + "else" + chr(10) + ~<statement> + chr(10)
 
-<statement> := "while (" + <expr> + ") " + ~<statement>
+<statement> := "while (" + <expr> + ")" + chr(10) + ~<statement>
 
-<statement> := "do " + ~<statement> + " while (" + <expr> + ")"
+<statement> := "do" + chr(10) + ~<statement> + chr(10) + "while (" + <expr> + ")" + chr(10)
 
-<statement> := "for (" + <simpleStatement> + "; " + <expr> + "; " + <expr> + ") " + ~<statement>
+<statement> := "for (" + <simpleStatement> + "; " + <expr> + "; " + <expr> + ")" + chr(10) + ~<statement> + chr(10)
 
 <simpleStatement> := <expr>
 <simpleStatement> := "var " + <varIds>
 <simpleStatement> := "var " + <varIds> + " = " + <expr>
 
+<num> := 0
+~<num> += 1
+~<num> -= 1
+~<num> *= 10
 
 <expr> := <varId>
 <expr> := <unaryOp> + " " + ~<expr>
@@ -113,7 +83,7 @@ pool: <binaryOp> 5
 <expr> := ~<expr> + "--"
 <expr> := ~<expr> + " ? " + ~<expr> + " : " + ~<expr>
 
-<expr> := str(<idval>)
+<expr> := str(<num>)
 <expr> := "true"
 <expr> := "false"
 
@@ -124,26 +94,4 @@ pool: <binaryOp> 5
 <binaryOp> := <["&&","||"]>
 <binaryOp> := <["<",">","<=",">=","==","!="]>
 
-<client> := testrpc.client.EthTesterClient()
-<account> := ~<client>.get_accounts()[0]
-
-{solc.exceptions.SolcError} <bin> := (solc.compile_source(<contract>,optimize=True)).values()[0]['bin']; print ("COMPILED",<contract,1>)
-
-#print ("CONTRACT IS:",~<contract>)
-#print ("EXPR IS:",~<expr>)
-#print ("STATEMENT IS:",~<statement>)
-
-<txnHash> := ~<client>.send_transaction(_from=~<account>, data=bytes(<bin>), value=0)
-<txnReceipt> := ~<client>.get_transaction_receipt(<txnHash>)
-<contractAddress> := <txnReceipt>['contractAddress']
-
-assert <contractAddress>
-
-<functionSig> := testrpc.client.utils.encode_data(ethereum.utils.sha3(<functionId>+"()")[:4])
-
-{ethereum.tester.TransactionFailed} <callReturn> := ~<client>.call(_from=<account>,to=<contractAddress>,data=<functionSig>)
-
-testrpc.client.utils.decode_hex(<callReturn>)
-
-reference: optimize=True ==> optimize=False
-compare: decode_hex
+"function f()" in <functions,1> -> solchelper.differentialTest(<functions>)

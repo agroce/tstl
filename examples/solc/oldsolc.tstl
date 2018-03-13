@@ -1,0 +1,149 @@
+@import solc
+@import testrpc.client
+@import testrpc.client.utils
+@import ethereum.utils
+@import ethereum.tester
+
+pool: <client> 1
+pool: <account> 1
+
+pool: <bin> 1 REF
+
+pool: <txnHash> 1 REF
+pool: <txnReceipt> 1 REF
+pool: <contractAddress> 1 REF
+
+pool: <functionSig> 10
+
+pool: <callReturn> 1 REF
+
+pool: <idval> 10
+pool: <idnum> 10
+
+pool: <contractId> 5
+pool: <functionId> 5
+pool: <eventId> 5
+pool: <varId> 5
+
+pool: <varIds> 5
+
+pool: <contract> 5
+pool: <contractParts> 5
+pool: <contractPart> 5
+
+pool: <functionDefinition> 5
+#pool: <eventDefinition> 5
+
+pool: <functionParameters> 5
+#pool: <eventParameters> 5
+
+pool: <block> 5
+
+pool: <statements> 5
+pool: <statement> 5
+
+pool: <simpleStatement> 5
+
+pool: <expr> 5
+pool: <unaryOp> 5
+pool: <binaryOp> 5
+
+<idval> := <[1..10]>
+~<idval> += 1
+<idnum> := str(~<idval>)
+
+<contractId> := "c_" + <idnum>
+#<eventId> := "e_" + <idnum>
+<functionId> := "f_" + <idnum>
+<varId> := "v_" + <idnum>
+
+<varIds> := <varId>
+<varIds> := <varIds> + ", " + <varId>
+
+<contract> := "contract " + <contractId> + " { " + <contractParts> + " } "
+
+#<contractParts> := ""
+<contractParts> := <contractPart>
+<contractParts> := <contractParts> + " " + <contractPart>
+
+"return " in <functionDefinition,1> -> <contractPart> := <functionDefinition>
+#<contractPart> := <eventDefinition>
+
+<functionDefinition> := "function " + <functionId> + <functionParameters> + <block>
+
+#<eventDefinition> := "event " + <eventId> + " " + <eventParameters> + " ;"
+
+<functionParameters> := "()"
+
+<block> := "{ " + <statements> + " }"
+
+<statements> := ""
+<statements> := <statement>
+<statements> := ~<statements> + " " + <statement>
+
+<statement> := ~<block>
+
+<statement> := "continue;"
+<statement> := "break;"
+<statement> := "_;"
+<statement> := "throw;"
+#<statement> := "return;"
+<statement> := "return " + <expr> + ";"
+<statement> := <simpleStatement> + ";"
+
+<statement> := "if (" + <expr> + ") " + ~<statement>
+<statement> := "if (" + <expr> + ") " + ~<statement> + " else " + ~<statement>
+
+<statement> := "while (" + <expr> + ") " + ~<statement>
+
+<statement> := "do " + ~<statement> + " while (" + <expr> + ")"
+
+<statement> := "for (" + <simpleStatement> + "; " + <expr> + "; " + <expr> + ") " + ~<statement>
+
+<simpleStatement> := <expr>
+<simpleStatement> := "var " + <varIds>
+<simpleStatement> := "var " + <varIds> + " = " + <expr>
+
+
+<expr> := <varId>
+<expr> := <unaryOp> + " " + ~<expr>
+<expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
+<expr> := "(" + <expr> + ")"
+<expr> := ~<expr> + "++"
+<expr> := ~<expr> + "--"
+<expr> := ~<expr> + " ? " + ~<expr> + " : " + ~<expr>
+
+<expr> := str(<idval>)
+<expr> := "true"
+<expr> := "false"
+
+<unaryOp> := <["!","~","delete","++","--","+","-"]>
+
+<binaryOp> := <["+","-","*","/","%","**"]>
+<binaryOp> := <["&","|","^","<<",">>"]>
+<binaryOp> := <["&&","||"]>
+<binaryOp> := <["<",">","<=",">=","==","!="]>
+
+<client> := testrpc.client.EthTesterClient()
+<account> := ~<client>.get_accounts()[0]
+
+{solc.exceptions.SolcError} <bin> := (solc.compile_source(<contract>,optimize=True)).values()[0]['bin']; print ("COMPILED",<contract,1>)
+
+#print ("CONTRACT IS:",~<contract>)
+#print ("EXPR IS:",~<expr>)
+#print ("STATEMENT IS:",~<statement>)
+
+<txnHash> := ~<client>.send_transaction(_from=~<account>, data=bytes(<bin>), value=0)
+<txnReceipt> := ~<client>.get_transaction_receipt(<txnHash>)
+<contractAddress> := <txnReceipt>['contractAddress']
+
+assert <contractAddress>
+
+<functionSig> := testrpc.client.utils.encode_data(ethereum.utils.sha3(<functionId>+"()")[:4])
+
+{ethereum.tester.TransactionFailed} <callReturn> := ~<client>.call(_from=<account>,to=<contractAddress>,data=<functionSig>)
+
+testrpc.client.utils.decode_hex(<callReturn>)
+
+reference: optimize=True ==> optimize=False
+compare: decode_hex
