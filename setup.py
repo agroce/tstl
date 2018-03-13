@@ -5,7 +5,7 @@ import sys, os
 
 setup(
     name='tstl',
-    version='1.1.10',
+    version='1.1.11',
     description='Template scripting testing language (TSTL)',
     long_description=open('README.md').read(),
     packages=['src',],

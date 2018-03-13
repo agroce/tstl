@@ -436,10 +436,10 @@ def main():
 
     with open(config.tstl, 'r') as fp:
         for l in fp:
+            if l[-1] != "\n":
+                l += "\n"            
             fileLine = str(l).replace("\r","")
             l = preprocess_angle_brackets(l)
-            if l[-1] != "\n":
-                l += "\n"
             l = l.replace("\r","")
             if len(l)>1:
                 if l[-2] == "'":
@@ -688,8 +688,11 @@ def main():
                         classDefs[pSub] = []
                     classDefs[pSub].append(c)
 
+    essentialClasses = []
     
     for c in codeClasses:
+        if "#ESSENTIAL" in c:
+            essentialClasses.append(c)
         dependencies[c] = []
         if ":=" in c:
             rhs = c.split(":=")[1]
@@ -1267,8 +1270,11 @@ def main():
     genCode.append(baseIndent + "self.__actionClass = {}\n")
     genCode.append(baseIndent + "self.__swarmConfig = None\n")    
     genCode.append(baseIndent + "self.__actionClasses = []\n")
+    genCode.append(baseIndent + "self.__essentialClasses = []\n")    
     for c in codeClasses:
         genCode.append(baseIndent + "self.__actionClasses.append('''" + c + "''')\n")
+    for c in essentialClasses:
+        genCode.append(baseIndent + "self.__essentialClasses.append('''" + c + "''')\n")        
     genCode.append(baseIndent + "self.__dependencies = {}\n")
     for c in codeClasses:
         genCode.append(baseIndent + "self.__dependencies['''"+c+"'''] = []\n")

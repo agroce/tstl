@@ -439,6 +439,9 @@ def actions(self):
 def actionClasses(self):
     return self.__actionClasses
 
+def essentialClasses(self):
+    return self.__essentialClasses
+
 def disable(self,f):
     """
     Disable an action by name.
@@ -550,7 +553,7 @@ def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None, noDependen
             
     for c in self.__actionClasses:
         if classProb == None:
-            if rgen.random() < P:
+            if (c in self.__essentialClasses) or (rgen.random() < P):
                 newEnabled.append(c)
         else:
             if rgen.random() < classProb[c]:
