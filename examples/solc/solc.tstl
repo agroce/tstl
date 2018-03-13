@@ -1,22 +1,21 @@
 @import solc
 @import testrpc.client
 @import testrpc.client.utils
-@import rlp.utils
 @import ethereum.utils
 @import ethereum.tester
 
 pool: <client> 1
 pool: <account> 1
 
-pool: <bin> 10 REF
+pool: <bin> 1 REF
 
-pool: <txnHash> 10 REF
-pool: <txnReceipt> 10 REF
-pool: <contractAddress> 10 REF
+pool: <txnHash> 1 REF
+pool: <txnReceipt> 1 REF
+pool: <contractAddress> 1 REF
 
 pool: <functionSig> 10
 
-pool: <callReturn> 10 REF
+pool: <callReturn> 1 REF
 
 pool: <idval> 10
 pool: <idnum> 10
@@ -80,9 +79,9 @@ pool: <binaryOp> 5
 
 <statements> := ""
 <statements> := <statement>
-<statements> := <statements> + " " + <statement>
+<statements> := ~<statements> + " " + <statement>
 
-<statement> := <block>
+<statement> := ~<block>
 
 <statement> := "continue;"
 <statement> := "break;"
@@ -92,14 +91,14 @@ pool: <binaryOp> 5
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
 
-<statement> := "if (" + <expr> + ") " + <statement>
-<statement> := "if (" + <expr> + ") " + <statement> + " else " + <statement>
+<statement> := "if (" + <expr> + ") " + ~<statement>
+<statement> := "if (" + <expr> + ") " + ~<statement> + " else " + ~<statement>
 
-<statement> := "while (" + <expr> + ") " + <statement>
+<statement> := "while (" + <expr> + ") " + ~<statement>
 
-<statement> := "do " + <statement> + " while (" + <expr> + ")"
+<statement> := "do " + ~<statement> + " while (" + <expr> + ")"
 
-<statement> := "for (" + <simpleStatement> + "; " + <expr> + "; " + <expr> + ") " + <statement>
+<statement> := "for (" + <simpleStatement> + "; " + <expr> + "; " + <expr> + ") " + ~<statement>
 
 <simpleStatement> := <expr>
 <simpleStatement> := "var " + <varIds>
@@ -107,12 +106,12 @@ pool: <binaryOp> 5
 
 
 <expr> := <varId>
-<expr> := <unaryOp> + " " + <expr>
-<expr> := <expr> + " " + <binaryOp> + " " + <expr>
+<expr> := <unaryOp> + " " + ~<expr>
+<expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
 <expr> := "(" + <expr> + ")"
-<expr> := <expr> + "++"
-<expr> := <expr> + "--"
-<expr> := <expr> + " ? " + <expr> + " : " + <expr>
+<expr> := ~<expr> + "++"
+<expr> := ~<expr> + "--"
+<expr> := ~<expr> + " ? " + ~<expr> + " : " + ~<expr>
 
 <expr> := str(<idval>)
 <expr> := "true"
@@ -128,7 +127,11 @@ pool: <binaryOp> 5
 <client> := testrpc.client.EthTesterClient()
 <account> := ~<client>.get_accounts()[0]
 
-{solc.exceptions.SolcError} <bin> := (solc.compile_source(<contract>,optimize=True)).values()[0]['bin']
+{solc.exceptions.SolcError} <bin> := (solc.compile_source(<contract>,optimize=True)).values()[0]['bin']; print ("COMPILED",<contract,1>)
+
+#print ("CONTRACT IS:",~<contract>)
+#print ("EXPR IS:",~<expr>)
+#print ("STATEMENT IS:",~<statement>)
 
 <txnHash> := ~<client>.send_transaction(_from=~<account>, data=bytes(<bin>), value=0)
 <txnReceipt> := ~<client>.get_transaction_receipt(<txnHash>)
@@ -140,7 +143,7 @@ assert <contractAddress>
 
 {ethereum.tester.TransactionFailed} <callReturn> := ~<client>.call(_from=<account>,to=<contractAddress>,data=<functionSig>)
 
-rlp.utils.big_endian_to_int(testrpc.client.utils.decode_hex(<callReturn>))
+testrpc.client.utils.decode_hex(<callReturn>)
 
 reference: optimize=True ==> optimize=False
-compare: rlp.utils.big_endian_to_int
+compare: decode_hex
