@@ -1,38 +1,38 @@
 @import solchelper
 
-pool: <functions> 10
+pool: <functions> 4
 
-pool: <idVal> 10
-pool: <idNum> 10
+pool: <idVal> 4
+pool: <idNum> 4
 
-pool: <functionId> 5
-pool: <varId> 5
+pool: <functionId> 4
+pool: <varId> 4
 
-pool: <varIds> 5
+pool: <varIds> 4
 
-pool: <functionDefinition> 5
+pool: <functionDefinition> 4
 
-pool: <functionParameters> 5
+pool: <functionParameters> 4
 
-pool: <block> 5
+pool: <block> 4
 
-pool: <statements> 5
-pool: <statement> 5
+pool: <statements> 4
+pool: <statement> 4
 
-pool: <simpleStatement> 5
+pool: <simpleStatement> 4
 
-pool: <num> 5
+pool: <num> 4
 
-pool: <expr> 5
-pool: <unaryOp> 5
-pool: <binaryOp> 5
+pool: <expr> 4
+pool: <unaryOp> 4
+pool: <binaryOp> 4
 
-<idVal> := <[1..10]>
+<idVal> := <[1..4]>
 ~<idVal> += 1
 <idNum> := str(~<idVal>)
 
-<functionId> := <["f","g","h","i","j","k","l"]>
-<varId> := "v_" + <idNum>
+<functionId> := <["g","h","i","j","k","l"]>
+<varId> := "v" + <idNum>
 
 <varIds> := <varId>
 <varIds> := <varIds> + ", " + <varId>
@@ -40,9 +40,9 @@ pool: <binaryOp> 5
 <functions> := <functionDefinition>
 solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <functions> + chr(10) + chr(10) + <functionDefinition>
 
-<functionDefinition> := "function " + <functionId> + <functionParameters> + <block>
+<functionDefinition> := "function f() returns (int) " + <block>
+<functionDefinition> := "function " + <functionId> + "(int input) returns (int) " + <block>
 
-<functionParameters> := "()"
 
 <block> := "{" + chr(10) + <statements> + chr(10) + "}" + chr(10)
 
@@ -53,7 +53,6 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 
 <statement> := "continue;"
 <statement> := "break;"
-<statement> := "throw;"
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
 
@@ -75,6 +74,7 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 ~<num> -= 1
 ~<num> *= 10
 
+<expr> := "input"
 <expr> := <varId>
 <expr> := <unaryOp> + " " + ~<expr>
 <expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
@@ -82,6 +82,7 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 <expr> := ~<expr> + "++"
 <expr> := ~<expr> + "--"
 <expr> := ~<expr> + " ? " + ~<expr> + " : " + ~<expr>
+<expr> := <functionId> + "(" + ~<expr> + ")"
 
 <expr> := str(<num>)
 <expr> := "true"
@@ -94,4 +95,4 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 <binaryOp> := <["&&","||"]>
 <binaryOp> := <["<",">","<=",">=","==","!="]>
 
-"function f()" in <functions,1> -> solchelper.differentialTest(<functions>)
+"function f()" in <functions,1> -> solchelper.differentialTest(<functions>) #ESSENTIAL
