@@ -18,10 +18,13 @@ def runTest(contract, optimize, verbose=False):
     try:
         bin = compile_source(contract,optimize=optimize).values()[0]['bin']
     except SolcError as e:
+        if "Compiler error: Stack too deep" in str(e):
+            return "STACK TOO DEEP"
         if "Internal compiler error during compilation" in str(e):
+            print (contract)
             print ("INTERNAL COMPILER ERROR WITH optimize =",optimize)
             print (e)
-            return "INTERNAL COMPILER ERROR"
+            assert False
         if verbose:
             print (e)
         return ("COMPILATION FAILED", None)
@@ -43,17 +46,23 @@ def runTest(contract, optimize, verbose=False):
         return ("CALL FAILED", bytes(bin))
     return (big_endian_to_int(decode_hex(val)), bytes(bin))
 
-def test(functions, verbose=False, verboseNoOpt=False):
+def test(functions, verbose=False, verboseNoOpt=False, saveContract=False):
     if verbose:
         print ("="*50)
     # Expects to receive a set of function definitions with a top-level, no-parameter, function called f()
     contract = "contract c {\n" + functions + "\n}"
+    if saveContract:
+        with open("contract.solc",'w') as f:
+            f.write(contract)
     (resultNoOpt,binNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
     if (binNoOpt != None) and (len(binNoOpt) > (24 * 1024)):
         print ("NON-OPTIMIZED CONTRACT TOO LARGE")
         return
+    if resultNoOpt == "STACK TOO DEEP":
+        print ("STACK TOO DEEP FOR NON-OPTIMIZING COMPILE")
+        return
     (resultOpt,binOpt) = runTest(contract, True, verbose=verbose)
-    if binOpt != binNoOpt:
+    if (binOpt != binNoOpt) and (binOpt != None) and (binNoOpt != None):
         print ("BINARIES DIFFER",len(binOpt),"BYTES VS.",len(binNoOpt),"BYTES NON-OPTIMIZED")
     if resultOpt != resultNoOpt:
         print ("*"*80)
@@ -82,6 +91,3 @@ def test(functions, verbose=False, verboseNoOpt=False):
         print (contract)
         print ("*"*40)        
         assert False
-        
-        
-

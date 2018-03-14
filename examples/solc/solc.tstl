@@ -1,48 +1,48 @@
 @import solchelper
 
 <@
-def statementsTooLong(stmts,stmt):
-    return len(stmts) + len(stmt) > 8192
+def statementsTooLong(s1,s2):
+    return len(s1) + len(s2) > 1024
 
 def exprTooLong(expr1,expr2):
     return len(expr1) + len(expr2) > 256
 @>
 
-pool: <functions> 7
 pool: <tested> 1
 
-pool: <idVal> 7
-pool: <idNum> 7
+pool: <functions> 6
 
-pool: <functionId> 7
+pool: <idVal> 4
+pool: <idNum> 4
 
-pool: <varId> 7
+pool: <functionId> 4
+
+pool: <varId> 4
 pool: <declared> 1
 pool: <type> 4
-pool: <varIds> 7
+pool: <varIds> 4
 
-pool: <functionDefinition> 7
-pool: <functionParameters> 7
+pool: <functionDefinition> 6
 
-pool: <block> 7
-pool: <statements> 7
-pool: <statement> 7
-pool: <simpleStatement> 7
+pool: <block> 5
+pool: <statements> 5
+pool: <statement> 5
+pool: <simpleStatement> 5
 
-pool: <num> 7
-pool: <expr> 7
-pool: <unaryOp> 7
-pool: <binaryOp> 7
+pool: <num> 5
+pool: <expr> 5
+pool: <unaryOp> 4
+pool: <binaryOp> 4
 
-pool: <boolexpr> 7
-pool: <boolUnaryOp> 7
-pool: <boolBinaryOp> 7
+pool: <boolexpr> 5
+pool: <boolUnaryOp> 4
+pool: <boolBinaryOp> 4
 
 init: <tested> = []
 
 init: <declared> = set([])
 
-<idVal> := <[1..7]>
+<idVal> := 1
 ~<idVal> += 1
 <idNum> := str(~<idVal>)
 
@@ -63,9 +63,9 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<statements> + <statement> + chr(10)
 
 <type> := "int"
-<type> := "uint"
-<type> := "int8"
-<type> := "uint8"
+#<type> := "uint"
+#<type> := "int8"
+#<type> := "uint8"
 
 <statement> := <block>
 
@@ -74,15 +74,15 @@ not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<stateme
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
 
-<varId,1> not in <declared> -> <statement> := <type> + " " + <varId> + " = " + <expr> + ";" ; ~<declared>.add(<varId,1>)
+<varId,1> not in <declared,1> -> <statement> := <type> + " " + <varId> + " = " + <expr> + ";" ; <declared>.add(<varId,1>)
 <varId,1> in <declared> -> <statement> := <varId> + "=" + <expr> + ";"
 <varId,1> in <declared> -> <statement> := <varId> + "++;"
 <varId,1> in <declared> -> <statement> := <varId> + "--;"
 
 <statement> := "if (" + <boolexpr> + ")" + chr(10) + <statement> + chr(10)
 <statement> := "if (" + <boolexpr> + ")" + chr(10) + <block> + chr(10)
-<statement> := "if (" + <boolexpr> + ")" + chr(10) + <statement> + chr(10) + "else" + chr(10) + <statement> + chr(10)
-<statement> := "if (" + <boolexpr> + ")" + chr(10) + <block> + chr(10) + "else" + chr(10) + <block> + chr(10)
+not statementsTooLong(<statement,2>,<statement,3>) -> <statement> := "if (" + <boolexpr> + ")" + chr(10) + <statement> + chr(10) + "else" + chr(10) + <statement> + chr(10)
+not statementsTooLong(<block,1>,<block,2>) -> <statement> := "if (" + <boolexpr> + ")" + chr(10) + <block> + chr(10) + "else" + chr(10) + <block> + chr(10)
 
 <statement> := "while (" + <boolexpr> + ")" + chr(10) + <statement>
 <statement> := "while (" + <boolexpr> + ")" + chr(10) + <block>
@@ -95,8 +95,8 @@ not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<stateme
 
 <simpleStatement> := <expr>
 #<simpleStatement> := <type> + " " + <varIds>
-#<simpleStatement> := <type> + " " + <varId> ; ~<declared>.add(<varId,1>)
-<varId,1> not in <declared> -> <simpleStatement> := <type> + " " + <varId> + " = " + <expr> ; ~<declared>.add(<varId,1>)
+#<simpleStatement> := <type> + " " + <varId> ; <declared>.add(<varId,1>)
+<varId,1> not in <declared,1> -> <simpleStatement> := <type> + " " + <varId> + " = " + <expr> ; <declared>.add(<varId,1>)
 
 <num> := 0
 ~<num> += 1
