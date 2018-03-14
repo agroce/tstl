@@ -43,11 +43,13 @@ def runTest(contract, optimize, verbose=False):
         return ("CALL FAILED", bytes(bin))
     return (big_endian_to_int(decode_hex(val)), bytes(bin))
 
-def test(functions, verbose=False):
+def test(functions, verbose=True, verboseNoOpt=False):
+    if verbose:
+        print ("="*50)
     # Expects to receive a set of function definitions with a top-level, no-parameter, function called f()
-    contract = "contract c {" + functions + "}"
+    contract = "contract c {\n" + functions + "\n}"
     (resultOpt,binOpt) = runTest(contract, True, verbose=verbose)
-    (resultNoOpt,binNoOpt) = runTest(contract, False, verbose=verbose)
+    (resultNoOpt,binNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
     if binOpt != binNoOpt:
         print ("BINARIES DIFFER",len(binOpt),"BYTES VS.",len(binNoOpt),"BYTES NON-OPTIMIZED")
     if resultOpt != resultNoOpt:
@@ -63,12 +65,19 @@ def test(functions, verbose=False):
         assert False
     if resultOpt not in ["COMPILATION FAILED", "SEND CONTRACT TRANSACTION FAILED", "CALL FAILED"]:
         print ("SUCCESSFULLY TESTED:")
-        print (functions)
+        print (contract)
         print ("RETURNED:",resultOpt)
     else:
         print (resultOpt,"FOR FUNCTIONS OF LENGTH",len(functions))
+        if verbose:
+            print ("*"*40)
+            print ("CONTRACT:")
+            print (contract)
+            print ("*"*40)
     if (resultOpt == "INTERNAL COMPILER ERROR") or (resultNoOpt == "INTERNAL COMPILER ERROR"):
-        print (functions)
+        print ("*"*40)        
+        print (contract)
+        print ("*"*40)        
         assert False
         
         

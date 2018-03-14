@@ -9,6 +9,8 @@ pool: <idNum> 7
 pool: <functionId> 7
 pool: <varId> 7
 
+pool: <declared> 1
+
 pool: <varIds> 7
 
 pool: <functionDefinition> 7
@@ -28,6 +30,15 @@ pool: <expr> 7
 pool: <unaryOp> 7
 pool: <binaryOp> 7
 
+pool: <boolexpr> 7
+pool: <boolUnaryOp> 7
+pool: <boolBinaryOp> 7
+
+
+init: <tested> = []
+
+init: <declared> = set([])
+
 <idVal> := <[1..7]>
 ~<idVal> += 1
 <idNum> := str(~<idVal>)
@@ -35,10 +46,10 @@ pool: <binaryOp> 7
 <functionId> := <["g","h","i"]>
 <varId> := "v" + <idNum>
 
-<varIds> := ~<varId>
-<varIds> := <varIds> + ", " + ~<varId>
+#<varIds> := ~<varId>
+#<varIds> := <varIds> + ", " + ~<varId>
 
-<functions> := "function f() returns (int) " + <block>
+"input" not in <block,1> -> <functions> := "function f() returns (int) " + <block>
 solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <functions> + chr(10) + chr(10) + <functionDefinition>
 
 <functionDefinition> := "function " + <functionId> + "(int input) returns (int) " + <block>
@@ -55,50 +66,63 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
 
-<statement> := "var " + <varId> + ";"
-<statement> := <varId> + "=" + <expr> + ";"
-<statement> := <varId> + "++;"
-<statement> := <varId> + "--;"
+<varId,1> not in <declared> -> <statement> := "int " + <varId> + " = " + <expr> + ";" ; ~<declared>.add(<varId,1>)
+<varId,1> in <declared> -> <statement> := <varId> + "=" + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + "++;"
+<varId,1> in <declared> -> <statement> := <varId> + "--;"
 
-<statement> := "if (" + <expr> + ")" + chr(10) + ~<statement> + chr(10)
-<statement> := "if (" + <expr> + ")" + chr(10) + ~<statement> + chr(10) + "else" + chr(10) + ~<statement> + chr(10)
+<statement> := "if (" + <boolexpr> + ")" + chr(10) + ~<statement> + chr(10)
+<statement> := "if (" + <boolexpr> + ")" + chr(10) + ~<statement> + chr(10) + "else" + chr(10) + ~<statement> + chr(10)
 
-<statement> := "while (" + <expr> + ")" + chr(10) + ~<statement>
+<statement> := "while (" + <boolexpr> + ")" + chr(10) + ~<statement>
 
-<statement> := "do" + chr(10) + ~<statement> + chr(10) + "while (" + <expr> + ")" + chr(10)
+<statement> := "do" + chr(10) + ~<statement> + chr(10) + "while (" + <boolexpr> + ");" + chr(10)
 
-<statement> := "for (" + <simpleStatement> + "; " + <expr> + "; " + <expr> + ")" + chr(10) + ~<statement> + chr(10)
+<statement> := "for (" + <simpleStatement> + "; " + <boolexpr> + "; " + <expr> + ")" + chr(10) + ~<statement> + chr(10)
 
 <simpleStatement> := <expr>
-<simpleStatement> := "var " + <varIds>
-<simpleStatement> := "var " + <varIds> + " = " + <expr>
+#<simpleStatement> := "int " + <varIds>
+#<simpleStatement> := "int " + <varId> ; ~<declared>.add(<varId,1>)
+<varId,1> not in <declared> -> <simpleStatement> := "int " + <varId> + " = " + <expr> ; ~<declared>.add(<varId,1>)
 
 <num> := 0
 ~<num> += 1
-~<num> -= 1
 ~<num> *= 10
 
 <expr> := "input"
-<expr> := <varId>
+<varId,1> in <declared> -> <expr> := <varId>
 <expr> := <unaryOp> + " " + ~<expr>
 <expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
 <expr> := "(" + <expr> + ")"
-<expr> := ~<expr> + "++"
-<expr> := ~<expr> + "--"
-<expr> := ~<expr> + " ? " + ~<expr> + " : " + ~<expr>
+<expr> := "(" +  ~<boolexpr> + " ? " + ~<expr> + " : " + ~<expr> + ")"
 <expr> := <functionId> + "(" + ~<expr> + ")"
 
+<expr> := str(<[0..10]>)
 <expr> := str(<num>)
-<expr> := "true"
-<expr> := "false"
 
-<unaryOp> := <["!","~","delete","++","--","+","-"]>
+<unaryOp> := "-"
 
-<binaryOp> := <["+","-","*","/","%","**"]>
+<binaryOp> := "+"
+<binaryOp> := "-"
+<binaryOp> := "*"
+<binaryOp> := "/"
+<binaryOp> := "%"
+<binaryOp> := "**"
 <binaryOp> := <["&","|","^","<<",">>"]>
-<binaryOp> := <["&&","||"]>
-<binaryOp> := <["<",">","<=",">=","==","!="]>
 
-<tested> := []
+<boolexpr> := "true"
+<boolexpr> := "false"
+
+<boolBinaryOp> := <["&&","||"]>
+
+<boolexpr> := <boolexpr> + " " + <boolBinaryOp> + " " + <boolexpr>
+<boolexpr> := "!(" + <boolexpr> + ")"
+<boolexpr> := "(" + <boolexpr> + ")"
+<boolexpr> := <expr> + " < " + <expr>
+<boolexpr> := <expr> + " > " + <expr>
+<boolexpr> := <expr> + " <= " + <expr>
+<boolexpr> := <expr> + " >= " + <expr>
+<boolexpr> := <boolexpr> + " == " + <boolexpr>
+<boolexpr> := <boolexpr> + " != " + <boolexpr>
 
 ("function f()" in <functions,1>) and (<functions,1> not in <tested,1>) -> ~<tested>.append(<functions>); solchelper.test(<functions,1>) #ESSENTIAL
