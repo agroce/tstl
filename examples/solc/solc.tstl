@@ -1,8 +1,11 @@
 @import solchelper
 
 <@
-def tooLong(expr1,expr2):
-    return len(expr1) + len(expr2) > 200
+def statementsTooLong(stmts,stmt):
+    return len(stmts) + len(stmt) > 8192
+
+def exprTooLong(expr1,expr2):
+    return len(expr1) + len(expr2) > 256
 @>
 
 pool: <functions> 7
@@ -12,25 +15,21 @@ pool: <idVal> 7
 pool: <idNum> 7
 
 pool: <functionId> 7
+
 pool: <varId> 7
-
 pool: <declared> 1
-
+pool: <type> 4
 pool: <varIds> 7
 
 pool: <functionDefinition> 7
-
 pool: <functionParameters> 7
 
 pool: <block> 7
-
 pool: <statements> 7
 pool: <statement> 7
-
 pool: <simpleStatement> 7
 
 pool: <num> 7
-
 pool: <expr> 7
 pool: <unaryOp> 7
 pool: <binaryOp> 7
@@ -38,7 +37,6 @@ pool: <binaryOp> 7
 pool: <boolexpr> 7
 pool: <boolUnaryOp> 7
 pool: <boolBinaryOp> 7
-
 
 init: <tested> = []
 
@@ -62,33 +60,43 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 <block> := "{" + chr(10) + <statements> + chr(10) + "}" + chr(10)
 
 <statements> := <statement> + chr(10)
-<statements> := ~<statements> + <statement> + chr(10)
+not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<statements> + <statement> + chr(10)
 
-<statement> := ~<block>
+<type> := "int"
+<type> := "uint"
+<type> := "int8"
+<type> := "uint8"
+
+<statement> := <block>
 
 <statement> := "continue;"
 <statement> := "break;"
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
 
-<varId,1> not in <declared> -> <statement> := "int " + <varId> + " = " + <expr> + ";" ; ~<declared>.add(<varId,1>)
+<varId,1> not in <declared> -> <statement> := <type> + " " + <varId> + " = " + <expr> + ";" ; ~<declared>.add(<varId,1>)
 <varId,1> in <declared> -> <statement> := <varId> + "=" + <expr> + ";"
 <varId,1> in <declared> -> <statement> := <varId> + "++;"
 <varId,1> in <declared> -> <statement> := <varId> + "--;"
 
-<statement> := "if (" + <boolexpr> + ")" + chr(10) + ~<statement> + chr(10)
-<statement> := "if (" + <boolexpr> + ")" + chr(10) + ~<statement> + chr(10) + "else" + chr(10) + ~<statement> + chr(10)
+<statement> := "if (" + <boolexpr> + ")" + chr(10) + <statement> + chr(10)
+<statement> := "if (" + <boolexpr> + ")" + chr(10) + <block> + chr(10)
+<statement> := "if (" + <boolexpr> + ")" + chr(10) + <statement> + chr(10) + "else" + chr(10) + <statement> + chr(10)
+<statement> := "if (" + <boolexpr> + ")" + chr(10) + <block> + chr(10) + "else" + chr(10) + <block> + chr(10)
 
-<statement> := "while (" + <boolexpr> + ")" + chr(10) + ~<statement>
+<statement> := "while (" + <boolexpr> + ")" + chr(10) + <statement>
+<statement> := "while (" + <boolexpr> + ")" + chr(10) + <block>
 
-<statement> := "do" + chr(10) + ~<statement> + chr(10) + "while (" + <boolexpr> + ");" + chr(10)
+<statement> := "do" + chr(10) + <statement> + chr(10) + "while (" + <boolexpr> + ");" + chr(10)
+<statement> := "do" + chr(10) + <block> + chr(10) + "while (" + <boolexpr> + ");" + chr(10)
 
-<statement> := "for (" + <simpleStatement> + "; " + <boolexpr> + "; " + <expr> + ")" + chr(10) + ~<statement> + chr(10)
+<statement> := "for (" + <simpleStatement> + "; " + <boolexpr> + "; " + <expr> + ")" + chr(10) + <statement> + chr(10)
+<statement> := "for (" + <simpleStatement> + "; " + <boolexpr> + "; " + <expr> + ")" + chr(10) + <block> + chr(10)
 
 <simpleStatement> := <expr>
-#<simpleStatement> := "int " + <varIds>
-#<simpleStatement> := "int " + <varId> ; ~<declared>.add(<varId,1>)
-<varId,1> not in <declared> -> <simpleStatement> := "int " + <varId> + " = " + <expr> ; ~<declared>.add(<varId,1>)
+#<simpleStatement> := <type> + " " + <varIds>
+#<simpleStatement> := <type> + " " + <varId> ; ~<declared>.add(<varId,1>)
+<varId,1> not in <declared> -> <simpleStatement> := <type> + " " + <varId> + " = " + <expr> ; ~<declared>.add(<varId,1>)
 
 <num> := 0
 ~<num> += 1
@@ -97,9 +105,9 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 <expr> := "input"
 <varId,1> in <declared> -> <expr> := <varId>
 <expr> := <unaryOp> + " " + ~<expr>
-not tooLong(<expr,2>,<expr,3>) -> <expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
 <expr> := "(" + <expr> + ")"
-not tooLong(<expr,2>,<expr,3>) -> <expr> := "(" +  ~<boolexpr> + " ? " + ~<expr> + " : " + ~<expr> + ")"
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "(" +  ~<boolexpr> + " ? " + ~<expr> + " : " + ~<expr> + ")"
 <expr> := <functionId> + "(" + ~<expr> + ")"
 
 <expr> := str(<[0..10]>)
@@ -120,14 +128,15 @@ not tooLong(<expr,2>,<expr,3>) -> <expr> := "(" +  ~<boolexpr> + " ? " + ~<expr>
 
 <boolBinaryOp> := <["&&","||"]>
 
-not tooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " " + <boolBinaryOp> + " " + <boolexpr>
+not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " " + <boolBinaryOp> + " " + <boolexpr>
 <boolexpr> := "!(" + <boolexpr> + ")"
 <boolexpr> := "(" + <boolexpr> + ")"
-not tooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " < " + <expr>
-not tooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " > " + <expr>
-not tooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " <= " + <expr>
-not tooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " >= " + <expr>
-not tooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " == " + <boolexpr>
-not tooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " != " + <boolexpr>
+not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " < " + <expr>
+
+not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " > " + <expr>
+not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " <= " + <expr>
+not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " >= " + <expr>
+not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " == " + <boolexpr>
+not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " != " + <boolexpr>
 
 ("function f()" in <functions,1>) and (<functions,1> not in <tested,1>) -> ~<tested>.append(<functions>); solchelper.test(<functions,1>) #ESSENTIAL
