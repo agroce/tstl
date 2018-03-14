@@ -1,5 +1,10 @@
 @import solchelper
 
+<@
+def tooLong(expr1,expr2):
+    return len(expr1) + len(expr2) > 200
+@>
+
 pool: <functions> 7
 pool: <tested> 1
 
@@ -92,9 +97,9 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 <expr> := "input"
 <varId,1> in <declared> -> <expr> := <varId>
 <expr> := <unaryOp> + " " + ~<expr>
-<expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
+not tooLong(<expr,2>,<expr,3>) -> <expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
 <expr> := "(" + <expr> + ")"
-<expr> := "(" +  ~<boolexpr> + " ? " + ~<expr> + " : " + ~<expr> + ")"
+not tooLong(<expr,2>,<expr,3>) -> <expr> := "(" +  ~<boolexpr> + " ? " + ~<expr> + " : " + ~<expr> + ")"
 <expr> := <functionId> + "(" + ~<expr> + ")"
 
 <expr> := str(<[0..10]>)
@@ -115,14 +120,14 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 
 <boolBinaryOp> := <["&&","||"]>
 
-<boolexpr> := <boolexpr> + " " + <boolBinaryOp> + " " + <boolexpr>
+not tooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " " + <boolBinaryOp> + " " + <boolexpr>
 <boolexpr> := "!(" + <boolexpr> + ")"
 <boolexpr> := "(" + <boolexpr> + ")"
-<boolexpr> := <expr> + " < " + <expr>
-<boolexpr> := <expr> + " > " + <expr>
-<boolexpr> := <expr> + " <= " + <expr>
-<boolexpr> := <expr> + " >= " + <expr>
-<boolexpr> := <boolexpr> + " == " + <boolexpr>
-<boolexpr> := <boolexpr> + " != " + <boolexpr>
+not tooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " < " + <expr>
+not tooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " > " + <expr>
+not tooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " <= " + <expr>
+not tooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " >= " + <expr>
+not tooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " == " + <boolexpr>
+not tooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " != " + <boolexpr>
 
 ("function f()" in <functions,1>) and (<functions,1> not in <tested,1>) -> ~<tested>.append(<functions>); solchelper.test(<functions,1>) #ESSENTIAL
