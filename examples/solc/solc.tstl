@@ -63,9 +63,9 @@ solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <f
 not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<statements> + <statement> + chr(10)
 
 <type> := "int"
-#<type> := "uint"
-#<type> := "int8"
-#<type> := "uint8"
+<type> := "uint"
+<type> := "int" + str(8*<[1..32]>)
+<type> := "uint" + str(8*<[1..32]>)
 
 <statement> := <block>
 
@@ -104,6 +104,14 @@ not statementsTooLong(<block,1>,<block,2>) -> <statement> := "if (" + <boolexpr>
 
 <expr> := "input"
 <varId,1> in <declared> -> <expr> := <varId>
+
+<expr> := "input + " + ~<expr>
+<varId,1> in <declared> -> <expr> := <varId> + " + " + ~<expr>
+<expr> := "input - " + ~<expr>
+<varId,1> in <declared> -> <expr> := <varId> + " - " + ~<expr>
+<expr> := "input * " + ~<expr>
+<varId,1> in <declared> -> <expr> := <varId> + " * " + ~<expr>
+
 <expr> := <unaryOp> + " " + ~<expr>
 not exprTooLong(<expr,2>,<expr,3>) -> <expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
 <expr> := "(" + <expr> + ")"
@@ -132,6 +140,20 @@ not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " " + <
 <boolexpr> := "!(" + <boolexpr> + ")"
 <boolexpr> := "(" + <boolexpr> + ")"
 not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " < " + <expr>
+
+<boolexpr> := "input < " + <expr>
+<boolexpr> := "input > " + <expr>
+<boolexpr> := "input <= " + <expr>
+<boolexpr> := "input >= " + <expr>
+<boolexpr> := "input == " + <expr>
+<boolexpr> := "input != " + <expr>
+
+<varId,1> in <declared> -> <boolexpr> := <varId> + " < " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " > " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " <= " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " >= " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " == " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " != " + <expr>
 
 not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " > " + <expr>
 not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " <= " + <expr>
