@@ -49,7 +49,7 @@ def test(functions, verbose=False, verboseNoOpt=False):
     # Expects to receive a set of function definitions with a top-level, no-parameter, function called f()
     contract = "contract c {\n" + functions + "\n}"
     (resultNoOpt,binNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
-    if len(binNoOpt) > (24 * 1024):
+    if (binNoOpt != None) and (len(binNoOpt) > (24 * 1024)):
         print ("NON-OPTIMIZED CONTRACT TOO LARGE")
         return
     (resultOpt,binOpt) = runTest(contract, True, verbose=verbose)
