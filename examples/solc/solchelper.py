@@ -43,13 +43,16 @@ def runTest(contract, optimize, verbose=False):
         return ("CALL FAILED", bytes(bin))
     return (big_endian_to_int(decode_hex(val)), bytes(bin))
 
-def test(functions, verbose=True, verboseNoOpt=False):
+def test(functions, verbose=False, verboseNoOpt=False):
     if verbose:
         print ("="*50)
     # Expects to receive a set of function definitions with a top-level, no-parameter, function called f()
     contract = "contract c {\n" + functions + "\n}"
-    (resultOpt,binOpt) = runTest(contract, True, verbose=verbose)
     (resultNoOpt,binNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
+    if len(binNoOpt) > (24 * 1024):
+        print ("NON-OPTIMIZED CONTRACT TOO LARGE")
+        return
+    (resultOpt,binOpt) = runTest(contract, True, verbose=verbose)
     if binOpt != binNoOpt:
         print ("BINARIES DIFFER",len(binOpt),"BYTES VS.",len(binNoOpt),"BYTES NON-OPTIMIZED")
     if resultOpt != resultNoOpt:
