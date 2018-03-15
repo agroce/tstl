@@ -19,9 +19,11 @@ def runTest(contract, optimize, verbose=False):
         bin = compile_source(contract,optimize=optimize).values()[0]['bin']
     except SolcError as e:
         if "Compiler error: Stack too deep" in str(e):
-            return "STACK TOO DEEP"
+            return ("STACK TOO DEEP", None)
         if "Internal compiler error during compilation" in str(e):
             print (contract)
+            with open("latest.solc",'w') as f:
+                f.write(contract)
             print ("INTERNAL COMPILER ERROR WITH optimize =",optimize)
             print (e)
             assert False

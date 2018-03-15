@@ -76,8 +76,40 @@ not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<stateme
 
 <varId,1> not in <declared,1> -> <statement> := <type> + " " + <varId> + " = " + <expr> + ";" ; <declared>.add(<varId,1>)
 <varId,1> in <declared> -> <statement> := <varId> + "=" + <expr> + ";"
+
 <varId,1> in <declared> -> <statement> := <varId> + "++;"
 <varId,1> in <declared> -> <statement> := <varId> + "--;"
+<varId,1> in <declared> -> <statement> := "++" + <varId> + ";"
+<varId,1> in <declared> -> <statement> := "--" + <varId> + ";"
+
+<varId,1> in <declared> -> <statement> := <varId> + " += " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " -= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " *= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " /= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " %= " + <expr> + ";"
+
+<varId,1> in <declared> -> <statement> := <varId> + " |= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " &= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " ^= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " <<= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " >>= " + <expr> + ";"
+
+<statement> := "input++;"
+<statement> := "input--;"
+<statement> := "++input;"
+<statement> := "--input;"
+
+<statement> := "input += " + <expr> + ";"
+<statement> := "input -= " + <expr> + ";"
+<statement> := "input *= " + <expr> + ";"
+<statement> := "input /= " + <expr> + ";"
+<statement> := "input %= " + <expr> + ";"
+
+<statement> := "input |= " + <expr> + ";"
+<statement> := "input &= " + <expr> + ";"
+<statement> := "input ^= " + <expr> + ";"
+<statement> := "input <<= " + <expr> + ";"
+<statement> := "input >>= " + <expr> + ";"
 
 <statement> := "if (" + <boolexpr> + ")" + chr(10) + <statement> + chr(10)
 <statement> := "if (" + <boolexpr> + ")" + chr(10) + <block> + chr(10)
@@ -122,7 +154,9 @@ not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "(" +  ~<boolexpr> + " ? " + ~<e
 <expr> := str(<num>)
 
 <unaryOp> := "-"
+<unaryOp> := "~"
 
+<binaryOp> := ","
 <binaryOp> := "+"
 <binaryOp> := "-"
 <binaryOp> := "*"
