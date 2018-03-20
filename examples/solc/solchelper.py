@@ -7,6 +7,7 @@ from testrpc.client.utils import decode_hex
 from ethereum.utils import sha3
 from ethereum.tester import TransactionFailed
 from rlp.utils import big_endian_to_int
+import os
 
 def fid(functionDef):
     end = functionDef.find("(")
@@ -22,8 +23,6 @@ def runTest(contract, optimize, verbose=False):
             return ("STACK TOO DEEP", None)
         if "Internal compiler error during compilation" in str(e):
             print (contract)
-            with open("latest.solc",'w') as f:
-                f.write(contract)
             print ("INTERNAL COMPILER ERROR WITH optimize =",optimize)
             print (e)
             assert False
@@ -48,13 +47,16 @@ def runTest(contract, optimize, verbose=False):
         return ("CALL FAILED", bytes(bin))
     return (big_endian_to_int(decode_hex(val)), bytes(bin))
 
-def test(functions, verbose=False, verboseNoOpt=False, saveContract=False):
+def test(functions, verbose=False, verboseNoOpt=False, saveContract=True):
     if verbose:
         print ("="*50)
     # Expects to receive a set of function definitions with a top-level, no-parameter, function called f()
     contract = "contract c {\n" + functions + "\n}"
     if saveContract:
-        with open("contract.solc",'w') as f:
+        i = 0
+        while (os.path.exists("contract." + str(i) + ".sol")):
+            i += 1
+        with open("contract." + str(i) + ".sol",'w') as f:
             f.write(contract)
     (resultNoOpt,binNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
     if (binNoOpt != None) and (len(binNoOpt) > (24 * 1024)):
@@ -77,6 +79,12 @@ def test(functions, verbose=False, verboseNoOpt=False, saveContract=False):
         print ("NON-OPTIMIZED VALUE:",resultNoOpt)
         print ("*"*80)        
         assert False
+    if saveContract and resultOpt not in ["COMPILATION FAILED"]:
+        i = 0
+        while (os.path.exists("goodcontract." + str(i) + ".sol")):
+            i += 1
+        with open("goodcontract." + str(i) + ".sol",'w') as f:
+            f.write(contract)
     if resultOpt not in ["COMPILATION FAILED", "SEND CONTRACT TRANSACTION FAILED", "CALL FAILED"]:
         print ("SUCCESSFULLY TESTED:")
         print (contract)
