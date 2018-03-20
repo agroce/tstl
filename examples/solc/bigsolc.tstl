@@ -18,9 +18,16 @@ pool: <idNum> 4
 pool: <functionId> 4
 
 pool: <varId> 4
+pool: <cvarId> 4
+pool: <mvarId> 4
 pool: <declared> 1
 pool: <type> 4
 pool: <varIds> 4
+
+pool: <mappingtype> 4
+pool: <complextype> 4
+pool: <basictype> 4
+pool: <mapping> 4
 
 pool: <functionDefinition> 6
 
@@ -49,6 +56,9 @@ init: <declared> = set([])
 <functionId> := <["g","h","i"]>
 <varId> := "v" + <idNum>
 
+<cvarId> := "cv" + <idNum>
+<mvarId> := "mv" + <idNum>
+
 #<varIds> := ~<varId>
 #<varIds> := <varIds> + ", " + ~<varId>
 
@@ -66,6 +76,24 @@ not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<stateme
 <type> := "uint"
 <type> := "int" + str(8*<[1..32]>)
 <type> := "uint" + str(8*<[1..32]>)
+
+<mappingtype> := "mapping (" + <complextype> + " =" + "> " + <complextype> + ")"
+<mappingtype> := "mapping (" + <type> + " =" + "> " + <type> + ")"
+<mappingtype> := "mapping (" + <basictype> + " =" + "> " + <basictype> + ")"
+
+<mvarId,1> not in <declared,1> -> <mapping> := <mappingtype> + " " + <mvarId> + ";" ; <declared>.add(<mvarId,1>)
+
+<complextype> := <mappingtype>
+<complextype> := <basictype>
+
+<basictype> := <type>
+<basictype> := "bool"
+<basictype> := "hash"
+<basictype> := "string32"
+<basictype> := "string"
+<basictype> := "bytes"
+<basictype> := "bytes" + str(<[1..32]>)
+<basictype> := "address"
 
 <statement> := <block>
 
@@ -125,6 +153,8 @@ not statementsTooLong(<block,1>,<block,2>) -> <statement> := "if (" + <boolexpr>
 <statement> := "for (" + <simpleStatement> + "; " + <boolexpr> + "; " + <expr> + ")" + chr(10) + <statement> + chr(10)
 <statement> := "for (" + <simpleStatement> + "; " + <boolexpr> + "; " + <expr> + ")" + chr(10) + <block> + chr(10)
 
+<mvarId,1> in <declared> -> <statement> := <mvarId> + "[" + <expr> + "] = " + <expr>
+
 <simpleStatement> := <expr>
 #<simpleStatement> := <type> + " " + <varIds>
 #<simpleStatement> := <type> + " " + <varId> ; <declared>.add(<varId,1>)
@@ -152,6 +182,8 @@ not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "(" +  ~<boolexpr> + " ? " + ~<e
 
 <expr> := str(<[0..10]>)
 <expr> := str(<num>)
+
+<mvarId,1> in <declared> -> <expr> := <mvarId> + "[" + ~<expr> + "]"
 
 <unaryOp> := "-"
 <unaryOp> := "~"
@@ -195,4 +227,7 @@ not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " >= " + <expr>
 not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " == " + <boolexpr>
 not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " != " + <boolexpr>
 
+<functions> := <mapping> + chr(10) + ~<functions>
+
 ("function f()" in <functions,1>) and (<functions,1> not in <tested,1>) -> ~<tested>.append(<functions>); solchelper.test(<functions,1>) #ESSENTIAL
+
