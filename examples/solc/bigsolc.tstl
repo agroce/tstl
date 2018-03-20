@@ -1,0 +1,198 @@
+@import solchelper
+
+<@
+def statementsTooLong(s1,s2):
+    return len(s1) + len(s2) > 1024
+
+def exprTooLong(expr1,expr2):
+    return len(expr1) + len(expr2) > 256
+@>
+
+pool: <tested> 1
+
+pool: <functions> 6
+
+pool: <idVal> 4
+pool: <idNum> 4
+
+pool: <functionId> 4
+
+pool: <varId> 4
+pool: <declared> 1
+pool: <type> 4
+pool: <varIds> 4
+
+pool: <functionDefinition> 6
+
+pool: <block> 5
+pool: <statements> 5
+pool: <statement> 5
+pool: <simpleStatement> 5
+
+pool: <num> 5
+pool: <expr> 5
+pool: <unaryOp> 4
+pool: <binaryOp> 4
+
+pool: <boolexpr> 5
+pool: <boolUnaryOp> 4
+pool: <boolBinaryOp> 4
+
+init: <tested> = []
+
+init: <declared> = set([])
+
+<idVal> := 1
+~<idVal> += 1
+<idNum> := str(~<idVal>)
+
+<functionId> := <["g","h","i"]>
+<varId> := "v" + <idNum>
+
+#<varIds> := ~<varId>
+#<varIds> := <varIds> + ", " + ~<varId>
+
+"input" not in <block,1> -> <functions> := "function f() returns (int) " + <block>
+solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <functions> + chr(10) + chr(10) + <functionDefinition>
+
+<functionDefinition> := "function " + <functionId> + "(int input) returns (int) " + <block>
+
+<block> := "{" + chr(10) + <statements> + chr(10) + "}" + chr(10)
+
+<statements> := <statement> + chr(10)
+not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<statements> + <statement> + chr(10)
+
+<type> := "int"
+<type> := "uint"
+<type> := "int" + str(8*<[1..32]>)
+<type> := "uint" + str(8*<[1..32]>)
+
+<statement> := <block>
+
+<statement> := "continue;"
+<statement> := "break;"
+<statement> := "return " + <expr> + ";"
+<statement> := <simpleStatement> + ";"
+
+<varId,1> not in <declared,1> -> <statement> := <type> + " " + <varId> + " = " + <expr> + ";" ; <declared>.add(<varId,1>)
+<varId,1> in <declared> -> <statement> := <varId> + "=" + <expr> + ";"
+
+<varId,1> in <declared> -> <statement> := <varId> + "++;"
+<varId,1> in <declared> -> <statement> := <varId> + "--;"
+<varId,1> in <declared> -> <statement> := "++" + <varId> + ";"
+<varId,1> in <declared> -> <statement> := "--" + <varId> + ";"
+
+<varId,1> in <declared> -> <statement> := <varId> + " += " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " -= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " *= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " /= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " %= " + <expr> + ";"
+
+<varId,1> in <declared> -> <statement> := <varId> + " |= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " &= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " ^= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " <<= " + <expr> + ";"
+<varId,1> in <declared> -> <statement> := <varId> + " >>= " + <expr> + ";"
+
+<statement> := "input++;"
+<statement> := "input--;"
+<statement> := "++input;"
+<statement> := "--input;"
+
+<statement> := "input += " + <expr> + ";"
+<statement> := "input -= " + <expr> + ";"
+<statement> := "input *= " + <expr> + ";"
+<statement> := "input /= " + <expr> + ";"
+<statement> := "input %= " + <expr> + ";"
+
+<statement> := "input |= " + <expr> + ";"
+<statement> := "input &= " + <expr> + ";"
+<statement> := "input ^= " + <expr> + ";"
+<statement> := "input <<= " + <expr> + ";"
+<statement> := "input >>= " + <expr> + ";"
+
+<statement> := "if (" + <boolexpr> + ")" + chr(10) + <statement> + chr(10)
+<statement> := "if (" + <boolexpr> + ")" + chr(10) + <block> + chr(10)
+not statementsTooLong(<statement,2>,<statement,3>) -> <statement> := "if (" + <boolexpr> + ")" + chr(10) + <statement> + chr(10) + "else" + chr(10) + <statement> + chr(10)
+not statementsTooLong(<block,1>,<block,2>) -> <statement> := "if (" + <boolexpr> + ")" + chr(10) + <block> + chr(10) + "else" + chr(10) + <block> + chr(10)
+
+<statement> := "while (" + <boolexpr> + ")" + chr(10) + <statement>
+<statement> := "while (" + <boolexpr> + ")" + chr(10) + <block>
+
+<statement> := "do" + chr(10) + <statement> + chr(10) + "while (" + <boolexpr> + ");" + chr(10)
+<statement> := "do" + chr(10) + <block> + chr(10) + "while (" + <boolexpr> + ");" + chr(10)
+
+<statement> := "for (" + <simpleStatement> + "; " + <boolexpr> + "; " + <expr> + ")" + chr(10) + <statement> + chr(10)
+<statement> := "for (" + <simpleStatement> + "; " + <boolexpr> + "; " + <expr> + ")" + chr(10) + <block> + chr(10)
+
+<simpleStatement> := <expr>
+#<simpleStatement> := <type> + " " + <varIds>
+#<simpleStatement> := <type> + " " + <varId> ; <declared>.add(<varId,1>)
+<varId,1> not in <declared,1> -> <simpleStatement> := <type> + " " + <varId> + " = " + <expr> ; <declared>.add(<varId,1>)
+
+<num> := 0
+~<num> += 1
+~<num> *= 10
+
+<expr> := "input"
+<varId,1> in <declared> -> <expr> := <varId>
+
+<expr> := "input + " + ~<expr>
+<varId,1> in <declared> -> <expr> := <varId> + " + " + ~<expr>
+<expr> := "input - " + ~<expr>
+<varId,1> in <declared> -> <expr> := <varId> + " - " + ~<expr>
+<expr> := "input * " + ~<expr>
+<varId,1> in <declared> -> <expr> := <varId> + " * " + ~<expr>
+
+<expr> := <unaryOp> + " " + ~<expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := ~<expr> + " " + <binaryOp> + " " + ~<expr>
+<expr> := "(" + <expr> + ")"
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "(" +  ~<boolexpr> + " ? " + ~<expr> + " : " + ~<expr> + ")"
+<expr> := <functionId> + "(" + ~<expr> + ")"
+
+<expr> := str(<[0..10]>)
+<expr> := str(<num>)
+
+<unaryOp> := "-"
+<unaryOp> := "~"
+
+<binaryOp> := ","
+<binaryOp> := "+"
+<binaryOp> := "-"
+<binaryOp> := "*"
+<binaryOp> := "/"
+<binaryOp> := "%"
+<binaryOp> := "**"
+<binaryOp> := <["&","|","^","<<",">>"]>
+
+<boolexpr> := "true"
+<boolexpr> := "false"
+
+<boolBinaryOp> := <["&&","||"]>
+
+not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " " + <boolBinaryOp> + " " + <boolexpr>
+<boolexpr> := "!(" + <boolexpr> + ")"
+<boolexpr> := "(" + <boolexpr> + ")"
+not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " < " + <expr>
+
+<boolexpr> := "input < " + <expr>
+<boolexpr> := "input > " + <expr>
+<boolexpr> := "input <= " + <expr>
+<boolexpr> := "input >= " + <expr>
+<boolexpr> := "input == " + <expr>
+<boolexpr> := "input != " + <expr>
+
+<varId,1> in <declared> -> <boolexpr> := <varId> + " < " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " > " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " <= " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " >= " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " == " + <expr>
+<varId,1> in <declared> -> <boolexpr> := <varId> + " != " + <expr>
+
+not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " > " + <expr>
+not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " <= " + <expr>
+not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " >= " + <expr>
+not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " == " + <boolexpr>
+not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " != " + <boolexpr>
+
+("function f()" in <functions,1>) and (<functions,1> not in <tested,1>) -> ~<tested>.append(<functions>); solchelper.test(<functions,1>) #ESSENTIAL
