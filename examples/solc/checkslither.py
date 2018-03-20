@@ -40,9 +40,10 @@ while True:
             else:
                 outputs[output].append((c,input))
 
+    print "ANALYZED",lastLen,"TOTAL CONTRACTS"
+    print
+                
     for (f,ef) in outputs:
-        if (f,ef) == ("",""):
-            continue
         print "=" * 50
         print "OUTPUT:",f
         print "ERROR: ",ef
