@@ -31,6 +31,10 @@ def runTest(contract, optimize, verbose=False):
         return ("COMPILATION FAILED", None, None)
     try:
         txnHash = client.send_transaction(_from = a, data = bytes(bin), value = 0)
+        # Right now we use 0 as the value due to eth-testrpc failing all attempts
+        # to send contracts ether; thus, all send/transfers in contracts will fail
+        # which should guarantee balanced are unchanged after execution
+        # Eventually this value will change and we'll test amounts
     except TransactionFailed as e:
         if verbose:
             print (e)
