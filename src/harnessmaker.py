@@ -260,6 +260,8 @@ def expandRange(original,trackOriginal=False):
         current = newVersion
 
     for index, line in enumerate(newVersion):
+        if config.debug:
+            print (index,line)
         for refPool in re.findall("%([^%,]*)\s*,\s*(\d+)%", line):
             # it finds e.g., ('LIST', '2') if you have   ~%LIST,2%   in your .tstl file
             poolName, refIndex = refPool

@@ -18,15 +18,18 @@ pool: <idNum> 4
 pool: <functionId> 4
 
 pool: <varId> 4
-pool: <cvarId> 4
 pool: <mvarId> 4
-pool: <declared> 1
-pool: <type> 4
-pool: <varIds> 4
+pool: <avarId> 4
 
+pool: <declared> 1
+
+pool: <address> 4
+
+pool: <type> 4
 pool: <mappingtype> 4
 pool: <complextype> 4
 pool: <basictype> 4
+
 pool: <mapping> 4
 
 pool: <functionDefinition> 6
@@ -46,7 +49,6 @@ pool: <boolUnaryOp> 4
 pool: <boolBinaryOp> 4
 
 init: <tested> = []
-
 init: <declared> = set([])
 
 <idVal> := 1
@@ -56,11 +58,8 @@ init: <declared> = set([])
 <functionId> := <["g","h","i"]>
 <varId> := "v" + <idNum>
 
-<cvarId> := "cv" + <idNum>
 <mvarId> := "mv" + <idNum>
-
-#<varIds> := ~<varId>
-#<varIds> := <varIds> + ", " + ~<varId>
+<avarId> := "mv" + <idNum>
 
 "input" not in <block,1> -> <functions> := "function f() returns (int) " + <block>
 solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <functions> + chr(10) + chr(10) + <functionDefinition>
@@ -97,8 +96,13 @@ not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<stateme
 
 <statement> := <block>
 
+<avarId,1> not in <declared,1> -> <statement> := "address " + <avarId> + " = " + <address> + ";" ; <declared>.add(<avarId,1>)
+
+<avarId,1> in <declared> -> <statement> := <avarId> + ".transfer(" + <expr> + ");"
+
 <statement> := "continue;"
 <statement> := "break;"
+<statement> := "throw;"
 <statement> := "return " + <expr> + ";"
 <statement> := <simpleStatement> + ";"
 
@@ -156,8 +160,6 @@ not statementsTooLong(<block,1>,<block,2>) -> <statement> := "if (" + <boolexpr>
 <mvarId,1> in <declared> -> <statement> := <mvarId> + "[" + <expr> + "] = " + <expr>
 
 <simpleStatement> := <expr>
-#<simpleStatement> := <type> + " " + <varIds>
-#<simpleStatement> := <type> + " " + <varId> ; <declared>.add(<varId,1>)
 <varId,1> not in <declared,1> -> <simpleStatement> := <type> + " " + <varId> + " = " + <expr> ; <declared>.add(<varId,1>)
 
 <num> := 0
@@ -182,6 +184,8 @@ not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "(" +  ~<boolexpr> + " ? " + ~<e
 
 <expr> := str(<[0..10]>)
 <expr> := str(<num>)
+
+<avarId,1> in <declared> -> <expr> := <avarId> + ".balance"
 
 <mvarId,1> in <declared> -> <expr> := <mvarId> + "[" + ~<expr> + "]"
 
@@ -226,6 +230,14 @@ not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " <= " + <expr>
 not exprTooLong(<expr,1>,<expr,2>) -> <boolexpr> := <expr> + " >= " + <expr>
 not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " == " + <boolexpr>
 not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " != " + <boolexpr>
+
+<avarId,1> in <declared> -> <boolexpr> := <avarId> + ".send(" + <expr> + ");"
+
+<address> := "0x82a978b3f5962a5b0957d9ee9eef472ee55b42f1"
+<address> := "0x7d577a597b2742b498cb5cf0c26cdcd726d39e6e"
+<address> := "0xdceceaf3fc5c0a63d195d69b1a90011b7b19650d"
+<address> := "0x598443f1880ef585b21f1d7585bd0577402861e5"
+<address> := "this"
 
 <functions> := <mapping> + chr(10) + ~<functions>
 

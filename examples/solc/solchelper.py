@@ -20,7 +20,7 @@ def runTest(contract, optimize, verbose=False):
         bin = compile_source(contract,optimize=optimize).values()[0]['bin']
     except SolcError as e:
         if "Compiler error: Stack too deep" in str(e):
-            return ("STACK TOO DEEP", None)
+            return ("STACK TOO DEEP", None, None)
         if "Internal compiler error during compilation" in str(e):
             print (contract)
             print ("INTERNAL COMPILER ERROR WITH optimize =",optimize)
@@ -28,44 +28,52 @@ def runTest(contract, optimize, verbose=False):
             assert False
         if verbose:
             print (e)
-        return ("COMPILATION FAILED", None)
+        return ("COMPILATION FAILED", None, None)
     try:
         txnHash = client.send_transaction(_from = a, data = bytes(bin), value = 0)
     except TransactionFailed as e:
         if verbose:
             print (e)
-        return ("SEND CONTRACT TRANSACTION FAILED", bytes(bin))
+        return ("SEND CONTRACT TRANSACTION FAILED", bytes(bin), None)
     txnReceipt = client.get_transaction_receipt(txnHash)
     contractAddress = txnReceipt['contractAddress']
+
     fsig = encode_data(sha3("f()")[:4])
     try:
         val = client.call(_from = a, to = contractAddress, data = fsig)
     except TransactionFailed as e:
+        balances = {}
+        for a in client.get_accounts():
+            balances[a] = client.get_balance(a)        
         if verbose:
             print ("CALL FAILURE:")
             print (e)
-        return ("CALL FAILED", bytes(bin))
-    return (big_endian_to_int(decode_hex(val)), bytes(bin))
+        return ("CALL FAILED", bytes(bin), balances)
+    balances = {}
+    for a in client.get_accounts():
+        balances[a] = client.get_balance(a)
+    return (big_endian_to_int(decode_hex(val)), bytes(bin), balances)
 
 def test(functions, verbose=False, verboseNoOpt=False, saveContract=True):
+    pid = str(os.getpid())
     if verbose:
         print ("="*50)
     # Expects to receive a set of function definitions with a top-level, no-parameter, function called f()
     contract = "contract c {\n" + functions + "\n}"
     if saveContract:
         i = 0
-        while (os.path.exists("contract." + str(i) + ".sol")):
+        while (os.path.exists("contract." + pid + "." + str(i) + ".sol")):
             i += 1
-        with open("contract." + str(i) + ".sol",'w') as f:
+        with open("contract." + pid + "." + str(i) + ".sol",'w') as f:
             f.write(contract)
-    (resultNoOpt,binNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
+    (resultNoOpt,binNoOpt, balancesNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
     if (binNoOpt != None) and (len(binNoOpt) > (24 * 1024)):
         print ("NON-OPTIMIZED CONTRACT TOO LARGE")
         return
     if resultNoOpt == "STACK TOO DEEP":
         print ("STACK TOO DEEP FOR NON-OPTIMIZING COMPILE")
         return
-    (resultOpt,binOpt) = runTest(contract, True, verbose=verbose)
+    (resultOpt,binOpt, balancesOpt) = runTest(contract, True, verbose=verbose)
     if (binOpt != binNoOpt) and (binOpt != None) and (binNoOpt != None):
         print ("BINARIES DIFFER",len(binOpt),"BYTES VS.",len(binNoOpt),"BYTES NON-OPTIMIZED")
     if resultOpt != resultNoOpt:
@@ -81,9 +89,9 @@ def test(functions, verbose=False, verboseNoOpt=False, saveContract=True):
         assert False
     if saveContract and resultOpt not in ["COMPILATION FAILED"]:
         i = 0
-        while (os.path.exists("goodcontract." + str(i) + ".sol")):
+        while (os.path.exists("goodcontract." + pid + "." + str(i) + ".sol")):
             i += 1
-        with open("goodcontract." + str(i) + ".sol",'w') as f:
+        with open("goodcontract." + pid + "." + str(i) + ".sol",'w') as f:
             f.write(contract)
     if resultOpt not in ["COMPILATION FAILED", "SEND CONTRACT TRANSACTION FAILED", "CALL FAILED"]:
         print ("SUCCESSFULLY TESTED:")
