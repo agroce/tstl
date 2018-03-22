@@ -15,7 +15,8 @@ def fid(functionDef):
 
 def runTest(contract, optimize, verbose=False):
     client = EthTesterClient()
-    a = sorted(client.get_accounts())[0]
+    client.reset_evm()
+    a0 = sorted(client.get_accounts())[0]
     try:
         bin = compile_source(contract,optimize=optimize).values()[0]['bin']
     except SolcError as e:
@@ -30,7 +31,7 @@ def runTest(contract, optimize, verbose=False):
             print (e)
         return ("COMPILATION FAILED", None, None)
     try:
-        txnHash = client.send_transaction(_from = a, data = bytes(bin), value = 0)
+        txnHash = client.send_transaction(_from = a0, data = bytes(bin), value = 0)
     except TransactionFailed as e:
         if verbose:
             print (e)
@@ -38,22 +39,27 @@ def runTest(contract, optimize, verbose=False):
     txnReceipt = client.get_transaction_receipt(txnHash)
     contractAddress = txnReceipt['contractAddress']
 
-    sendVal = 999999999
+    origBalances = {}
+    
+    for a in client.get_accounts():
+        origBalances[a] = client.get_balance(a)        
+    
+    sendVal = 9999999
     
     fsig = encode_data(sha3("f()")[:4])
     try:
-        val = client.call(_from = a, to = contractAddress, data = fsig, value=sendVal)
+        val = client.call(_from = a0, to = contractAddress, data = fsig, value = sendVal)
     except TransactionFailed as e:
         balances = {}
         for a in client.get_accounts():
-            balances[a] = client.get_balance(a)        
+            balances[a] = client.get_balance(a)-origBalances[a]
         if verbose:
             print ("CALL FAILURE:")
             print (e)
         return ("CALL FAILED", bytes(bin), balances)
     balances = {}
     for a in client.get_accounts():
-        balances[a] = client.get_balance(a)
+        balances[a] = client.get_balance(a)-origBalances[a]
     if verbose:
         print (balances)
     return (big_endian_to_int(decode_hex(val)), bytes(bin), balances)
