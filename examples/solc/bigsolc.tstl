@@ -99,7 +99,7 @@ not statementsTooLong(<statements,2>,<statement,1>) -> <statements> := ~<stateme
 <avarId,1> not in <declared,1> -> <statement> := "address " + <avarId> + " = " + <address> + ";" ; <declared>.add(<avarId,1>)
 
 <avarId,1> in <declared> -> <statement> := <avarId> + ".transfer(" + <expr> + ");"
-<avarId,1> in <declared> -> <statement> := <avarId> + ".transfer(" + <num> + ");"
+<avarId,1> in <declared> -> <statement> := <avarId> + ".transfer(" + str(<num>) + ");"
 <avarId,1> in <declared> and <varId,1> in <declared> -> <statement> := <avarId> + ".transfer(" + <varId> + ");"
 
 <statement> := "continue;"
@@ -234,7 +234,7 @@ not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " == " 
 not exprTooLong(<boolexpr,2>,<boolexpr,3>) -> <boolexpr> := <boolexpr> + " != " + <boolexpr>
 
 <avarId,1> in <declared> -> <boolexpr> := <avarId> + ".send(" + <expr> + ");"
-<avarId,1> in <declared> -> <boolexpr> := <avarId> + ".send(" + <num> + ");"
+<avarId,1> in <declared> -> <boolexpr> := <avarId> + ".send(" + str(<num>) + ");"
 <avarId,1> in <declared> and <varId,1> in <declared> -> <boolexpr> := <avarId> + ".send(" + <varId> + ");"
 
 <address> := "0x10a1c1cb95c92ec31d3f22c66eef1d9f3f258c6b"
