@@ -15,7 +15,7 @@ def fid(functionDef):
 
 def runTest(contract, optimize, verbose=False):
     client = EthTesterClient()
-    a = client.get_accounts()[0]
+    a = sorted(client.get_accounts())[0]
     try:
         bin = compile_source(contract,optimize=optimize).values()[0]['bin']
     except SolcError as e:
@@ -31,10 +31,6 @@ def runTest(contract, optimize, verbose=False):
         return ("COMPILATION FAILED", None, None)
     try:
         txnHash = client.send_transaction(_from = a, data = bytes(bin), value = 0)
-        # Right now we use 0 as the value due to eth-testrpc failing all attempts
-        # to send contracts ether; thus, all send/transfers in contracts will fail
-        # which should guarantee balanced are unchanged after execution
-        # Eventually this value will change and we'll test amounts
     except TransactionFailed as e:
         if verbose:
             print (e)
@@ -42,9 +38,11 @@ def runTest(contract, optimize, verbose=False):
     txnReceipt = client.get_transaction_receipt(txnHash)
     contractAddress = txnReceipt['contractAddress']
 
+    sendVal = 999999999
+    
     fsig = encode_data(sha3("f()")[:4])
     try:
-        val = client.call(_from = a, to = contractAddress, data = fsig)
+        val = client.call(_from = a, to = contractAddress, data = fsig, value=sendVal)
     except TransactionFailed as e:
         balances = {}
         for a in client.get_accounts():
@@ -56,6 +54,8 @@ def runTest(contract, optimize, verbose=False):
     balances = {}
     for a in client.get_accounts():
         balances[a] = client.get_balance(a)
+    if verbose:
+        print (balances)
     return (big_endian_to_int(decode_hex(val)), bytes(bin), balances)
 
 def test(functions, verbose=False, verboseNoOpt=False, saveContract=True):
@@ -70,14 +70,14 @@ def test(functions, verbose=False, verboseNoOpt=False, saveContract=True):
             i += 1
         with open("contract." + pid + "." + str(i) + ".sol",'w') as f:
             f.write(contract)
-    (resultNoOpt,binNoOpt, balancesNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
+    (resultNoOpt,binNoOpt,balancesNoOpt) = runTest(contract, False, verbose=verboseNoOpt)
     if (binNoOpt != None) and (len(binNoOpt) > (24 * 1024)):
         print ("NON-OPTIMIZED CONTRACT TOO LARGE")
         return
     if resultNoOpt == "STACK TOO DEEP":
         print ("STACK TOO DEEP FOR NON-OPTIMIZING COMPILE")
         return
-    (resultOpt,binOpt, balancesOpt) = runTest(contract, True, verbose=verbose)
+    (resultOpt,binOpt,balancesOpt) = runTest(contract, True, verbose=verbose)
     if (binOpt != binNoOpt) and (binOpt != None) and (binNoOpt != None):
         print ("BINARIES DIFFER",len(binOpt),"BYTES VS.",len(binNoOpt),"BYTES NON-OPTIMIZED")
     if resultOpt != resultNoOpt:
@@ -91,6 +91,22 @@ def test(functions, verbose=False, verboseNoOpt=False, saveContract=True):
         print ("NON-OPTIMIZED VALUE:",resultNoOpt)
         print ("*"*80)        
         assert False
+    if balancesOpt != balancesNoOpt:
+        print ("*"*80)
+        print ("MISMATCH IN BALANCES:")
+        print ("CONTRACT:")
+        print (contract)
+        print ("="*50)
+        print ("OPTIMIZED BALANCES:")
+        for a in sorted(balancesOpt.keys()):
+            print ("  ",a, balancesOpt[a])
+        print ("="*50)        
+        print ("NON-OPTIMIZED BALANCES (DIFFERING):")
+        for a in sorted(balancesNoOpt.keys()):
+            if balancesNoOpt[a] != balancesOpt[a]:
+                print ("  ",a, balancesNoOpt[a])
+        print ("*"*80)        
+        assert False        
     if saveContract and resultOpt not in ["COMPILATION FAILED"]:
         i = 0
         while (os.path.exists("goodcontract." + pid + "." + str(i) + ".sol")):

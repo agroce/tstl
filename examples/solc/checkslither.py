@@ -63,6 +63,9 @@ while True:
         print "*"*20
         print "FILE:",csort[0][0]
         print len(csort[0][1]),"CHARS"
+        if len(csort[0][1]) < 400:
+            print "CODE:"
+            print csort[0][1]
         print "*"*20
         if len(csort) > 1:
             print "ALSO:",map(lambda x:x[0],csort[1:])
