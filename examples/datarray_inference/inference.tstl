@@ -3,42 +3,25 @@
 
 <@
 def flatten_and_sort(v):
-    if type(v) == list:
-       return sorted(map(flatten_and_sort,v),key=repr)
-    if type(v) == dict:
-       return flatten_and_sort(list(v.items()))
-    if type(v) == tuple:
-       return sorted(map(flatten_and_sort,v),key=repr)
-    return v
+    return (sorted(map(flatten_and_sort,v),key=repr) if type(v) in [list,tuple] else
+                (flatten_and_sort(list(v.items())) if type(v) == dict else v))
+
+def psplit(P):
+    return ([P,1.0-P])
 @>
 
+pool: <P> 3
 pool: <cpts> 3
 pool: <evidence> 3 OPAQUE
-
-pool: <prob> 3
-pool: <psplit> 3
-
 pool: <ename> 3
 pool: <event> 3
-pool: <result> 1
 
-<prob> := 0.1 * <[0..10]>
-<prob,1>-0.01 > 0.0 -> ~<prob> -= 0.01
-<prob,1>+0.01 < 1.0 -> ~<prob> += 0.01
-<prob> := <prob> / 2.0
-
-<psplit> := [<prob>,1.0-<prob,1>]
+<P> := 0.01 * <[0..100]>
 
 <ename> := "E" + str(<[1..5]>)
-#<ename> := "earthquake"
-#<ename> := "alarm"
-#<ename> := "johncalls"
-#<ename> := "marycalls"
-#<ename> := "burglary"
 
-{Exception} <event> := [datarray.DataArray(<psplit>, axes = [<ename>])]
-{Exception} <ename,1> != <ename,2> -> <event> := [datarray.DataArray([[<psplit>],[<psplit>]],[<ename>,<ename>])]
-{Exception} len(set([<ename,1>,<ename,2>,<ename,3>])) == 3 -> <event> := [datarray.DataArray([[[<psplit>],[<psplit>]],[[<psplit>],[<psplit>]]],[<ename>,<ename>,<ename>])]
+{Exception} <event> := [datarray.DataArray(psplit(<P>), axes = [<ename>])]
+{Exception} <ename,1> != <ename,2> -> <event> := [datarray.DataArray([[psplit(<P>)],psplit(<P>)],[<ename>,<ename>])]
 
 <cpts> := []
 ~<cpts>.append(<event>[0])
@@ -46,6 +29,7 @@ pool: <result> 1
 <evidence> := {}
 ~<evidence>.update([(<ename>,0)])
 
-{Exception} (len(<evidence,1>) > 0) and (len(<cpts,1>) > 0) -> <result> := flatten_and_sort(inference_algs.calc_marginals_sumproduct(<cpts>,<evidence>))
+{Exception} print(flatten_and_sort(inference_algs.calc_marginals_simple(<cpts>,<evidence>)))
+{Exception} print(flatten_and_sort(inference_algs.calc_marginals_sumproduct(<cpts>,<evidence>)))
+{Exception} print(flatten_and_sort(inference_algs.calc_marginals_jtree(<cpts>,<evidence>)))
 
-print (<result>); <result,1> = None
