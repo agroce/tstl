@@ -45,7 +45,8 @@ def main():
         print("--noCheck:      do not run property checks")
         print("--logging:      set the logging level for the test")
         print("--verbose:      run with verbose action output")
-        print("--showActions:      run with verbose action output")        
+        print("--hideOpaque:   hide opaque values in verbose actions")
+        print("--showActions:  show all actions")        
         print("--coverage:     report code coverage")        
         print("--internal:     report detailed code coverage information")
         print("--html:         produce HTML report on coverage")
@@ -115,6 +116,8 @@ def main():
     i = 0
     if verbose:
         sut.verbose(True)
+    if "--hideOpaque" in sys.argv:
+        sut.verboseOpaque(False)
     for l in open(file):
         name = l[:-1]
         if name == "<<RESTART>>":
