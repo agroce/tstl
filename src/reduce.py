@@ -44,7 +44,15 @@ def parse_args():
     parser.add_argument('--determinismDelay0', type=float, default=None,                            
                         help='Time delay for INITIAL run in nondeterminism check.')    
     parser.add_argument('--determinismTries', type=int, default=1,                            
-                        help='Number of times to check for nondeterministic behavior.')            
+                        help='Number of times to check for nondeterministic behavior.')
+    parser.add_argument('--checkProcessDeterminism', action='store_true',                            
+                        help='Reduce with respect to test being process deterministic.')
+    parser.add_argument('--iterate',action='store_true',
+                        help='Use iterative approach to check process determinism.')                            
+    parser.add_argument('--probability', type=float, default=None,                            
+                        help='Ensure predicate fails with this probability.')
+    parser.add_argument('--samples', type=int, default=None,                            
+                        help='Use this many samples to check probability.')        
     parser.add_argument('-k', '--keepLast', action='store_true',
                         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument('--uncaught', action='store_true',
@@ -179,6 +187,14 @@ def main():
         pred = (lambda t: sut.nondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
                                                    delay0=config.determinismDelay0))
             
+    if config.checkProcessDeterminism:
+        pred = (lambda t: sut.processNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,iterate=config.iterate))
+
+
+    if config.probability != None:
+        Ppred = pred
+        pred = (lambda t: sut.forceP(t,Ppred,P=config.probabiilty,samples=config.samples))
+        
     print("STARTING WITH TEST OF LENGTH",len(r))
     if not config.noReduce:
         start = time.time()

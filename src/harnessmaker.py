@@ -419,7 +419,8 @@ def main():
     outf.write("import re\n")
     outf.write("import sys\n")
     outf.write("import time\n")
-    outf.write("import glob\n")    
+    outf.write("import glob\n")
+    outf.write("import subprocess\n")    
     outf.write("import os.path\n")        
     outf.write("from itertools import chain, combinations\n")    
 

@@ -815,6 +815,77 @@ def failsAny(self, test, verbose=False, failure=None):
         return False        
     return False    
 
+def forceP(self,t,pred,P=0.5,samples=10):
+    success = 0.0
+    for i in range(0,samples):
+        if pred(t):
+            success += 1.0
+    return (success/samples) >= P
+
+def findProcessNondeterminism(self,t,ignoreExceptions=True,verbose=False,delay=None,tries=1):
+    for j in range(0,tries):
+        try:
+            self.saveTest(t,".tmp.test")
+            cmd = ["tstl_replay",".tmp.test","--hideOpaque","--verbose"]
+            if delay != None:
+                cmd.extend(["--delay",str(delay)])
+            out1 = subprocess.check_output(cmd, universal_newlines=True)
+            out2 = subprocess.check_output(cmd, universal_newlines=True)        
+        finally:
+            os.remove(".tmp.test")
+        out1l = out1.split("\n")
+        out2l = out2.split("\n")    
+        if ignoreExceptions:
+            removeExceptions = (lambda l: "RAISED".find(l) != 0)
+            out1l = list(filter(removeExceptions, out1l))
+            out2l = list(filter(removeExceptions, out2l))
+        if (out1l != out2l):
+            action = -1
+            for i in range(0,min(len(out1l),len(out2l))):
+                if out1l[i].find("STEP") == 0:
+                    action = int(out1l[i].split(":")[0].split("#")[1])+1
+                if out1l[i] != out2l[i]:
+                    if verbose:
+                        print ("="*50)
+                        print ("DIFFERENCE FOUND AT STEP",action)
+                        print (out1l[i])
+                        print ("  VS.")
+                        print (out2l[i])
+                        print ("="*50)                    
+                    break
+            return action
+        else:
+            if verbose:
+                print ("NO DIFFERENCES IN OUTPUT FILES")
+    return -1
+
+def iterateFindProcessNondeterminism(self,t,ignoreExceptions=True,verbose=False,double=False,delay=None,tries=1):
+    i = 1
+    if verbose:
+        print ("TRYING WITH LENGTH:",i)
+    p = self.findProcessNondeterminism(t[:i],ignoreExceptions,verbose,delay,tries)
+    while (p == -1) and (i < len(t)):
+        if not double:
+            i += 1
+        else:
+            i *= 2
+            if (i > len(t)):
+                i = len(t)
+        if verbose:
+            print ("TRYING WITH LENGTH:",i)
+        p = self.findProcessNondeterminism(t[:i],ignoreExceptions,verbose,delay,tries)
+    return p
+
+def processNondeterministic(self,t,ignoreExceptions=True,verbose=False,iterate=False,double=True,delay=None,tries=1):
+    for i in range(0,tries):
+        if not iterate:
+            nd = (self.findProcessNondeterminism(t,ignoreExceptions,verbose,delay) != -1)
+        else:
+            nd = (self.iterateFindProcessNondeterminism(t,ignoreExceptions,verbose,double,delay) != -1)
+        if nd:
+            return True
+    return False
+
 def nondeterministic(self,t,delay=1.0,delay0=None,tries=1):
     """
     Checks if a test behaves nondeterministically (in terms of final non-opaque pool values)
@@ -989,7 +1060,10 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
                     self.restart()
                     newtb = []
                     for a in tb:
-                        if a[1]():
+                        if a[0] == "<<RESTART>>":
+                            newtb.append(a)
+                            self.restart()
+                        elif a[1]():
                             newtb.append(a)
                             try:
                                 a[2]()

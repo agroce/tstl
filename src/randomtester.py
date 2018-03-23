@@ -59,6 +59,10 @@ def parse_args():
                         help='Allow uncaught exceptions in actions.')
     parser.add_argument('--checkDeterminism', action='store_true',
                         help='Check determinism of pool objects.')
+    parser.add_argument('--checkProcessDeterminism', action='store_true',                            
+                        help='Check that tests are process deterministic.')
+    parser.add_argument('--processDeterminismTries', type=int, default = 1,                            
+                        help='Number of tries to catch process nondeterminism.')        
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage (save a test for each newly reached coverage target).")
     parser.add_argument('--readQuick', action='store_true',
@@ -1246,7 +1250,7 @@ def main():
         else:
             testsWithNoNewCoverage += 1
 
-        if config.checkDeterminism and not testFailed:
+        if (config.checkDeterminism or config.checkProcessDeterminism) and not testFailed:
             replayTest = list(sut.test()) # grab the test before quick tests or something else disturbs it
 
         if config.trackMaxCoverage:
@@ -1425,7 +1429,16 @@ def main():
         if (not config.multiple) and (failCount > 0):
             break
 
+        if config.checkProcessDeterminism and not testFailed:
+            print ("CHECKING PROCESS DETERMINISM...")
+            nondeterministic = sut.findProcessNondeterminism(replayTest,verbose=True,tries=config.processDeterminismTries)
+            if nondeterministic != -1:
+                print ("TEST WAS NOT PROCESS DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
+                sut.saveTest(replayTest[:nondeterministic],"ndfail.test")
+                break
+        
         if config.checkDeterminism and not testFailed:
+            print ("CHECKING DETERMINISM...")            
             replayi = 0
             sut.restart()
             nondeterministic = False
