@@ -59,7 +59,7 @@ init: <declared> = set([])
 <varId> := "v" + <idNum>
 
 <mvarId> := "mv" + <idNum>
-<avarId> := "mv" + <idNum>
+<avarId> := "av" + <idNum>
 
 "input" not in <block,1> -> <functions> := "function f() public payable returns (int) " + <block>
 solchelper.fid(<functionDefinition,1>) not in <functions,2> -> <functions> := <functions> + chr(10) + chr(10) + <functionDefinition>
