@@ -140,7 +140,11 @@ def preprocess_angle_brackets(line):
             else:
                 newLine += c
     return newLine
-            
+
+def baseVersion(pname):
+    global poolPrefix
+    pname1 = pname.replace(poolPrefix,"")
+    return "%" + (pname1[:pname1.find("[")]) + "%"
 
 def parse_import_line(line):
     """
@@ -1054,11 +1058,21 @@ def main():
         genCode.append(baseIndent + baseIndent + "__bV = {}\n")        
         genCode.append(baseIndent + baseIndent + "print ('ACTION:',self.prettyName('''" + newC[:-1] + " '''))\n")
         for p in forVerbose:
-            genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
-            genCode.append(baseIndent + baseIndent + "except: pass\n")
+            if baseVersion(p) not in opaqueSet:
+                genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
+                genCode.append(baseIndent + baseIndent + "except: pass\n")
+            else:
+                genCode.append(baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")                
         for p in verboseRef:
-            genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
-            genCode.append(baseIndent + baseIndent + "except: pass\n")            
+            if baseVersion(p.replace("_REF","")) not in opaqueSet:
+                genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
+                genCode.append(baseIndent + baseIndent + "except: pass\n")
+            else:
+                genCode.append(baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")                
+                genCode.append(baseIndent + baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")                
         if not config.noCover:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
             genCode.append(baseIndent + "try: test_before_each(self)\n")
@@ -1115,10 +1129,17 @@ def main():
         if len(forVerbose) > 0:
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions:\n")
             for p in forVerbose:
-                genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")                        
-                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
+                if baseVersion(p) not in opaqueSet:
+                    genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")                        
+                    genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
+                else:
+                    genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "try:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")                        
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "except: pass\n")                    
   
         if not config.noCover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov: self.__cov.stop(); self.__updateCov()\n")
@@ -1140,10 +1161,17 @@ def main():
             
             genCode.append(baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
-                genCode.append(baseIndent + baseIndent + "try:\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n") 
-                genCode.append(baseIndent + baseIndent + "except: pass\n")
+                if baseVersion(p.replace("_REF","")) not in opaqueSet:
+                    genCode.append(baseIndent + baseIndent + "try:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n") 
+                    genCode.append(baseIndent + baseIndent + "except: pass\n")
+                else:
+                    genCode.append(baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n") 
+                    genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")                    
             if postCode and checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
             if config.forceStrongRefExceptionMatch:
@@ -1293,7 +1321,8 @@ def main():
         genCode.append(baseIndent + "self.__enumerateEnabled = True\n")
     else:
         genCode.append(baseIndent + "self.__enumerateEnabled = False\n")        
-    genCode.append(baseIndent + "self.__verboseActions = False\n")    
+    genCode.append(baseIndent + "self.__verboseActions = False\n")
+    genCode.append(baseIndent + "self.__verbosePrintOpaque = True\n")    
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
     genCode.append(baseIndent + "self.__assumptionViolated = None\n")    

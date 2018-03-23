@@ -175,6 +175,8 @@ def parse_args():
                         help="Best coverage test must hit this statement (default None).")    
     parser.add_argument('--verboseActions', action='store_true',
                         help="Make test actions verbose.")
+    parser.add_argument('--verboseNoOpaque', action='store_true',
+                        help="Do not print values of opaque pools.")    
     parser.add_argument('--showActions', action='store_true',
                         help="Show actions as they run")
     parser.add_argument('--noAlphaConvert', action='store_true',
@@ -435,6 +437,8 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         i += 1
     if not config.verboseActions:
         sut.verbose(False)
+    if config.verboseNoOpaque:
+        sut.verboseOpaque(False)        
     if (not newCov) and (not becauseBranchCov) and (not becauseStatementCov):
         if config.localize:
             for s in sut.currStatements():
@@ -738,7 +742,9 @@ def main():
         
     if config.verboseActions:
         sut.verbose(True)
-
+    if config.verboseNoOpaque:
+        sut.verboseOpaque(False)        
+        
     if config.sequencesFromTests:
         testsForSequences = []
         print("READING TESTS...")

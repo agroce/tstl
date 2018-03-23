@@ -692,6 +692,8 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
         cov = []
     for a in test:
         name = a[0]
+        if name == "<<RESTART>>":
+            self.restart()
         guard = a[1]
         act = a[2]
         if verbose:
@@ -856,6 +858,9 @@ def nondeterministic(self,t,delay=1.0,delay0=None,tries=1):
 def verbose(self, bool):
     self.__verboseActions = bool
 
+def verboseOpaque(self, bool):
+    self.__verbosePrintOpaque = bool
+    
 def logOff(self):
     self.__log = None
 
