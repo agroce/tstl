@@ -51,10 +51,12 @@ random tester will automatically import and test.  Both tstl and the
 random tester take a variety of command line options, which --help
 will show.  You can do most of what you'll need with just the commands `tstl`, `tstl_rt`, `tstl_replay`, and `tstl_reduce`.
 
-* `tstl <filename.tstl>` compiles a `.tstl` file into and `sut.py` interface for testing
+* `tstl <filename.tstl>` compiles a `.tstl` file into an `sut.py` interface for testing
 * `tstl_rt` runs random testing on the `sut.py` in the current directory, and dumps any discovered faults into `.test` files
 * `tstl_replay <filename.test>` runs a saved TSTL test, and tells you if it passes or fails; with `--verbose` it provides a fairly detailed trace of the test execution
-* `tstl_reduce <filename.test> <newfilename.tstl>` takes `<filename.test>` and runs reduction and normalization on it, and saves the output as `<newfilename.tstl>`.
+* `tstl_reduce <filename.test> <newfilename.tstl>` takes `<filename.test>` runs reduction and normalization on it to produce a shorter, easier to understand test, and saves the output as `<newfilename.tstl>`.
+
+All of these tools offer many (too many) configuration options; `--help` will produce a list of supported options for all TSTL tools.
 
 Example
 -----
