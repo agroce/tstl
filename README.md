@@ -23,9 +23,7 @@ You can grab a recent (but not always the latest) tstl most easily using pip.  `
     python setup.py install
     # Might need to do a sudo on the last step if not using virtualenv
 
-Note that TSTL expects a Python 2.7 version, is developed/tested that way, and is not well-tested yet with Python 3.0+.
-However, in theory it should work ok, thanks to mrbean-bremen.  Also, you probably want to
-install (pip will do the trick) Ned Batchelder's coverage.py
+ Also, you probably want to install (pip will do the trick) Ned Batchelder's coverage.py
 (https://coverage.readthedocs.io).  Feel free to be careful and use virtualenv or whatever.  If you're planning to test anything that touches the filesystem, or might touch the filesystem, or could do bad things if you found a nasty bug, I suggest using a virtual machine for testing, in fact.
 
 Using TSTL
@@ -35,10 +33,7 @@ TSTL installs a few standard tools: the TSTL compiler itself, `tstl` (technicall
 you really need to do something useful); a random test generator
 `tstl_rt`; a tool for producing standalone tests, `tstl_standalone`;
 a tool for replaying TSTL test files, `tstl_replay`; a tool for
-delta-debugging and normalization of TSTL tests, `tstl_reduce`; and a tool for running a set of tests as a regression, `tstl_regress`.  The
-`tstl_reduce` tool is not essential, since the random tester performs
-delta debugging and alpha conversion by default (you have to add
-`--normalize` to also get normalization of tests from `tstl_rt`, however).
+delta-debugging and normalization of TSTL tests, `tstl_reduce`; and a tool for running a set of tests as a regression, `tstl_regress`.
 
 The simplest usage is to go to a directory with a .tstl file, and
 type:
@@ -57,6 +52,9 @@ will show.  You can do most of what you'll need with just the commands `tstl`, `
 * `tstl_reduce <filename.test> <newfilename.tstl>` takes `<filename.test>` runs reduction and normalization on it to produce a shorter, easier to understand test, and saves the output as `<newfilename.tstl>`.
 
 All of these tools offer many (too many) configuration options; `--help` will produce a list of supported options for all TSTL tools.
+
+Note that TSTL was originally written for Python 2.7 has mostly been developed/tested that way, and is not extremely well-tested yet with Python 3.0+.
+However, it should work ok, thanks to mrbean-bremen. 
 
 Example
 -----
