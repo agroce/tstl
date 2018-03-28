@@ -34,11 +34,11 @@ Using TSTL
 TSTL installs a few standard tools: the TSTL compiler itself, `tstl` (technically all
 you really need to do something useful); a random test generator
 `tstl_rt`; a tool for producing standalone tests, `tstl_standalone`;
-a tool for replaying TSTL test files `tstl_replay`; a tool for
+a tool for replaying TSTL test files, `tstl_replay`; a tool for
 delta-debugging and normalization of TSTL tests, `tstl_reduce`; and a tool for running a set of tests as a regression, `tstl_regress`.  The
 `tstl_reduce` tool is not essential, since the random tester performs
 delta debugging and alpha conversion by default (you have to add
-`--normalize` to also get normalization of tests, however).
+`--normalize` to also get normalization of tests from `tstl_rt`, however).
 
 The simplest usage is to go to a directory with a .tstl file, and
 type:
@@ -48,7 +48,7 @@ type:
 
 The first line compiles mytstlfile.tstl and produces sut.py, which the
 random tester will automatically import and test.  Both tstl and the
-random tester take a variety of command line options, which --help
+random tester take a variety of command line options, which `--help`
 will show.  You can do most of what you'll need with just the commands `tstl`, `tstl_rt`, `tstl_replay`, and `tstl_reduce`.
 
 * `tstl <filename.tstl>` compiles a `.tstl` file into an `sut.py` interface for testing
