@@ -108,7 +108,7 @@ type:
 The first line compiles mytstlfile.tstl and produces sut.py, which the
 random tester will automatically import and test.  Both tstl and the
 random tester take a variety of command line options, which --help
-will show.
+will show.  You can do most of what you'll need with just the commands `tstl`, `tstl_rt`, `tstl_replay`, and `tstl_reduce`.
 
 Example
 -----
@@ -366,7 +366,7 @@ that causes a failure.
 
 Using `--output`, the failing test can be saved to a named file, and with the `standalone.py`
 utility, converted into a completely standalone test case that does
-not require TSTL itself.
+not require TSTL itself.  Without `--output` the test is still saved, but the name is based on the process ID of `tstl_rt`.  In either case, you can easily re-run a saved test, even without converting to a standalone test, using `tstl_replay <testname>`, and reduce it using `tstl_reduce`.  The `--verbose` flag is useful for replay, since it will show you exactly what happens during a test.
 
     ~/tstl/examples/AVL$ tstl_rt --timeout 30 --output failure.test
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
@@ -375,6 +375,8 @@ not require TSTL itself.
     REDUCING...
     ...
     NORMALIZING...
+    ...
+    ~/tstl/examples/AVL$ tstl_replay failure_norm.test --verbose
     ...
     ~/tstl/examples/AVL$ tstl_standalone failure_norm.test failure.py
     ~/tstl/examples/AVL$ python failure_small.py
