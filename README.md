@@ -16,7 +16,6 @@ You can grab a recent tstl most easily using pip.  `pip install tstl` should wor
     git clone https://github.com/agroce/tstl.git
     cd tstl
     python setup.py install
-    # Might need to do a sudo on the last step if not using virtualenv
 
 For code coverage, you will also need to install Ned Batchelder's `coverage.py` tool; `pip install coverage` is all that is needed.
 
