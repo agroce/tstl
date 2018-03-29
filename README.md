@@ -62,6 +62,12 @@ pool: <int> 10
 # int2 = int(math.pow(2,int4))
 # int2 -= 3
 
+# The size of the int pool determines how many different ints can
+# appear in such a test.  You can think of it as TSTL's "working
+# memory."  If you have a pool size of 1, and an action like
+# foo(<int>,<int>) you'll always call foo with the same value for both
+# parameters -- like foo(int0,int0).
+
 property: <int> != 510
 
 # property: indicates a boolean expression that, if it is False,
