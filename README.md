@@ -534,4 +534,4 @@ Who is responsible for TSTL?
 
 
 
-\* Do you actually remember that asterisk way up top?  The footnote is that TSTL _is_ a little language.  However, in another sense, it embeds all of Python which makes it pretty big.  It depends on how you think about it.
+\* Do you actually remember that asterisk way up there?  The footnote is that TSTL _is_ a little language.  However, in another sense, it embeds all of Python which makes it pretty big.  It depends on how you think about it.
