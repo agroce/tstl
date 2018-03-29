@@ -59,7 +59,7 @@ pool: <int> 10
 # int3 += 4
 # int4 += 4
 # int3 = 0
-# int2 = int(math,pow(2,int4))
+# int2 = int(math.pow(2,int4))
 # int2 -= 3
 
 property: <int> != 510
