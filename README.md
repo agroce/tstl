@@ -468,8 +468,14 @@ on Software Testing and Analsysis (ISSTA) 2015 papers at
 http://www.cefns.nau.edu/~adg326/nfm15.pdf and
 http://www.cefns.nau.edu/~adg326/issta15.pdf, with some implementation
 details or concepts that are not present in the more up-to-date and
-complete paper.  There is a more recent paper describing the "normalization"
-idea in more detail, http://www.cefns.nau.edu/~adg326/issta17.pdf, as well as a
+complete paper.  In particular, the NFM paper, "A Little* Language for
+Testing" has a deprecated syntax and other issues, but is the most
+concise explanation of the core TSTL idea: a DSL embedding a full
+programming language,
+designed to make testing (and building testing tools) easy.
+
+There is a more recent paper describing test normalization, a feature
+unique to TSTL, in more detail, http://www.cefns.nau.edu/~adg326/issta17.pdf, as well as a
 tool paper describing how to use TSTL's test manipulation commands 
 (http://www.cefns.nau.edu/~adg326/issta17tool.pdf).
 
