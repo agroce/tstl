@@ -27,21 +27,22 @@ TSTL in a Nutshell
 
 ```
 @import math
+
 pool: <int> 10
 
 <int> := 0
 <int> += 1
 <int> -= 1
-<int> *= 2
-<int> := math.pow(<int>,<int>)
+<int> *= 3
+{OverflowError} <int> := int(math.pow(2,<int>))
 
-property: <int> < 1000
+property: <int> != 510
 ```
 
 2. Type `tstl nutshell.tstl`.
 3. Type `tstl_rt --normalize --output nutshell.test`.
 
-This should (after a brief moment) find a way to violate the property (produce an integer greater than 1,000), find a maximally-simple version of that "failing test", and produce a file `nutshell.test` that contains the test.
+This should, in a few seconds, find a way to violate the property (produce the value 510), find a maximally-simple version of that "failing test", and produce a file `nutshell.test` that contains the test.
 
 4. Type `tstl_replay nutshell.test --verbose`.
 
@@ -50,34 +51,22 @@ This will replay the test you just created.
 Using TSTL
 ------------
 
-TSTL installs a few standard tools: the TSTL compiler itself, `tstl` (technically all
-you really need to do something useful); a random test generator
+TSTL installs a few standard tools: the TSTL compiler itself, `tstl`; a random test generator
 `tstl_rt`; a tool for producing standalone tests, `tstl_standalone`;
 a tool for replaying TSTL test files, `tstl_replay`; a tool for
 delta-debugging and normalization of TSTL tests, `tstl_reduce`; and a tool for running a set of tests as a regression, `tstl_regress`.
 
-The simplest usage is to go to a directory with a .tstl file, and
-type:
-
-    tstl mytstlfile.tstl
-    tstl_rt
-
-The first line compiles mytstlfile.tstl and produces sut.py, which the
-random tester will automatically import and test.  Both tstl and the
-random tester take a variety of command line options, which `--help`
-will show.  You can do most of what you'll need with just the commands `tstl`, `tstl_rt`, `tstl_replay`, and `tstl_reduce`.
+You can do most of what you'll need with just the commands `tstl`, `tstl_rt`, `tstl_replay`, and `tstl_reduce`.
 
 * `tstl <filename.tstl>` compiles a `.tstl` file into an `sut.py` interface for testing
 * `tstl_rt` runs random testing on the `sut.py` in the current directory, and dumps any discovered faults into `.test` files
 * `tstl_replay <filename.test>` runs a saved TSTL test, and tells you if it passes or fails; with `--verbose` it provides a fairly detailed trace of the test execution
 * `tstl_reduce <filename.test> <newfilename.tstl>` takes `<filename.test>` runs reduction and normalization on it to produce a shorter, easier to understand test, and saves the output as `<newfilename.tstl>`.
 
-All of these tools offer many (too many) configuration options; `--help` will produce a list of supported options for all TSTL tools.
+All of these tools offer a large number of configuration options; `--help` will produce a list of supported options for all TSTL tools.
 
-Note that TSTL was originally written for Python 2.7 has mostly been developed/tested that way, and is not extremely well-tested yet with Python 3.0+.
-However, it should work ok, thanks to mrbean-bremen. 
 
-Example
+Extended Example
 -----
 
 The easiest way to understand TSTL may be to examine
@@ -444,6 +433,11 @@ considerable guidance in how to (efficiently) use TSTL in a generic
 testing tool, with TSTL providing an interface to the underlying
 application/library to be tested.
 
+Caveats
+-------
+
+Note that TSTL was originally written for Python 2.7 has mostly been developed/tested that way, and is not extremely well-tested yet with Python 3.0+.
+However, it should work ok, thanks to mrbean-bremen. 
 
 Developer Info
 --------------
