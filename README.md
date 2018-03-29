@@ -79,9 +79,8 @@ pool: <int> 5
 
 property: <int> != 510
 
-# property: indicates a boolean expression that, if it is False,
-# we consider the test to have failed.  In other words, it expresses
-# an invariant of what you are testing.
+# property: expresses an invariant of what we are testing.  If the
+# boolean expression evaluates to False, the test has failed.
 ```
 
 As in normal Python, `#` indicates a comment.  Comment lines are below
@@ -540,7 +539,8 @@ Who is responsible for TSTL?
 
 - The pyfakefs team (mrbean-bremen and jmcgeheeiv on github) really worked with me to test pyfakefs, which resulted in a number of nice improvements to TSTL and to differential testing in particular.  More recently, mrbean-bremen has taken the lead in making TSTL compatible with Python 3, which seems to mostly be done now!
 
-
-
+- Corey Kosak helped turn this README into something that you might
+  actually enjoy reading, and gets to the point much faster than
+  previous versions.
 
 \* Do you actually remember that asterisk way up there?  The footnote is that TSTL _is_ a little language.  However, in another sense, it embeds all of Python which makes it pretty big.  It depends on how you think about it.
