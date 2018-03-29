@@ -31,10 +31,10 @@ To get an idea of how TSTL operates, let's try a toy example.  We will use TSTL 
 
 # A line beginning with an @ is just python code.
 
-pool: <int> 10
+pool: <int> 5
 
-# A pool is a set of values we'll produce (and need) in testing.
-# We need some integers, and we'll let TSTL produce up to 10 of them.
+# A pool is a set of values we'll produce and use in testing.
+# We need some integers, and we'll let TSTL produce up to 5 of them.
 # The name is a variable name, basically, but often will be like a
 # type name, showing how the value is used.
 
@@ -57,17 +57,25 @@ pool: <int> 10
 #
 # int3 = 0
 # int4 = 0
-# int3 += 4
+# int3 *= 3
 # int4 += 4
 # int3 = 0
 # int2 = int(math.pow(2,int4))
 # int2 -= 3
 
+# As you can see, the actions can appear in any order, but every
+# pool variable is first initialized by some := assignment.
+# Similarly, TSTL may use pool variables in an arbitrary order;
+# thus we never see int0 or int1 used, here, by chance.
+
 # The size of the int pool determines how many different ints can
 # appear in such a test.  You can think of it as TSTL's "working
 # memory."  If you have a pool size of 1, and an action like
 # foo(<int>,<int>) you'll always call foo with the same value for both
-# parameters -- like foo(int0,int0).
+# parameters -- like foo(int0,int0).  You should always have a pool
+# size at least as large as the number of times you use a pool in a
+# single action.  More is often better, to give TSTL more ability to
+# bring back in earlier computed values.
 
 property: <int> != 510
 
