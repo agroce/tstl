@@ -2,7 +2,7 @@ TSTL: the Template Scripting Testing Language
 ===========================================
 
 TSTL is a domain-specific language (DSL) and set of tools to support automated generation of tests for software.  This
-implementation targets Python.  You define (in Python) a set of components used to build up a test, and any properties you want to hold for the tested system, and TSTL generates tests for your system.  TSTL support test replay, test reduction, and code coverage analysis, and includes push-button support for some sophisticated test-generation methods.
+implementation targets Python.  You define (in Python) a set of components used to build up a test, and any properties you want to hold for the tested system, and TSTL generates tests for your system.  TSTL supports test replay, test reduction, and code coverage analysis, and includes push-button support for some sophisticated test-generation methods.
 
 TSTL has been used to find and fix real faults in real code, including ESRI's ArcPy (http://desktop.arcgis.com/en/arcmap/latest/analyze/arcpy/what-is-arcpy-.htm), sortedcontainers (https://github.com/grantjenks/sorted_containers),
 gmpy2 (https://github.com/aleaxit/gmpy), sympy (http://www.sympy.org/en/index.html), pyfakefs (https://github.com/jmcgeheeiv/pyfakefs),
@@ -22,6 +22,8 @@ For code coverage, you will also need to install Ned Batchelder's `coverage.py` 
 
 TSTL in a Nutshell
 ------------------
+
+To get an idea of how TSTL operates, let's try a toy example.  We will use TSTL to solve a simple "puzzle" to see if it is possible to generate the integer value 510 using only a few lines of Python code, using only a small set of operations (add 1, subtract 1, multiply by 3, and produce a power of two) starting from 0.
 
 1.  Create a file called `nutshell.tstl` with the following content:
 
