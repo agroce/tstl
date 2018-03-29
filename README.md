@@ -59,7 +59,7 @@ property: <int> != 510
 ```
 
 As in normal Python, `#` indicates a comment.  Comment lines are below
-the line being described.
+the TSTL code being described.
 
 2. Type `tstl nutshell.tstl`.
 3. Type `tstl_rt --normalize --output nutshell.test`.
