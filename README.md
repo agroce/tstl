@@ -133,10 +133,9 @@ Extended Example
 
 The easiest way to understand TSTL may be to examine
 examples/AVL/avlnew.tstl (https://github.com/agroce/tstl/blob/master/examples/AVL/avlnew.tstl), which is a simple example file in the latest
-language format (easier to read) (the file avlblocks.tstl has this
-same harness in a different format).
+language format.
 
-These are pretty full-featured testers for an AVL tree class.  You can
+`avlnew.tstl` is a pretty full-featured testers for an AVL tree class.  You can
 write something very quick and fairly effective with just a few lines
 of code, however:
 
@@ -155,11 +154,11 @@ of code, however:
     <avl>.display()	
 
 This says that there are two kinds of "things" involved in our
-AVL tree implementation testing:  `int` and `avl`.   We define (in
-Python, almost) how to create these things, and what we can do with
-these things, and then TSTL produces sequences that match our
-definition.  It also checks that all AVL trees, at all times, are
-properly balanced.  If we wanted, as in avlnew.tstl, we could also
+AVL tree implementation testing:  `int` and `avl`.   We define, in
+Python, how to create these things, and what we can do with
+these things, and then TSTL produces sequences of actions, that is
+_tests_, that match our definition.  TSTL also checks that all AVL trees, at all times, are
+properly balanced.  If we wanted, as in `avlnew.tstl`, we could also
 make sure that our AVL tree "acts like" a set --- when we insert
 something, we can find that thing, and when we delete something, we
 can no longer find it.
@@ -171,7 +170,7 @@ the code to be tested and automatically provide coverage, static analysis-aided
 testing methods, and proper module management.  Utility code in the standard library,
 on the other hand, can be imported any way you wish.
 
-If we test this (or avlnew.tstl) for 30 seconds, something like this will appear:
+If we test this (or `avlnew.tstl`) for 30 seconds, something like this will appear:
 
 `~/tstl/examples/AVL$ tstl_rt --timeout 30`
 
