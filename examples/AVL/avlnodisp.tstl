@@ -32,7 +32,7 @@ log: POST 1 <avl>.inorder()
 
 # pools are where TSTL stores state of the SUT; REF indicates a pool that is mirrored by a reference implementation
 pool: <int> 4
-pool: <avl> 3 REF
+pool: <avl> 3 REF OPAQUE
 
 # properties are invariants to check after each step of testing
 property: heightOk(<avl>) 
