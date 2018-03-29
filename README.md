@@ -33,8 +33,10 @@ To get an idea of how TSTL operates, let's try a toy example.  We will use TSTL 
 
 pool: <int> 10
 
-# A pool is a set of values we'll produce or need in testing.
+# A pool is a set of values we'll produce (and need) in testing.
 # We need some integers, and we'll let TSTL produce up to 10 of them.
+# The name is a variable name, basically, but often will be like a
+# type name, showing how the value is used.
 
 <int> := 0
 <int> += 4
@@ -46,7 +48,7 @@ pool: <int> 10
 # The big changes from normal Python are:
 # 1. := is like Python assignment with =, but also tells TSTL this
 # assignment _initializes_ a value.
-# 2. <int> is a placeholder meaning _any_ int value we've produced.
+# 2. <int> is a placeholder meaning _any_ int value in the pool.
 # 3. {OverflowError} means that we want to ignore if this line of
 # Python produces an uncaught OverflowError exception.
 
