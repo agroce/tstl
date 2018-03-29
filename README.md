@@ -23,7 +23,7 @@ For code coverage, you will also need to install Ned Batchelder's `coverage.py` 
 TSTL in a Nutshell
 ------------------
 
-To get an idea of how TSTL operates, let's try a toy example.  We will use TSTL to solve a simple "puzzle" to see if it is possible to generate the integer value 510 using only a few lines of Python code, using only a small set of operations (add 1, subtract 1, multiply by 3, and produce a power of two) starting from 0.
+To get an idea of how TSTL operates, let's try a toy example.  We will use TSTL to solve a simple "puzzle" to see if it is possible to generate the integer value 510 using only a few lines of Python code, using only a small set of operations (add 4, subtract 3, multiply by 3, and produce a power of two) starting from 0.
 
 1.  Create a file called `nutshell.tstl` with the following content:
 
@@ -33,8 +33,8 @@ To get an idea of how TSTL operates, let's try a toy example.  We will use TSTL 
 pool: <int> 10
 
 <int> := 0
-<int> += 1
-<int> -= 1
+<int> += 4
+<int> -= 3
 <int> *= 3
 {OverflowError} <int> := int(math.pow(2,<int>))
 
@@ -44,11 +44,19 @@ property: <int> != 510
 2. Type `tstl nutshell.tstl`.
 3. Type `tstl_rt --normalize --output nutshell.test`.
 
-This should, in a few seconds, find a way to violate the property (produce the value 510), find a maximally-simple version of that "failing test", and produce a file `nutshell.test` that contains the test.  If we had omitted the `{OverflowError}` TSTL would either have found a way to produce 510, or (less likely) found a way to produce an overflow in the `pow` call.
+This should, in a few seconds, find a way to violate the property
+(produce the value 510), find a maximally-simple version of that
+"failing test", and produce a file `nutshell.test` that contains the
+test.  If we had omitted the `{OverflowError}` TSTL would either have
+found a way to produce 510, or (less likely) would have found a way to
+produce an overflow in the `pow` call:  either would be considered a failure.
 
 4. Type `tstl_replay nutshell.test --verbose`.
 
 This will replay the test you just created.
+
+5. Comment out (using `#` as usual in Python code) the line `<int> -=
+   3`.  Now try running `tstl_rt`.
 
 Using TSTL
 ------------
