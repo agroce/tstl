@@ -91,8 +91,14 @@ produce an overflow in the `pow` call:  either would be considered a failure.
 
 This will replay the test you just created.
 
-5. Comment out (using `#` as usual in Python code) the line `<int> -=
-   3`.  Now try running `tstl_rt`.
+5. Comment out (using `#` as usual in Python code) the line `<int> -= 3`.  Now try running `tstl_rt`.
+
+The core idea of TSTL is to define a set of possible steps in a test,
+plus properties describing what can be considered a test failure, and
+let TSTL find out if there exists a sequence of actions that will
+produce a test failure.  The actions may be function or method calls,
+or steps that assemble input data (for example, building up a string
+to pass to a parser), or, really, anything you can do with Python.
 
 Using TSTL
 ------------
