@@ -30,7 +30,12 @@ To get an idea of how TSTL operates, let's try a toy example.  We will use TSTL 
 ```
 @import math
 
+# A line beginning with an @ is just python code.
+
 pool: <int> 10
+
+# A pool is a set of values we'll produce or need in testing.
+# We need some integers, and we'll let TSTL produce up to 10 of them.
 
 <int> := 0
 <int> += 4
@@ -38,8 +43,23 @@ pool: <int> 10
 <int> *= 3
 {OverflowError} <int> := int(math.pow(2,<int>))
 
+# These are actions, basically single lines of Python code.
+# The big changes from normal Python are:
+# 1. := is like Python assignment with =, but also tells TSTL this
+# assignment _initializes_ a value.
+# 2. <int> is a placeholder meaning _any_ int value we've produced.
+# 3. {OverflowError} means that we want to ignore if this line of
+# Python produces an uncaught OverflowError exception.
+
 property: <int> != 510
+
+# property: indicates a boolean expression that, if it is False,
+# we consider the test to have failed.  In other words, it expresses
+# an invariant of what you are testing.
 ```
+
+As in normal Python, `#` indicates a comment.  Comment lines are below
+the line being described.
 
 2. Type `tstl nutshell.tstl`.
 3. Type `tstl_rt --normalize --output nutshell.test`.
