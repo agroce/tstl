@@ -55,7 +55,7 @@ pool: <int> 10
 # test would be:
 #
 # int3 = 0
-# int4 =0
+# int4 = 0
 # int3 += 4
 # int4 += 4
 # int3 = 0
