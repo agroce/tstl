@@ -1,30 +1,24 @@
 TSTL: the Template Scripting Testing Language
 ===========================================
 
-TSTL is a "little"* language that makes it easy to test software.  This
-implementation targets Python.  There is also a (beta) Java version,
-at https://github.com/flipturnapps/TSTL-Java.
+TSTL is a domain-specific language (DSL) and set of tools to support automated generation of tests for software.  This
+implementation targets Python.  You define (in Python) a set of components used to build up a test, and any properties you want to hold for the tested system, and TSTL generates tests for your system.  TSTL support test replay, test reduction, and code coverage analysis, and includes push-button support for some sophisticated test-generation methods.
 
-TSTL produces a simple, universal interface for test generators to use
--- it essentially turns a definition of valid tests into a graph of system states with test actions as the transitions; you, the tester, can largely ignore this, and view TSTL as a testing tool supporting test generation, test replay, test reduction, and code coverage analysis, with some sophisticated additions to pure random testing to provide effective testing.
-
-TSTL is not purely an academic toy: it's been used to find (and, thus, usually, fix) 
-real faults in real code, including ESRI's ArcPy (http://desktop.arcgis.com/en/arcmap/latest/analyze/arcpy/what-is-arcpy-.htm), sortedcontainers (https://github.com/grantjenks/sorted_containers),
+TSTL has been used to find and fix real faults in real code, including ESRI's ArcPy (http://desktop.arcgis.com/en/arcmap/latest/analyze/arcpy/what-is-arcpy-.htm), sortedcontainers (https://github.com/grantjenks/sorted_containers),
 gmpy2 (https://github.com/aleaxit/gmpy), sympy (http://www.sympy.org/en/index.html), pyfakefs (https://github.com/jmcgeheeiv/pyfakefs),
 Python itself (https://bugs.python.org/issue27870), the Solidity compiler (https://github.com/ethereum/solidity), a Solidity static analysis tool, and even OS X.
 
 Installation
 ------------
 
-You can grab a recent (but not always the latest) tstl most easily using pip.  `pip install tstl` should work fine.  If you want something even more recent you can:
+You can grab a recent tstl most easily using pip.  `pip install tstl` should work fine.  If you want something even more recent you can:
 
     git clone https://github.com/agroce/tstl.git
     cd tstl
     python setup.py install
     # Might need to do a sudo on the last step if not using virtualenv
 
- Also, you probably want to install (pip will do the trick) Ned Batchelder's coverage.py
-(https://coverage.readthedocs.io).  Feel free to be careful and use virtualenv or whatever.  If you're planning to test anything that touches the filesystem, or might touch the filesystem, or could do bad things if you found a nasty bug, I suggest using a virtual machine for testing, in fact.
+For code coverage, you will also need to install Ned Batchelder's `coverage.py` tool; `pip install coverage` is all that is needed.
 
 Using TSTL
 ------------
@@ -446,6 +440,8 @@ Who is responsible for TSTL?
 - Pranjal Mittal contributed a number of critical elements, including the initial effort to prepare TSTL for a pip release as a useful tool, and has helped publicize TSTL.
 
 - Pooria Azimi added the `<int,1>` notation, which turns out to be one of the most important changes, and eliminated the need for the exceedingly awkward way of handling binding via Python functions and commit point based guards.  Without this, you really don't have a useful TSTL.
+
+- Kevin Kellar developed a (beta) Java version of TSTL: https://github.com/flipturnapps/TSTL-Java.
 
 - My (Alex's) other graduate students (Amin Alipour, Rahul Gopinath, Arpit Christi, Chaoqiang Zhang, Shalini Shamasunder) and almost-mine graduate student (Iftekhar Ahmed) contributed to the general intellectual climate in which TSTL was born.
 
