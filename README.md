@@ -51,6 +51,17 @@ pool: <int> 10
 # 3. {OverflowError} means that we want to ignore if this line of
 # Python produces an uncaught OverflowError exception.
 
+# A test in TSTL is a sequence of actions.  So, given the above, one
+# test would be:
+#
+# int3 = 0
+# int4 =0
+# int3 += 4
+# int4 += 4
+# int3 = 0
+# int2 = int(math,pow(2,int4))
+# int2 -= 3
+
 property: <int> != 510
 
 # property: indicates a boolean expression that, if it is False,
