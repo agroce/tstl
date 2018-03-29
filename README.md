@@ -42,7 +42,7 @@ property: <int> != 510
 2. Type `tstl nutshell.tstl`.
 3. Type `tstl_rt --normalize --output nutshell.test`.
 
-This should, in a few seconds, find a way to violate the property (produce the value 510), find a maximally-simple version of that "failing test", and produce a file `nutshell.test` that contains the test.
+This should, in a few seconds, find a way to violate the property (produce the value 510), find a maximally-simple version of that "failing test", and produce a file `nutshell.test` that contains the test.  If we had omitted the `{OverflowError}` TSTL would either have found a way to produce 510, or (less likely) found a way to produce an overflow in the `pow` call.
 
 4. Type `tstl_replay nutshell.test --verbose`.
 
@@ -111,7 +111,8 @@ on the other hand, can be imported any way you wish.
 
 If we test this (or avlnew.tstl) for 30 seconds, something like this will appear:
 
-~/tstl/examples/AVL$ tstl_rt --timeout 30
+`~/tstl/examples/AVL$ tstl_rt --timeout 30`
+
 
     Random testing using config=Config(swarmSwitch=None, verbose=False, fastQuickAnalysis=False, failedLogging=None, maxtests=-1, greedyStutter=False, exploit=None, seed=None, generalize=False, localize=False, uncaught=False, speed='FAST', internal=False, normalize=False, highLowSwarm=None, replayable=False, essentials=False, quickTests=False, coverfile='coverage.out', uniqueValuesAnalysis=False, swarm=False, ignoreprops=False, total=False, swarmLength=None, noreassign=False, profile=False, full=False, multiple=False, relax=False, swarmP=0.5, stutter=None, running=False, compareFails=False, nocover=False, swarmProbs=None, gendepth=None, quickAnalysis=False, exploitCeiling=0.1, logging=None, html=None, keep=False, depth=100, throughput=False, timeout=30, output=None, markov=None, startExploit=0)
       12 [2:0]
