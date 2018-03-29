@@ -20,6 +20,33 @@ You can grab a recent tstl most easily using pip.  `pip install tstl` should wor
 
 For code coverage, you will also need to install Ned Batchelder's `coverage.py` tool; `pip install coverage` is all that is needed.
 
+TSTL in a Nutshell
+------------------
+
+1.  Create a file called `nutshell.tstl` with the following content:
+
+```
+@import math
+pool: <int> 10
+
+<int> := 0
+<int> += 1
+<int> -= 1
+<int> *= 2
+<int> := math.pow(<int>,<int>)
+
+property: <int> < 1000
+```
+
+2. Type `tstl nutshell.tstl`.
+3. Type `tstl_rt --normalize --output nutshell.test`.
+
+This should (after a brief moment) find a way to violate the property (produce an integer greater than 1,000), find a maximally-simple version of that "failing test", and produce a file `nutshell.test` that contains the test.
+
+4. Type `tstl_replay nutshell.test --verbose`.
+
+This will replay the test you just created.
+
 Using TSTL
 ------------
 
