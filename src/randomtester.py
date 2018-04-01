@@ -59,6 +59,8 @@ def parse_args():
                         help='Allow uncaught exceptions in actions.')
     parser.add_argument('--checkDeterminism', action='store_true',
                         help='Check determinism of pool objects.')
+    parser.add_argument('--determinismTries', type=int, default = 1,                            
+                        help='Number of tries to catch nondeterminism.')            
     parser.add_argument('--checkProcessDeterminism', action='store_true',                            
                         help='Check that tests are process deterministic.')
     parser.add_argument('--processDeterminismTries', type=int, default = 1,                            
@@ -653,24 +655,6 @@ def printStatus(elapsed,step=None):
     print(nops, "TOTAL ACTIONS (" + str(nops/elapsed) + "/s)")
     sys.stdout.flush()
 
-def trajectoryItem():
-    global sut
-    ss = sut.shallowState()
-    o = sut.opaque()
-    ti = {}
-    for (name, vals) in ss:
-        if name in o:
-            continue
-        if name.replace("_REF","") in o: # Assume if pool is opaque, so is reference
-            continue
-        ti[name] = {}
-        for v in vals:
-            try:
-                ti[name][v] = copy.deepcopy(vals[v])
-            except:
-                ti[name][v] = "UNABLE TO COPY"
-    return ti
-    
 def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest, failCloud, allClouds
     global failFileCount
@@ -1102,7 +1086,7 @@ def main():
             stepOk = sut.safely(a)
             
             if config.checkDeterminism:
-                trajectory.append(trajectoryItem())
+                trajectory.append(sut.trajectoryItem())
                 
             if config.generateLOC != None:
                 sys.settrace(None)
@@ -1433,37 +1417,49 @@ def main():
             print ("CHECKING PROCESS DETERMINISM...")
             nondeterministic = sut.findProcessNondeterminism(replayTest,verbose=True,tries=config.processDeterminismTries)
             if nondeterministic != -1:
+                if not config.noAlphaConvert:
+                    alphaReplay = sut.alphaConvert(replayTest[:nondeterministic])
+                else:
+                    alphaReplay = list(replayTest[:nondeterministic])
+                sut.prettyPrintTest(replayTest[:nondeterministic])
                 print ("TEST WAS NOT PROCESS DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
-                sut.saveTest(replayTest[:nondeterministic],"ndfail.test")
+                sut.saveTest(alphaReplay,"ndfail.test")
                 break
         
         if config.checkDeterminism and not testFailed:
-            print ("CHECKING DETERMINISM...")            
-            replayi = 0
-            sut.restart()
-            nondeterministic = False
-            for s in replayTest:
-                sut.safely(s)
-                ti = trajectoryItem()
-                try:
-                    if not (ti == trajectory[replayi]):
-                        for p in ti:
-                            if ti[p] != trajectory[replayi][p]:
-                                for pv in ti[p]:
-                                    if ti[p][pv] != trajectory[replayi][p][pv]:
-                                        sut.prettyPrintTest(replayTest[:replayi+1])
-                                        print ("MISMATCH IN REPLAY VALUE:")
-                                        print ("   ",sut.prettyName(p+"["+str(pv)+"]"),":",ti[p][pv],"VS.",trajectory[replayi][p][pv])
-                        nondeterministic = True
-                        break
-                except KeyboardInterrupt as e:
-                    raise e
-                except Exception as e:
-                    print ("WARNING:",e)
-                replayi += 1
+            print ("CHECKING DETERMINISM...")
+            for replayTry in range(0,config.determinismTries):
+                replayi = 0
+                sut.restart()
+                nondeterministic = False
+                for s in replayTest:
+                    sut.safely(s)
+                    ti = sut.trajectoryItem()
+                    try:
+                        if not (ti == trajectory[replayi]):
+                            for p in ti:
+                                if ti[p] != trajectory[replayi][p]:
+                                    for pv in ti[p]:
+                                        if ti[p][pv] != trajectory[replayi][p][pv]:
+                                            if not config.noAlphaConvert:                                        
+                                                alphaReplay = sut.alphaConvert(replayTest[:replayi+1])
+                                            else:
+                                                alphaReplay = list(replayTest[:replayi+1])
+                                            sut.prettyPrintTest(replayTest[:replayi+1])
+                                            print ("MISMATCH IN REPLAY VALUE:")
+                                            print ("   ",sut.prettyName(p+"["+str(pv)+"]"),":",ti[p][pv],"VS.",trajectory[replayi][p][pv])
+                            nondeterministic = True
+                            break
+                    except KeyboardInterrupt as e:
+                        raise e
+                    except Exception as e:
+                        print ("WARNING:",e)
+                    replayi += 1
+                if nondeterministic:
+                    print ("TEST WAS NOT DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
+                    sut.saveTest(alphaReplay,"ndfail.test")
+                    break
             if nondeterministic:
-                print ("TEST WAS NOT DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
-                sut.saveTest(replayTest[:replayi+1],"ndfail.test")
                 break
                 
         if (config.stopWhenNoCoverage != None):

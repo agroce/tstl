@@ -886,6 +886,48 @@ def processNondeterministic(self,t,ignoreExceptions=True,verbose=False,iterate=F
             return True
     return False
 
+def trajectoryItem(self):
+    ss = self.shallowState()
+    o = self.opaque()
+    ti = {}
+    for (name, vals) in ss:
+        if name in o:
+            continue
+        if name.replace("_REF","") in o: # Assume if pool is opaque, so is reference
+            continue
+        ti[name] = {}
+        for v in vals:
+            try:
+                ti[name][v] = copy.deepcopy(vals[v])
+            except:
+                ti[name][v] = "UNABLE TO COPY"
+    return ti
+
+def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False):
+    """
+    Checks if a test behaves nondeterministically (in terms of all non-opaque pool values produced)
+    under an optional timing change.  Default is to run with no delay for an initial capture
+    of state, then run with a 1 second delay, and only run once.
+    """
+    trajectory = []
+    self.restart()
+    for s in t:
+        self.safely(s)
+        trajectory.append(self.trajectoryItem())
+        if delay0 != None:        
+            time.sleep(delay0)        
+    for i in range(0,tries):
+        pos = 0
+        self.restart()
+        for s in t:
+            self.safely(s)
+            if (self.trajectoryItem()) != (trajectory[pos]):
+                return True            
+            if delay != None:
+                time.sleep(delay)
+            pos += 1
+    return False
+
 def nondeterministic(self,t,delay=1.0,delay0=None,tries=1):
     """
     Checks if a test behaves nondeterministically (in terms of final non-opaque pool values)
