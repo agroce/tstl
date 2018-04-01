@@ -3,6 +3,7 @@ import subprocess
 import sys
 import os
 import time
+import datetime
 
 dnull = open(os.devnull,'w')
 
@@ -29,13 +30,22 @@ while True:
             continue
         else:
             handled.append(c)
+            print "FILE:",c
+            print "AT",(datetime.datetime.now()).ctime()
         with open(c) as f:
             input = f.read()
         with open("fuzz.ast.json",'w') as f:
+            print "COMPILING...",
+            st = time.time()
             subprocess.call(["solc",c,"--ast-json"],stdout=f,stderr=dnull)
+            print time.time()-st,"SECONDS"
+            sys.stdout.flush()
         with open("slither.out",'w') as f:
-            with open("slither.err",'w') as ef:        
+            with open("slither.err",'w') as ef:
+                print "ANALYZING...",
                 subprocess.call(["python","/Users/alex/slither/slither.py","fuzz.ast.json","--solc-ast","--debug"],stdout=f,stderr=ef)
+                print time.time()-st,"SECONDS"
+                sys.stdout.flush()
         with open("slither.out",'r') as f:
             with open("slither.err",'r') as ef:
                 output = (f.read(),ef.read())
