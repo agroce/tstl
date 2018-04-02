@@ -166,9 +166,11 @@ def parse_args():
     parser.add_argument('--stopWhenStatements', type=int, default=None,
                         help="Stop when statement coverage exceeds a given target value (default None).")
     parser.add_argument('--stopWhenNoCoverage', type=int, default=None,
-                        help="Stop there has been no additional coverage for this many tests (default None).")
+                        help="Stop when there has been no additional coverage for this many tests (default None).")
     parser.add_argument('--stopTestWhenNoCoverage', type=int, default=None,
-                        help="Stop test when there has been no additional coverage for this many steps (default None).")    
+                        help="Stop test when there has been no additional coverage for this many steps (default None).")
+    parser.add_argument('--stopTestWhenThroughputBelow', type=float, default=None,
+                        help="Stop test when throughput (actions/sec) falls below threshold (default None).")
     parser.add_argument('--stopWhenHitBranch', type=str, default=None,
                         help="Stop testing when given branch is hit (default None).")
     parser.add_argument('--stopWhenHitStatement', type=str, default=None,
@@ -652,11 +654,12 @@ def printStatus(elapsed,step=None):
             print("(no cov+ for",testsWithNoNewCoverage,"tests)", end=' ')
     if (config.exploit != None) and (config.verbose or config.verboseExploit):
         print("[ POOLS: full",len(fullPool),"active",len(activePool),"]", end=' ')
-    print(nops, "TOTAL ACTIONS (" + str(nops/elapsed) + "/s)")
+    print(nops, "TOTAL ACTIONS (" + str(round(nops/elapsed,2)) + "/s)", end=' ')
+    print("(test " + str(round(thisOps/thisElapsed,2)) + "/s)")
     sys.stdout.flush()
 
 def main():
-    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest, failCloud, allClouds
+    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest, failCloud, allClouds,thisOps,thisElapsed
     global failFileCount
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
     global hintPool, hintValueCounts
@@ -925,6 +928,7 @@ def main():
     neverExploited = True
         
     while (config.maxTests == -1) or (ntests < config.maxTests):
+
         if config.checkDeterminism:
             trajectory = []
         
@@ -985,6 +989,9 @@ def main():
         if config.sequencesFromTests:
             currentSequence = R.choice(sequences)
             currentSequencePos = 0
+
+        thisStart = time.time()
+        thisOps = 0
             
         for s in range(0,config.depth):
             if config.verbose:
@@ -1049,6 +1056,7 @@ def main():
                 
             guardTime += time.time()-startGuard
             elapsed = time.time() - start
+            thisElapsed = time.time() - thisStart           
             if elapsed > config.timeout:
                 print("STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test()))
                 break
@@ -1097,6 +1105,7 @@ def main():
                     actLOCs[aclass].append(lastLOCs)
             thisOpTime = time.time()-startOp
             nops += 1
+            thisOps += 1
             if config.profile:
                 profileTime[sut.actionClass(a)] += thisOpTime
                 profileCount[sut.actionClass(a)] += 1
@@ -1135,6 +1144,7 @@ def main():
                 break
             
             elapsed = time.time() - start
+            thisElapsed = time.time() - thisStart                       
 
             if config.running:
                 if sut.newBranches() != set([]):
@@ -1214,6 +1224,13 @@ def main():
                 print("STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test()))
                 break
 
+            if config.stopTestWhenThroughputBelow != None:
+                if thisOps > 10: # initial counts are likely to be inaccurate
+                    throughput = (thisOps/thisElapsed)
+                    if throughput < config.stopTestWhenThroughputBelow:
+                        print("STOPPING TEST DUE TO LOW THROUGHPUT OF",throughput," ACTIONS/S; TERMINATED AT LENGTH",len(sut.test()))
+                        break
+            
             if config.stopTestWhenNoCoverage:
                 if anyNewCoverage:
                     stepsWithNoNewCoverage = 0
