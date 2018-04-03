@@ -6,7 +6,7 @@
 <@
 
 IS_WIN = sys.platform == 'win32'
-ROOT_PATH = 'R:\\test' if IS_WIN else '/Volumes/ramdisk/test'
+ROOT_PATH = 'R:\\test' if IS_WIN else '/Volumes/ramdisk/test/'
 
 def newFakeOS():
     fs = pyfakefs.fake_filesystem.FakeFilesystem()
