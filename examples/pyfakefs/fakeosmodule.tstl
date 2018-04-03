@@ -6,7 +6,10 @@
 <@
 
 IS_WIN = sys.platform == 'win32'
-ROOT_PATH = 'R:\\test' if IS_WIN else '/Volumes/ramdisk/test/'
+ROOT_PATH = 'R:\\test' if IS_WIN else '/Volumes/ramdisk/test'
+
+def notRoot(path):
+    return os.path.normpath(path) != os.path.normpath(ROOT_PATH)
 
 def newFakeOS():
     fs = pyfakefs.fake_filesystem.FakeFilesystem()
@@ -113,14 +116,14 @@ finally: <file>.close()
 
 {OSError} ~<os>.remove(<path>)
 
-{OSError} <path,1> != ROOT_PATH -> ~<os>.rmdir(<path>)
+{OSError} notRoot(<path,1>) -> ~<os>.rmdir(<path>)
 # Guard needed so you don't delete the "root" of the tested FS
 {OSError} len(os.listdir(ROOT_PATH)) > 1 -> ~<os>.removedirs(<path>)
 
 {IOError,OSError} sorted(~<os>.listdir(<path>))
 
-{OSError} <path,1> != ROOT_PATH -> <stat> := ~<os>.stat(<path>)
-{OSError} <path,1> != ROOT_PATH -> <stat> := ~<os>.lstat(<path>)
+{OSError} notRoot(<path,1>) -> <stat> := ~<os>.stat(<path>)
+{OSError} notRoot(<path,1>) -> <stat> := ~<os>.lstat(<path>)
 
 # Not testing mode equivalence for now
 #<stat>.st_mode
