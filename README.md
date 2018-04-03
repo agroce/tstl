@@ -436,6 +436,23 @@ Adding `--reducePool` sometimes also improves the performance of this method.
 
 You can tune the exploit and mutate parameters to see if they improve results.  You can even combine lines-of-code bias with the `exploit` approach and/or swarm testing.  Sometimes testing benefits from having all three!  Unfortunately, using `--exploit` does mean you can't get away with `--noCover` to avoid the overhead of computing code coverage.
 
+Other Useful Features
+-----
+
+TSTL supports automated fault localization.  If you have a harness that finds
+bugs, you might get some insight into the nature of those bugs by
+running something like:
+
+`tstl-rt --localize --multiple <other options>`
+
+This will run TSTL for an hour (default), generate a number of failing
+test cases (if your bug can be found relatively easily in an hour),
+and then report on the 20 most-likely-faulty statements and branches
+in the code under test.   Some of this code may be involved in things
+like printing assertion values, or error handling for the fault, but
+there's a good chance you'll find the buggy code in the localization
+results, in our experience.
+
 TSTL and Hypothesis
 ------------------------
 
