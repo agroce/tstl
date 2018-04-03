@@ -71,6 +71,8 @@ def parse_args():
                         help="Read existing quick tests (and add to them if producing quick tests).")        
     parser.add_argument('--localize', action='store_true',
                         help="Produce fault localization (Ochai formula) if there are any failing tests.")
+    parser.add_argument('--localizeTop', type=int, default=20,
+                        help="Show top n localization results (default=20).")    
     parser.add_argument('--full', action='store_true',
                         help="Don't reduce -- report full failing test.")
     parser.add_argument('-l', '--logging', type=int, default=None,
@@ -1691,15 +1693,17 @@ def main():
             if denom == 0.0:
                 continue            
             scoresB[b] = localizeBFail[b]/denom
-        sortedS = sorted(list(scoresS.keys()),key = lambda x:scoresS[x])
-        sortedB = sorted(list(scoresB.keys()),key = lambda x:scoresB[x])
-        print("FAULT LOCALIZATION RESULTS:")
-        for s in sortedS:
+        sortedS = sorted(list(scoresS.keys()),key = lambda x:scoresS[x],reverse=True)
+        sortedB = sorted(list(scoresB.keys()),key = lambda x:scoresB[x],reverse=True)
+        print("FAULT LOCALIZATION RESULTS (TOP",config.localizeTop," RESULTS)")
+        print("STATEMENTS:")
+        for s in sortedS[:config.localizeTop]:
             if scoresS[s] > 0.0:
-                print(s, scoresS[s])
-        for b in sortedB:
+                print("  ",s, scoresS[s])
+        print("BRANCHES:")
+        for b in sortedB[:config.localizeTop]:
             if scoresB[b] > 0.0:
-                print(b, scoresB[b])            
+                print("  ",b, scoresB[b])            
             
     if not config.noCover:
         print(len(sut.allBranches()),"BRANCHES COVERED")

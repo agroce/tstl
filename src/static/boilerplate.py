@@ -95,6 +95,26 @@ def prettyPrintTest(self, test, columns=80):
         print(self.prettyName(s).ljust(columns - len(steps),' '),steps)
         i += 1
 
+def prettyPrintRemoved(self, test1, test2, columns=80):
+    # Assumption is that test2 is test1 with parts removed!
+    i = 0
+    j = 0
+    for a in test1:
+        s = a[0]
+        if i < len(test2):
+            sdiff = test2[i][0]
+        else:
+            sdiff = None
+        if s != sdiff:
+            steps = ""
+            if len(a) > 3:  # NOW ALLOW ANNOTATIONS!
+                steps += "  ;;; " + a[3]
+            print(self.prettyName(s).ljust(columns - len(steps),' '),steps)
+            j += 1
+        else:
+            i += 1
+            j = i
+
 def captureReplay(self, test):
     captured = ""
     for step in test:
@@ -815,6 +835,13 @@ def failsAny(self, test, verbose=False, failure=None):
         return False        
     return False    
 
+def P(self,t,pred,samples=10):
+    success = 0.0
+    for i in range(0,samples):
+        if pred(t):
+            success += 1.0
+    return (success/samples) 
+
 def forceP(self,t,pred,P=0.5,samples=10):
     success = 0.0
     for i in range(0,samples):
@@ -1028,6 +1055,8 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
 
     if amplify:
         currBest = pred(test)
+        if verbose:
+            print ("Starting best value:",currBest)
 
     if findLocations:
         ntest = []
@@ -1085,11 +1114,16 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
                 if v > currBest:
                     currBest = v
                     v = True
+                    if verbose:
+                        print ("New best value:",currBest)                    
                 else:
                     v = False
             if v:
                 if stopFound:
                     return (tc + addLast)
+                if verbose == "SHOW":
+                    print ("REMOVED:")
+                    self.prettyPrintRemoved(tb,tc)
                 tb = tc
                 if not noResetSplit:
                     n = 2
@@ -1116,6 +1150,9 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
                     if verbose:
                         if len(newtb) < len(tb):
                             print("Guard pruning reduced test length to",len(newtb+addLast))
+                            if verbose == "SHOW":
+                                print ("REMOVED:")
+                                self.prettyPrintRemoved(tb,newtb)                            
                     tb = newtb
                 if tryFast:
                     n = len(tb)
