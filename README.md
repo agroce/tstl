@@ -443,15 +443,17 @@ TSTL supports automated fault localization.  If you have a harness that finds
 bugs, you might get some insight into the nature of those bugs by
 running something like:
 
-`tstl-rt --localize --multiple <other options>`
+`tstl-rt --localize --multiple`
 
-This will run TSTL for an hour (default), generate a number of failing
+This will run TSTL for an hour, generate a number of failing
 test cases (if your bug can be found relatively easily in an hour),
 and then report on the 20 most-likely-faulty statements and branches
 in the code under test.   Some of this code may be involved in things
 like printing assertion values, or error handling for the fault, but
 there's a good chance you'll find the buggy code in the localization
-results, in our experience.
+results, in our experience.  In fact, a five minute run will suffice
+for good localization, often, is five minutes is sufficient to find
+your bug a few times.
 
 TSTL and Hypothesis
 ------------------------
@@ -518,7 +520,7 @@ application/library to be tested.
 Caveats
 -------
 
-Note that TSTL was originally written for Python 2.7 has mostly been developed/tested that way, and is not extremely well-tested yet with Python 3.0+.
+Note that TSTL was originally written for Python 2.7, has mostly been developed/tested that way, and is not extremely well-tested yet with Python 3.0+.
 However, it should work ok, thanks to mrbean-bremen. 
 
 Developer Info
