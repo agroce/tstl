@@ -842,12 +842,17 @@ def P(self,t,pred,samples=10):
             success += 1.0
     return (success/samples) 
 
-def forceP(self,t,pred,P=0.5,samples=10):
-    success = 0.0
-    for i in range(0,samples):
-        if pred(t):
-            success += 1.0
-    return (success/samples) >= P
+def forceP(self,t,pred,P=0.5,samples=10,replications=1):
+    while (replications > 0):
+        success = 0.0
+        for i in range(0,samples):
+            if pred(t):
+                success += 1.0
+        replications -= 1
+        if replications == 0:
+            return (success/samples) >= P
+        elif (success/samples) < P:
+            return False
 
 def findProcessNondeterminism(self,t,ignoreExceptions=True,verbose=False,delay=None,tries=1):
     for j in range(0,tries):
