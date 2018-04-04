@@ -1141,9 +1141,13 @@ def main():
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")                        
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "except: pass\n")                    
-  
+
+
         if not config.noCover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov: self.__cov.stop(); self.__updateCov()\n")
+
+        if assumeSet != []:
+            genCode.append(baseIndent + baseIndent + "self.checkAssumptions()\n")                    
 
         if checkRefRaised:
             genCode.append(baseIndent + "refRaised = None\n")
