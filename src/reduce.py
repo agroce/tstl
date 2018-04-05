@@ -51,8 +51,10 @@ def parse_args():
                         help='Use iterative approach to check process determinism.')                            
     parser.add_argument('--probability', type=float, default=None,                            
                         help='Ensure predicate fails with this probability.')
-    parser.add_argument('--samples', type=int, default=None,                            
-                        help='Use this many samples to check probability.')        
+    parser.add_argument('--samples', type=int, default=10,                            
+                        help='Use this many samples to check probability (default 10).')
+    parser.add_argument('--replications', type=int, default=1,                            
+                        help='Use this many replications to check probability (default 1).')            
     parser.add_argument('-k', '--keepLast', action='store_true',
                         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument('--uncaught', action='store_true',
@@ -193,7 +195,7 @@ def main():
 
     if config.probability != None:
         Ppred = pred
-        pred = (lambda t: sut.forceP(t,Ppred,P=config.probabiilty,samples=config.samples))
+        pred = (lambda t: sut.forceP(t,Ppred,P=config.probability,samples=config.samples,replications=config.replications))
         
     print("STARTING WITH TEST OF LENGTH",len(r))
     if not config.noReduce:
