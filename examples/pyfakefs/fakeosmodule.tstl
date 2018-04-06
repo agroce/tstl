@@ -63,7 +63,7 @@ finally: <os>.close(<fd>)
 finally: <file>.close()
 
 <os> := newFakeOS()
-#<opener> := newFakeOpener(~<os>)
+<opener> := newFakeOpener(~<os>)
 
 <component> := <["alpha","beta","gamma","Alpha","Beta","Gamma","a","b","c","d","e","f","g","omega","lambda","phi",""]>
 
@@ -170,7 +170,7 @@ not stat.S_ISDIR(<stat,1>.st_mode) -> <stat>.st_size
 {StopIteration,ValueError,IOError} ~<file>.next()
 {OSError,IOError,ValueError} ~<file>.truncate()
 {OSError,ValueError} ~<file>.seek(<bytes>)
-#{OSError,ValueError} ~<file>.tell()
+{OSError,ValueError} ~<file>.tell()
 {OSError,ValueError} ~<file>.flush()
 
 {OSError,ValueError} <file>.close()
