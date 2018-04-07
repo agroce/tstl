@@ -25,6 +25,7 @@ setup(
     tstl_regress = src.runregressions:main
     tstl_markov = src.markov:main
     tstl_graph = src.graph:main
+    tstl_afl = src.tstl_afl:main
     """,
     keywords='testing tstl',
     classifiers=[
