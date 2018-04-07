@@ -36,8 +36,10 @@ def main():
 
     for s in test:
         p = s
+        if p < 0:
+            p = -p
         if p >= alen:
-            p = p % alen
+            p = (p % alen)
         while not sut.actions()[p][1]():
             p = (p + 1) % alen
 
