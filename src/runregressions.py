@@ -68,7 +68,8 @@ def main():
     anyFailed = False
 
     noNewCover = []
-
+    newCover = []
+    
     totalTests = 0
     invalidTests = []
     
@@ -90,6 +91,8 @@ def main():
         if not nocover:
             if (len(sut.newCurrBranches()) == 0) and (len(sut.newCurrStatements()) == 0):
                 noNewCover.append(f)
+            else:
+                newCover.append(f)
         if running:
             if sut.newCurrBranches() != set([]):
                 for b in sut.newCurrBranches():
@@ -107,6 +110,8 @@ def main():
         print(time.time()-stime,"ELAPSED")
         if not nocover:
             print("STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches()))
+            if not f in noNewCover:
+                print("NEW STATEMENTS:",len(sut.newCurrStatements()), "BRANCHES:",len(sut.newCurrBranches()))
 
     if not nocover:
         sut.internalReport()
@@ -118,6 +123,9 @@ def main():
     if (not nocover) and (len(noNewCover) > 0):
         for f in noNewCover:
             print("TEST",f,"REDUNDANT WITH RESPECT TO COVERAGE")
+        print ()
+        print (len(newCover),"TESTS NEEDED FOR FULL COVERAGE:",", ".join(newCover))
+        print ()
 
     print("EXECUTED",totalTests,"TESTS")
 
