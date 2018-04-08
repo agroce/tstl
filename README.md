@@ -478,7 +478,19 @@ afl byte file into a normal TSTL test file, using the `--alwaysSave` option, whi
 
 In theory, this is a powerful testing option, as it lets you use afl's great heuristics to fuzz things that are at best highly inconvenient with just afl.  You can set up complex TSTL properties, mix grammar generation and API-call sequences, and do differential testing TSTL-style, but use afl's tuned input generation methods.
 
-Unfortunately, afl has no way to distinguish exploring the TSTL harness code and exploring SUT code, so at least for a long initial period, it may be much less effective than the TSTL random tester.  Potentially, once it's saturated coverage of the harness, it can start picking on the SUT better, though even then the structure of the bytes may be hard to explore well using the usual afl methods.  I haven't played with it enough to know, yet.
+Unfortunately, python-afl right now has no way to distinguish
+exploring the TSTL harness code and exploring SUT code, so at least
+for a long initial period, it may be much less effective than the TSTL
+random tester.  Potentially, once it's saturated coverage of the
+harness, it can start picking on the SUT better, though even then the
+structure of the bytes may be hard to explore well using the usual afl
+methods.  I haven't played with it enough to know, yet.
+
+There's a patch submitted to python-afl that would allow you to set
+the environment variable `PYTHON_AFL_TSTL` to at least avoid
+instrumentation on code in the `sut.py` file (if TSTL calls a library,
+it'll still be visible, but that's not too common).  In the meantime
+you can use this fork to get a more TSTL-savvy python-afl:  https://github.com/agroce/python-afl.
 
 There are also tools for converting large numbers of files to and from afl format.
 `tstl_toafl` simply takes existing TSTL test files and
