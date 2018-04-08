@@ -458,13 +458,15 @@ your bug a few times.
 TSTL and afl
 ---------
 
-So far it hasn't proven clearly useful, but you can even use afl to generate TSTL tests.  You need to install afl itself and the `python-afl` pip package.  Then you can fuzz using afl with a command like:
+I'm not yet sure how useful it is, but you can even use afl to generate TSTL tests.  You need to install afl itself and the `python-afl` pip package.  Then you can fuzz using afl with a command like:
 
 `py-afl-fuzz -o <outputdir> -i <inputdir> -- tstl_afl`
 
-`tstl_afl` takes a file of bytes and interprets every two bytes as the index of a TSTL action (modulo the number of actions), using `sut.py` as usual.  You can even use `--swarm` to interpret the first 4 bytes as a seed to control swarm testing.  When `tstl_afl` detects a failure it also produces a conventional TSTL test file under the name `aflfail.<PID>.test`.  In the very unlikely case you have too many actions for 16 bit encoding, use `--32` to use 4 byte action indices.
+`tstl_afl` takes a file of bytes and interprets every two bytes as the index of a TSTL action (modulo the number of actions), using `sut.py` as usual.  You can even use `--swarm` to interpret the first 4 bytes as a seed to control swarm testing.  When `tstl_afl` detects a failure it also produces a conventional TSTL test file under the name `aflfail.<PID>.test`.  In the very unlikely case you have too many actions for 16 bit encoding, use `--32` to use 4 byte action indices.  `tstl_afl` is also useful for turning afl byte inputs into normal TSTL test files, with the `--alwaysSave` option.
 
-Unfortunately, afl has no way to distinguish exploring the TSTL harness code and exploring SUT code, so it doesn't seem to be extremely effective as a way to generate tests.
+Unfortunately, afl has no way to distinguish exploring the TSTL harness code and exploring SUT code, so at least for a long initial period, it may be much less effective than the TSTL random tester.  Potentially, once it's saturated coverage of the harness, it can start picking on the SUT better.
+
+There are also tools (`tstl_aflcorpus` and `tstl_toaflcorpus`) for generating some initial "interesting" input byte files.  `tstl_aflcorpus` randomly generates inputs that trigger novel SUT coverage, and `tstl_toaflcorpus` simply takes existing TSTL test files and converts them to afl byte inputs.
 
 TSTL and Hypothesis
 ------------------------
