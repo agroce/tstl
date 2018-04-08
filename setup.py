@@ -27,6 +27,7 @@ setup(
     tstl_graph = src.graph:main
     tstl_afl = src.tstl_afl:main
     tstl_aflcorpus = src.makecorpus:main
+    tstl_toaflcorpus = src.tocorpus:main
     """,
     keywords='testing tstl',
     classifiers=[
