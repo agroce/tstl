@@ -44,6 +44,9 @@ def main():
 
     bytesin = sys.stdin.read()
 
+    if len(bytesin) < 4:
+        os._exit(0)        
+
     if swarm:
         R.seed(struct.unpack(">L",bytesin[0:4]))
         sut.standardSwarm(R)
