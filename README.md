@@ -436,7 +436,7 @@ Adding `--reducePool` sometimes also improves the performance of this method.
 
 You can tune the exploit and mutate parameters to see if they improve results.  You can even combine lines-of-code bias with the `exploit` approach and/or swarm testing.  Sometimes testing benefits from having all three!  Unfortunately, using `--exploit` does mean you can't get away with `--noCover` to avoid the overhead of computing code coverage.
 
-Other Useful Features
+Fault Localization
 -----
 
 TSTL supports automated fault localization.  If you have a harness that finds
@@ -454,6 +454,17 @@ there's a good chance you'll find the buggy code in the localization
 results, in our experience.  In fact, a five minute run will suffice
 for good localization, often, is five minutes is sufficient to find
 your bug a few times.
+
+TSTL and afl
+---------
+
+So far it hasn't proven clearly useful, but you can even use afl to generate TSTL tests.  You need to install afl itself and the `python-afl` pip package.  Then you can fuzz using afl with a command like:
+
+`py-afl-fuzz -o <outputdir> -i <inputdir> -- tstl_afl`
+
+`tstl_afl` takes a file of bytes and interprets it them as indices of TSTL actions, using `sut.py` as usual.  You can even use `--swarm` to interpret the first 4 bytes as a seed to control swarm testing.  When `tstl_afl` detects a failure it also produces a conventional TSTL test file under the name `aflfail.<PID>.test`.  
+
+Unfortunately, afl has no way to distinguish exploring the TSTL harness code and exploring SUT code, so it doesn't seem to be extremely effective as a way to generate tests.
 
 TSTL and Hypothesis
 ------------------------
