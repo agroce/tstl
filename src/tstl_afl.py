@@ -2,6 +2,7 @@ import sys
 import afl
 import os
 import struct
+import random
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
@@ -20,7 +21,7 @@ def makeInt(s):
 def main():
 
     sut = SUT.sut()
-    saveFile = str(os.getpid()) + ".failure.test"
+    saveFile = "aflfail." + str(os.getpid()) + ".test"
     
     try:
         sut.stopCoverage()
@@ -29,17 +30,26 @@ def main():
 
     sut.restart()
 
+    if "--swarm" in sys.argv:
+        swarm = True
+        R = random.Random()
+    else:
+        swarm = False
     if "--verbose" in sys.argv:
         sut.verbose(True)
     noSave = "--noSave" in sys.argv
     noCheck = "--noCheck" in sys.argv
 
-
-    alen = len(sut.actions())
-
     afl.init()
 
     bytesin = sys.stdin.read()
+
+    if swarm:
+        R.seed(struct.unpack(">L",bytesin[0:4]))
+        sut.standardSwarm(R)
+        bytesin = bytesin[4:]
+
+    alen = len(sut.actions())
 
     test = []
     for i in range(0,len(bytesin)/4):
@@ -54,12 +64,12 @@ def main():
         if a[1]():
             ok = sut.safely(a)
             if (not noSave) and not ok:
-                sut.saveTest(saveFile,sut.test())
+                sut.saveTest(sut.test(),saveFile)
             assert(ok)
         if not noCheck:
             checkResult = sut.check()
             if (not noSave) and not checkResult:
-                sut.saveTest(saveFile,sut.test())            
+                sut.saveTest(sut.test(),saveFile)            
             assert(checkResult)
             
     os._exit(0)
