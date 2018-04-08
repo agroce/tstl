@@ -34,11 +34,6 @@ def main():
         sys.exit(0)
     
     sut = SUT.sut()
-    i = 0
-    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
-    while os.path.exists(saveFile):
-        i += 1
-        saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"        
     
     try:
         sut.stopCoverage()
@@ -81,13 +76,28 @@ def main():
                 print (sut.prettyName(a[0]))
             ok = sut.safely(a)
             if (not noSave) and not ok:
+                i = 0
+                saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+                while os.path.exists(saveFile):
+                    i += 1
+                    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
                 sut.saveTest(sut.test(),saveFile)
             assert(ok)
             if not noCheck:
                 checkResult = sut.check()
                 if (not noSave) and not checkResult:
+                    i = 0
+                    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+                    while os.path.exists(saveFile):
+                        i += 1
+                        saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
                     sut.saveTest(sut.test(),saveFile)            
                 assert(checkResult)
     if alwaysSave:
-        sut.saveTest(sut.test(),saveFile.replace("aflfail","afltest"))
+        i = 0
+        saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"
+        while os.path.exists(saveFile):
+            i += 1
+            saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"        
+        sut.saveTest(sut.test(),saveFile)
     os._exit(0)
