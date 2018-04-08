@@ -2,6 +2,12 @@ import sys
 import afl
 import os
 import struct
+
+# Appending current working directory to sys.path
+# So that user can run randomtester from the directory where sut.py is located
+current_working_dir = os.getcwd()
+sys.path.append(current_working_dir)
+
 import sut as SUT
 
 def makeInt(s):
@@ -38,8 +44,6 @@ def main():
     test = []
     for i in range(0,len(bytesin)/4):
         test.append(struct.unpack(">L",bytesin[i:i+4])[0] % alen)
-
-    print test
     
     for s in test:
         p = s
