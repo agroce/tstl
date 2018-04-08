@@ -54,3 +54,5 @@ def main():
             if (not noSave) and not checkResult:
                 sut.saveTest(saveFile,sut.test())            
             assert(checkResult)
+            
+    os._exit(0)
