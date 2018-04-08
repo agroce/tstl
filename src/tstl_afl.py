@@ -54,14 +54,6 @@ def main():
     noSave = "--noSave" in sys.argv
     alwaysSave = "--alwaysSave" in sys.argv        
     noCheck = "--noCheck" in sys.argv
-    bytes = 2
-    fmt = "<H"
-    if "--32" in sys.argv:
-        bytes = 4
-        fmt = "<L"
-    if "--64" in sys.argv:
-        bytes = 8
-        fmt = "<Q"
 
     afl.init()
 
@@ -71,21 +63,18 @@ def main():
         os._exit(0)        
 
     if swarm:
-        R.seed(struct.unpack(">L",bytesin[0:4]))
+        R.seed(struct.unpack("<L",bytesin[0:4])[0])
         sut.standardSwarm(R)
         bytesin = bytesin[4:]
 
     alen = len(sut.actions())
 
-    test = []
-    for i in range(0,len(bytesin)/bytes):
-        test.append(struct.unpack(fmt,bytesin[i:i+bytes])[0] % alen)
+    test = sut.bytesToTest(bytesin)
     
-    for s in test:
-        a = sut.actions()[s]
+    for a in test:
         if a[1]():
             if showActions:
-                print (a[0])
+                print (sut.prettyName(a[0]))
             ok = sut.safely(a)
             if (not noSave) and not ok:
                 sut.saveTest(sut.test(),saveFile)

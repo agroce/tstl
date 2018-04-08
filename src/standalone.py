@@ -14,13 +14,15 @@ if not "--help" in sys.argv:
 def main():
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_standalone <test file> <output Python file> [<sut file>] [--noCheck] [--noRefs] [--regression] [--verbose]")
+        print("Usage:  tstl_standalone <test file> <output Python file> [<sut file>] [--noCheck] [--noRefs] [--regression] [--verbose] [--afl] [--aflswarm]")
         print("  default for <sut file> is sut.py")
         print("Options:")
         print(" --noCheck:      do not include property checks")
         print(" --noRefs:       do not include reference actions")
         print(" --regression:   produce a regression test that captures values")
         print(" --verbose:      produce a verbose test that shows actions taken")
+        print(" --afl:          test is in afl format")
+        print(" --aflswarm:     test is in afl swarm format")        
         sys.exit(0)
     
     testFile = sys.argv[1]
@@ -34,6 +36,8 @@ def main():
     checkRefs = not "--noRefs" in sys.argv
     makeRegression = "--regression" in sys.argv
     verbose = "--verbose" in sys.argv
+    afl = "--afl" in sys.argv
+    aflswarm = "--aflswarm" in sys.argv    
 
     t = SUT.sut()
 

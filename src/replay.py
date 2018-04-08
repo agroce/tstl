@@ -40,7 +40,7 @@ def trace_calls(frame, event, arg):
 def main():
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--delay secs] [--trace]")
+        print("Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--delay secs] [--trace] [--afl] [--aflswarm]")
         print("Options:")
         print("--noCheck:      do not run property checks")
         print("--logging:      set the logging level for the test")
@@ -52,6 +52,8 @@ def main():
         print("--html:         produce HTML report on coverage")
         print("--delay:        delay to inject between steps")        
         print("--trace:        trace lines executed (does not work with SUTs compiled with coverage)")
+        print("--afl:          test is in afl format")
+        print("--aflswarm:     test is in afl swarm format")                
         sys.exit(0)
 
     sut = SUT.sut()
@@ -118,7 +120,13 @@ def main():
         sut.verbose(True)
     if "--hideOpaque" in sys.argv:
         sut.verboseOpaque(False)
-    for l in open(file):
+    if not "--afl" in sys.argv:
+        with open(file,'r') as f:
+            theTest = f.readlines()
+    else:
+        readTest = sut.loadTest(file,afl=True,swarm=("--aflswarm" in sys.argv))
+        theTest = map(lambda x:x[0]+"\n",readTest)
+    for l in theTest:
         name = l[:-1]
         if name == "<<RESTART>>":
             if "--showActions" in sys.argv:

@@ -15,11 +15,15 @@ import sut as SUT
 
 def main():
     if "--help" in sys.argv:
-        print("Usage:  tstl_toafl <outputdir> <files>")
+        print("Usage:  tstl_fromafl <outputdir> <files> [--aflswarm]")
         sys.exit(0)
 
     sut = SUT.sut()
 
+    aflswarm = "--aflswarm" in sys.argv
+    if aflswarm:
+        sys.argv.remove("--aflswarm")
+    
     outputDir = sys.argv[1]
     files = sys.argv[2:]
 
@@ -27,8 +31,8 @@ def main():
 
     i = 0
     for f in files:
-        t = sut.loadTest(f)
-        sut.saveTest(t,outputDir+"/"+os.path.basename(f)+".afl",afl=True)
+        t = sut.loadTest(f,afl=True,swarm=aflswarm)
+        sut.saveTest(t,outputDir+"/"+os.path.basename(f)+".test")
         i += 1
 
 

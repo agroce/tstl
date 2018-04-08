@@ -15,28 +15,37 @@ import sut as SUT
 
 def main():
     if "--help" in sys.argv:
-        print("Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noReduce] [--noCover]")
+        print("Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noReduce] [--noCover] [--afl] [--aflswarm]")
         print("Options:")
         print(" --noReduce:      do not reduce inputs by coverage")
-        print(" --noCover:       do not check for new coverage")                
+        print(" --noCover:       do not check for new coverage")
+        print(" --swarm:         use swarm format")                        
         sys.exit(0)
 
     sut = SUT.sut()
 
-    length = int(sys.argv[1])
-    outputDir = sys.argv[2]
+    pid = str(os.getpid())
+
+    outputDir = sys.argv[1]
+    length = int(sys.argv[2])
     timeout = int(sys.argv[3])
 
     noReduce = "--noReduce" in sys.argv
-    noCover = "--noCover" in sys.argv    
+    noCover = "--noCover" in sys.argv
+    swarm = "--swarm" in sys.argv
     
     R = random.Random()
+    Rswarm = random.Random()
 
     acts = sut.actions()
     i = 0
     stime = time.time()
     while (time.time()-stime) < timeout:
         i += 1
+        if swarm:
+            seed = R.randint(0,2**32)
+            Rswarm.seed(seed)
+            sut.standardSwarm(Rswarm)
         (t,ok) = sut.makeTest(length,R)
         if (not noCover) and (len(sut.newCurrBranches()) == 0):
             continue
@@ -59,15 +68,13 @@ def main():
                 print ("REDUCED LENGTH:",len(r))
             sut.prettyPrintTest(r)
             print ("="*80)
-            newinput = open(outputDir + "/input" + str(i),'wb')
-            for s in r:
-                index = 0
-                for a in acts:
-                    if a == s:
-                        break
-                    index += 1
-                newinput.write(struct.pack("<H",index))
-            newinput.close()
+            if not swarm:
+                sut.saveTest(r,outputDir + "/input" +"." + pid + "." + str(i) + ".afl",afl=True)
+            else:
+                bytes = sut.testToBytes(r)
+                with open(outputDir + "/input" +"." + pid + "." + str(i) + ".afl",'wb') as f:
+                    f.write(struct.pack("<L",seed))
+                    f.write(bytes)
         else:
             print ("TEST FAILS!")
 

@@ -80,7 +80,13 @@ def parse_args():
     parser.add_argument('--quietSandbox', action='store_true',
                         help="Run sandbox in a quieter mode.")
     parser.add_argument('--timeout', type=int, default=None,
-                        help='Timeout for sandbox reductions (only works on unix-like systems).')    
+                        help='Timeout for sandbox reductions (only works on unix-like systems).')
+    parser.add_argument('--afl', action='store_true',
+                        help="Read in tests in afl format.")
+    parser.add_argument('--aflswarm', action='store_true',
+                        help="afl tests are in swarm format.")    
+    parser.add_argument('--aflwrite', action='store_true',
+                        help="Write out tests in afl format.")    
     
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -155,7 +161,7 @@ def main():
         if config.seed != None:
             R.seed(config.seed)
     
-    r = sut.loadTest(config.infile)
+    r = sut.loadTest(config.infile,afl=config.afl,swarm=config.aflswarm)
 
     f = None
     
@@ -263,7 +269,7 @@ def main():
         else:
             print("NEW LENGTHS",list(map(len,rs)))
     if (not config.multiple) and (not config.decompose):
-        sut.saveTest(r,config.outfile)
+        sut.saveTest(r,config.outfile,afl=config.writeafl)
         sut.prettyPrintTest(r)
         print()
         print("TEST WRITTEN TO",config.outfile)     
@@ -271,7 +277,7 @@ def main():
         i = 0
         for r in rs:
             print("TEST #"+str(i)+":")
-            sut.saveTest(r,config.outfile+"."+str(i)+".test")
+            sut.saveTest(r,config.outfile+"."+str(i)+".test",afl=config.writeafl)
             sut.prettyPrintTest(r)
             print()
             print("TEST WRITTEN TO",config.outfile+"."+str(i))

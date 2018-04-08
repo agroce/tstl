@@ -388,7 +388,7 @@ def main():
     baseIndent = "    "
 
     if "-v" in sys.argv or "--version" in sys.argv:
-        print("TSTL, version 1.2.8")
+        print("TSTL, version 1.2.9")
         print("Documentation at https://github.com/agroce/tstl")
         sys.exit(0)
         
@@ -420,7 +420,9 @@ def main():
     outf.write("import sys\n")
     outf.write("import time\n")
     outf.write("import glob\n")
-    outf.write("import subprocess\n")    
+    outf.write("import struct\n")
+    outf.write("import random\n")        
+    outf.write("import subprocess\n")
     outf.write("import os.path\n")        
     outf.write("from itertools import chain, combinations\n")    
 

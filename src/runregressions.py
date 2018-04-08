@@ -15,7 +15,7 @@ if not "--help" in sys.argv:
 def main():
     
     if "--help" in sys.argv:
-        print("Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running]")
+        print("Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running] [--afl] [--aflswarm]")
         print("Options:")
         print(" --noCheck:      do not run property checks")
         print(" --html:         output an HTML coverage report to the chosen directory")
@@ -23,6 +23,8 @@ def main():
         print(" --verbose:      make actions verbose")
         print(" --running:      give a running report on code coverage")
         print(" --keepGoing:    don't stop on failed test")
+        print(" --afl:          tests are in afl format")
+        print(" --aflswarm:          tests are in afl swarm format")                
         sys.exit(0)
     
     sut = SUT.sut()
@@ -31,6 +33,8 @@ def main():
     verbose = False
     running = False
     keepGoing = False
+    afl = False
+    aflswarm = False
     ignoreProps = False
     lastWasHtml = False
     files = []
@@ -60,6 +64,10 @@ def main():
         running = True
     if "--keepGoing" in sys.argv:
         keepGoing = True
+    if "--afl" in sys.argv:
+       afl = True
+    if "--aflswarm" in sys.argv:
+       aflswarm = True               
 
     if verbose:
         sut.verbose(True)
@@ -78,7 +86,7 @@ def main():
         totalTests += 1
         print("RUNNING TEST",f)
         try:
-            t = sut.loadTest(f)
+            t = sut.loadTest(f,afl=afl,swarm=aflswarm)
         except KeyError:
             print("INVALID TEST, SKIPPING...")
             invalidTests.append(f)

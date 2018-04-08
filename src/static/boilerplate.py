@@ -641,13 +641,68 @@ def serializable(self, step):
 def annotate(self,text):
     self.__test[-1] = self.__test[-1]+(text,)
 
-def saveTest(self, test, filename):
-    outf = open(filename,'w')
+def testToBytes(self, test):
+    alen = len(self.actions())
+    bytes = 2
+    fmt = "<H"
+    if alen < 256:
+        bytes = 1
+        fmt = "<B"    
+    if alen > 2**16:
+        bytes = 4
+        fmt = "<L"
+    data = b""
     for s in test:
-        outf.write(self.serializable(s) + "\n")
+        index = 0
+        for a in self.actions():
+            if a == s:
+                break
+            index += 1
+        p = struct.pack(fmt,index)
+        data += p
+    return data
+        
+def saveTest(self, test, filename, afl=False):
+    if not afl:
+        outf = open(filename,'w')
+    else:
+        outf = open(filename,'wb')
+    if not afl:
+        for s in test:
+            outf.write(self.serializable(s) + "\n")
+    else:
+        outf.write(self.testToBytes(test))
     outf.close()
+    
 
-def loadTest(self, filename):
+def bytesToTest(self, data, swarm=False):
+    alen = len(self.actions())
+    bytes = 2
+    fmt = "<H"
+    if alen < 256:
+        bytes = 1
+        fmt = "<B"
+    if alen > 2**16:
+        bytes = 4
+        fmt = "<L"
+    test = []
+    if swarm:
+        R = random.Random()
+        seed = struct.unpack("<L",data[0:4])[0]
+        R.seed(seed)
+        self.standardSwarm(R)
+        data = data[4:]
+        alen = len(self.actions())
+    for i in range(0,(len(data)/bytes)):
+        index = struct.unpack(fmt,data[i*bytes:(i*bytes)+bytes])[0] % alen
+        test.append(self.actions()[index])
+    return test
+        
+def loadTest(self, filename, afl=False, swarm=False):
+    if afl:
+        with open(filename,'rb') as f:
+            return self.bytesToTest(f.read(),swarm=swarm)
+        
     test = []
     with open(filename) as f:
         for l in f:
