@@ -462,7 +462,7 @@ So far it hasn't proven clearly useful, but you can even use afl to generate TST
 
 `py-afl-fuzz -o <outputdir> -i <inputdir> -- tstl_afl`
 
-`tstl_afl` takes a file of bytes and interprets it them as indices of TSTL actions, using `sut.py` as usual.  You can even use `--swarm` to interpret the first 4 bytes as a seed to control swarm testing.  When `tstl_afl` detects a failure it also produces a conventional TSTL test file under the name `aflfail.<PID>.test`.  
+`tstl_afl` takes a file of bytes and interprets every two bytes as the index of a TSTL action (modulo the number of actions), using `sut.py` as usual.  You can even use `--swarm` to interpret the first 4 bytes as a seed to control swarm testing.  When `tstl_afl` detects a failure it also produces a conventional TSTL test file under the name `aflfail.<PID>.test`.  In the very unlikely case you have too many actions for 16 bit encoding, use `--32` to use 4 byte action indices.
 
 Unfortunately, afl has no way to distinguish exploring the TSTL harness code and exploring SUT code, so it doesn't seem to be extremely effective as a way to generate tests.
 

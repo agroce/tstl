@@ -5,7 +5,7 @@ import sys, os
 
 setup(
     name='tstl',
-    version='1.2.7',
+    version='1.2.8',
     description='Template scripting testing language (TSTL)',
     long_description=open('README.md').read(),
     packages=['src',],
@@ -26,6 +26,7 @@ setup(
     tstl_markov = src.markov:main
     tstl_graph = src.graph:main
     tstl_afl = src.tstl_afl:main
+    tstl_aflcorpus = src.makecorpus:main
     """,
     keywords='testing tstl',
     classifiers=[
