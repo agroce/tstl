@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 import afl
 import os
@@ -20,6 +22,17 @@ def makeInt(s):
 
 def main():
 
+    if "--help" in sys.argv:
+        print("Usage:  tstl_afl [--noCheck] [--swarm] [--verbose] [--showActions] [--noSave] [--alwaysSave]")
+        print("Options:")
+        print(" --noCheck:      do not run property checks")
+        print(" --swarm         use first four bytes to determine a swarm configuration")
+        print(" --verbose:      make actions verbose")
+        print(" --showActions:  show actions in test")
+        print(" --noSave:       don't save failing tests as standard TSTL tests")
+        print(" --alwaysSave:   save even non-failing tests")        
+        sys.exit(0)
+    
     sut = SUT.sut()
     saveFile = "aflfail." + str(os.getpid()) + ".test"
     
@@ -35,10 +48,20 @@ def main():
         R = random.Random()
     else:
         swarm = False
+    showActions = "--showActions" in sys.argv
     if "--verbose" in sys.argv:
         sut.verbose(True)
     noSave = "--noSave" in sys.argv
+    alwaysSave = "--alwaysSave" in sys.argv        
     noCheck = "--noCheck" in sys.argv
+    bytes = 2
+    fmt = "<H"
+    if "--32" in sys.argv:
+        bytes = 4
+        fmt = "<L"
+    if "--64" in sys.argv:
+        bytes = 8
+        fmt = "<Q"
 
     afl.init()
 
@@ -55,24 +78,23 @@ def main():
     alen = len(sut.actions())
 
     test = []
-    for i in range(0,len(bytesin)/4):
-        test.append(struct.unpack(">L",bytesin[i:i+4])[0] % alen)
+    for i in range(0,len(bytesin)/bytes):
+        test.append(struct.unpack(fmt,bytesin[i:i+bytes])[0] % alen)
     
     for s in test:
-        p = s
-        while not sut.actions()[p][1]():
-            p = (p + 1) % alen
-
-        a = sut.actions()[p]
+        a = sut.actions()[s]
         if a[1]():
+            if showActions:
+                print (a[0])
             ok = sut.safely(a)
             if (not noSave) and not ok:
                 sut.saveTest(sut.test(),saveFile)
             assert(ok)
-        if not noCheck:
-            checkResult = sut.check()
-            if (not noSave) and not checkResult:
-                sut.saveTest(sut.test(),saveFile)            
-            assert(checkResult)
-            
+            if not noCheck:
+                checkResult = sut.check()
+                if (not noSave) and not checkResult:
+                    sut.saveTest(sut.test(),saveFile)            
+                assert(checkResult)
+    if alwaysSave:
+        sut.saveTest(sut.test(),saveFile.replace("aflfail","afltest"))
     os._exit(0)
