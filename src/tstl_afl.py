@@ -1,6 +1,7 @@
 import sys
 import afl
 import os
+import struct
 import sut as SUT
 
 def makeInt(s):
@@ -32,14 +33,16 @@ def main():
 
     afl.init()
 
-    test = list(filter(lambda x:x != None,map(makeInt,sys.stdin.read().split(","))))
+    bytesin = sys.stdin.read()
 
+    test = []
+    for i in range(0,len(bytesin)/4):
+        test.append(struct.unpack(">L",bytesin[i:i+4])[0] % alen)
+
+    print test
+    
     for s in test:
         p = s
-        if p < 0:
-            p = -p
-        if p >= alen:
-            p = (p % alen)
         while not sut.actions()[p][1]():
             p = (p + 1) % alen
 
