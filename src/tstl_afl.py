@@ -34,7 +34,11 @@ def main():
         sys.exit(0)
     
     sut = SUT.sut()
-    saveFile = "aflfail." + str(os.getpid()) + ".test"
+    i = 0
+    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+    while os.path.exists(saveFile):
+        i += 1
+        saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"        
     
     try:
         sut.stopCoverage()

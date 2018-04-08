@@ -491,7 +491,10 @@ There's a patch submitted to python-afl that would allow you to set
 the environment variable `PYTHON_AFL_TSTL` to at least avoid
 instrumentation on code in the `sut.py` file (if TSTL calls a library,
 it'll still be visible, but that's not too common).  In the meantime
-you can use this fork to get a more TSTL-savvy python-afl:  https://github.com/agroce/python-afl.
+you can use this fork to get a more TSTL-savvy python-afl:
+https://github.com/agroce/python-afl.  One warning:  if you set
+`PYTHON_TSTL_AFL`, your initial inputs to afl need to run at least
+some SUT code, or afl will complain there is no instrumentation.
 
 There are also tools for converting large numbers of files to and from afl format.
 `tstl_toafl` simply takes existing TSTL test files and
