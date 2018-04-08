@@ -462,7 +462,8 @@ You can even use afl (http://lcamtuf.coredump.cx/afl/) to generate TSTL tests.  
 
 `py-afl-fuzz -o <outputdir> -i <inputdir> -- tstl_afl`
 
-`tstl_afl` takes a file of bytes and interprets every two bytes as the
+`tstl_afl` takes a file of bytes and interprets every N bytes (N
+depends on how many actions your harness has) as the
 index of a TSTL action (modulo the number of actions), using `sut.py`
 as usual.  When `tstl_afl` detects a failure
 it also produces a conventional TSTL test file under the name
