@@ -1479,8 +1479,12 @@ def reduceLengthStep(self, test, pred, pruneGuards = True, keepLast = False, ver
     enableChange = self.getEnabled(test,checkEnabled)
 
     reassignCount = self.numReassigns(test)
+
+    stop = len(test)
+    if keepLast:
+        stop -= 1
     
-    for i in range(0,len(test)):
+    for i in range(0,stop):
         name1 = test[i][0]
         if i not in enableChange:
             continue        
@@ -1516,6 +1520,10 @@ def replaceAllStep(self, test, pred, pruneGuards = True, keepLast = False, verbo
                     continue
                 donePairs.append((name1,name2))
                 testC = [self.actionReplace(x,name1,name2) for x in test]
+                if keepLast:
+                    testC = testC[:-1] + [test[-1]]
+                    if testC == test:
+                        continue
                 if (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     if verbose:
                         print("NORMALIZER: RULE SimplifyAll:",name1,"-->",name2)
@@ -1593,8 +1601,12 @@ def replaceSingleStep(self, test, pred, pruneGuards = True, keepLast = False, ve
     enableChange = self.getEnabled(test,checkEnabled)    
 
     reassignCount = self.numReassigns(test)
+
+    stop = len(test)
+    if keepLast:
+        stop -= 1
     
-    for i in range(0,len(test)):
+    for i in range(0,stop):
         name1 = test[i][0]
         if i not in enableChange:
             continue        
