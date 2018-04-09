@@ -1,0 +1,29 @@
+@import osquery
+
+pool: <instance> 3
+pool: <client> 3
+pool: <results> 3
+pool: <query> 3
+
+<instance> := osquery.ExtensionClient('/Users/alex/.osquery/osqueryd.sock')
+
+<instance>.open()
+
+{AttributeError} ~<instance>.client.shutdown()
+
+<client> := <instance>.extension_client()
+<client> := <instance>.extension_manager_client()
+
+<query> := "select pid,name,path from processes limit 10"
+<query> := "select timestamp from time"
+
+{Exception} <results> := <client>.query(<query>)
+{Exception} <results> := <client>.getQueryColumns(<query>)
+
+
+{Exception} <client>.ping()
+{Exception} <client>.options()
+{Exception} <client>.extensions()
+
+<results>.response
+len(<results>.response)
