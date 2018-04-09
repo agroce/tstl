@@ -79,4 +79,4 @@ def main():
         print ("TEST:",signatures[sig][0])
         print ("OPERATION:",signatures[sig][3])
         print ("FAILURE:")
-        traceback.print_tb(signatures[sig][2][2])
+        traceback.print_tb(signatures[sig][2][2],file=sys.stdout)
