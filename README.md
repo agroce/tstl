@@ -538,6 +538,23 @@ calls and assignments that more resembles a traditional
 do-some-stuff-and-then-check-it unit test) and assert general
 properties about the behavior of a system under valid input.
 
+Tips for Handling Numerous Bugs
+---------------
+
+If you test real software with a good harness, you may well find many
+issues.  There are a few ways to deal with this.  First, using
+`--normalize` when doing `--multiple` runs with `tstl_rt` can help.
+In some cases (file systems) normalization (or even reduction) goes
+too far.  In testing at NASA, we found that "last operation" was a
+good heuristic for different bugs.  Using `--keepLast` in testing (or when
+using `tstl_reduce`) forces reduction and normalization to leave the
+last step (mostly) alone.  Normalization can still move it around, or
+change the pool it uses, but is much more careful about changing the
+actual action performed.  There is also a tool `tstl_triage` that
+takes a list of TSTL tests, runs them all, and reports ones with
+different (heuristic) failure signatures.  In particular, it gives you
+the shortest test for each signature.
+
 Further Details
 ----------------
 
