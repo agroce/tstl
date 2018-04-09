@@ -23,6 +23,8 @@ def parse_args():
                         help="Where to put afl fuzzing output (default afloutputs)")
     parser.add_argument('--noCheck', action='store_true',                            
                         help='Do not check properties')
+    parser.add_argument('--depth', type=int, default=200,
+                        help="Test depth for corpus construction (default 200)')
     parser.add_argument('--swarm', action='store_true',                            
                         help='Use swarm testing.')
     parser.add_argument('--noCover', action='store_true',                            
@@ -57,7 +59,7 @@ def main():
         os.mkdir(input)
 
     start = time.time()
-    corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.length) + " " + str(config.corpusBudget)
+    corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.depth) + " " + str(config.corpusBudget)
     if config.swarm:
         corpusCmd += " --swarm"
     if config.noCover:
