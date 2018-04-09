@@ -23,7 +23,9 @@ def parse_args():
     parser.add_argument('testglob', metavar='filename', type=str, default=None,
                          help='Glob for tests to run.')
     parser.add_argument('--noCheck', action='store_true',                            
-                        help='Do not check properties.') 
+                        help='Do not check properties.')
+    parser.add_argument('--showTests', action='store_true',                            
+                        help='Show the tests.')     
 
     
     parsed_args = parser.parse_args(sys.argv[1:])
@@ -71,12 +73,17 @@ def main():
             e = e[:e.find("<traceback object at 0x")] + ")"
             l = t[-1][0]
             sig = (noDigits(e),noDigits(l))
-            if (sig not in signatures) or (len(signatures[sig][1]) > len(t)):
-                signatures[sig] = (fn,t,sut.failure(),sut.prettyName(t[-1][0]))
+            if (sig not in signatures):
+                signatures[sig] = (fn,t,sut.failure(),sut.prettyName(t[-1][0]),1)
+            elif (len(t) < signatures[sig][1]):
+                signatures[sig] = (fn,t,sut.failure(),sut.prettyName(t[-1][0]),signatures[sig][4]+1)                
 
-    for sig in signatures:
+    for sig in sorted(signatures.keys(),key=lambda x:signatures[x][4],reverse=True):
         print ("="*80)
-        print ("TEST:",signatures[sig][0])
+        print ("TEST:",signatures[sig][0],"LENGTH:",len(signatures[sig][1]))
         print ("OPERATION:",signatures[sig][3])
         print ("FAILURE:")
         traceback.print_tb(signatures[sig][2][2],file=sys.stdout)
+        print ("COUNT:",signatures[sig][4])
+        if config.showTest:
+            sut.prettyPrintTest(signatures[sig][1])
