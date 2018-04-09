@@ -24,7 +24,7 @@ def main():
         print(" --running:      give a running report on code coverage")
         print(" --keepGoing:    don't stop on failed test")
         print(" --afl:          tests are in afl format")
-        print(" --aflswarm:          tests are in afl swarm format")                
+        print(" --aflswarm:     tests are in afl swarm format")
         sys.exit(0)
     
     sut = SUT.sut()
