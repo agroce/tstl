@@ -30,6 +30,7 @@ setup(
     tstl_toafl = src.tocorpus:main
     tstl_fromafl = src.fromafl:main
     tstl_triage = src.triage:main
+    tstl_afl_fuzz = src.tstl_afl_fuzz:main
     """,
     keywords='testing tstl',
     classifiers=[

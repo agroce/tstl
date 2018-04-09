@@ -33,6 +33,9 @@ def main():
     noReduce = "--noReduce" in sys.argv
     noCover = "--noCover" in sys.argv
     swarm = "--swarm" in sys.argv
+
+    if noCover:
+        sut.stopCoverage()
     
     R = random.Random()
     Rswarm = random.Random()
@@ -54,7 +57,7 @@ def main():
             if not noCover:
                 print ("NEW BRANCHES:",len(sut.newCurrBranches()),end=" ")
         if ok: # failing tests won't work with afl
-            if not noReduce:
+            if (not noCover) and (not noReduce):
                 b = set(sut.currBranches())
                 s = set(sut.currStatements())
                 pred = sut.coversAll(s,b,checkProp=True,catchUncaught=False)
