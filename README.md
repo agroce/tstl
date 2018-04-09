@@ -460,7 +460,9 @@ TSTL and afl
 
 You can even use afl (http://lcamtuf.coredump.cx/afl/) to generate TSTL tests.  You need to install afl itself and the `python-afl` pip package.  Then you can fuzz using afl with a command like:
 
-`py-afl-fuzz -o <outputdir> -i <inputdir> -- tstl_afl`
+`py-afl-fuzz -d -o <outputdir> -i <inputdir> -- tstl_afl`
+
+(the `-d` is optional, but likely to yield better results with TSTL)
 
 `tstl_afl` takes a file of bytes and interprets every N bytes (N
 depends on how many actions your harness has) as the
