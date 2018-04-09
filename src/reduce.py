@@ -85,7 +85,7 @@ def parse_args():
                         help="Read in tests in afl format.")
     parser.add_argument('--aflswarm', action='store_true',
                         help="afl tests are in swarm format.")    
-    parser.add_argument('--aflwrite', action='store_true',
+    parser.add_argument('--writeafl', action='store_true',
                         help="Write out tests in afl format.")    
     
     parsed_args = parser.parse_args(sys.argv[1:])
