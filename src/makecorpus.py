@@ -15,11 +15,11 @@ import sut as SUT
 
 def main():
     if "--help" in sys.argv:
-        print("Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noReduce] [--noCover] [--afl] [--aflswarm]")
+        print("Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noReduce] [--noCover] [--swarm]")
         print("Options:")
         print(" --noReduce:      do not reduce inputs by coverage")
         print(" --noCover:       do not check for new coverage")
-        print(" --swarm:         use swarm format")                        
+        print(" --swarm:         use swarm format, generate tests using swarm")                        
         sys.exit(0)
 
     sut = SUT.sut()
