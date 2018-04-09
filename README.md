@@ -440,7 +440,7 @@ Fault Localization
 -----
 
 TSTL supports automated fault localization.  If you have a harness that finds
-bugs, you might get some insight into the nature of those bugs by
+a bug, you might get some insight into the nature of that bug by
 running something like:
 
 `tstl-rt --localize --multiple`
@@ -452,8 +452,8 @@ in the code under test.   Some of this code may be involved in things
 like printing assertion values, or error handling for the fault, but
 there's a good chance you'll find the buggy code in the localization
 results, in our experience.  In fact, a five minute run will suffice
-for good localization, often, is five minutes is sufficient to find
-your bug a few times.
+for good localization, often, if five minutes is sufficient to find
+your bug a few times.  Note that results are much worse if you have more than one bug!
 
 TSTL and afl
 ---------
