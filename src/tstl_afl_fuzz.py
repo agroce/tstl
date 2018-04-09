@@ -17,18 +17,18 @@ def parse_args():
                         help="Time budget for generating a corpus to get afl started (default 10 minutes)")    
     parser.add_argument('--aflTimeout', type=int, default=5000,
                         help="afl timeout (default 5000)")    
-    parser.add_argument('--input', type=filename, default="inputs",
-                        help="Where to put corpus files (default /tmp/inputs)")
-    parser.add_argument('--output', type=filename, default="tstlafl",
-                        help="Where to put afl fuzzing output (default tstlafl)")
+    parser.add_argument('--input', type=filename, default="aflinputs",
+                        help="Where to put corpus files (default aflinputs)")
+    parser.add_argument('--output', type=filename, default="afloutputs",
+                        help="Where to put afl fuzzing output (default afloutputs)")
     parser.add_argument('--noCheck', action='store_true',                            
-                        help='Do not check properties.')
+                        help='Do not check properties')
     parser.add_argument('--swarm', action='store_true',                            
                         help='Use swarm testing.')
     parser.add_argument('--noCover', action='store_true',                            
-                        help='Do not use coverage to guide corpus tests.')                 
+                        help='Do not use coverage to guide corpus tests')                 
     parser.add_argument('--noReduce', action='store_true',                            
-                        help='Do not reduce corpus tests.')             
+                        help='Do not reduce corpus tests')           
 
     
     parsed_args = parser.parse_args(sys.argv[1:])
@@ -51,7 +51,7 @@ def main():
 
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print(('Triaging using config={}'.format(config)))    
+    print(('Fuzzing with afl using config={}'.format(config)))    
 
     if not os.path.exists(config.input):
         os.mkdir(input)
