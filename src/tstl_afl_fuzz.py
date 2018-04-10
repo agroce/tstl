@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument('--timeout', type=int, default=86400,
                         help='Total time budget for testing')
     parser.add_argument('--corpusBudget', type=int, default=600,
-                        help='Time budget for generating a corpus to get afl started (default 10 minutes)')    
+                        help='Time budget for generating a corpus to get afl started (default 5 minutes)')    
     parser.add_argument('--aflTimeout', type=int, default=5000,
                         help='afl timeout (default 5000)')    
     parser.add_argument('--input', type=str, default="aflinputs",
@@ -23,14 +23,16 @@ def parse_args():
                         help='Where to put afl fuzzing output (default afloutputs)')
     parser.add_argument('--noCheck', action='store_true',                            
                         help='Do not check properties')
-    parser.add_argument('--depth', type=int, default=200,
-                        help='Test depth for corpus construction (default 200)')
+    parser.add_argument('--depth', type=int, default=100,
+                        help='Test depth for corpus construction (default 100)')
     parser.add_argument('--swarm', action='store_true',                            
                         help='Use swarm testing.')
     parser.add_argument('--noCover', action='store_true',                            
                         help='Do not use coverage to guide corpus tests')                 
     parser.add_argument('--noReduce', action='store_true',                            
-                        help='Do not reduce corpus tests.')
+                        help='Do not reduce corpus tests')
+    parser.add_argument('--skipFails', action='store_true',                            
+                        help='Skip over failed tests during corpus generation')    
     parser.add_argument('--thorough', action='store_true',                            
                         help='Include afl deterministic steps (slows things down A LOT)')    
     
@@ -63,24 +65,29 @@ def main():
     corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.depth) + " " + str(config.corpusBudget)
     if config.swarm:
         corpusCmd += " --swarm"
+    if config.noCheck:
+        corpusCmd += " --noCheck"        
     if config.noCover:
         corpusCmd += " --noCover"
     if config.noReduce:
-        corpusCmd += " --noReduce"        
+        corpusCmd += " --noReduce"
+    if config.skipFails:
+        corpusCmd += " --skipFails"                
     P = subprocess.Popen([corpusCmd], shell=True)
     while (time.time() - start) < config.corpusBudget:
         time.sleep(1)
     P.kill()    
     
-    aflCmd = "py-afl-fuzz -t " + config.aflTimeout + "-o " + config.output + " -i " + config.input
+    aflCmd = "py-afl-fuzz -t " + str(config.aflTimeout) + " -i " + config.input + " -o " + config.output
     if not config.thorough:
         aflCmd += " -d "
-    aflCmd += " -- tstl_afl"
+    aflCmd += " -- tstl_afl "
     if config.swarm:
         aflCmd += " --swarm"
     if config.noCheck:
         aflCmd += " --noCheck"
-    start = time.time()        
+    print ("RUNNING AFL WITH COMMAND LINE:",aflCmd)        
+    start = time.time()
     P = subprocess.Popen([aflCmd], shell=True)
     while (time.time() - start) < (config.timeout - config.corpusBudget):
         time.sleep(1)

@@ -85,5 +85,5 @@ def main():
         print ("FAILURE:")
         traceback.print_tb(signatures[sig][2][2],file=sys.stdout)
         print ("COUNT:",signatures[sig][4])
-        if config.showTest:
+        if config.showTests:
             sut.prettyPrintTest(signatures[sig][1])
