@@ -35,6 +35,8 @@ def parse_args():
                         help='Skip over failed tests during corpus generation')    
     parser.add_argument('--thorough', action='store_true',                            
                         help='Include afl deterministic steps (slows things down A LOT)')    
+    parser.add_argument('--instrumentAll, action='store_true',                            
+                        help='Instrument TSTL harness as well (usually not a good idea)')    
     
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -80,12 +82,14 @@ def main():
     
     aflCmd = "py-afl-fuzz -t " + str(config.aflTimeout) + " -i " + config.input + " -o " + config.output
     if not config.thorough:
-        aflCmd += " -d "
-    aflCmd += " -- tstl_afl "
+        aflCmd += " -d"
+    aflCmd += " -- tstl_afl"
     if config.swarm:
         aflCmd += " --swarm"
     if config.noCheck:
         aflCmd += " --noCheck"
+    if not config.instrumentAll:
+        os.putenv("PYTHON_AFL_TSTL","TRUE")
     print ("RUNNING AFL WITH COMMAND LINE:",aflCmd)        
     start = time.time()
     P = subprocess.Popen([aflCmd], shell=True)
