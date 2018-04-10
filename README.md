@@ -548,12 +548,16 @@ In some cases (file systems) normalization (or even reduction) goes
 too far.  In testing at NASA, we found that "last operation" was a
 good heuristic for different bugs.  Using `--keepLast` in testing (or when
 using `tstl_reduce`) forces reduction and normalization to leave the
-last step (mostly) alone.  Normalization can still move it around, or
+last step  alone.  Normalization can still move it around, or
 change the pool it uses, but is much more careful about changing the
 actual action performed.  There is also a tool `tstl_triage` that
-takes a list of TSTL tests, runs them all, and reports ones with
+takes a _glob expression for a set of tests_, runs them all, and reports ones with
 different (heuristic) failure signatures.  In particular, it gives you
-the shortest test for each signature.
+the shortest test for each signature.  Remember that triage requires a
+glob expression (in quotes) not a list of files.  This is so it can
+handle even sets of tests that go beyond the shell expansion limit.
+We assume that you won't need to handle that many tests in regression,
+but for triage, who knows?
 
 Further Details
 ----------------
