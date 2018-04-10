@@ -17,11 +17,11 @@ def parse_args():
                         help='Time budget for generating a corpus to get afl started (default 10 minutes)')    
     parser.add_argument('--aflTimeout', type=int, default=5000,
                         help='afl timeout (default 5000)')    
-    parser.add_argument('--input', type=filename, default="aflinputs",
+    parser.add_argument('--input', type=str, default="aflinputs",
                         help='Where to put corpus files (default aflinputs)')
-    parser.add_argument('--output', type=filename, default="afloutputs",
+    parser.add_argument('--output', type=str, default="afloutputs",
                         help='Where to put afl fuzzing output (default afloutputs)')
-    Parser.add_argument('--noCheck', action='store_true',                            
+    parser.add_argument('--noCheck', action='store_true',                            
                         help='Do not check properties')
     parser.add_argument('--depth', type=int, default=200,
                         help='Test depth for corpus construction (default 200)')
@@ -57,7 +57,7 @@ def main():
     print(('Fuzzing with afl using config={}'.format(config)))    
 
     if not os.path.exists(config.input):
-        os.mkdir(input)
+        os.mkdir(config.input)
 
     start = time.time()
     corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.depth) + " " + str(config.corpusBudget)
@@ -67,7 +67,7 @@ def main():
         corpusCmd += " --noCover"
     if config.noReduce:
         corpusCmd += " --noReduce"        
-    P = subprocess.Popen([corpusCmd, shell=True])
+    P = subprocess.Popen([corpusCmd], shell=True)
     while (time.time() - start) < config.corpusBudget:
         time.sleep(1)
     P.kill()    
