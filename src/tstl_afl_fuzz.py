@@ -35,7 +35,7 @@ def parse_args():
                         help='Skip over failed tests during corpus generation')    
     parser.add_argument('--thorough', action='store_true',                            
                         help='Include afl deterministic steps (slows things down A LOT)')    
-    parser.add_argument('--instrumentAll, action='store_true',                            
+    parser.add_argument('--instrumentAll', action='store_true',                            
                         help='Instrument TSTL harness as well (usually not a good idea)')    
     
     parsed_args = parser.parse_args(sys.argv[1:])
