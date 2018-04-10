@@ -12,26 +12,27 @@ from collections import namedtuple
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--timeout', type=int, default=86400,
-                        help="Total time budget for testing")
+                        help='Total time budget for testing')
     parser.add_argument('--corpusBudget', type=int, default=600,
-                        help="Time budget for generating a corpus to get afl started (default 10 minutes)")    
+                        help='Time budget for generating a corpus to get afl started (default 10 minutes)')    
     parser.add_argument('--aflTimeout', type=int, default=5000,
-                        help="afl timeout (default 5000)")    
-    parser.add_argument('--input', type=filename, default="inputs",
-                        help="Where to put corpus files (default /tmp/inputs)")
-    parser.add_argument('--output', type=filename, default="tstlafl",
-                        help="Where to put afl fuzzing output (default tstlafl)")
-    parser.add_argument('--noCheck', action='store_true',                            
-                        help='Do not check properties.')
+                        help='afl timeout (default 5000)')    
+    parser.add_argument('--input', type=filename, default="aflinputs",
+                        help='Where to put corpus files (default aflinputs)')
+    parser.add_argument('--output', type=filename, default="afloutputs",
+                        help='Where to put afl fuzzing output (default afloutputs)')
+    Parser.add_argument('--noCheck', action='store_true',                            
+                        help='Do not check properties')
+    parser.add_argument('--depth', type=int, default=200,
+                        help='Test depth for corpus construction (default 200)')
     parser.add_argument('--swarm', action='store_true',                            
                         help='Use swarm testing.')
     parser.add_argument('--noCover', action='store_true',                            
-                        help='Do not use coverage to guide corpus tests.')                 
+                        help='Do not use coverage to guide corpus tests')                 
     parser.add_argument('--noReduce', action='store_true',                            
                         help='Do not reduce corpus tests.')
     parser.add_argument('--thorough', action='store_true',                            
                         help='Include afl deterministic steps (slows things down A LOT)')    
-
     
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -53,13 +54,13 @@ def main():
 
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print(('Triaging using config={}'.format(config)))    
+    print(('Fuzzing with afl using config={}'.format(config)))    
 
     if not os.path.exists(config.input):
         os.mkdir(input)
 
     start = time.time()
-    corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.length) + " " + str(config.corpusBudget)
+    corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.depth) + " " + str(config.corpusBudget)
     if config.swarm:
         corpusCmd += " --swarm"
     if config.noCover:
