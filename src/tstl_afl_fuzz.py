@@ -28,7 +28,9 @@ def parse_args():
     parser.add_argument('--noCover', action='store_true',                            
                         help='Do not use coverage to guide corpus tests.')                 
     parser.add_argument('--noReduce', action='store_true',                            
-                        help='Do not reduce corpus tests.')             
+                        help='Do not reduce corpus tests.')
+    parser.add_argument('--thorough', action='store_true',                            
+                        help='Include afl deterministic steps (slows things down A LOT)')    
 
     
     parsed_args = parser.parse_args(sys.argv[1:])
@@ -69,7 +71,9 @@ def main():
         time.sleep(1)
     P.kill()    
     
-    aflCmd = "py-afl-fuzz -d -t " + config.aflTimeout + "-o " + config.output + " -i " + config.input
+    aflCmd = "py-afl-fuzz -t " + config.aflTimeout + "-o " + config.output + " -i " + config.input
+    if not config.thorough:
+        aflCmd += " -d "
     aflCmd += " -- tstl_afl"
     if config.swarm:
         aflCmd += " --swarm"
