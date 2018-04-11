@@ -582,13 +582,15 @@ def buildActivePool():
 def tryExploit():
     global fulltest, currtest
     ok = True
+    wasExploit = False
     if R.random() < config.exploit:
         buildActivePool()
         if len(activePool) == 0:
-            return ok
+            return (wasExploit,ok)
         et = R.choice(activePool)
         if config.verboseExploit or config.verbose:
-            print("EXPLOITING STORED TEST ENDING IN",sut.prettyName(et[-1][0]))        
+            print("EXPLOITING STORED TEST ENDING IN",sut.prettyName(et[-1][0]))
+        wasExploit = True
         if R.random() < config.Pmutate:
             if config.verboseExploit or config.verbose:
                 print("MUTATING EXPLOITED TEST")
@@ -614,8 +616,8 @@ def tryExploit():
         except KeyboardInterrupt as e:
             raise e
         except:
-            return False
-    return ok
+            return (wasExploit,False)
+    return (wasExploit,ok)
             
 def collectExploitable():
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool,hintValueCounts
@@ -645,7 +647,7 @@ def collectExploitable():
             reducePool.append((list(sut.test()),set(sut.newBranches()),set(sut.newStatements())))
 
 def printStatus(elapsed,step=None):
-    global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage
+    global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage, testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
     print("TEST #"+str(ntests), end=' ')
     if step != None:
         print("STEP #"+str(step), end=' ')
@@ -654,14 +656,17 @@ def printStatus(elapsed,step=None):
         print("[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]", end=' ')
         if testsWithNoNewCoverage > 0:
             print("(no cov+ for",testsWithNoNewCoverage,"tests)", end=' ')
-    if (config.exploit != None) and (config.verbose or config.verboseExploit):
+    if (config.exploit != None):
         print("[ POOLS: full",len(fullPool),"active",len(activePool),"]", end=' ')
     print(nops, "TOTAL ACTIONS (" + str(round(nops/elapsed,2)) + "/s)", end=' ')
-    print("(test " + str(round(thisOps/thisElapsed,2)) + "/s)")
+    print("(test " + str(round(thisOps/thisElapsed,2)) + "/s)", end=' ')
+    if (config.exploit != None) and (totalExploits > 0):    
+        print("["+str(exploitsWithNewCoverage),"cov+ exploits /",str(totalExploits)+"]",end=' ')    
+    print(testsWithNewCoverage,"cov+ tests")
     sys.stdout.flush()
 
 def main():
-    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest, failCloud, allClouds,thisOps,thisElapsed
+    global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest, failCloud, allClouds,thisOps,thisElapsed, testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
     global failFileCount
     global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
     global hintPool, hintValueCounts
@@ -671,6 +676,11 @@ def main():
     global testsWithNoNewCoverage
     global stepsWithNoNewCoverage    
     global sequences
+
+    testsWithNewCoverage = 0
+    exploitsWithNewCoverage = 0
+
+    wasExploit = False
     
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
@@ -928,6 +938,7 @@ def main():
 
     testsWithNoNewCoverage = 0
     neverExploited = True
+    totalExploits = 0
         
     while (config.maxTests == -1) or (ntests < config.maxTests):
 
@@ -974,7 +985,9 @@ def main():
             if neverExploited:
                 print("** STARTING EXPLOITATION OF TESTS AT TIME",time.time()-start,"AFTER",testsWithNoNewCoverage,"TESTS WITH NO NEW COVERAGE **")
                 neverExploited = False
-            exploitOk = tryExploit()
+            (wasExploit,exploitOk) = tryExploit()
+            if wasExploit:
+                totalExploits += 1
             if not exploitOk:
                 testFailed = True
                 handle_failure(sut.test(), "FAILURE DURING MUTATION", False)
@@ -1250,6 +1263,9 @@ def main():
 
         if not config.noCover and (anyNewCoverage or (len(set(sut.newCurrBranches())) > 0) or (len(set(sut.newCurrStatements())) > 0)):
             testsWithNoNewCoverage = 0
+            testsWithNewCoverage += 1
+            if wasExploit:
+                exploitsWithNewCoverage += 1
         else:
             testsWithNoNewCoverage += 1
 

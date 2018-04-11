@@ -3,6 +3,7 @@ from __future__ import print_function
 import sys
 import time
 import os
+import glob
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
@@ -17,6 +18,7 @@ def main():
     if "--help" in sys.argv:
         print("Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running] [--afl] [--aflswarm]")
         print("Options:")
+        print(" --glob:         <test files> are glob expressions (used when too many files to use shell expansion)")
         print(" --noCheck:      do not run property checks")
         print(" --html:         output an HTML coverage report to the chosen directory")
         print(" --noCover:      do not compute code coverage")
@@ -56,6 +58,11 @@ def main():
             sut.stopCoverage()
         except:
             pass
+    if "--glob" in sys.argv:
+        newFiles = []
+        for f in files:
+            newFiles.extend(glob.glob(f))
+        files = newFiles
     if "--verbose" in sys.argv:
         verbose = True
     if "--noCheck" in sys.argv:
