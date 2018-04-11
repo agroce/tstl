@@ -137,7 +137,7 @@ def parse_args():
                         help="Exploitation is verbose (info on pool, etc.).")    
     parser.add_argument("--reducePool",action='store_true',
                         help="Reduce tests by their new coverage before adding to exploitation pool.")
-    parser.add_argument('--exploitCeiling', type=float, default=0.4,
+    parser.add_argument('--exploitCeiling', type=float, default=0.5,
                         help="Max ratio to mean coverage count for exploitation.")
     parser.add_argument('--Pmutate', type=float, default=0.0,
                         help="Probability to mutate exploited tests (default = 0.0 -- no mutation).")
