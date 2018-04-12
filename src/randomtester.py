@@ -522,7 +522,8 @@ def buildActivePool():
                     sut.newCurrStatements().update(newStatements)
                     sut.newCurrBranches().update(newBranches)
                     # Collect the quick test
-                    handle_failure(r,"NEW COVERAGE", False, newCov=True)
+                    if config.quickTests:
+                        handle_failure(r,"NEW COVERAGE", False, newCov=True)
             # At this point all of reducePool is in fullPool
             reducePool = []
 
