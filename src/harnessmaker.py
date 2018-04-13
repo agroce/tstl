@@ -1106,9 +1106,11 @@ def main():
                 genCode.append(baseIndent + baseIndent + baseIndent + newC)
                 genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as exc2:\n")
                 genCode.append(baseIndent + baseIndent + baseIndent + "failedAgain = True\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXPECTED EXCEPTION:',type(raised),raised,'ON RETRY ALSO')\n")
+                genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXCEPTION:',type(exc2),exc2,'ON RETRY')\n")
                 genCode.append(baseIndent + baseIndent + "if self.__verboseActions and not failedAgain: print ('DID NOT RAISE EXPECTED EXCEPTION ON RETRY')\n")                                
                 genCode.append(baseIndent + baseIndent + "assert failedAgain, 'Action did not fail on second attempt.'\n")
+                genCode.append(baseIndent + baseIndent + "assert (repr(exc) == repr(exc2)), 'Failure with different exception.'\n")
+                
         if warnExcepts != "":
             genCode.append(baseIndent + "except (" + warnExcepts + ") as exc:\n")
             genCode.append(baseIndent + baseIndent + "raised = exc\n")
