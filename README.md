@@ -134,7 +134,7 @@ The easiest way to understand TSTL may be to examine
 examples/AVL/avlnew.tstl (https://github.com/agroce/tstl/blob/master/examples/AVL/avlnew.tstl), which is a simple example file in the latest
 language format.
 
-`avlnew.tstl` is a pretty full-featured testers for an AVL tree class.  You can
+`avlnew.tstl` creates a pretty full-featured tester for an AVL tree class.  You can
 write something very quick and fairly effective with just a few lines
 of code, however:
 
