@@ -662,8 +662,11 @@ def printStatus(elapsed,step=None):
     print(nops, "TOTAL ACTIONS (" + str(round(nops/elapsed,2)) + "/s)", end=' ')
     print("(test " + str(round(thisOps/thisElapsed,2)) + "/s)", end=' ')
     if (config.exploit != None) and (totalExploits > 0):    
-        print("["+str(exploitsWithNewCoverage),"cov+ exploits /",str(totalExploits)+"]",end=' ')    
-    print(testsWithNewCoverage,"cov+ tests")
+        print("["+str(exploitsWithNewCoverage),"cov+ exploits /",str(totalExploits)+"]",end=' ')
+    if (not config.noCover) and (not config.postCover):
+        print(testsWithNewCoverage,"cov+ tests")
+    else:
+        print()
     sys.stdout.flush()
 
 def main():
