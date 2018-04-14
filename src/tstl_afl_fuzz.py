@@ -78,7 +78,9 @@ def main():
     P = subprocess.Popen([corpusCmd], shell=True)
     while (time.time() - start) < config.corpusBudget:
         time.sleep(1)
-    P.kill()    
+    if P.poll() != None:
+        P.kill()
+        print ("KILLED TSTL CORPUS GENERATION")
     
     aflCmd = "py-afl-fuzz -t " + str(config.aflTimeout) + " -i " + config.input + " -o " + config.output
     if not config.thorough:
@@ -90,6 +92,8 @@ def main():
         aflCmd += " --noCheck"
     if not config.instrumentAll:
         os.putenv("PYTHON_AFL_TSTL","TRUE")
+    else:
+        os.unsetenv("PYTHON_AFL_TEST")
     print ("RUNNING AFL WITH COMMAND LINE:",aflCmd)        
     start = time.time()
     P = subprocess.Popen([aflCmd], shell=True)

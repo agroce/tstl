@@ -28,6 +28,8 @@ def main():
 
     pid = str(os.getpid())
 
+    print ("GENERATING INITIAL AFL INPUTS...")
+    
     outputDir = sys.argv[1]
     length = int(sys.argv[2])
     timeout = int(sys.argv[3])
