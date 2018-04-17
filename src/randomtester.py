@@ -60,11 +60,13 @@ def parse_args():
     parser.add_argument('--checkDeterminism', action='store_true',
                         help='Check determinism of pool objects.')
     parser.add_argument('--determinismTries', type=int, default = 1,                            
-                        help='Number of tries to catch nondeterminism.')            
+                        help='Number of tries to catch nondeterminism (default 1).')            
     parser.add_argument('--checkProcessDeterminism', action='store_true',                            
                         help='Check that tests are process deterministic.')
-    parser.add_argument('--processDeterminismTries', type=int, default = 1,                            
-                        help='Number of tries to catch process nondeterminism.')        
+    parser.add_argument('--processDetTries', type=int, default = 1,                            
+                        help='Number of tries to catch process nondeterminism (default 1).')
+    parser.add_argument('--processDetDelay', type=int, default = 0,                            
+                        help='Delay when checking process nondeterminism (default 0).')            
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage (save a test for each newly reached coverage target).")
     parser.add_argument('--readQuick', action='store_true',
@@ -1454,7 +1456,8 @@ def main():
 
         if config.checkProcessDeterminism and not testFailed:
             print ("CHECKING PROCESS DETERMINISM...")
-            nondeterministic = sut.findProcessNondeterminism(replayTest,verbose=True,tries=config.processDeterminismTries)
+            nondeterministic = sut.findProcessNondeterminism(replayTest,verbose=True,tries=config.processDetTries,
+                                                                 delay=config.processDetDelay)
             if nondeterministic != -1:
                 if not config.noAlphaConvert:
                     alphaReplay = sut.alphaConvert(replayTest[:nondeterministic])

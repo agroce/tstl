@@ -127,6 +127,7 @@ def main():
             print("STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches()))
             if not f in noNewCover:
                 print("NEW STATEMENTS:",len(sut.newCurrStatements()), "BRANCHES:",len(sut.newCurrBranches()))
+        sys.stdout.flush()
 
     if not nocover:
         sut.internalReport()

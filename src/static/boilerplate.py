@@ -990,7 +990,7 @@ def trajectoryItem(self):
                 ti[name][v] = "UNABLE TO COPY"
     return ti
 
-def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False):
+def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False,reportEqualFail=False):
     """
     Checks if a test behaves nondeterministically (in terms of all non-opaque pool values produced)
     under an optional timing change.  Default is to run with no delay for an initial capture
@@ -1008,14 +1008,18 @@ def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False):
         self.restart()
         for s in t:
             self.safely(s)
-            if (self.trajectoryItem()) != (trajectory[pos]):
-                return True            
+            try:
+                if (self.trajectoryItem()) != (trajectory[pos]):
+                    return True
+            except:
+                if reportEqualFail:
+                    raise
             if delay != None:
                 time.sleep(delay)
             pos += 1
     return False
 
-def nondeterministic(self,t,delay=1.0,delay0=None,tries=1):
+def nondeterministic(self,t,delay=1.0,delay0=None,tries=1,reportEqualFail=False):
     """
     Checks if a test behaves nondeterministically (in terms of final non-opaque pool values)
     under an optional timing change.  Default is to run with no delay for an initial capture
@@ -1051,8 +1055,12 @@ def nondeterministic(self,t,delay=1.0,delay0=None,tries=1):
                     s1[name][v] = copy.deepcopy(vals[v])
                 except:
                     s1[name][v] = "UNABLE TO COPY"    
-        if s0 != s1:
-            return True
+        try:
+            if s0 != s1:
+                return True
+        except:
+            if reportEqualFail:
+                raise
     return False
 
 def verbose(self, bool):
