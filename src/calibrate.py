@@ -136,9 +136,9 @@ def main():
     sortLOC = sorted(classLOCVals.keys(),key=lambda x:classP[x],reverse=True)
     print ("HIGHEST LOC-BASED PROBABILITY ACTIONS:")
     for c in sortLOC[:3]:
-        print ("  ",c,round(classP[c],3))
+        print ("  ",c,round(classP[c],5))
     print ("\nLOWEST LOC-BASED PROBABILITY ACTIONS:")
     for c in sortLOC[-3:]:
-        print ("  ",c,round(classP[c],3))
+        print ("  ",c,round(classP[c],5))
     
     calibFile.close()
