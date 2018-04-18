@@ -503,7 +503,9 @@ def buildActivePool():
                 sut.replay(r,checkProp=not(config.noCheck),catchUncaught=True)
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
                 if config.savePool != None:
-                    sut.saveTest(r,"pool."+config.savePool+"."+str(poolCount)+".test")
+                    pname = "pool."+config.savePool+"."+str(poolCount)+".test"
+                    print ("SAVING POOL TEST AS",pname)
+                    sut.saveTest(r,pname)
                     poolCount += 1
                 # Have to make sure if we got some new coverage out of this it's in the coverage map
                 # Also need to make sure quickTests know about it
@@ -650,7 +652,9 @@ def collectExploitable():
         if not config.reducePool:
             fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
             if config.savePool != None:
-                sut.saveTest(list(sut.test()),"pool."+config.savePool+"."+str(poolCount)+".test")
+                pname = "pool."+config.savePool+"."+str(poolCount)+".test"
+                print ("SAVING POOL TEST AS",pname)
+                sut.saveTest(list(sut.test()),pname)
                 poolCount += 1            
         else:
             # We can't reduce right now, unless we want the annoyance of saving and restoring state, since
@@ -702,11 +706,16 @@ def main():
     config = make_config(parsed_args, parser)
     print(('Random testing using config={}'.format(config)))
 
+    
     R = random.Random(config.seed)
 
     start = time.time()
     elapsed = time.time()-start
 
+    sut = SUT.sut()
+    if config.relax:
+        sut.relax()
+    
     failCount = 0
     failFileCount = 0
     quickCount = 0
@@ -724,7 +733,7 @@ def main():
         poolCount = 0
         reducePool = []
         activePool = []
-
+        
     hintPool = []
     hintValueCounts = {}
 
@@ -737,10 +746,15 @@ def main():
         uniquef = open("unique.corpus",'w')
         allUniquePaths = []
 
-    sut = SUT.sut()
-    if config.relax:
-        sut.relax()
-
+    if config.readPool != None:
+        startRead = time.time()
+        for f in glob.glob("pool."+config.readPool+".*.test"):
+            t = sut.loadTest(f)
+            sut.replay(t,checkProp=not(config.noCheck),catchUncaught=True)
+            fullPool.append((t, set(sut.currBranches()), set(sut.currStatements())))
+        poolCount = len(fullPool)
+        print ("READ",poolCount,"POOL TESTS IN",time.time()-startRead,"SECONDS")
+        
     # MAJOR SPEED GAIN:  IF NOT MEASURING COVERGE, NO NEED TO RECOMPILE, JUST RUN --noCover
     if config.noCover or config.postCover:
         try:
