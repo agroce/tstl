@@ -503,7 +503,7 @@ def buildActivePool():
                 sut.replay(r,checkProp=not(config.noCheck),catchUncaught=True)
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
                 if config.savePool != None:
-                    pname = "pool."+config.savePool+"."+str(poolCount)+".test"
+                    pname = config.savePool+".pool."+str(poolCount)+".test"
                     print ("SAVING POOL TEST AS",pname)
                     sut.saveTest(r,pname)
                     poolCount += 1
@@ -652,7 +652,7 @@ def collectExploitable():
         if not config.reducePool:
             fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
             if config.savePool != None:
-                pname = "pool."+config.savePool+"."+str(poolCount)+".test"
+                pname = config.savePool+".pool."+str(poolCount)+".test"
                 print ("SAVING POOL TEST AS",pname)
                 sut.saveTest(list(sut.test()),pname)
                 poolCount += 1            
@@ -748,7 +748,7 @@ def main():
 
     if config.readPool != None:
         startRead = time.time()
-        for f in glob.glob("pool."+config.readPool+".*.test"):
+        for f in glob.glob(config.readPool+".pool.*.test"):
             t = sut.loadTest(f)
             sut.replay(t,checkProp=not(config.noCheck),catchUncaught=True)
             fullPool.append((t, set(sut.currBranches()), set(sut.currStatements())))
