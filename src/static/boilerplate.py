@@ -2163,8 +2163,11 @@ def moduleLocations(self):
             else:
                 raise AttributeError
         except AttributeError:
-            f = m.__file__
-            if ("lib-dynload" in f) or ("site-packages" not in f):
-                continue # skip system code
-            locs.append(m.__name__)
+            try:
+                f = m.__file__
+                if ("lib-dynload" in f) or ("site-packages" not in f):
+                    continue # skip system code
+                locs.append(m.__name__)
+            except AttributeError:
+                pass
     return locs
