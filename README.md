@@ -460,7 +460,7 @@ TSTL and afl
 
 You can even use afl (http://lcamtuf.coredump.cx/afl/) to generate
 TSTL tests.  You need to install afl itself and the `python-afl` pip
-package.  Then you can fuzz using afl in any directory with a compiled
+package (or grab the code from github at https://github.com/jwilk/python-afl).  Then you can fuzz using afl in any directory with a compiled
 TSTL harness:
 
 `tstl_afl_fuzz --output <outputdir> --input <inputdir>`
@@ -633,7 +633,14 @@ Who is responsible for TSTL?
 
 - Ned Batchelder, David R. MacIver, and John Regehr have no actual code in TSTL, but all contributed in significant ways to various implementation aspects, in ways that go beyond the general disclaimer that TSTL freely steals from the entire software testing (research) community.
 
-- The pyfakefs team (mrbean-bremen and jmcgeheeiv on github) really worked with me to test pyfakefs, which resulted in a number of nice improvements to TSTL and to differential testing in particular.  More recently, mrbean-bremen has taken the lead in making TSTL compatible with Python 3, which seems to mostly be done now!
+- The pyfakefs team (mrbean-bremen and jmcgeheeiv on github) really
+  worked with me to test pyfakefs, which resulted in a number of nice
+  improvements to TSTL and to differential testing in particular.
+  More recently, mrbean-bremen has taken the lead in making TSTL
+  compatible with Python 3, which seems to mostly be done now!
+
+- Jakub Wilk helped with modifications to python-afl that made
+  TSTL/afl integration work much better.
 
 - Corey Kosak helped turn this README into something that you might
   actually enjoy reading, and gets to the point much faster than
