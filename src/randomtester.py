@@ -131,6 +131,10 @@ def parse_args():
                         help="New quick tests add sequences.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
                         help="Probability to exploit stored coverage tests.")
+    parser.add_argument('--savePool',type=str,default=None,
+                        help="Save pool generated during exploitation.")
+    parser.add_argument('--readPool',type=str,default=None,
+                        help="Read pool files generated during exploitation.")    
     parser.add_argument('--startExploit', type=float, default=0.0,
                         help="Time at which exploitation starts (default 0.0, LOWER BOUND: this plus startExploitStall must hold).")
     parser.add_argument('--startExploitStall', type=int, default=0,
@@ -482,7 +486,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
             print("FAILURE IS NEW, STORING; NOW",len(failures),"DISTINCT FAILURES")
 
 def buildActivePool():
-    global activePool, reducePool
+    global activePool, reducePool, fullPool, poolCount
 
     activePool = []
 
@@ -498,6 +502,9 @@ def buildActivePool():
                     print()
                 sut.replay(r,checkProp=not(config.noCheck),catchUncaught=True)
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
+                if config.savePool != None:
+                    sut.saveTest(r,"pool."+config.savePool+"."+str(poolCount)+".test")
+                    poolCount += 1
                 # Have to make sure if we got some new coverage out of this it's in the coverage map
                 # Also need to make sure quickTests know about it
                 # Some statistics may be inaccurate, though
@@ -623,7 +630,7 @@ def tryExploit():
     return (wasExploit,ok)
             
 def collectExploitable():
-    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool,hintValueCounts
+    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool,hintValueCounts,poolCount
 
     if config.useHints:
         # We are assuming hints are all normalized to the same scale!
@@ -642,6 +649,9 @@ def collectExploitable():
             print("COLLECTING DUE TO NEW COVERAGE:",len(sut.newBranches()),len(sut.newStatements()))
         if not config.reducePool:
             fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
+            if config.savePool != None:
+                sut.saveTest(list(sut.test()),"pool."+config.savePool+"."+str(poolCount)+".test")
+                poolCount += 1            
         else:
             # We can't reduce right now, unless we want the annoyance of saving and restoring state, since
             # we are in the middle of a test run, and we'd mess up quick test and coverage stats collection
@@ -674,7 +684,7 @@ def printStatus(elapsed,step=None):
 def main():
     global failCount,sut,config,reduceTime,quickCount,repeatCount,failures,cloudFailures,R,opTime,checkTime,guardTime,restartTime,nops,ntests,fulltest,currtest, failCloud, allClouds,thisOps,thisElapsed, testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
     global failFileCount
-    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool
+    global fullPool,activePool,branchCoverageCount,statementCoverageCount,localizeSFail,localizeBFail,reducePool,poolCount
     global hintPool, hintValueCounts
     global allQuickTests
     global allTheTests
@@ -711,6 +721,7 @@ def main():
 
     if config.exploit != None:
         fullPool = []
+        poolCount = 0
         reducePool = []
         activePool = []
 

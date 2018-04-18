@@ -31,6 +31,7 @@ setup(
     tstl_fromafl = src.fromafl:main
     tstl_triage = src.triage:main
     tstl_afl_fuzz = src.tstl_afl_fuzz:main
+    tstl_calibrate = src.calibrate:main
     """,
     keywords='testing tstl',
     classifiers=[
