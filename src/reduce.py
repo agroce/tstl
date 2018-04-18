@@ -38,7 +38,9 @@ def parse_args():
     parser.add_argument('--coverMore', action='store_true',                            
                         help='Only allow reductions that increase code coverage.')
     parser.add_argument('--checkDeterminism', action='store_true',                            
-                        help='Reduce with respect to test being deterministic.')
+                        help='Reduce with respect to test being deterministic (final state).')
+    parser.add_argument('--checkStepDeterminism', action='store_true',                            
+                        help='Reduce with respect to test being deterministic (visible value).')    
     parser.add_argument('--determinismDelay', type=float, default=1.0,                            
                         help='Time delay for nondeterminism check.')
     parser.add_argument('--determinismDelay0', type=float, default=None,                            
@@ -194,6 +196,10 @@ def main():
     if config.checkDeterminism:
         pred = (lambda t: sut.nondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
                                                    delay0=config.determinismDelay0))
+
+    if config.checkStepDeterminism:
+        pred = (lambda t: sut.stepNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
+                                                   delay0=config.determinismDelay0))            
             
     if config.checkProcessDeterminism:
         pred = (lambda t: sut.processNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,iterate=config.iterate))

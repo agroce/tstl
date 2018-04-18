@@ -1099,7 +1099,8 @@ def testCandidates(self, t, n):
         candidates.append(tc)
     return candidates
 
-def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = True, rgen = None, amplify = False, amplifyReplications = 1, stopFound = False, tryFast=True, testHandler = None, findLocations = False, noResetSplit = False, safeReduce = False):
+def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = True, rgen = None, amplify = False, amplifyReplications = 1, stopFound = False, tryFast=True, testHandler = None, findLocations = False, noResetSplit = False, safeReduce = False,
+               saveIntermediate = None):
     """
     This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
     pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
@@ -1118,6 +1119,8 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
     except:
         pass
 
+    intermediate = 0
+    
     if len(test) < 2:
         return test
 
@@ -1237,7 +1240,10 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
                     truePos = (lastRemove + removePos) % len(tb)
                     lastRemove = truePos
                     if verbose == "VERY":
-                        print("check #",truePos,removePos,lastRemove)                     
+                        print("check #",truePos,removePos,lastRemove)
+                if saveIntermediate != None:
+                    self.saveTest(tb+addLast,saveIntermediate + "." + str(intermediate) + ".test")
+                    intermediate += 1
                 reduced = True
                 break
         if not reduced:

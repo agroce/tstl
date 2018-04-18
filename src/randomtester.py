@@ -60,12 +60,14 @@ def parse_args():
     parser.add_argument('--checkDeterminism', action='store_true',
                         help='Check determinism of pool objects.')
     parser.add_argument('--determinismTries', type=int, default = 1,                            
-                        help='Number of tries to catch nondeterminism (default 1).')            
+                        help='Number of tries to catch nondeterminism (default 1).')
+    parser.add_argument('--determinismDelay', type=float, default = 0,                            
+                        help='Delay when checking for nondeterminism (default 0).')                
     parser.add_argument('--checkProcessDeterminism', action='store_true',                            
                         help='Check that tests are process deterministic.')
     parser.add_argument('--processDetTries', type=int, default = 1,                            
                         help='Number of tries to catch process nondeterminism (default 1).')
-    parser.add_argument('--processDetDelay', type=int, default = 0,                            
+    parser.add_argument('--processDetDelay', type=float, default = 0,                            
                         help='Delay when checking process nondeterminism (default 0).')            
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage (save a test for each newly reached coverage target).")
@@ -1481,8 +1483,8 @@ def main():
 
         if config.checkProcessDeterminism and not testFailed:
             print ("CHECKING PROCESS DETERMINISM...")
-            nondeterministic = sut.findProcessNondeterminism(replayTest,verbose=True,tries=config.processDetTries,
-                                                                 delay=config.processDetDelay)
+            nondeterministic = sut.findProcessNondeterminism(replayTest,verbose=True,tries=config.determinismTries,
+                                                                 delay=config.determinismDelay)
             if nondeterministic != -1:
                 if not config.noAlphaConvert:
                     alphaReplay = sut.alphaConvert(replayTest[:nondeterministic])
@@ -1500,6 +1502,7 @@ def main():
                 sut.restart()
                 nondeterministic = False
                 for s in replayTest:
+                    time.sleep(config.determinismDelay)                    
                     sut.safely(s)
                     ti = sut.trajectoryItem()
                     try:
