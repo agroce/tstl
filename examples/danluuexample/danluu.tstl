@@ -1,0 +1,18 @@
+@import danluu
+
+pool: <int> 10
+pool: <list> 10
+
+<int> := 0
+<int> := 1
+<int> := <[0..256]>
+<int> += 1
+<int> *= 2
+<int> -= 1
+<int> += <int>
+<int> -= <int>
+
+<list> := []
+<list>.append(<int>)
+
+assert (danluu.dut(<list>) != 0)
