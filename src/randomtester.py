@@ -627,7 +627,7 @@ def tryExploit():
                 currtest.flush()
         try:
             ok = sut.replay(et,checkProp=not(config.noCheck),catchUncaught=config.uncaught)
-            if len(sut.newCurrBranches()) != 0:
+            if (len(sut.newCurrBranches()) != 0) or (len(sut.newCurrStatements()) != 0):
                 print ("COVERAGE INCREASE DURING MUTATION")
                 if not config.reducePool:
                     fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
@@ -642,7 +642,6 @@ def tryExploit():
                     if config.verbose or config.verboseExploit:
                         print("SAVING TEST FOR REDUCTION")
                     reducePool.append((list(sut.test()),set(sut.newCurrBranches()),set(sut.newCurrStatements())))                
-                
         except KeyboardInterrupt as e:
             raise e
         except:
