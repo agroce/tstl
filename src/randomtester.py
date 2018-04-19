@@ -594,7 +594,7 @@ def buildActivePool():
             sut.prettyPrintTest(t)
             
 def tryExploit():
-    global fulltest, currtest
+    global fulltest, currtest, fullPool, reducePool, poolCount
     ok = True
     wasExploit = False
     if R.random() < config.exploit:
@@ -627,6 +627,22 @@ def tryExploit():
                 currtest.flush()
         try:
             ok = sut.replay(et,checkProp=not(config.noCheck),catchUncaught=config.uncaught)
+            if len(sut.newCurrBranches()) != 0:
+                print ("COVERAGE INCREASE DURING MUTATION")
+                if not config.reducePool:
+                    fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
+                    if config.savePool != None:
+                        pname = config.savePool+".pool."+str(poolCount)+".test"
+                        print ("SAVING POOL TEST AS",pname)
+                        sut.saveTest(list(sut.test()),pname)
+                        poolCount += 1            
+                else:
+                    # We can't reduce right now, unless we want the annoyance of saving and restoring state, since
+                    # we are in the middle of a test run, and we'd mess up quick test and coverage stats collection
+                    if config.verbose or config.verboseExploit:
+                        print("SAVING TEST FOR REDUCTION")
+                    reducePool.append((list(sut.test()),set(sut.newCurrBranches()),set(sut.newCurrStatements())))                
+                
         except KeyboardInterrupt as e:
             raise e
         except:
@@ -1023,6 +1039,7 @@ def main():
                 totalExploits += 1
             if not exploitOk:
                 testFailed = True
+                sut.replay(sut.test(),checkProp = not config.noCheck)
                 handle_failure(sut.test(), "FAILURE DURING MUTATION", False)
                 if not config.multiple:
                     print("STOPPING TESTING DUE TO FAILED TEST")
