@@ -1,3 +1,10 @@
+# Example taken from https://danluu.com/testing/
+
+# TSTL, even with coverage-driven mode, has trouble with this.
+# tstl_afl_fuzz, however, given the start (once TSTL finds -1 in the first
+# position, finishes it in less than five minutes; it does have some difficulty
+# getting to the first -1 with just an input producing a four item list, though.
+
 def dlfilter(x):
     for i in range(0,16):
         if not((x & 1) == 1):
