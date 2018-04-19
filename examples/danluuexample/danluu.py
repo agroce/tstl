@@ -11,6 +11,10 @@
 # It's an interesting example of TSTL/afl cooperation, actually, in that if you
 # don't give TSTL those two minutes to find the four-item list, afl ends up
 # taking a LOT longer to find the problem (about half an hour).
+#
+# In fact, a swarm + genetic algorithm combo with TSTL can get lucky and generate two
+# -1 inputs at the beginning within 5 minutes, and then afl can turn that into a crash
+# in under a minute flat.
 
 def dlfilter(x):
     for i in range(0,16):
