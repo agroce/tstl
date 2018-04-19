@@ -7,6 +7,10 @@
 # Still, it can take the four item list easily produced in two minutes of TSTL
 # exploration and reach the target in less than ten minutes.  TSTL doesn't manage
 # that in two hours, using the simple coverage-driven GA.
+#
+# It's an interesting example of TSTL/afl cooperation, actually, in that if you
+# don't give TSTL those two minutes to find the four-item list, afl ends up
+# taking a LOT longer to find the problem (about half an hour).
 
 def dlfilter(x):
     for i in range(0,16):

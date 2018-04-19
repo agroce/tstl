@@ -15,4 +15,4 @@ pool: <list> 10
 <list> := []
 <list>.append(<int>)
 
-assert (danluu.dut(<list>) != 0)
+assert (danluu.dut(<list>) != 0) #ESSENTIAL
