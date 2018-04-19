@@ -568,7 +568,7 @@ Further Details
 
 For more details on TSTL, the best starting point is a comprehensive
 journal paper in STTT:
-https://github.com/agroce/tstl/blob/master/doc/papers/STTTjournal/maintstl.pdf.
+http://agroce.github.io/sttt17.pdf.
 There are also NASA Formal Methods (NFM) and International Symposium
 on Software Testing and Analsysis (ISSTA) 2015 papers at
 http://agroce.github.io/nfm15.pdf and
