@@ -1334,6 +1334,7 @@ def main():
     genCode.append(baseIndent + "self.__verbosePrintOpaque = True\n")    
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
+    genCode.append(baseIndent + "self.__doReload = True\n")    
     genCode.append(baseIndent + "self.__assumptionViolated = None\n")    
     genCode.append(baseIndent + "self.__noReassigns = False\n")
     genCode.append(baseIndent + "self.__safeSafelyMode = False\n")    
@@ -1398,17 +1399,18 @@ def main():
     genCode.append(baseIndent + "except:\n")
     genCode.append(baseIndent + baseIndent + "pass\n")    
     if not config.noCover:
-        genCode.append(baseIndent + "self.cleanCov()\n")
-        #genCode.append(baseIndent + "self.__currBranches = set()\n")
+        genCode.append(baseIndent + "if self.__collectCov: self.cleanCov()\n")
+        #genCode.append(baseIndent + baseIndent + "self.__currBranches = set()\n")
         #genCode.append(baseIndent + "self.__currStatements = set()\n")
         #genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         #genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
         if config.coverReload:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     genCode.append("# BEGIN RELOAD CODE\n")
-    for l in import_modules:
-        if not config.noReload:
-            s = baseIndent + 'reload({})\n'.format(l)
+    if not config.noReload:
+        genCode.append(baseIndent + "if self.__doReload:\n")
+        for l in import_modules:
+            s = baseIndent + baseIndent + 'reload({})\n'.format(l)
             genCode.append(s)
     #for l in import_froms:
     #    s = baseIndent + l

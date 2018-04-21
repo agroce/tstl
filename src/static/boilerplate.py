@@ -2149,6 +2149,9 @@ def generalize(self, test, pred, pruneGuards = True, keepLast = False, verbose =
 def relax(self):
     self.__relaxUsedRestriction = True
 
+def setReload(self,val):
+    self.__doReload = val
+
 def stopRelax(self):
     self.__relaxUsedRestriction = False
 

@@ -111,6 +111,7 @@ def main():
         afl.init()
         runTest()
     else:
+        sut.setReload(False)
         while afl.loop():
             runTest()
             sut.restart()                        
