@@ -19,9 +19,56 @@ def makeInt(s):
     except:
         return None
 
+def runTest():
+    global stdin_compat, swarm, showActions, noCheck, alwaysSave, noSave, sut
+    
+    bytesin = stdin_compat.read()
 
+    if swarm:
+        if len(bytesin) < 4:
+            os._exit(0)        
+        R.seed(struct.unpack("<L",bytesin[0:4])[0])
+        sut.standardSwarm(R)
+        bytesin = bytesin[4:]
+
+    alen = len(sut.actions())
+
+    test = sut.bytesToTest(bytesin)
+
+    for a in test:
+        if a[1]():
+            if showActions:
+                print (sut.prettyName(a[0]))
+            ok = sut.safely(a)
+            if (not noSave) and not ok:
+                i = 0
+                saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+                while os.path.exists(saveFile):
+                    i += 1
+                    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+                sut.saveTest(sut.test(),saveFile)
+            assert(ok)
+            if not noCheck:
+                checkResult = sut.check()
+                if (not noSave) and not checkResult:
+                    i = 0
+                    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+                    while os.path.exists(saveFile):
+                        i += 1
+                        saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+                    sut.saveTest(sut.test(),saveFile)            
+                assert(checkResult)
+    if alwaysSave:
+        i = 0
+        saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"
+        while os.path.exists(saveFile):
+            i += 1
+            saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"        
+        sut.saveTest(sut.test(),saveFile)
+    
 def main():
-
+    global stdin_compat, swarm, showActions, noCheck, alwaysSave, noSave, sut
+    
     if "--help" in sys.argv:
         print("Usage:  tstl_afl [--noCheck] [--swarm] [--verbose] [--showActions] [--noSave] [--alwaysSave]")
         print("Options:")
@@ -53,51 +100,19 @@ def main():
     noSave = "--noSave" in sys.argv
     alwaysSave = "--alwaysSave" in sys.argv        
     noCheck = "--noCheck" in sys.argv
+    persist = "--persist" in sys.argv
 
-    afl.init()
+    try:
+        stdin_compat = sys.stdin.buffer
+    except AttributeError:
+        stdin_compat = sys.stdin
 
-    bytesin = sys.stdin.read()
-
-    if len(bytesin) < 4:
-        os._exit(0)        
-
-    if swarm:
-        R.seed(struct.unpack("<L",bytesin[0:4])[0])
-        sut.standardSwarm(R)
-        bytesin = bytesin[4:]
-
-    alen = len(sut.actions())
-
-    test = sut.bytesToTest(bytesin)
-    
-    for a in test:
-        if a[1]():
-            if showActions:
-                print (sut.prettyName(a[0]))
-            ok = sut.safely(a)
-            if (not noSave) and not ok:
-                i = 0
-                saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
-                while os.path.exists(saveFile):
-                    i += 1
-                    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
-                sut.saveTest(sut.test(),saveFile)
-            assert(ok)
-            if not noCheck:
-                checkResult = sut.check()
-                if (not noSave) and not checkResult:
-                    i = 0
-                    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
-                    while os.path.exists(saveFile):
-                        i += 1
-                        saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
-                    sut.saveTest(sut.test(),saveFile)            
-                assert(checkResult)
-    if alwaysSave:
-        i = 0
-        saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"
-        while os.path.exists(saveFile):
-            i += 1
-            saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"        
-        sut.saveTest(sut.test(),saveFile)
+    if not persist:
+        afl.init()
+        runTest()
+    else:
+        while afl.loop():
+            runTest()
+            sut.restart()                        
+        
     os._exit(0)

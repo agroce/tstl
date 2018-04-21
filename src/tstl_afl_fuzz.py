@@ -21,6 +21,8 @@ def parse_args():
                         help='Where to put corpus files (default aflinputs)')
     parser.add_argument('--output', type=str, default="afloutputs",
                         help='Where to put afl fuzzing output (default afloutputs)')
+    parser.add_argument('--persist', action='store_true',                            
+                        help='Use persistent mode')    
     parser.add_argument('--noCheck', action='store_true',                            
                         help='Do not check properties')
     parser.add_argument('--depth', type=int, default=100,
@@ -63,24 +65,25 @@ def main():
     if not os.path.exists(config.input):
         os.mkdir(config.input)
 
-    start = time.time()
-    corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.depth) + " " + str(config.corpusBudget)
-    if config.swarm:
-        corpusCmd += " --swarm"
-    if config.noCheck:
-        corpusCmd += " --noCheck"        
-    if config.noCover:
-        corpusCmd += " --noCover"
-    if config.noReduce:
-        corpusCmd += " --noReduce"
-    if config.skipFails:
-        corpusCmd += " --skipFails"                
-    P = subprocess.Popen([corpusCmd], shell=True)
-    while (time.time() - start) < config.corpusBudget:
-        time.sleep(1)
-    if P.poll() != None:
-        P.kill()
-        print ("KILLED TSTL CORPUS GENERATION")
+    if config.corpusBudget > 0:
+        start = time.time()
+        corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.depth) + " " + str(config.corpusBudget)
+        if config.swarm:
+            corpusCmd += " --swarm"
+        if config.noCheck:
+            corpusCmd += " --noCheck"        
+        if config.noCover:
+            corpusCmd += " --noCover"
+        if config.noReduce:
+            corpusCmd += " --noReduce"
+        if config.skipFails:
+            corpusCmd += " --skipFails"                
+        P = subprocess.Popen([corpusCmd], shell=True)
+        while (time.time() - start) < config.corpusBudget:
+            time.sleep(1)
+        if P.poll() != None:
+            P.kill()
+            print ("KILLED TSTL CORPUS GENERATION")
     
     aflCmd = "py-afl-fuzz -t " + str(config.aflTimeout) + " -i " + config.input + " -o " + config.output
     if not config.thorough:
@@ -90,6 +93,8 @@ def main():
         aflCmd += " --swarm"
     if config.noCheck:
         aflCmd += " --noCheck"
+    if config.persist:
+        aflCmd += " --persist"                        
     if not config.instrumentAll:
         os.putenv("PYTHON_AFL_TSTL","TRUE")
     else:
