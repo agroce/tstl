@@ -22,6 +22,7 @@ def main():
         print(" --noCover:       do not check for new coverage")
         print(" --swarm:         use swarm format, generate tests using swarm")
         print(" --skipFails:     just pass over failures, don't try to fix")
+        print(" --burst:         high speed, dumb version (let afl sort 'em out)")        
         sys.exit(0)
 
     sut = SUT.sut()
@@ -34,13 +35,18 @@ def main():
     length = int(sys.argv[2])
     timeout = int(sys.argv[3])
 
+
+    burst = "--burst" in sys.argv
     checkProp = not "--noCheck" in sys.argv
     noReduce = "--noReduce" in sys.argv
     noCover = "--noCover" in sys.argv
     swarm = "--swarm" in sys.argv
     skipFails = "--skipFails" in sys.argv
 
-    if noCover:
+    if burst:
+        timeout = 60
+
+    if noCover or burst:
         sut.stopCoverage()
     
     R = random.Random()
@@ -56,15 +62,16 @@ def main():
             Rswarm.seed(seed)
             sut.standardSwarm(Rswarm)
         (t,ok) = sut.makeTest(length,R,stopFail=True,checkProp=checkProp)
-        if (not noCover) and (len(sut.newCurrBranches()) == 0):
+        if ((not noCover) and (not burst) and (len(sut.newCurrBranches()) == 0) and
+                len(sut.newCurrStatements()) == 0):
             continue
         else:
             print ("INPUT",i,"GENERATED",end=" ")
-            if not noCover:
+            if (not noCover) and (not burst):
                 print ("NEW BRANCHES:",len(sut.newCurrBranches()),end=" ")
             type = "branch" + str(len(sut.newCurrBranches()))
         if ok: # failing tests won't work with afl
-            if (not noCover) and (not noReduce):
+            if (not burst) and (not noCover) and (not noReduce):
                 b = set(sut.currBranches())
                 s = set(sut.currStatements())
                 pred = sut.coversAll(s,b,checkProp=True,catchUncaught=False)
@@ -81,9 +88,10 @@ def main():
                 
         # always alpha convert to make actions clearer to afl, easier to splice
         r = sut.alphaConvert(r) 
-        if ok and (not noReduce):
+        if ok and (not burst) and (not noCover) and (not noReduce):
             print ("REDUCED LENGTH:",len(r))
-        sut.prettyPrintTest(r)
+        if not burst:
+            sut.prettyPrintTest(r)
         print ("="*80)
         if not swarm:
             sut.saveTest(r,outputDir + "/tstl." + type +"." + pid + "." + str(i) + ".afl",afl=True)

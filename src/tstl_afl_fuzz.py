@@ -22,7 +22,9 @@ def parse_args():
     parser.add_argument('--output', type=str, default="afloutputs",
                         help='Where to put afl fuzzing output (default afloutputs)')
     parser.add_argument('--persist', action='store_true',                            
-                        help='Use persistent mode')    
+                        help='Use persistent mode (does not work for some programs!)')
+    parser.add_argument('--burst', action='store_true',
+                        help='Build corpus in burst mode; overrides most other corpus options')
     parser.add_argument('--noCheck', action='store_true',                            
                         help='Do not check properties')
     parser.add_argument('--depth', type=int, default=100,
@@ -65,9 +67,16 @@ def main():
     if not os.path.exists(config.input):
         os.mkdir(config.input)
 
-    if config.corpusBudget > 0:
+    if config.burst:
+        corpusTimeout = 60
+    else:
+        corpusTimeout = config.corpusBudget
+        
+    if corpusTimeout:
         start = time.time()
         corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.depth) + " " + str(config.corpusBudget)
+        if config.burst:
+            corpusCmd += " --burst"
         if config.swarm:
             corpusCmd += " --swarm"
         if config.noCheck:
@@ -79,11 +88,14 @@ def main():
         if config.skipFails:
             corpusCmd += " --skipFails"                
         P = subprocess.Popen([corpusCmd], shell=True)
-        while (time.time() - start) < config.corpusBudget:
+        while (time.time() - start) < corpusTimeout:
             time.sleep(1)
         if P.poll() != None:
-            P.kill()
-            print ("KILLED TSTL CORPUS GENERATION")
+            try:
+                P.kill()
+                print ("KILLED TSTL CORPUS GENERATION")                
+            except OSError:
+                pass
     
     aflCmd = "py-afl-fuzz -t " + str(config.aflTimeout) + " -i " + config.input + " -o " + config.output
     if not config.thorough:
