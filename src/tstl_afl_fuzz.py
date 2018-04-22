@@ -21,8 +21,6 @@ def parse_args():
                         help='Where to put corpus files (default aflinputs)')
     parser.add_argument('--output', type=str, default="afloutputs",
                         help='Where to put afl fuzzing output (default afloutputs)')
-    parser.add_argument('--persist', action='store_true',                            
-                        help='Use persistent mode (does not work for some programs!)')
     parser.add_argument('--burst', action='store_true',
                         help='Build corpus in burst mode; overrides most other corpus options')
     parser.add_argument('--noCheck', action='store_true',                            
@@ -40,7 +38,10 @@ def parse_args():
     parser.add_argument('--thorough', action='store_true',                            
                         help='Include afl deterministic steps (slows things down A LOT)')    
     parser.add_argument('--instrumentAll', action='store_true',                            
-                        help='Instrument TSTL harness as well (usually not a good idea)')    
+                        help='Instrument TSTL harness as well (usually not a good idea)')
+    parser.add_argument('--persist', action='store_true',                            
+                        help='Use persistent mode (experimental and not recommended')
+    
     
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
