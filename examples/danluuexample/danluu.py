@@ -15,6 +15,10 @@
 # In fact, a swarm + genetic algorithm combo with TSTL can get lucky and generate two
 # -1 inputs at the beginning within 5 minutes, and then afl can turn that into a crash
 # in under a minute flat.
+#
+# Finally, throughput is king.  With persist mode now working, afl can find the bug reliably
+# in less than five  minutes, even starting essentially from nothing but a test calling the
+# function on the empty list; give it a four-item list test (no -1s) and it's even faster.
 
 def dlfilter(x):
     for i in range(0,16):
