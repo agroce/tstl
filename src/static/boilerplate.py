@@ -973,9 +973,13 @@ def processNondeterministic(self,t,ignoreExceptions=True,verbose=False,iterate=F
             return True
     return False
 
-def trajectoryItem(self):
+def trajectoryItem(self,pools=None):
     ss = self.shallowState()
-    o = self.opaque()
+    o = set(self.opaque())
+    if pools != None:
+        for p in self.pools():
+            if p not in pools:
+                o.add(p)    
     ti = {}
     for (name, vals) in ss:
         if name in o:
@@ -990,7 +994,7 @@ def trajectoryItem(self):
                 ti[name][v] = "UNABLE TO COPY"
     return ti
 
-def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False,reportEqualFail=False):
+def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False,reportEqualFail=False,pools=None):
     """
     Checks if a test behaves nondeterministically (in terms of all non-opaque pool values produced)
     under an optional timing change.  Default is to run with no delay for an initial capture
@@ -1000,7 +1004,7 @@ def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False,repo
     self.restart()
     for s in t:
         self.safely(s)
-        trajectory.append(self.trajectoryItem())
+        trajectory.append(self.trajectoryItem(pools))
         if delay0 != None:        
             time.sleep(delay0)        
     for i in range(0,tries):
@@ -1009,7 +1013,7 @@ def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False,repo
         for s in t:
             self.safely(s)
             try:
-                if (self.trajectoryItem()) != (trajectory[pos]):
+                if (self.trajectoryItem(pools)) != (trajectory[pos]):
                     return True
             except:
                 if reportEqualFail:
@@ -1019,7 +1023,7 @@ def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False,repo
             pos += 1
     return False
 
-def nondeterministic(self,t,delay=1.0,delay0=None,tries=1,reportEqualFail=False):
+def nondeterministic(self,t,delay=1.0,delay0=None,tries=1,reportEqualFail=False,pools=None):
     """
     Checks if a test behaves nondeterministically (in terms of final non-opaque pool values)
     under an optional timing change.  Default is to run with no delay for an initial capture
@@ -1027,7 +1031,11 @@ def nondeterministic(self,t,delay=1.0,delay0=None,tries=1,reportEqualFail=False)
     """
     self.replay(t,delay=delay0)
     ss = self.shallowState()
-    o = self.opaque()
+    o = set(self.opaque())
+    if pools != None:
+        for p in self.pools():
+            if p not in pools:
+                o.add(p)
     s0 = {}
     for (name, vals) in ss:
         if name in o:
