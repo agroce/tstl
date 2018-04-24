@@ -476,9 +476,13 @@ of advice:  `<outputdir>` should probably be a ramdisk, unless you
 want to really hammer your SSD (don't even think about doing this on
 an actual hard drive).
 
-You can also try the `--persist` option to `tstl_afl_fuzz`, which
-in will often improve fuzzing speed by a large margin; however, for
-this is less well-tested than the non-persistent mode.
+You should also also try the `--persist` option to `tstl_afl_fuzz`, which
+in will often improve fuzzing speed by a large margin, and
+dramatically improve afl results (since throughput is so critical); however, 
+this is somewhat less well-tested than the non-persistent mode.  With
+more testing, this will likely become the default setting, so you may
+want to jump ahead of the curve, and only run non-persistent if
+persistent mode seems to cause problems.
 
 This is a powerful testing option, as it lets you use afl's great
 heuristics to fuzz things that are at best highly inconvenient with
