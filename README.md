@@ -476,6 +476,10 @@ of advice:  `<outputdir>` should probably be a ramdisk, unless you
 want to really hammer your SSD (don't even think about doing this on
 an actual hard drive).
 
+You can also try the `--persist` option to `tstl_afl_fuzz`, which
+in will often improve fuzzing speed by a large margin; however, for
+this is less well-tested than the non-persistent mode.
+
 This is a powerful testing option, as it lets you use afl's great
 heuristics to fuzz things that are at best highly inconvenient with
 just afl.  You can set up complex TSTL properties, mix grammar
@@ -513,10 +517,7 @@ run it with `--swarm`.  Because of the way the swarm format works, it
 is unfortunately currently not possible to extract a swarm format test
 from a standard TSTL test.
 
-You can also try the `--persist` option, which
-in theory should often improve fuzzing speed by a large margin; however, for reasons not
-yet understood, persistent mode seems to generally not work, causing
-the instrumentation to misbehave.
+
 
 TSTL and Hypothesis
 ------------------------

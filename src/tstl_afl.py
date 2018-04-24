@@ -20,9 +20,9 @@ def makeInt(s):
         return None
 
 def runTest():
-    global stdin_compat, swarm, showActions, noCheck, alwaysSave, noSave, sut
+    global swarm, showActions, noCheck, alwaysSave, noSave, sut
     
-    bytesin = stdin_compat.read()
+    bytesin = os.read(0,(2**31)-1)  # yes, puts a limit on test length, but not a very important one probably!
 
     if swarm:
         if len(bytesin) < 4:
@@ -67,7 +67,7 @@ def runTest():
         sut.saveTest(sut.test(),saveFile)
     
 def main():
-    global stdin_compat, swarm, showActions, noCheck, alwaysSave, noSave, sut
+    global swarm, showActions, noCheck, alwaysSave, noSave, sut
     
     if "--help" in sys.argv:
         print("Usage:  tstl_afl [--noCheck] [--swarm] [--verbose] [--showActions] [--noSave] [--alwaysSave]")
@@ -102,16 +102,10 @@ def main():
     noCheck = "--noCheck" in sys.argv
     persist = "--persist" in sys.argv
 
-    try:
-        stdin_compat = sys.stdin.buffer
-    except AttributeError:
-        stdin_compat = sys.stdin
-
     if not persist:
         afl.init()
         runTest()
     else:
-        sut.setReload(False)
         while afl.loop():
             runTest()
             sut.restart()                        
