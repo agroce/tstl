@@ -22,7 +22,7 @@ def makeInt(s):
 def runTest():
     global swarm, showActions, noCheck, alwaysSave, noSave, sut
     
-    bytesin = os.read(0,(2**31)-1)  # yes, puts a limit on test length, but not a very important one probably!
+    bytesin = os.read(0,1024*1024)  # yes, puts a limit on test length, but not a very important one probably!
 
     if swarm:
         if len(bytesin) < 4:
