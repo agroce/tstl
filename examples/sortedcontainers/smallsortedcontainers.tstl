@@ -1,0 +1,320 @@
+@import sortedcontainers
+
+<@
+def sortListAppend(l,i):
+    if len(l) == 0:
+        l.append(i)
+    else:
+        if i >= l[-1]:
+            l.append(i)
+        else:
+            raise ValueError("would not be sorted")
+
+def sortListExtend(l,el):
+    lcopy = list(l)
+    lcopy.extend(el)
+    for i in xrange(0,len(lcopy)-1):
+        if lcopy[i] > lcopy[i+1]:
+            raise ValueError("would not be sorted")
+    l.extend(el)
+
+def sortListAdd(l,i):
+    l.append(i)
+    l.sort()
+
+def sortListInsert(l,index,el):
+    lcopy = list(l)
+    if index < 0:
+        if (-index) > len(l):
+            index = -(len(l))
+    if index > len(l):
+        index = len(l) + 1
+    lcopy.insert(index,el)
+    for i in xrange(0,len(lcopy)-1):
+        if lcopy[i] > lcopy[i+1]:
+            raise ValueError("would not be sorted")
+    l.insert(index,el)
+
+def setList(l, index, el):
+    l[index] = el
+
+def setListSlice(l, index1, index2, el):
+    l[index1:index2] = el    
+    
+def sortListSet(l,index,el):
+    lcopy = list(l)
+    lcopy[index] = el
+    for i in xrange(0,len(lcopy)-1):
+        if lcopy[i] > lcopy[i+1]:
+            raise ValueError("would not be sorted")
+    l[index] = el
+
+def sortListSetSlice(l,index1,index2,el):
+    lcopy = list(l)
+    lcopy[index1:index2] = list(el)
+    for i in xrange(0,len(lcopy)-1):
+        if lcopy[i] > lcopy[i+1]:
+            raise ValueError("would not be sorted")
+    l[index1:index2] = list(el)
+
+def sortListMultiply(l,v):
+    l *= v
+    l.sort()
+
+def sortListMultiAdd(l,el):
+    l.extend(el)
+    l.sort()
+    
+def sortListDiscard(l,i):
+    try:
+        l.remove(i)
+    except ValueError:
+        pass
+
+def sortDictPopitem(d,last=True):
+    k = sorted(d.keys())
+    if k == []:
+        raise KeyError
+    if last:
+        mk = max(k)
+    else:
+        mk = min(k)
+    rv = d[mk]
+    del d[mk]
+    return (mk,rv)
+
+def sortDictPeekitem(d,index=-1):
+    k = sorted(d.keys())
+    mk = k[index]
+    rv = d[mk]
+    return (mk,rv)    
+@>
+
+property: <list> == REF:<list,1>
+property: <dict> == REF:<dict,1>
+property: <set> == REF:<set,1>
+
+pool: <list> 3 REF
+pool: <plist> 3
+pool: <dict> 3 REF
+pool: <set> 3 REF
+
+pool: <val> 5
+pool: <ival> 5
+pool: <sval> 5
+
+<ival> := <[1..20]>
+<ival> := <ival> + <ival>
+<ival> := <ival> * <ival>
+<ival> := <ival> - <ival>
+<sval> := <['a'..'z']>
+<sval> := <['A'..'Z']>
+<sval> := <sval> + <sval>
+<val> := <ival>
+<val> := <sval>
+
+<list> := sortedcontainers.SortedList()
+<dict> := sortedcontainers.SortedDict()
+<set> := sortedcontainers.SortedSet()
+
+<dict> := <dict>.fromkeys(<list>,<val>)
+<dict> := <dict>.fromkeys(<set>,<val>)
+
+<dict>.setdefault(<val>,<val>)
+
+<dict>.update(<dict>)
+
+<list> == <list>
+<list> != <list>
+<list> > <list>
+<list> < <list>
+<list> >= <list>
+<list> <= <list>
+
+{OverflowError} <ival,1> < 5 -> <list> *= <ival>
+
+<plist> := <list> [<ival> : <ival>]
+<list> := sortedcontainers.SortedList(<plist>)
+
+<list>+=<list>
+
+<list>.update(<set>)
+<list>.update(<list>)
+
+<set>.update(<set>)
+<set>.update(<list>)
+
+<list>.count(<val>)
+
+<dict> == <dict>
+<dict> != <dict>
+
+<set> == <set>
+<set> != <set>
+<set> < <set>
+<set> > <set>
+
+<set> := <set> & <set>
+<set> := <set> | <set>
+<set> := <set> ^ <set>
+<set> := <set> - <set>
+<set> := <set>.union(<set>)
+
+<set> &= <set>
+<set> |= <set>
+<set> -= <set>
+<set> ^= <set>
+
+<set>.isdisjoint(<set>)
+<set>.issuperset(<set>)
+<set>.issubset(<set>)
+
+<dict> := <dict>.copy()
+<set> := <set>.copy()
+
+<dict>.clear()
+<set>.clear()
+
+len(<list>)
+len(<dict>)
+len(<set>)
+
+repr(<list>)
+repr(<dict>)
+repr(<set>)
+
+{ValueError} <list>.append(<val>)
+{ValueError} <list>.extend(<list>)
+<list>.add(<val>)
+{ValueError} <list>.insert(<ival>,<val>)
+
+<dict> [<val>] = <val>
+
+<set>.add(<val>)
+
+{IndexError,ValueError} setList(<list>,<ival>,<val>)
+{IndexError,ValueError} setListSlice(<list>,<ival>,<ival>,<list>)
+
+sorted(list(<dict>.keys()))
+sorted(list(<dict>.values()))
+sorted(list(<dict>.items()))
+len(<dict>.keys())
+len(<dict>.values())
+len(<dict>.items())
+(<dict>.keys()).count(<val>)
+(<dict>.values()).count(<val>)
+(<dict>.items()).count(<val>)
+
+<val> in <list>
+<val> in <dict>
+<val> in <set>
+
+{KeyError} <dict> [<val>]
+{KeyError} del <dict> [<val>]
+
+{IndexError} del <list> [<ival>]
+del <list> [<ival> : <ival>]
+
+<dict>.get(<val>,None)
+<dict>.get(<val>,<val>)
+<dict>.pop(<val>,None)
+<dict>.pop(<val>,<val>)
+{KeyError} <dict>.pop(<val>)
+
+{KeyError} <dict>.popitem()
+{KeyError} <dict>.popitem(last=False)
+{IndexError} <dict>.peekitem()
+{IndexError} <dict>.peekitem(<ival>)
+
+{IndexError} <list>.pop(<ival>)
+{ValueError} <list>.remove(<val>)
+{ValueError} <list>.index(<val>)
+
+{KeyError} <set>.remove(<val>)
+<set>.discard(<val>)
+
+<list>.discard(<val>)
+
+iter(<dict>)
+reversed(<dict>)
+
+iter(<list>)
+reversed(<list>)
+
+iter(<set>)
+reversed(<set>)
+
+<list>.islice(start=None,stop=<ival>)
+<list>.islice(start=None,stop=None)
+<list>.islice(start=None,stop=None)
+<list>.islice(start=<ival>,stop=<ival>,reverse=True)
+<list>.islice(start=<ival>,stop=<ival>)
+<list>.islice(start=<ival>,stop=<ival>,reverse=True)
+<set>.islice(start=None,stop=<ival>)
+<set>.islice(start=None,stop=None)
+<set>.islice(start=None,stop=None)
+<set>.islice(start=<ival>,stop=<ival>)
+<set>.islice(start=<ival>,stop=<ival>,reverse=True)
+<dict>.islice(start=None,stop=<ival>)
+<dict>.islice(start=None,stop=None)
+<dict>.islice(start=None,stop=None)
+<dict>.islice(start=<ival>,stop=<ival>)
+<dict>.islice(start=<ival>,stop=<ival>,reverse=True)
+
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False))
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True))
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False))
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False),reverse=True)
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True),reverse=True)
+<list>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False),reverse=True)
+
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False))
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True))
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False))
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False),reverse=True)
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True),reverse=True)
+<set>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False),reverse=True)
+
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False))
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True))
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False))
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(True,False),reverse=True)
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,True),reverse=True)
+<dict>.irange(minimum=<val>,maximum=<val>,inclusive=(False,False),reverse=True)
+
+reference: sortedcontainers.SortedList\(\) ==> []
+reference: sortedcontainers.SortedList\((\S+)\) ==> list(\1)
+reference: sortedcontainers.SortedDict\(\) ==> {}
+reference: sortedcontainers.SortedSet\(\) ==> set([])
+
+reference: (\S+list\S+)\.append\((\S+)\) ==> sortListAppend(\1,\2)
+reference: (\S+list\S+)\.extend\((\S+)\) ==> sortListExtend(\1,\2)
+reference: (\S+list\S+)\.add\((\S+)\) ==> sortListAdd(\1,\2)
+reference: (\S+list\S+)\.insert\((\S+),(\S+)\) ==> sortListInsert(\1,\2,\3)
+reference: (\S+list\S+)\.update\((\S+)\) ==> sortListMultiAdd(\1,\2)
+reference: (\S+list\S+)\+=(\S+) ==> sortListMultiAdd(\1,\2)
+reference: setList\((\S+),(\S+),(\S+)\) ==> sortListSet(\1,\2,\3)
+reference: setListSlice\((\S+),(\S+),(\S+),(\S+)\) ==> sortListSetSlice(\1,\2,\3,\4)
+reference: (\S+list\S+)\.discard\((\S+)\) ==> sortListDiscard(\1,\2)
+reference: (\S+list\S+) \*= (\S+) ==> sortListMultiply(\1,\2)
+reference: (\S+dict\S+)\.popitem\((\S*)\) ==> sortDictPopitem(\1,\2)
+reference: (\S+dict\S+)\.peekitem\((\S*)\) ==> sortDictPeekitem(\1,\2)
+reference: sortedcontainers.reversed\((\S+)\) ==> \1
+
+compare: len
+compare: in\
+compare: get
+compare: pop\(
+compare: index
+compare: ==
+compare: !=
+compare: count
+compare: keys
+compare: values
+compare: items
+compare: isdisjoint
+compare: issuperset
+compare: issubset
+compare: setdefault
+compare: popitem
+compare: peekitem
