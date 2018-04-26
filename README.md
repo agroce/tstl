@@ -495,6 +495,10 @@ TSTL can do in an hour, unless your SUT is unusual.  But it is
 certainly an attractive option for week-long heavy-duty testing when
 `tstl_rt` isn't finding any problems.
 
+Note that if you don't use `tstl_afl_fuzz` but directly call
+`py-afl-fuzz` you probably (except on Mac OS, where memory limiting
+doesn't work anyway) need a large `-m` for TSTL to work.
+
  Under the hood, the`tstl_afl`command takes a file of bytes and interprets every N bytes (N
 depends on how many actions your harness has) as the
 index of a TSTL action (modulo the number of actions), using `sut.py`

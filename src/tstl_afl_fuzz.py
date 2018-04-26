@@ -15,8 +15,10 @@ def parse_args():
                         help='Total time budget for testing')
     parser.add_argument('--corpusBudget', type=int, default=600,
                         help='Time budget for generating a corpus to get afl started (default 5 minutes)')    
-    parser.add_argument('--aflTimeout', type=int, default=5000,
-                        help='afl timeout (default 5000)')    
+    parser.add_argument('--aflTimeout', type=str, default="5000",
+                        help='afl timeout (default 5000)')
+    parser.add_argument('--aflMemory', type=int, default=4096,
+                        help='afl memory limit (default 4096)')        
     parser.add_argument('--input', type=str, default="aflinputs",
                         help='Where to put corpus files (default aflinputs)')
     parser.add_argument('--output', type=str, default="afloutputs",
@@ -98,7 +100,7 @@ def main():
             except OSError:
                 pass
     
-    aflCmd = "py-afl-fuzz -t " + str(config.aflTimeout) + " -i " + config.input + " -o " + config.output
+    aflCmd = "py-afl-fuzz -t " + config.aflTimeout + " -m " + str(config.aflMemory) + " -i " + config.input + " -o " + config.output
     if not config.thorough:
         aflCmd += " -d"
     aflCmd += " -- tstl_afl"
