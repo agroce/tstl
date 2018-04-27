@@ -77,20 +77,20 @@ def main():
 
     if corpusTimeout:
         start = time.time()
-        corpusCmd = "tstl_aflcorpus " + config.input + " " + str(config.depth) + " " + str(config.corpusBudget)
+        corpusCmd = ["tstl_aflcorpus", config.input, str(config.depth), str(config.corpusBudget)]
         if config.burst:
-            corpusCmd += " --burst"
+            corpusCmd += ["--burst"]
         if config.swarm:
-            corpusCmd += " --swarm"
+            corpusCmd += ["--swarm"]
         if config.noCheck:
-            corpusCmd += " --noCheck"
+            corpusCmd += ["--noCheck"]
         if config.noCover:
-            corpusCmd += " --noCover"
+            corpusCmd += ["--noCover"]
         if config.noReduce:
-            corpusCmd += " --noReduce"
+            corpusCmd += ["--noReduce"]
         if config.skipFails:
-            corpusCmd += " --skipFails"
-        P = subprocess.Popen([corpusCmd], shell=True)
+            corpusCmd += ["--skipFails"]
+        P = subprocess.Popen(corpusCmd)
         while (time.time() - start) < corpusTimeout:
             time.sleep(1)
         if P.poll() is None:
@@ -100,23 +100,23 @@ def main():
             except OSError:
                 pass
 
-    aflCmd = "py-afl-fuzz -t " + config.aflTimeout + " -m " + str(config.aflMemory) + " -i " + config.input + " -o " + config.output
+    aflCmd = ["py-afl-fuzz", "-t", config.aflTimeout, "-m", str(config.aflMemory), "-i", config.input, "-o", config.output]
     if not config.thorough:
-        aflCmd += " -d"
-    aflCmd += " -- tstl_afl"
+        aflCmd += ["-d"]
+    aflCmd += ["--", "tstl_afl"]
     if config.swarm:
-        aflCmd += " --swarm"
+        aflCmd += ["--swarm"]
     if config.noCheck:
-        aflCmd += " --noCheck"
+        aflCmd += ["--noCheck"]
     if config.persist:
-        aflCmd += " --persist"
+        aflCmd += ["--persist"]
     if not config.instrumentAll:
         os.putenv("PYTHON_AFL_TSTL","TRUE")
     else:
         os.unsetenv("PYTHON_AFL_TEST")
     print ("RUNNING AFL WITH COMMAND LINE:",aflCmd)
     start = time.time()
-    P = subprocess.Popen([aflCmd], shell=True)
+    P = subprocess.Popen(aflCmd)
     while (time.time() - start) < (config.timeout - config.corpusBudget):
         time.sleep(1)
     P.kill()
