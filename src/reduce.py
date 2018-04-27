@@ -23,40 +23,40 @@ def parse_args():
                             help='Path to the test to be reduced.')
     parser.add_argument('outfile', metavar='filename', type=str, default=None,
                             help='Path to the test to be reduced.')
-    parser.add_argument('--noCheck', action='store_true',                            
-                        help='Do not check properties.') 
+    parser.add_argument('--noCheck', action='store_true',
+                        help='Do not check properties.')
     parser.add_argument('--noReduce', action='store_true',
-                        help="Do not reduce the test.")   
+                        help="Do not reduce the test.")
     parser.add_argument('--noNormalize', action='store_true',
-                        help="Do not normalize/simplify test.")    
+                        help="Do not normalize/simplify test.")
     parser.add_argument('--noAlpha', action='store_true',
-                        help="Do not alpha convert test.")      
-    parser.add_argument('--matchException', action='store_true',                            
+                        help="Do not alpha convert test.")
+    parser.add_argument('--matchException', action='store_true',
                         help='Force test to fail with same exception as original (does not work for sandboxes).')
-    parser.add_argument('--coverage', action='store_true',                            
+    parser.add_argument('--coverage', action='store_true',
                         help='Reduce with respect to maintaining code coverage, not failure.')
-    parser.add_argument('--coverMore', action='store_true',                            
+    parser.add_argument('--coverMore', action='store_true',
                         help='Only allow reductions that increase code coverage.')
-    parser.add_argument('--checkDeterminism', action='store_true',                            
+    parser.add_argument('--checkDeterminism', action='store_true',
                         help='Reduce with respect to test being deterministic (final state).')
-    parser.add_argument('--checkStepDeterminism', action='store_true',                            
-                        help='Reduce with respect to test being deterministic (visible value).')    
-    parser.add_argument('--determinismDelay', type=float, default=1.0,                            
+    parser.add_argument('--checkStepDeterminism', action='store_true',
+                        help='Reduce with respect to test being deterministic (visible value).')
+    parser.add_argument('--determinismDelay', type=float, default=1.0,
                         help='Time delay for nondeterminism check.')
-    parser.add_argument('--determinismDelay0', type=float, default=None,                            
-                        help='Time delay for INITIAL run in nondeterminism check.')    
-    parser.add_argument('--determinismTries', type=int, default=1,                            
+    parser.add_argument('--determinismDelay0', type=float, default=None,
+                        help='Time delay for INITIAL run in nondeterminism check.')
+    parser.add_argument('--determinismTries', type=int, default=1,
                         help='Number of times to check for nondeterministic behavior.')
-    parser.add_argument('--checkProcessDeterminism', action='store_true',                            
+    parser.add_argument('--checkProcessDeterminism', action='store_true',
                         help='Reduce with respect to test being process deterministic.')
     parser.add_argument('--iterate',action='store_true',
-                        help='Use iterative approach to check process determinism.')                            
-    parser.add_argument('--probability', type=float, default=None,                            
+                        help='Use iterative approach to check process determinism.')
+    parser.add_argument('--probability', type=float, default=None,
                         help='Ensure predicate fails with this probability.')
-    parser.add_argument('--samples', type=int, default=10,                            
+    parser.add_argument('--samples', type=int, default=10,
                         help='Use this many samples to check probability (default 10).')
-    parser.add_argument('--replications', type=int, default=1,                            
-                        help='Use this many replications to check probability (default 1).')            
+    parser.add_argument('--replications', type=int, default=1,
+                        help='Use this many replications to check probability (default 1).')
     parser.add_argument('-k', '--keepLast', action='store_true',
                         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument('--uncaught', action='store_true',
@@ -64,7 +64,7 @@ def parse_args():
     parser.add_argument('--ddmin', action='store_true',
                         help="Use standard binary-search-like delta-debugging, not greedy one-step method.")
     parser.add_argument('--decompose', action='store_true',
-                        help="Perform decomposition by coverage (assumes coverage based reduction).  Produces multiple tests.")    
+                        help="Perform decomposition by coverage (assumes coverage based reduction).  Produces multiple tests.")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Produce multiple reductions.")
     parser.add_argument('--recursive', type=int, default=1,
@@ -72,7 +72,7 @@ def parse_args():
     parser.add_argument('--limit', type=int, default=None,
                         help='Limit on combinations generated in comb-block (default None).')
     parser.add_argument('--random', action='store_true',
-                        help="Randomize order of reductions.")    
+                        help="Randomize order of reductions.")
     parser.add_argument('--seed', type=int, default=None,
                         help='Random seed (default = None).')
     parser.add_argument('--verbose', type=str, default=None,
@@ -86,10 +86,10 @@ def parse_args():
     parser.add_argument('--afl', action='store_true',
                         help="Read in tests in afl format.")
     parser.add_argument('--aflswarm', action='store_true',
-                        help="afl tests are in swarm format.")    
+                        help="afl tests are in swarm format.")
     parser.add_argument('--writeafl', action='store_true',
-                        help="Write out tests in afl format.")    
-    
+                        help="Write out tests in afl format.")
+
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
 
@@ -104,7 +104,7 @@ def make_config(pargs, parser):
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
-    return nt_config   
+    return nt_config
 
 def sandboxReplay(test):
     global timeout
@@ -122,14 +122,14 @@ def sandboxReplay(test):
         cmd = "ulimit -t " + timeout + "; " + cmd
     start = time.time()
     subprocess.call([cmd],shell=True)
-    if not "--quietSandbox" in sys.argv:    
+    if not "--quietSandbox" in sys.argv:
         print("ELAPSED:",time.time()-start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
-            if not "--quietSandbox" in sys.argv:            
+            if not "--quietSandbox" in sys.argv:
                 print("TEST SUCCEEDS")
             return False
-    if not "--quietSandbox" in sys.argv:        
+    if not "--quietSandbox" in sys.argv:
         print("TEST FAILS")
     print("SANDBOX RUN FAILS: TEST LENGTH NOW",len(test))
     bestreduce = open("lastreduction." + str(os.getpid()) + ".test",'w')
@@ -144,8 +144,8 @@ def main():
 
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print(('Reducing using config={}'.format(config)))    
-    
+    print(('Reducing using config={}'.format(config)))
+
     sut = SUT.sut()
 
     timeout = config.timeout
@@ -155,18 +155,18 @@ def main():
             sut.stopCoverage()
         except:
             pass
-    
+
     R = None
     if config.random:
         R = random.Random()
 
         if config.seed != None:
             R.seed(config.seed)
-    
+
     r = sut.loadTest(config.infile,afl=config.afl,swarm=config.aflswarm)
 
     f = None
-    
+
     if config.matchException:
         print("EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
         assert (sut.fails(r))
@@ -199,8 +199,8 @@ def main():
 
     if config.checkStepDeterminism:
         pred = (lambda t: sut.stepNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
-                                                   delay0=config.determinismDelay0))            
-            
+                                                   delay0=config.determinismDelay0))
+
     if config.checkProcessDeterminism:
         pred = (lambda t: sut.processNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,iterate=config.iterate))
 
@@ -208,7 +208,7 @@ def main():
     if config.probability != None:
         Ppred = pred
         pred = (lambda t: sut.forceP(t,Ppred,P=config.probability,samples=config.samples,replications=config.replications))
-        
+
     print("STARTING WITH TEST OF LENGTH",len(r))
     if not config.noReduce:
         start = time.time()
@@ -248,7 +248,7 @@ def main():
                     print("ERROR:",f)
                     print("TRACEBACK:")
                     traceback.print_tb(f[2],file=sys.stdout)
-                
+
                 if not config.sandbox:
                     pred = (lambda x: sut.failsCheck(x,failure=f))
                     if not config.noCheck:
@@ -265,8 +265,8 @@ def main():
                     if config.coverMore:
                         pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
                     else:
-                        pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)                
-                    
+                        pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+
                 newrs.append(sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast,tryFast=not config.ddmin))
             rs = newrs
         print("NORMALIZED IN",time.time()-start,"SECONDS")
@@ -278,7 +278,7 @@ def main():
         sut.saveTest(r,config.outfile,afl=config.writeafl)
         sut.prettyPrintTest(r)
         print()
-        print("TEST WRITTEN TO",config.outfile)     
+        print("TEST WRITTEN TO",config.outfile)
     else:
         i = 0
         for r in rs:
@@ -289,6 +289,6 @@ def main():
             print("TEST WRITTEN TO",config.outfile+"."+str(i))
             print()
             i += 1
-            
-    
-    
+
+
+

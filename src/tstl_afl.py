@@ -21,12 +21,12 @@ def makeInt(s):
 
 def runTest():
     global swarm, showActions, noCheck, alwaysSave, noSave, sut
-    
+
     bytesin = os.read(0,1024*1024)  # yes, puts a limit on test length, but not a very important one probably!
 
     if swarm:
         if len(bytesin) < 4:
-            os._exit(0)        
+            os._exit(0)
         R.seed(struct.unpack("<L",bytesin[0:4])[0])
         sut.standardSwarm(R)
         bytesin = bytesin[4:]
@@ -56,19 +56,19 @@ def runTest():
                     while os.path.exists(saveFile):
                         i += 1
                         saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
-                    sut.saveTest(sut.test(),saveFile)            
+                    sut.saveTest(sut.test(),saveFile)
                 assert(checkResult)
     if alwaysSave:
         i = 0
         saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"
         while os.path.exists(saveFile):
             i += 1
-            saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"        
+            saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"
         sut.saveTest(sut.test(),saveFile)
-    
+
 def main():
     global swarm, showActions, noCheck, alwaysSave, noSave, sut
-    
+
     if "--help" in sys.argv:
         print("Usage:  tstl_afl [--noCheck] [--swarm] [--verbose] [--showActions] [--noSave] [--alwaysSave]")
         print("Options:")
@@ -77,11 +77,11 @@ def main():
         print(" --verbose:      make actions verbose")
         print(" --showActions:  show actions in test")
         print(" --noSave:       don't save failing tests as standard TSTL tests")
-        print(" --alwaysSave:   save even non-failing tests")        
+        print(" --alwaysSave:   save even non-failing tests")
         sys.exit(0)
-    
+
     sut = SUT.sut()
-    
+
     try:
         sut.stopCoverage()
     except:
@@ -98,7 +98,7 @@ def main():
     if "--verbose" in sys.argv:
         sut.verbose(True)
     noSave = "--noSave" in sys.argv
-    alwaysSave = "--alwaysSave" in sys.argv        
+    alwaysSave = "--alwaysSave" in sys.argv
     noCheck = "--noCheck" in sys.argv
     persist = "--persist" in sys.argv
 
@@ -108,6 +108,6 @@ def main():
     else:
         while afl.loop():
             runTest()
-            sut.restart()                        
-        
+            sut.restart()
+
     os._exit(0)

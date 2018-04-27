@@ -22,9 +22,9 @@ def main():
         print(" --regression:   produce a regression test that captures values")
         print(" --verbose:      produce a verbose test that shows actions taken")
         print(" --afl:          test is in afl format")
-        print(" --aflswarm:     test is in afl swarm format")        
+        print(" --aflswarm:     test is in afl swarm format")
         sys.exit(0)
-    
+
     testFile = sys.argv[1]
     outFile = sys.argv[2]
     if (len(sys.argv) > 3) and (".py" in sys.argv[3]):
@@ -37,7 +37,7 @@ def main():
     makeRegression = "--regression" in sys.argv
     verbose = "--verbose" in sys.argv
     afl = "--afl" in sys.argv
-    aflswarm = "--aflswarm" in sys.argv    
+    aflswarm = "--aflswarm" in sys.argv
 
     t = SUT.sut()
 
@@ -46,7 +46,7 @@ def main():
             return str
 
         newStr = str.replace("(", '("')
-        newStr = newStr.replace(" != None", '" in globals()')    
+        newStr = newStr.replace(" != None", '" in globals()')
         return newStr.replace("# CHECK POOL INIT","")
 
         print("STR=",str)
@@ -56,7 +56,7 @@ def main():
         strNew = str[:condBegin+1] + '"' + theCheck + '"' + str[str.find(" != None):"):]
         print(strNew)
         strNew = strNew.replace(" != None"," in globals()")
-        print(strNew)    
+        print(strNew)
         strNew = strNew.replace("# CHECK POOL INIT","")
         print(strNew)
         return strNew
@@ -71,7 +71,7 @@ def main():
     initCode = []
 
     outf.write("from __future__ import print_function\n\n")
-    
+
     for l in open(sutFile):
         if "END STANDALONE CODE" in l:
             startPrelim = False
@@ -136,10 +136,10 @@ def main():
         if checkRefs:
             if t.getRefCode(name) != None:
                 for r in t.getRefCode(name):
-                    outf.write("try:\n")                
+                    outf.write("try:\n")
                     outf.write("  " + t.prettyName(r) + "\n")
                     outf.write("except:\n")
-                    outf.write("  pass\n")                    
+                    outf.write("  pass\n")
         if checkProps:
             outf.write("check()\n")
         if makeRegression:

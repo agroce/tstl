@@ -31,9 +31,9 @@ for f in glob.glob(sys.argv[1]):
 sources =  {}
 for f in set(highLevel.keys()):
     sources[f] = sut.loadTest(f)
-                
+
 print("DETAILED PROVENANCE SUMMARY:")
-                
+
 lsrcs = sorted(list(lowLevel.keys()), key=lambda x:len(lowLevel[x]))
 
 print()
@@ -56,10 +56,10 @@ csrcs = sorted(list(classes.keys()),key=lambda x:len(classes[x]))
 for c in csrcs:
     print(c,len(classes[c]))
 
-    
+
 print()
 print()
-    
+
 print("FILE LEVEL PROVENANCE SUMMARY:")
 
 hsrcs = sorted(list(highLevel.keys()), key=lambda x:len(highLevel[x]))

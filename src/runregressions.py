@@ -14,7 +14,7 @@ if not "--help" in sys.argv:
     import sut as SUT
 
 def main():
-    
+
     if "--help" in sys.argv:
         print("Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running] [--afl] [--aflswarm]")
         print("Options:")
@@ -28,7 +28,7 @@ def main():
         print(" --afl:          tests are in afl format")
         print(" --aflswarm:     tests are in afl swarm format")
         sys.exit(0)
-    
+
     sut = SUT.sut()
 
     nocover = False
@@ -74,7 +74,7 @@ def main():
     if "--afl" in sys.argv:
        afl = True
     if "--aflswarm" in sys.argv:
-       aflswarm = True               
+       aflswarm = True
 
     if verbose:
         sut.verbose(True)
@@ -84,10 +84,10 @@ def main():
 
     noNewCover = []
     newCover = []
-    
+
     totalTests = 0
     invalidTests = []
-    
+
     stime = time.time()
     for f in files:
         totalTests += 1
@@ -131,7 +131,7 @@ def main():
 
     if not nocover:
         sut.internalReport()
-        print(sut.report("coverage.out"),"PERCENT COVERED")    
+        print(sut.report("coverage.out"),"PERCENT COVERED")
 
     if htmlOut != None:
         sut.htmlReport(htmlOut)
@@ -150,7 +150,7 @@ def main():
         for f in invalidTests:
             print(f, end=' ')
         print()
-    
+
     if not anyFailed:
         print("ALL TESTS SUCCESSFUL")
     else:

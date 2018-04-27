@@ -50,7 +50,7 @@ def getPropCode(self,name):
     try:
         return self.__propCode[name]
     except:
-        return None        
+        return None
 
 def actionClass(self,action):
     return self.__actionClass[action[0]]
@@ -74,7 +74,7 @@ def prettyName(self, name):
             needUnderscore = ""
             if p[-1] in ['0','1','2','3','4','5','6','7','8','9']:
                 needUnderscore = "_"
-            newAccess = p.replace(self.__poolPrefix,"") + needUnderscore + index                
+            newAccess = p.replace(self.__poolPrefix,"") + needUnderscore + index
             newName = newName.replace(access, newAccess)
             pfind = newName.find(p+"[")
     return newName
@@ -144,7 +144,7 @@ def highLowSwarm(self, rgen, P = 0.5, file = None, highProb = 0.9):
             c = ls[0][:-1]
             prob = float(ls[1])
             classProb[c] = prob
-            
+
     for c in self.__actionClasses:
         if file == None:
             if rgen.random() < P:
@@ -157,7 +157,7 @@ def highLowSwarm(self, rgen, P = 0.5, file = None, highProb = 0.9):
     changed = True
     while changed:
         changed = False
-        
+
         forcedAdd = []
         for c in high:
             for d in self.dependencies(c):
@@ -194,9 +194,9 @@ def highLowSwarm(self, rgen, P = 0.5, file = None, highProb = 0.9):
     if low == []:
         return [(1.0/len(high),x) for x in high]
     if high == []:
-        return [(1.0/len(low),x) for x in low]    
+        return [(1.0/len(low),x) for x in low]
     highP = highProb / len(high)
-    lowP = (1.0-highProb) / len(low)    
+    lowP = (1.0-highProb) / len(low)
     for c in high:
         probs.append((highP,c))
     for c in low:
@@ -213,7 +213,7 @@ def highLowClassProbs(self,rgen, P = 0.5, file = None, highProb = 0.9):
             c = ls[0][:-1]
             prob = float(ls[1])
             classProb[c] = prob
-             
+
     for c in self.__actionClasses:
         if file == None:
             if rgen.random() < P:
@@ -229,9 +229,9 @@ def highLowClassProbs(self,rgen, P = 0.5, file = None, highProb = 0.9):
     if low == []:
         return [(1.0/len(high),x) for x in high]
     if high == []:
-        return [(1.0/len(low),x) for x in low]    
+        return [(1.0/len(low),x) for x in low]
     highP = highProb / len(high)
-    lowP = (1.0-highProb) / len(low)    
+    lowP = (1.0-highProb) / len(low)
     for c in high:
         probs.append((highP,c))
     for c in low:
@@ -242,7 +242,7 @@ def randomEnabledClassProbs(self,rgen,probs):
     if self.__enumerateEnabled:
         enableds = self.enabled()
     else:
-        enableds = None            
+        enableds = None
     a = None
     while a == None:
         r = rgen.random()
@@ -311,7 +311,7 @@ def randomEnableds(self,rgen,n):
     retActs = []
     acts = self.__actions
     if self.__enumerateEnabled:
-        acts = self.enabled()    
+        acts = self.enabled()
     while len(retActs) < n:
         if len(acts) == 1:
             p = 0
@@ -369,7 +369,7 @@ def mutate(self,test,rgen,Pinsert=0.2):
 
 def crossover(self,test1,test2,rgen,twoPoint=False):
     '''
-    Simple code for performing crossover of two tests.  Just picks an order, then picks a point at which to stop first 
+    Simple code for performing crossover of two tests.  Just picks an order, then picks a point at which to stop first
     test then start second.  twoPoint results in two point crossover.
     '''
     if rgen.randrange(2) == 0:
@@ -401,7 +401,7 @@ def crossover(self,test1,test2,rgen,twoPoint=False):
     else:
         newTest.extend(t2[p2:])
     return newTest
-        
+
 def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,checkProp=True,initial=None,timeout=None,stopWhen=None):
     '''
     Allows generation of fixed length tests using either a default generator (pure random testing), or using a simple
@@ -409,14 +409,14 @@ def makeTest(self,size,rgen=None,generator=None,sgenerator=None,stopFail=True,ch
     An sgenerator must take as input both a state and an interface to the SUT (to query for coverage, etc.) and return
     an (action, new state) tuple.  User can also control whether to stop on failure, whether to check properties, and
     supply a timeout in seconds.
-    
+
     '''
-    
+
     if timeout != None:
         stime = time.time()
 
     noFailure = True
-        
+
     if generator != None:
         genF = generator
     else:
@@ -476,7 +476,7 @@ def disable(self,f):
     self.__actions = newActions
 
 def enableAll(self):
-    
+
     """
     Enable all actions.
     """
@@ -485,11 +485,11 @@ def enableAll(self):
     self.__actions_assume_backup = list(self.__actions_backup)
 
 def enableAllAssume(self):
-    
+
     """
     Enable all actions, but restricted by current swarm set
     """
-    self.__actions = self.__actions_assume_backup    
+    self.__actions = self.__actions_assume_backup
 
 def objCodeLOCs(self,obj,context):
     LOCs = []
@@ -508,7 +508,7 @@ def objCodeLOCs(self,obj,context):
         except:
             pass
     return LOCs
-    
+
 def codeLOCs(self):
     LOCs = []
     for m in self.__importModules:
@@ -525,7 +525,7 @@ def codeLOCProbs(self, baseline=0.2, codeLOCs=None):
     totalLOCs = 0.0
     aProbs = []
     num0LOC = 0
-    
+
     for a in self.__actionClasses:
         thisLOC = 0
         for (f,LOC,c) in cl:
@@ -543,8 +543,8 @@ def codeLOCProbs(self, baseline=0.2, codeLOCs=None):
         else:
             P.append(((LOC/totalLOCs)*leftOver,a))
     return P
-    
-    
+
+
 def readProbFile(self, file, returnList=False):
     classProb = {}
     with open(file) as f:
@@ -559,7 +559,7 @@ def readProbFile(self, file, returnList=False):
     for k in classProb:
         l.append((classProb[k],k))
     return l
-    
+
 def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None, noDependencies = False):
     """
     Enables all actions, then sets a swarm configuration based on rgen, P = probability of enabling an action class,
@@ -570,7 +570,7 @@ def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None, noDependen
 
     if file != None:
         classProb = self.readProbFile(file)
-            
+
     for c in self.__actionClasses:
         if classProb == None:
             if (c in self.__essentialClasses) or (rgen.random() < P):
@@ -584,10 +584,10 @@ def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None, noDependen
     changed = True
     if noDependencies:
         changed = False
-    
+
     while changed:
         changed = False
-        
+
         forcedAdd = []
         for c in newEnabled:
             for d in self.dependencies(c):
@@ -619,7 +619,7 @@ def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None, noDependen
                         forcedAdd.append(rgen.choice(needsThis))
                         changed = True
         newEnabled.extend(forcedAdd)
-                            
+
     #print "SWARMING WITH CONFIGURATION:",newEnabled
     self.__swarmConfig = newEnabled
     enabledActions = []
@@ -631,7 +631,7 @@ def standardSwarm(self, rgen, P = 0.5, file = None, classProb = None, noDependen
 
 def swarmConfig(self):
     return self.__swarmConfig
-    
+
 def serializable(self, step):
     ser = step[0]
     if len(step) > 3:
@@ -647,7 +647,7 @@ def testToBytes(self, test):
     fmt = "<H"
     if alen < 256:
         bytes = 1
-        fmt = "<B"    
+        fmt = "<B"
     if alen > 2**16:
         bytes = 4
         fmt = "<L"
@@ -661,7 +661,7 @@ def testToBytes(self, test):
         p = struct.pack(fmt,index)
         data += p
     return data
-        
+
 def saveTest(self, test, filename, afl=False):
     if not afl:
         outf = open(filename,'w')
@@ -673,7 +673,7 @@ def saveTest(self, test, filename, afl=False):
     else:
         outf.write(self.testToBytes(test))
     outf.close()
-    
+
 
 def bytesToTest(self, data, swarm=False):
     alen = len(self.actions())
@@ -697,12 +697,12 @@ def bytesToTest(self, data, swarm=False):
         index = struct.unpack(fmt,data[i*bytes:(i*bytes)+bytes])[0] % alen
         test.append(self.actions()[index])
     return test
-        
+
 def loadTest(self, filename, afl=False, swarm=False):
     if afl:
         with open(filename,'rb') as f:
             return self.bytesToTest(f.read(),swarm=swarm)
-        
+
     test = []
     with open(filename) as f:
         for l in f:
@@ -756,7 +756,7 @@ def allEnabled(self, test):
 def replay(self, test, catchUncaught = False, extend=False, checkProp=False, verbose=False, stopFail = True, returnCov = False, delay = None):
     '''
     Replays a test, either resetting first or extending current test (default is to restart).  Can either stop or keep going
-    on failure, catch and notify about uncaught exceptions or throw them, and check or not check properties.  The returnCov setting 
+    on failure, catch and notify about uncaught exceptions or throw them, and check or not check properties.  The returnCov setting
     adds a sequential record of coverage by step as another element of a return tuple.
     '''
     if not extend:
@@ -779,7 +779,7 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
             try:
                 act()
             except KeyboardInterrupt as e:
-                raise e                    
+                raise e
             except Exception as e:
                 self.__failure = sys.exc_info()
                 if catchUncaught:
@@ -800,7 +800,7 @@ def replay(self, test, catchUncaught = False, extend=False, checkProp=False, ver
             if (len(newS) > 0) or (len(newB) > 0):
                 cov.append((newS,newB))
             allS.update(s)
-            allB.update(b)            
+            allB.update(b)
     if returnCov:
         return (self.__failure == None, cov)
     return (self.__failure == None)
@@ -815,14 +815,14 @@ def replayUntil(self, test, pred, catchUncaught = False, checkProp=False, stopFa
         name = a[0]
         guard = a[1]
         act = a[2]
-        
+
         newt.append((name, guard, act))
         if guard():
             if catchUncaught:
                 try:
                     act()
                 except KeyboardInterrupt as e:
-                    raise e                    
+                    raise e
                 except:
                     self.__failure = sys.exc_info()
                     if stopFail:
@@ -841,7 +841,7 @@ def failsCheck(self, test, verbose=False, failure=None):
     try:
         r = self.replay(test, catchUncaught=True, checkProp=True, verbose=verbose)
     except KeyboardInterrupt as e:
-        raise e        
+        raise e
     except:
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
             return True
@@ -858,7 +858,7 @@ def fails(self, test, verbose=False, failure=None):
     try:
         r = self.replay(test, verbose=verbose, catchUncaught=True)
     except KeyboardInterrupt as e:
-        raise e    
+        raise e
     except:
         if verbose:
             print("Got exception during replay!")
@@ -872,30 +872,30 @@ def fails(self, test, verbose=False, failure=None):
         return True
     else:
         return False
-    
+
 def failsAny(self, test, verbose=False, failure=None):
     try:
         r = self.replay(test, checkProp=True, verbose=verbose,catchUncaught=True)
     except KeyboardInterrupt as e:
-        raise e        
+        raise e
     except:
         self.__failure = sys.exc_info()
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
-            return True                
+            return True
         return False
     if r == False:
         #self.__failure = sys.exc_info()
         if (failure == None) or ((self.__failure[0] == failure[0]) and (repr(self.__failure[1]) == repr(failure[1]))):
-            return True                
-        return False        
-    return False    
+            return True
+        return False
+    return False
 
 def P(self,t,pred,samples=10):
     success = 0.0
     for i in range(0,samples):
         if pred(t):
             success += 1.0
-    return (success/samples) 
+    return (success/samples)
 
 def forceP(self,t,pred,P=0.5,samples=10,replications=1):
     while (replications > 0):
@@ -917,11 +917,11 @@ def findProcessNondeterminism(self,t,ignoreExceptions=True,verbose=False,delay=N
             if delay != None:
                 cmd.extend(["--delay",str(delay)])
             out1 = subprocess.check_output(cmd, universal_newlines=True)
-            out2 = subprocess.check_output(cmd, universal_newlines=True)        
+            out2 = subprocess.check_output(cmd, universal_newlines=True)
         finally:
             os.remove(".tmp.test")
         out1l = out1.split("\n")
-        out2l = out2.split("\n")    
+        out2l = out2.split("\n")
         if ignoreExceptions:
             removeExceptions = (lambda l: "RAISED".find(l) != 0)
             out1l = list(filter(removeExceptions, out1l))
@@ -938,7 +938,7 @@ def findProcessNondeterminism(self,t,ignoreExceptions=True,verbose=False,delay=N
                         print (out1l[i])
                         print ("  VS.")
                         print (out2l[i])
-                        print ("="*50)                    
+                        print ("="*50)
                     break
             return action
         else:
@@ -979,7 +979,7 @@ def trajectoryItem(self,pools=None):
     if pools != None:
         for p in self.pools():
             if p not in pools:
-                o.add(p)    
+                o.add(p)
     ti = {}
     for (name, vals) in ss:
         if name in o:
@@ -1005,8 +1005,8 @@ def stepNondeterministic(self,t,delay=1.0,delay0=None,tries=1,verbose=False,repo
     for s in t:
         self.safely(s)
         trajectory.append(self.trajectoryItem(pools))
-        if delay0 != None:        
-            time.sleep(delay0)        
+        if delay0 != None:
+            time.sleep(delay0)
     for i in range(0,tries):
         pos = 0
         self.restart()
@@ -1062,7 +1062,7 @@ def nondeterministic(self,t,delay=1.0,delay0=None,tries=1,reportEqualFail=False,
                 try:
                     s1[name][v] = copy.deepcopy(vals[v])
                 except:
-                    s1[name][v] = "UNABLE TO COPY"    
+                    s1[name][v] = "UNABLE TO COPY"
         try:
             if s0 != s1:
                 return True
@@ -1076,7 +1076,7 @@ def verbose(self, bool):
 
 def verboseOpaque(self, bool):
     self.__verbosePrintOpaque = bool
-    
+
 def logOff(self):
     self.__log = None
 
@@ -1128,7 +1128,7 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
         pass
 
     intermediate = 0
-    
+
     if len(test) < 2:
         return test
 
@@ -1147,7 +1147,7 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
             ntest.append((name,guard,act,i))
             i += 1
         test = ntest
-    
+
     if keepLast:
         tb = test[:-1]
         addLast = [test[-1]]
@@ -1156,12 +1156,12 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
         addLast = []
 
     n = 2
-    
+
     if tryFast:
         n = len(tb)
 
     lastRemove = 0
-        
+
     count = 0
     stests = {}
     while True:
@@ -1233,7 +1233,7 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
                             try:
                                 a[2]()
                             except KeyboardInterrupt as e:
-                                raise e                                
+                                raise e
                             except:
                                 pass
                     if verbose:
@@ -1241,7 +1241,7 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
                             print("Guard pruning reduced test length to",len(newtb+addLast))
                             if verbose == "SHOW":
                                 print ("REMOVED:")
-                                self.prettyPrintRemoved(tb,newtb)                            
+                                self.prettyPrintRemoved(tb,newtb)
                     tb = newtb
                 if tryFast:
                     n = len(tb)
@@ -1277,7 +1277,7 @@ def reduce(self, test, pred, pruneGuards = True, keepLast = False, verbose = Tru
             if not findLocations:
                 v = pred(tc + addLast)
             else:
-                v = pred([(x[0],x[1],x[2]) for x in tc+addLast])            
+                v = pred([(x[0],x[1],x[2]) for x in tc+addLast])
             if amplify:
                 if v > currBest:
                     v = True
@@ -1294,7 +1294,7 @@ def tryCompose(tests, pred, pruneGuards = False, keepLast = False, verbose = Tru
         newt.extend(t)
     newt = newt * combs
     return reduce(newt, pred, pruneGuards, keepLast, verbose, rgen, amplify)
-            
+
 def reductions(self, test, pred, pruneGuards = True, tryFast = True, keepLast = False, verbose=True, recursive=1, useClasses=True, limit = None):
     # use recursive = -1 for infinite recursion (all tests)
     r = self.reduce(test, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose, tryFast=tryFast)
@@ -1311,7 +1311,7 @@ def reductions(self, test, pred, pruneGuards = True, tryFast = True, keepLast = 
             for s in r:
                 if not set([s]) in impossibleSets:
                     filterActs.add(s)
-                
+
         anyNew = False
         sys.stdout.flush()
         for i in range(1,len(filterActs)):
@@ -1326,7 +1326,7 @@ def reductions(self, test, pred, pruneGuards = True, tryFast = True, keepLast = 
                 #    print "ANALYZED:",analyzedCount
                 if (limit != None) and (analyzedCount > limit):
                     print("REDUCTION LIMIT EXCEEDED")
-                    return reductions                
+                    return reductions
                 cs = set(c)
                 if cs in analyzed:
                     continue
@@ -1363,7 +1363,7 @@ def reductions(self, test, pred, pruneGuards = True, tryFast = True, keepLast = 
                             anyNew = True
                         if verbose:
                             print("ADDING NEW TEST OF LENGTH",len(rfilter1))
-                        #print "ADDING NEW TEST OF LENGTH",len(rfilter1)                            
+                        #print "ADDING NEW TEST OF LENGTH",len(rfilter1)
                         reductions.append(rfilter1)
                 if pfilter2:
                     rfilter2 = self.reduce(tfilter2, pred, pruneGuards = pruneGuards, keepLast = keepLast, verbose=verbose, tryFast=tryFast)
@@ -1372,7 +1372,7 @@ def reductions(self, test, pred, pruneGuards = True, tryFast = True, keepLast = 
                             anyNew = True
                         if verbose:
                             print("ADDING NEW TEST OF LENGTH",len(rfilter2))
-                        #print "ADDING NEW TEST OF LENGTH",len(rfilter2)                            
+                        #print "ADDING NEW TEST OF LENGTH",len(rfilter2)
                         reductions.append(rfilter2)
                 if (not pfilter1) and (not pfilter2):
                     if cs not in impossibleSets:
@@ -1381,8 +1381,8 @@ def reductions(self, test, pred, pruneGuards = True, tryFast = True, keepLast = 
                         impossibleSets.append(cs)
             if verbose:
                 print("ANALYZED",ncombos,"COMBINATIONS")
-            #print "ANALYZED",ncombos,"COMBINATIONS"                
-                    
+            #print "ANALYZED",ncombos,"COMBINATIONS"
+
     return reductions
 
 def poolUses(self,str):
@@ -1475,7 +1475,7 @@ def numReassigns(self, test):
 
     if not self.__noReassigns:
         return 0
-    
+
     lhsPools = []
     reuses = []
 
@@ -1505,11 +1505,11 @@ def reduceLengthStep(self, test, pred, pruneGuards = True, keepLast = False, ver
     stop = len(test)
     if keepLast:
         stop -= 1
-    
+
     for i in range(0,stop):
         name1 = test[i][0]
         if i not in enableChange:
-            continue        
+            continue
         for name2 in enableChange[i]:
             if name1 != name2:
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -1525,17 +1525,17 @@ def reduceLengthStep(self, test, pred, pruneGuards = True, keepLast = False, ver
 
 def replaceAllStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print("STARTING REPLACE ALL STEP")    
+        print("STARTING REPLACE ALL STEP")
     # Replace all occurrences of an action with a simpler action
-    enableChange = self.getEnabled(test,checkEnabled)    
+    enableChange = self.getEnabled(test,checkEnabled)
 
     reassignCount = self.numReassigns(test)
-    
+
     donePairs = []
     for i in range(0,len(test)):
         name1 = test[i][0]
         if i not in enableChange:
-            continue        
+            continue
         for name2 in enableChange[i]:
             if (self.__orderings[name1] > self.__orderings[name2]) and ((name1,name2) not in donePairs):
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -1554,7 +1554,7 @@ def replaceAllStep(self, test, pred, pruneGuards = True, keepLast = False, verbo
 
 def replacePoolStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print("STARTING REPLACE POOL STEP")        
+        print("STARTING REPLACE POOL STEP")
     # Replace pools with lower-numbered pools
 
     pools = []
@@ -1563,29 +1563,29 @@ def replacePoolStep(self, test, pred, pruneGuards = True, keepLast = False, verb
             if p not in pools:
                 pools.append(p)
 
-    reassignCount = self.numReassigns(test)                
+    reassignCount = self.numReassigns(test)
 
     # First try the simple version:
 
     if self.__noReassigns:
-    
+
         for (p,i) in pools:
             for n in range(0,int(i)):
-                new = p.replace("["+i+"]","[" + str(n) + "]")    
+                new = p.replace("["+i+"]","[" + str(n) + "]")
                 testC = [self.actionModify(x,p,new) for x in test]
                 if (testC != test) and (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     if verbose:
                         print("NORMALIZER: RULE ReplacePool:",p,"WITH",new)
-                    return (True, testC)    
+                    return (True, testC)
 
         # Remained of this code is now not needed, probably, due to noReassignRule
         return (False, test)
-    
+
     # Reduce number of pools but may need to move assignment to a later position, or only change after the position
     for pos in range(0,len(test)):
         for (p,i) in pools:
             for n in range(0,int(i)):
-                new = p.replace("["+i+"]","[" + str(n) + "]")    
+                new = p.replace("["+i+"]","[" + str(n) + "]")
                 prefix = []
                 moved = []
                 for j in range(0,pos):
@@ -1595,7 +1595,7 @@ def replacePoolStep(self, test, pred, pruneGuards = True, keepLast = False, verb
                         prefix.append(test[j])
                 suffix = [self.actionModify(x,p,new) for x in moved + test[pos:]]
                 newPrefix = [self.actionModify(x,p,new) for x in prefix]
-                newSuffix = [self.actionModify(x,p,new) for x in suffix]                
+                newSuffix = [self.actionModify(x,p,new) for x in suffix]
                 testC = newPrefix + newSuffix
                 if (testC != test) and (self.numReassigns(testC) <= reassignCount) and pred(testC):
                     if verbose:
@@ -1618,20 +1618,20 @@ def replacePoolStep(self, test, pred, pruneGuards = True, keepLast = False, verb
 
 def replaceSingleStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print("STARTING REPLACE SINGLE STEP")        
+        print("STARTING REPLACE SINGLE STEP")
     # Replace any single action with a lower-numbered action
-    enableChange = self.getEnabled(test,checkEnabled)    
+    enableChange = self.getEnabled(test,checkEnabled)
 
     reassignCount = self.numReassigns(test)
 
     stop = len(test)
     if keepLast:
         stop -= 1
-    
+
     for i in range(0,stop):
         name1 = test[i][0]
         if i not in enableChange:
-            continue        
+            continue
         for name2 in enableChange[i]:
             if self.__orderings[name1] > self.__orderings[name2]:
                 if (distLimit != None) and (self.levDist(name1, name2) > distLimit):
@@ -1645,7 +1645,7 @@ def replaceSingleStep(self, test, pred, pruneGuards = True, keepLast = False, ve
 
 def swapPoolStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print("STARTING SWAP POOL STEP")        
+        print("STARTING SWAP POOL STEP")
     # Swap two pool uses in between two positions, if this lowers the minimal action ordering between them
     pools = []
     for s in test:
@@ -1654,7 +1654,7 @@ def swapPoolStep(self, test, pred, pruneGuards = True, keepLast = False, verbose
                 pools.append(p)
 
     reassignCount = self.numReassigns(test)
-                
+
     swaps = []
     for (p1,i1) in pools:
         for (p2,i2) in pools:
@@ -1703,7 +1703,7 @@ def coversUnique(self, val, catchUncaught=False):
         try:
             self.replay(test, catchUncaught)
         except KeyboardInterrupt as e:
-            raise e            
+            raise e
         except:
             pass
         uv = self.uniqueVals()
@@ -1713,7 +1713,7 @@ def coversUnique(self, val, catchUncaught=False):
 def noReassignStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if not self.__noReassigns:
         return (False, test)
-    
+
     if verbose == "VERY":
         print("STARTING NOREASSIGNS STEP")
     # Replace reassignments with fresh variables
@@ -1757,17 +1757,17 @@ def noReassignStep(self, test, pred, pruneGuards = True, keepLast = False, verbo
         for s in test[i:]:
             suffix.append(self.actionModify(s,p,newp))
         return (True, prefix+suffix)
-            
+
     return (False, test)
 
 def swapActionOrderStep(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, checkEnabled = False, distLimit = None):
     if verbose == "VERY":
-        print("STARTING SWAP ACTION ORDER STEP")        
+        print("STARTING SWAP ACTION ORDER STEP")
     # Try to swap any out-of-order actions
     lastMover = len(test)
     if keepLast:
         lastMover -= 1
-        
+
     for i in range(0,lastMover):
         for j in range(i+1,lastMover):
             step1 = test[i][0]
@@ -1842,7 +1842,7 @@ def alphaConvert(self, test, verbose = False):
             if changed:
                 break
     return test
-    
+
 def normalize(self, test, pred, pruneGuards = True, keepLast = False, verbose = False, speed = "FAST", checkEnabled = False, distLimit = None, reorder=True,
               noReassigns = False, useCache = True, tryFast = True):
     """
@@ -1857,7 +1857,7 @@ def normalize(self, test, pred, pruneGuards = True, keepLast = False, verbose = 
         self.__noReassigns = True
     else:
         self.__noReassigns = False
-    
+
     # Check the cache
     stest = self.captureReplay(test)
     if useCache and (stest in self.__simplifyCache):
@@ -1865,10 +1865,10 @@ def normalize(self, test, pred, pruneGuards = True, keepLast = False, verbose = 
             print("NORMALIZER: FOUND TEST IN CACHED RESULTS")
         return self.__simplifyCache[stest]
     history = [stest]
-        
+
     # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
     #self.relax()
-             
+
     # Default speed is fast, if speed not recognized
     simplifiers = [self.noReassignStep, self.replaceAllStep, self.replacePoolStep, self.replaceSingleStep, self.swapPoolStep, self.swapActionOrderStep, self.reduceLengthStep]
     #simplifiers = [self.noReassignStep, self.replaceAllStep, self.replaceSingleStep, self.swapActionOrderStep, self.reduceLengthStep]
@@ -1896,7 +1896,7 @@ def normalize(self, test, pred, pruneGuards = True, keepLast = False, verbose = 
     elif speed == "VERYFASTREDUCE":
         reduceOnChange = True
         if distLimit == None:
-            distLimit = 3 # maximum of 3 char change when replacing actions!  allows numeric switches, simple pool modifications, but very few method changes            
+            distLimit = 3 # maximum of 3 char change when replacing actions!  allows numeric switches, simple pool modifications, but very few method changes
 
     numChanges = 0
     changed = True
@@ -1924,7 +1924,7 @@ def normalize(self, test, pred, pruneGuards = True, keepLast = False, verbose = 
                     for t in history:
                         self.__simplifyCache[t] = result
                     #self.stopRelax()
-                    return result                
+                    return result
                 history.append(stest)
                 if reorder:
                     simplifiers = newSimplifiers
@@ -1945,7 +1945,7 @@ def normalize(self, test, pred, pruneGuards = True, keepLast = False, verbose = 
     # Update the simplification cache and return
     if useCache:
         for t in history:
-            self.__simplifyCache[t] = test    
+            self.__simplifyCache[t] = test
     return test
 
 def freshSimpleVariants(self, name, previous, replacements):
@@ -2005,17 +2005,17 @@ def generalize(self, test, pred, pruneGuards = True, keepLast = False, verbose =
                returnCollect = False, collected = None, depth = 0, silent=False, targets = None, fresh=True):
 
     #print self.__consts
-    
+
     if collected is None:
         collected = {}
 
     newCollected = {}
-        
+
     # Change so double assignments are allowed
     #self.relax()
 
     enableChange = self.getEnabled(test,checkEnabled)
-    
+
     canReplace = {}
     canSwap = {}
     canMakeSimple = {}
@@ -2036,10 +2036,10 @@ def generalize(self, test, pred, pruneGuards = True, keepLast = False, verbose =
                         stestC = self.captureReplay(testC)
                         if stestC not in collected:
                             collected[stestC] = True
-                            newCollected[stestC] = True                            
+                            newCollected[stestC] = True
                         if stestC in targets:
                             #self.stopRelax()
-                            return (True, stestC, dict(collected))                                                    
+                            return (True, stestC, dict(collected))
                     canReplace[i].append(a)
         for j in range(i+1,len(test)):
             if i == j or test[i][0] == test[j][0]:
@@ -2050,10 +2050,10 @@ def generalize(self, test, pred, pruneGuards = True, keepLast = False, verbose =
                     stestC = self.captureReplay(testC)
                     if stestC not in collected:
                         collected[stestC] = True
-                        newCollected[stestC] = True                        
+                        newCollected[stestC] = True
                         if stestC in targets:
                             #self.stopRelax()
-                            return (True, stestC, dict(collected))                        
+                            return (True, stestC, dict(collected))
                 canSwap[i].append(j)
                 canSwap[j].append(i)
         if fresh:
@@ -2061,7 +2061,7 @@ def generalize(self, test, pred, pruneGuards = True, keepLast = False, verbose =
                 #print "="*50
                 #print "FRESH SIMPLE, i = ",i
                 testC = test[:i] + v + test[i+1:]
-                #self.prettyPrintTest(testC)                
+                #self.prettyPrintTest(testC)
                 if pred(testC) and self.allEnabled(testC):
                     #print "SUCCESS!"
                     canMakeSimple[i].append(v)

@@ -17,12 +17,12 @@ def main():
     if "--help" in sys.argv:
         print("Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noCheck] [--noReduce] [--noCover] [--swarm] [--skipFails]")
         print("Options:")
-        print(" --noCheck:       do not check properties")                
+        print(" --noCheck:       do not check properties")
         print(" --noReduce:      do not reduce inputs by coverage")
         print(" --noCover:       do not check for new coverage")
         print(" --swarm:         use swarm format, generate tests using swarm")
         print(" --skipFails:     just pass over failures, don't try to fix")
-        print(" --burst:         high speed, dumb version (let afl sort 'em out)")        
+        print(" --burst:         high speed, dumb version (let afl sort 'em out)")
         sys.exit(0)
 
     sut = SUT.sut()
@@ -30,7 +30,7 @@ def main():
     pid = str(os.getpid())
 
     print ("GENERATING INITIAL AFL INPUTS...")
-    
+
     outputDir = sys.argv[1]
     length = int(sys.argv[2])
     timeout = int(sys.argv[3])
@@ -48,7 +48,7 @@ def main():
 
     if noCover or burst:
         sut.stopCoverage()
-    
+
     R = random.Random()
     Rswarm = random.Random()
 
@@ -85,9 +85,9 @@ def main():
             type = "nearfail"
             print ("SAVING ALL BUT LAST STEP OF FAILED TEST")
             r = t[:-1]
-                
+
         # always alpha convert to make actions clearer to afl, easier to splice
-        r = sut.alphaConvert(r) 
+        r = sut.alphaConvert(r)
         if ok and (not burst) and (not noCover) and (not noReduce):
             print ("REDUCED LENGTH:",len(r))
         if not burst:

@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument('tstl', metavar='filename', type=str, default=None,
                         help='Path to the .tstl file.')
     parser.add_argument('-v', '--version', action='store_true',
-                        help='Display the tstl version.')    
+                        help='Display the tstl version.')
     parser.add_argument('-o', '--output', type=str, default="sut.py",
                         help='Name of the file containing the generated harness code (default = sut.py)')
     parser.add_argument('-c', '--classname', type=str, default='sut',
@@ -53,7 +53,7 @@ def parse_args():
     parser.add_argument('-i', '--coverInit', action='store_true',
                         help='Generate coverage for SUT initialization behavior.')
     parser.add_argument('-e', '--enumerateEnabled', action='store_true',
-                        help='Enumerate enabled actions instead of trying to find one, useful when |actions| typically >> |enabled|.')    
+                        help='Enumerate enabled actions instead of trying to find one, useful when |actions| typically >> |enabled|.')
     parser.add_argument('-R', '--defaultReplay', action='store_true',
                         help='Backtracking defaults to replay method.')
     parser.add_argument('--forceRefExceptionMatch', action='store_true',
@@ -61,7 +61,7 @@ def parse_args():
     parser.add_argument('--forceStrongRefExceptionMatch', action='store_true',
                         help='Exceptions must match message with reference.')
     parser.add_argument('--checkFailureDeterminism', action='store_true',
-                        help='Check that failures are deterministic.')            
+                        help='Check that failures are deterministic.')
     parser.add_argument('-a', '--ignoreAngles', action='store_true',
                         help='Do not use angle brackets as TSTL markers, for use with some languages.')
     parser.add_argument('-s', '--stats', action='store_true',
@@ -69,7 +69,7 @@ def parse_args():
     parser.add_argument('-p', '--pylib', action='store_true',
                         help='Add if you need to test something in the standard Python library.  Will blow up coverage!')
     parser.add_argument('--noReload', action='store_true',
-                        help='Do not reload module on each restart.  For testing modules with broken reload (e.g. TensorFlow)')    
+                        help='Do not reload module on each restart.  For testing modules with broken reload (e.g. TensorFlow)')
 
     # Useful to print internal variables iteratively
     parser.add_argument('--debug', dest='debug', action='store_true', help='Toggle debug mode on')
@@ -94,25 +94,25 @@ def make_config(pargs, parser):
     elif not os.path.exists(pargs.tstl):
         parser.print_help()
         raise ValueError('Cannot locate the .tstl file at path={}'.format(pargs.output))
-    
+
     if pargs.output is None:
         parser.print_help()
         raise ValueError('The output file is not specified.')
-    
+
     # create a namedtuple object for fast attribute lookup
     key_list = list(pdict.keys())
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
-    return nt_config   
-    
+    return nt_config
+
 def preprocess_angle_brackets(line):
     if config.ignoreAngles:
         return line
     repLine = line.replace("<[","%[")
     repLine = repLine.replace("]>","]%")
     repLine = repLine.replace("<,[","%,[")
-    repLine = repLine.replace("],>","],%")        
+    repLine = repLine.replace("],>","],%")
     repLine = repLine.replace("PRE<","pre<")
     prePos = repLine.find("pre<(")
     while prePos != -1:
@@ -156,7 +156,7 @@ def parse_import_line(line):
     """
     global import_froms
     global need_imports
-    
+
     #print "IMPORT:",line
     raw = line.split('import ')
     if "from " in line:
@@ -230,7 +230,7 @@ def expandRange(original,trackOriginal=False):
                 for i in ilist:
                     if trackOriginal:
                         originalCode[c.replace(rexp, i, 1)] = oldCode
-                    newVersion.append(c.replace(rexp, i, 1))                
+                    newVersion.append(c.replace(rexp, i, 1))
             elif "%[" in c:
                 anyChanged = True
                 lpos = c.find("%[")
@@ -269,17 +269,17 @@ def expandRange(original,trackOriginal=False):
         for refPool in re.findall("%([^%,]*)\s*,\s*(\d+)%", line):
             # it finds e.g., ('LIST', '2') if you have   ~%LIST,2%   in your .tstl file
             poolName, refIndex = refPool
-            # if you had 
+            # if you had
             # ~%LIST% = ~%LIST% + [%INT%, %INT%]
-            # in your .tstl file, and in this particular line they were expanded to e.g., 
+            # in your .tstl file, and in this particular line they were expanded to e.g.,
             # ~%LIST% [2] = ~%LIST% [3] + [%INT% [0], %INT% [0]]
             # then poolOccurences will be ['2', '3']
             poolOccurences = re.findall("%"+poolName+"%\s*\[(\d+)\]", line)
-            
+
             # refIndex is 2, so the actual pool used for the secons %LIST% is poolOccurences[1]
             actualPoolUsed = poolOccurences[int(refIndex)-1]
             # replace   ~%LIST,2%    with    self.p_LIST[3]
-            
+
             line = re.sub("~?%("+poolName+")\s*,\s*("+refIndex+")%", poolPrefix+"\\1["+actualPoolUsed+"]", line)
             if trackOriginal:
                 originalCode[line] = originalCode[newVersion[index]]
@@ -319,7 +319,7 @@ def prettyName(pools, name):
             closePos = newName.find("]",pfind)
             index = newName[newName.find("[",pfind)+1:closePos]
             access = newName[pfind:newName.find("]",pfind)+1]
-            newAccess = p.replace(poolPrefix,"") + index                
+            newAccess = p.replace(poolPrefix,"") + index
             newName = newName.replace(access, newAccess)
             pfind = newName.find(p+"[")
     return newName
@@ -344,7 +344,7 @@ def genInitialization():
         for x in range(0,poolSet[p]):
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "[" + str(x) + "] = None"
-            genCode.append(s + "\n")    
+            genCode.append(s + "\n")
             s = baseIndent
             s += poolPrefix + p.replace("%","") + "_used[" + str(x) + "] = True"
             genCode.append(s + "\n")
@@ -358,14 +358,14 @@ def genInitialization():
         genCode.append(s)
     if firstInit:
         genCode.append("# END INITIALIZATION CODE\n")
-        firstInit = False    
+        firstInit = False
     if (not config.noCover) and config.coverInit:
-        genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
+        genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
 
 
 def main():
-    
+
     global config
     global import_froms
     global import_modules
@@ -374,7 +374,7 @@ def main():
     global refSet
     global poolType
     global initSet
-    
+
     global finallySet
     global constSet
     global opaqueSet
@@ -391,9 +391,9 @@ def main():
         print("TSTL, version 1.2.16")
         print("Documentation at https://github.com/agroce/tstl")
         sys.exit(0)
-        
 
-    
+
+
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
     print(('Generating harness core using config={}'.format(config)))
@@ -415,27 +415,27 @@ def main():
     outf.write("        pass\n")
     outf.write("import copy\n")
     outf.write("import traceback\n")
-    outf.write("import inspect\n")    
+    outf.write("import inspect\n")
     outf.write("import re\n")
     outf.write("import sys\n")
     outf.write("import time\n")
     outf.write("import glob\n")
     outf.write("import struct\n")
-    outf.write("import random\n")        
+    outf.write("import random\n")
     outf.write("import subprocess\n")
-    outf.write("import os.path\n")        
-    outf.write("from itertools import chain, combinations\n")    
+    outf.write("import os.path\n")
+    outf.write("from itertools import chain, combinations\n")
 
     if not config.noCover:
         outf.write("import coverage\n")
 
     outf.write("# BEGIN STANDALONE CODE\n")
-        
+
     code = []
     import_modules = []             # We will call reload on these during restart
     import_froms = []
     inside_literal_block = False    # To check whether we are inside raw python code
-    
+
     inside_function = False         # Are we inside a function def, so need to consider PRE?
     function_code = []
     anyPRE = False
@@ -446,7 +446,7 @@ def main():
     with open(config.tstl, 'r') as fp:
         for l in fp:
             if l[-1] != "\n":
-                l += "\n"            
+                l += "\n"
             fileLine = str(l).replace("\r","")
             l = preprocess_angle_brackets(l)
             l = l.replace("\r","")
@@ -491,9 +491,9 @@ def main():
                     if function_code != []:
                         if anyPRE:
                             outf.write(baseIndent + "__pre = {}\n")
-                            
+
                         for fl in function_code:
-                            outf.write(fl)                    
+                            outf.write(fl)
                     # guarded function, append the speculation argument and continue
                     outf.write(l.replace("):",", SPECULATIVE_CALL = False):"))
                     inside_function = True
@@ -511,7 +511,7 @@ def main():
                     function_code = []
                 elif inside_function:
                     if l.find("%COMMIT%") != -1:
-                    
+
                         # commit point in a guarded function definition
                         outf.write(l.replace("%COMMIT%","if SPECULATIVE_CALL: return True"))
                     m = re.match(r".*PRE%\((.+)\)%.*",l)
@@ -522,13 +522,13 @@ def main():
                         l = l.replace("PRE%(" + pre_expr + ")%", "__pre[" + spre_expr + "]", 1)
                         function_code = [(baseIndent + "__pre[" + spre_expr + "] = " + pre_expr + "\n")] + function_code
                         m = re.match(r".*PRE%\((.+)\)%.*",l)
-                    function_code.append(l)                    
+                    function_code.append(l)
                 else:
                     outf.write(l)
             elif l[0] == "*":       # include action multiple times
                 spos = l.find(" ")
-                times = int(l[1:spos]) 
-                originalCode[l[spos:]] = fileLine 
+                times = int(l[1:spos])
+                originalCode[l[spos:]] = fileLine
                 for n in range(0,times):
                     code.append(l[spos:])
             else:
@@ -538,10 +538,10 @@ def main():
         if anyPRE:
             outf.write(baseIndent + "__pre = {}\n")
         for fl in function_code:
-            outf.write(fl)       
+            outf.write(fl)
 
     outf.write("# END STANDALONE CODE\n")
-                            
+
     assert len(code) > 0, 'No non-comment lines found in .tstl file'
 
     # Build up the pool, initialization values
@@ -565,11 +565,11 @@ def main():
     hintSet = []
     referenceMap = {}
     autoPrefix = ""
-    
+
     # Parse the code to process the "tag lines"
     newCode = []
     noAutoPrefix = ["pools:","actions:","properties:","logs:","inits:","references:","compares:","features:","sources:"]
-    
+
     for c in code:
         fileCode = originalCode[c]
         if config.debug:
@@ -587,15 +587,15 @@ def main():
         elif cs[0] == "properties:":
             autoPrefix = "property: "
         elif cs[0] == "assumptions:":
-            autoPrefix = "assume: "            
+            autoPrefix = "assume: "
         elif cs[0] == "logs:":
             autoPrefix = "log: "
         elif cs[0] == "hints:":
-            autoPrefix = "hint: "            
+            autoPrefix = "hint: "
         elif cs[0] == "inits:":
             autoPrefix = "init: "
         elif cs[0] == "finallys:":
-            autoPrefix = "finally: "            
+            autoPrefix = "finally: "
         elif cs[0] == "references:":
             autoPrefix = "reference: "
         elif cs[0] == "compares:":
@@ -607,21 +607,21 @@ def main():
         elif cs[0] == "exceptions:":
             autoPrefix = "exception: "
         elif cs[0] == "actions:":
-            autoPrefix = ""                        
+            autoPrefix = ""
         elif cs[0] == "init:":
             initSet.append(c.replace("init: ",""))
         elif cs[0] == "finally:":
-            finallySet.append(c.replace("finally: ",""))            
+            finallySet.append(c.replace("finally: ",""))
         elif cs[0] == "log:":
             logSet.append(c.replace("log: ",""))
         elif cs[0] == "hint:":
-            hintSet.append(c.replace("hint: ",""))            
+            hintSet.append(c.replace("hint: ",""))
         elif cs[0] == "property:":
             propSet.append(c.replace("property: ",""))
         elif cs[0] == "assume:":
-            assumeSet.append(c.replace("assume: ",""))            
+            assumeSet.append(c.replace("assume: ",""))
         elif cs[0] == "exception:":
-            ignoredExcepts.append(c.replace("exception: ",""))            
+            ignoredExcepts.append(c.replace("exception: ",""))
         elif cs[0] == "pool:":
             poolSet[cs[1]] = int(cs[2])
             if (len(cs)>3) and ("REF" in cs):
@@ -632,7 +632,7 @@ def main():
             if (len(cs)>3) and ("OPAQUE" in cs):
                 opaqueSet.append(cs[1])
             if (len(cs)>3) and ("OPAQUEREF" in cs):
-                opaqueSet.append(cs[1]+"_REF")                                
+                opaqueSet.append(cs[1]+"_REF")
             if (":" in cs):
                 tpos = cs.index(":")
                 poolType[cs[1]] = cs[tpos+1]
@@ -666,7 +666,7 @@ def main():
         elif cs[0] == "feature:":
             featureSet.append(cs[1])
         elif cs[0] == "compare:":
-            compareSet.append(cs[1])        
+            compareSet.append(cs[1])
         elif cs[0] == "source:":
             sourceSet.append(cs[1])
         else:
@@ -676,7 +676,7 @@ def main():
             originalCode[c] = fileCode
             newCode.append(c)
     code = newCode
-        
+
     dependencies = {}
     classDefs = {}
 
@@ -684,7 +684,7 @@ def main():
     for c in code:
         if originalCode[c] not in codeClasses:
             codeClasses.append(originalCode[c] + ' ')
-    
+
     # get definitions
     for c in codeClasses:
         if ":=" in c:
@@ -698,7 +698,7 @@ def main():
                     classDefs[pSub].append(c)
 
     essentialClasses = []
-    
+
     for c in codeClasses:
         if "#ESSENTIAL" in c:
             essentialClasses.append(c)
@@ -712,13 +712,13 @@ def main():
             pAngle = "<" + pSub + ">"
             pComma = "<" + pSub + ","
             pPerc = "%" + pSub + "%"
-            pPercComma = "%" + pSub + ","            
+            pPercComma = "%" + pSub + ","
             if (pAngle in rhs) or (pComma in rhs) or (pPerc in rhs) or (pPercComma in rhs):
                 if pSub in classDefs:
                     fc = [x for x in classDefs[pSub] if x != c]
                     if fc != []:
                         dependencies[c].append(fc)
-                
+
     if config.debug:
         print("-------- :code: --------")
         pprint(code)
@@ -727,7 +727,7 @@ def main():
     # ------------------------------------------ #
     code = expandPool(code,trackOriginal=True)
     propSet = expandPool(propSet)
-    assumeSet = expandPool(assumeSet)    
+    assumeSet = expandPool(assumeSet)
     initSet = expandPool(initSet)
     finallySet = expandPool(finallySet)
     logSet = expandPool(logSet)
@@ -740,9 +740,9 @@ def main():
 
     code = expandRange(code,trackOriginal=True)
     propSet = expandRange(propSet)
-    assumeSet = expandRange(assumeSet)    
+    assumeSet = expandRange(assumeSet)
     initSet = expandRange(initSet)
-    finallySet = expandRange(finallySet)    
+    finallySet = expandRange(finallySet)
     logSet = expandRange(logSet)
     hintSet = expandRange(hintSet)
 
@@ -786,7 +786,7 @@ def main():
         newAssumes = []
         for c in assumeSet:
             newAssumes.append(c.replace(p + " ", poolPrefix + p.replace("%","")))
-        assumeSet = newAssumes        
+        assumeSet = newAssumes
 
     for p in poolSet:
         newLogs = []
@@ -808,13 +808,13 @@ def main():
             if p in refSet:
                 pRaw = poolPrefix + p.replace("%","")
                 refl = l.replace(pRaw,pRaw+"_REF")
-        if refl != l:        
+        if refl != l:
             for base in referenceMap:
                 if re.match(r"^[a-zA-Z_0-9]+$", refl):  # base is not a regex; treat it like a function name
                     refl = re.sub(r'\b'+base+r'\b',referenceMap[base],refl)
                 else:   # base is a regex; treat it like one
                     refl = re.sub(base,referenceMap[base],refl)
-        newLogs.append(l)        
+        newLogs.append(l)
         if refl != l:
             newLogs.append(refl)
     logSet = newLogs
@@ -832,7 +832,7 @@ def main():
     allNames = {}
 
     warnedAbout = []
-    
+
     for corig in code:
         act = genAct()
         guard = genGuard()
@@ -866,7 +866,7 @@ def main():
                 okExcepts = okExcepts[:-1]
 
         newC = c
-            
+
         forVerbose = []
 
         cParts = c.split("; ")
@@ -938,7 +938,7 @@ def main():
                 g = g.replace("[", "_used[")
                 gguard = "((" + g + ") or (" + gval + " == None) or (self.__relaxUsedRestriction))"
                 guardConds.append(gguard)
-                changes.append(g + "=False")                    
+                changes.append(g + "=False")
 
         newC = newC.replace(":=","=")
         newC = newC.replace("~"+poolPrefix,poolPrefix)
@@ -953,9 +953,9 @@ def main():
             print("WARNING: did you forget to declare the pool",b.replace("%","")+"?")
             print("first used in this code:")
             print(originalCode[corig])
-            print("*"*70)            
+            print("*"*70)
 
-        
+
         interestingGuard = ""
         newCguard = ""
         if newC.find(" -> ") > -1:
@@ -971,7 +971,7 @@ def main():
         if config.forceRefExceptionMatch or config.forceStrongRefExceptionMatch:
             checkRaised = True
             checkRefRaised = True
-        
+
         postCode = None
         if newC.find(" => ") > -1:
             postCodeSplit = newC.split(" => ")
@@ -993,7 +993,7 @@ def main():
                     preSet.append("__pre = {}\n")
                 preSet.append("__pre[" + spre_expr + "] = " + pre_expr + "\n")
                 m = re.match(r".*PRE%\((.+)\)%.*",postCode)
-            
+
         expectCode = None
         if newC.find(" ==> ") > -1:
             codeExpectkSplit = newC.split(" ==> ")
@@ -1001,7 +1001,7 @@ def main():
             expectCode = codeExpectkSplit[1].rstrip('\n')
 
         verboseRef = list(forVerbose)
-            
+
         refC = newC
         for p in poolSet:
             if p in refSet:
@@ -1032,7 +1032,7 @@ def main():
             checkRaised = True
             checkRefRaised = True
         newC = newC.replace("; result = result","")
-        refC = refC.replace("; result_REF = result_REF","")        
+        refC = refC.replace("; result_REF = result_REF","")
 
         beforeSig = afterSig = checkSig = ""
         if expectCode:
@@ -1052,13 +1052,13 @@ def main():
         d += "self." + act + "))\n"
         genCode.append(baseIndent + d)
         genCode.append(baseIndent + "self.__raised = None\n")
-        genCode.append(baseIndent + "self.__refRaised = None\n")        
+        genCode.append(baseIndent + "self.__refRaised = None\n")
         if logSet != []:
             genCode.append(baseIndent + "self.log('''" + newC[:-1] + "''')\n")
         if checkRaised:
             genCode.append(baseIndent + "raised = None\n");
         genCode.append(baseIndent + "if self.__verboseActions:\n")
-        genCode.append(baseIndent + baseIndent + "__bV = {}\n")        
+        genCode.append(baseIndent + baseIndent + "__bV = {}\n")
         genCode.append(baseIndent + baseIndent + "print ('ACTION:',self.prettyName('''" + newC[:-1] + " '''))\n")
         for p in forVerbose:
             if baseVersion(p) not in opaqueSet:
@@ -1067,21 +1067,21 @@ def main():
             else:
                 genCode.append(baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")
                 genCode.append(baseIndent + baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")                
+                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
         for p in verboseRef:
             if baseVersion(p.replace("_REF","")) not in opaqueSet:
                 genCode.append(baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
                 genCode.append(baseIndent + baseIndent + "except: pass\n")
             else:
-                genCode.append(baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")                
+                genCode.append(baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")
                 genCode.append(baseIndent + baseIndent + baseIndent + "try: __bV['''" + p + "'''] = repr(" + p + "); print (self.prettyName('''" + p + "''') + ' =', __bV['''" + p + "'''], ':',type(" + p + "))\n")
-                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")                
+                genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
         if not config.noCover:
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
             genCode.append(baseIndent + "try: test_before_each(self)\n")
             genCode.append(baseIndent + "except: pass\n")
         if warnExcepts != "":
-            genCode.append(baseIndent + "self.__warning = None\n")            
+            genCode.append(baseIndent + "self.__warning = None\n")
         genCode.append(baseIndent + "try:\n")
         if preSet != []:
             for p in preSet:
@@ -1107,26 +1107,26 @@ def main():
                 genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as exc2:\n")
                 genCode.append(baseIndent + baseIndent + baseIndent + "failedAgain = True\n")
                 genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXCEPTION:',type(exc2),exc2,'ON RETRY')\n")
-                genCode.append(baseIndent + baseIndent + "if self.__verboseActions and not failedAgain: print ('DID NOT RAISE EXPECTED EXCEPTION ON RETRY')\n")                                
+                genCode.append(baseIndent + baseIndent + "if self.__verboseActions and not failedAgain: print ('DID NOT RAISE EXPECTED EXCEPTION ON RETRY')\n")
                 genCode.append(baseIndent + baseIndent + "assert failedAgain, 'Action did not fail on second attempt.'\n")
                 genCode.append(baseIndent + baseIndent + "assert (repr(exc) == repr(exc2)), 'Failure with different exception.'\n")
-                
+
         if warnExcepts != "":
             genCode.append(baseIndent + "except (" + warnExcepts + ") as exc:\n")
             genCode.append(baseIndent + baseIndent + "raised = exc\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED WARNING EXCEPTION:',type(raised),raised)\n")
-            genCode.append(baseIndent + baseIndent + "self.__warning = raised\n")            
+            genCode.append(baseIndent + baseIndent + "self.__warning = raised\n")
 
         genCode.append(baseIndent + "except Exception as exc:\n")
         genCode.append(baseIndent + baseIndent + "raised = exc\n")
         genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('RAISED EXCEPTION:',type(raised),raised)\n")
-        genCode.append(baseIndent + baseIndent + "raise\n")                    
-            
+        genCode.append(baseIndent + baseIndent + "raise\n")
+
         genCode.append(baseIndent + "finally:\n")
         genCode.append(baseIndent + baseIndent + "try: self.__raised = raised\n")
         genCode.append(baseIndent + baseIndent + "except: pass\n")
         for ch in changes:
-            genCode.append(baseIndent + baseIndent + ch + "\n")        
+            genCode.append(baseIndent + baseIndent + ch + "\n")
         if postCode and checkRaised and not (checkRefRaised):
             genCode.append(baseIndent + baseIndent + "assert " + postCode + "\n")
         genCode.append(baseIndent + baseIndent + "try: test_after_each(self)\n")
@@ -1137,62 +1137,62 @@ def main():
                 if baseVersion(p) not in opaqueSet:
                     genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")                        
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
                 else:
                     genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "try:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")                        
-                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "except: pass\n")                    
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "except: pass\n")
 
 
         if not config.noCover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov: self.__cov.stop(); self.__updateCov()\n")
 
         if assumeSet != []:
-            genCode.append(baseIndent + baseIndent + "self.checkAssumptions()\n")                    
+            genCode.append(baseIndent + baseIndent + "self.checkAssumptions()\n")
 
         if checkRefRaised:
             genCode.append(baseIndent + "refRaised = None\n")
-        
+
         if refC != newC:
             genCode.append(baseIndent + "try:\n")
-            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('REFERENCE ACTION:',self.prettyName('''"+refC[:-1]+" '''))\n")            
+            genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('REFERENCE ACTION:',self.prettyName('''"+refC[:-1]+" '''))\n")
             genCode.append(baseIndent + baseIndent + refC)
             genCode.append(baseIndent + "except KeyboardInterrupt:\n")
-            genCode.append(baseIndent + baseIndent + "raise\n")            
+            genCode.append(baseIndent + baseIndent + "raise\n")
             genCode.append(baseIndent + "except Exception as exc:\n")
             genCode.append(baseIndent + baseIndent + "refRaised = exc\n")
             genCode.append(baseIndent + baseIndent + "if self.__verboseActions: print ('REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised)\n")
             genCode.append(baseIndent + "try: self.__refRaised = refRaised\n")
-            genCode.append(baseIndent + "except: pass\n")        
-            
+            genCode.append(baseIndent + "except: pass\n")
+
             genCode.append(baseIndent + "if self.__verboseActions:\n")
             for p in verboseRef:
                 if baseVersion(p.replace("_REF","")) not in opaqueSet:
                     genCode.append(baseIndent + baseIndent + "try:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-                    genCode.append(baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n") 
+                    genCode.append(baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")
                     genCode.append(baseIndent + baseIndent + "except: pass\n")
                 else:
                     genCode.append(baseIndent + baseIndent + "if self.__verbosePrintOpaque:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + "try:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "__aV = repr(" + p + ")\n")
-                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n") 
-                    genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")                    
+                    genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")
+                    genCode.append(baseIndent + baseIndent + baseIndent + "except: pass\n")
             if postCode and checkRefRaised:
                 genCode.append(baseIndent + "assert " + postCode + "\n")
             if config.forceStrongRefExceptionMatch:
                 genCode.append(baseIndent + "assert (raised == self.refRaised)\n")
             elif config.forceRefExceptionMatch:
-                genCode.append(baseIndent + "assert (type(raised) == type(refRaised))\n")                
+                genCode.append(baseIndent + "assert (type(raised) == type(refRaised))\n")
             if comparing:
                 if (not config.forceRefExceptionMatch) and not (config.forceStrongRefExceptionMatch):
                     genCode.append(baseIndent + "assert (raised is None) == (refRaised is None)\n")
                 genCode.append(baseIndent + "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
-        genCode.append(baseIndent + "if self.__verboseActions: print ('='*50)\n")                                      
+        genCode.append(baseIndent + "if self.__verboseActions: print ('='*50)\n")
         if logSet != []:
             genCode.append(baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
 
@@ -1215,7 +1215,7 @@ def main():
             newC = newC[:-1] + " " + newC[-1]
 
         allNames[newC[:-1]] = newCguard
-        
+
         d = "self.__actions.append(("
         d += "'''" + newC[:-1] +" ''',"
         d += "self." + guard + ","
@@ -1227,7 +1227,7 @@ def main():
         d += "self." + act + ")\n"
         actDefs.append(d)
         d = "self.__actionClass[" + "'''" + newC[:-1] + " '''] = '''" + originalCode[corig] + " '''\n"
-        actDefs.append(d)        
+        actDefs.append(d)
         nind += 1
         d = "self.__orderings[" + "'''" + newC[:-1] + " '''] = " + str(nind) + "\n"
         actDefs.append(d)
@@ -1242,12 +1242,12 @@ def main():
             if comparing:
                 d = "self.__refCode[" + "'''" + newC[:-1] + " '''].append(\"assert result == result_REF, \\\" (%s) == (%s) \\\" % (result, result_REF)\\n\")\n"
                 actDefs.append(d)
-            
-        
+
+
         if postCode:
             d = "self.__propCode[" + "'''" + newC[:-1] + " '''] = \"\"\"" + postCode + " \"\"\"\n"
             actDefs.append(d)
-        
+
         if preSet != []:
             d = "self.__preCode[" + "'''" + newC[:-1] + " '''] = []\n"
             actDefs.append(d)
@@ -1264,7 +1264,7 @@ def main():
     genCode.append(baseIndent + "self.__modules = []\n")
     for s in sourceSet:
         genCode.append(baseIndent + 'self.__modules.append(r"' + s + '")\n')
-    genCode.append(baseIndent + "self.__importModules = []\n")        
+    genCode.append(baseIndent + "self.__importModules = []\n")
     for i in import_modules:
         genCode.append(baseIndent + "self.__importModules.append(" + i + ")\n")
     genCode.append(baseIndent + "self.__features = []\n")
@@ -1307,13 +1307,13 @@ def main():
     genCode.append(baseIndent + 'self.__poolPrefix = "' + poolPrefix + '"\n')
     genCode.append(baseIndent + 'self.__names["<<RESTART>>"] = ("<<RESTART>>", lambda x: True, lambda x: self.restart())\n')
     genCode.append(baseIndent + "self.__actionClass = {}\n")
-    genCode.append(baseIndent + "self.__swarmConfig = None\n")    
+    genCode.append(baseIndent + "self.__swarmConfig = None\n")
     genCode.append(baseIndent + "self.__actionClasses = []\n")
-    genCode.append(baseIndent + "self.__essentialClasses = []\n")    
+    genCode.append(baseIndent + "self.__essentialClasses = []\n")
     for c in codeClasses:
         genCode.append(baseIndent + "self.__actionClasses.append('''" + c + "''')\n")
     for c in essentialClasses:
-        genCode.append(baseIndent + "self.__essentialClasses.append('''" + c + "''')\n")        
+        genCode.append(baseIndent + "self.__essentialClasses.append('''" + c + "''')\n")
     genCode.append(baseIndent + "self.__dependencies = {}\n")
     for c in codeClasses:
         genCode.append(baseIndent + "self.__dependencies['''"+c+"'''] = []\n")
@@ -1329,18 +1329,18 @@ def main():
     if config.enumerateEnabled:
         genCode.append(baseIndent + "self.__enumerateEnabled = True\n")
     else:
-        genCode.append(baseIndent + "self.__enumerateEnabled = False\n")        
+        genCode.append(baseIndent + "self.__enumerateEnabled = False\n")
     genCode.append(baseIndent + "self.__verboseActions = False\n")
-    genCode.append(baseIndent + "self.__verbosePrintOpaque = True\n")    
+    genCode.append(baseIndent + "self.__verbosePrintOpaque = True\n")
     genCode.append(baseIndent + "self.__logAction = self.logPrint\n")
     genCode.append(baseIndent + "self.__relaxUsedRestriction = False\n")
-    genCode.append(baseIndent + "self.__doReload = True\n")    
-    genCode.append(baseIndent + "self.__assumptionViolated = None\n")    
+    genCode.append(baseIndent + "self.__doReload = True\n")
+    genCode.append(baseIndent + "self.__assumptionViolated = None\n")
     genCode.append(baseIndent + "self.__noReassigns = False\n")
-    genCode.append(baseIndent + "self.__safeSafelyMode = False\n")    
+    genCode.append(baseIndent + "self.__safeSafelyMode = False\n")
     genCode.append(baseIndent + "self.__simplifyCache = {}\n")
     genCode.append(baseIndent + "self.__pools = []\n")
-    genCode.append(baseIndent + "self.__psize = {}\n")        
+    genCode.append(baseIndent + "self.__psize = {}\n")
     genCode.append(baseIndent + "self.__consts = []\n")
     genCode.append(baseIndent + "self.__opaque = []\n")
     genCode.append(baseIndent + "self.__abstraction = {}\n")
@@ -1363,17 +1363,17 @@ def main():
             s = baseIndent
             s += 'self.__abstraction["' + poolPrefix + p.replace("%","") + '"] = "' + absSet[p] + '"'
             genCode.append(s + "\n")
-            
+
     for d in actDefs:
         genCode.append(baseIndent + d + "\n")
     genCode.append(baseIndent + "self.__actions_backup = list(self.__actions)\n")
-    genCode.append(baseIndent + "self.__actions_assume_backup = list(self.__actions)\n")    
+    genCode.append(baseIndent + "self.__actions_assume_backup = list(self.__actions)\n")
 
     genCode.append("def restart(self):\n")
     if assumeSet != []:
             genCode.append(baseIndent + "if self.__assumptionViolated != None:\n")
-            genCode.append(baseIndent + baseIndent + "self.enableAllAssume()\n")            
-            genCode.append(baseIndent + "self.__assumptionViolated = None\n")    
+            genCode.append(baseIndent + baseIndent + "self.enableAllAssume()\n")
+            genCode.append(baseIndent + "self.__assumptionViolated = None\n")
     if finallySet != []:
         for f in finallySet:
             genCode.append(baseIndent + "try:\n")
@@ -1393,11 +1393,11 @@ def main():
                 genCode.append(baseIndent + "try:\n")
                 genCode.append(baseIndent + baseIndent + refF)
                 genCode.append(baseIndent + "except: pass\n")
-            
+
     genCode.append(baseIndent + "try:\n")
     genCode.append(baseIndent + baseIndent + "test_before_restart(self)\n")
     genCode.append(baseIndent + "except:\n")
-    genCode.append(baseIndent + baseIndent + "pass\n")    
+    genCode.append(baseIndent + baseIndent + "pass\n")
     if not config.noCover:
         genCode.append(baseIndent + "if self.__collectCov: self.cleanCov()\n")
         #genCode.append(baseIndent + baseIndent + "self.__currBranches = set()\n")
@@ -1415,15 +1415,15 @@ def main():
     #for l in import_froms:
     #    s = baseIndent + l
     #    genCode.append(s)
-    genCode.append("# END RELOAD CODE\n")        
+    genCode.append("# END RELOAD CODE\n")
     if (not config.noCover) and config.coverReload:
-        genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")        
+        genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")
         genCode.append(baseIndent + "if self.__collectCov: self.__updateCov()\n")
     genInitialization()
     genCode.append(baseIndent + "try:\n")
     genCode.append(baseIndent + baseIndent + "test_after_restart(self)\n")
     genCode.append(baseIndent + "except:\n")
-    genCode.append(baseIndent + baseIndent + "pass\n")    
+    genCode.append(baseIndent + baseIndent + "pass\n")
 
     genCode.append("def hints(self):\n")
     if hintSet == []:
@@ -1434,9 +1434,9 @@ def main():
             genCode.append(baseIndent + "try: hvals.append(" + replaceRefs(h[:-1]) + ")\n")
             genCode.append(baseIndent + "except: hvals.append(None)\n")
         genCode.append(baseIndent + "return hvals\n")
-            
 
-    
+
+
     genCode.append("def log(self, name):\n")
     if logSet != []:
         genCode.append(baseIndent + "if self.__log == None:\n")
@@ -1456,7 +1456,7 @@ def main():
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__logAction(name," + '"""' + lcode[:-1] + '""",' + lcode[:-1] + ",False)\n")
             genCode.append(baseIndent + baseIndent + "except:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "pass\n")
-            
+
     else:
         genCode.append(baseIndent + "pass\n")
 
@@ -1481,10 +1481,10 @@ def main():
             genCode.append(baseIndent + baseIndent + baseIndent + "self.__logAction(name," + '"""' + lcode[:-1] + '""",' + lcode[:-1] + ",True)\n")
             genCode.append(baseIndent + baseIndent + "except:\n")
             genCode.append(baseIndent + baseIndent + baseIndent + "pass\n")
-            
+
     else:
         genCode.append(baseIndent + "pass\n")
-        
+
     genCode.append("def state(self):\n")
     genCode.append(baseIndent + "if self.__replayBacktrack:\n")
     genCode.append(baseIndent + baseIndent + "return self.captureReplay(self.__test)\n")
@@ -1518,20 +1518,20 @@ def main():
 
     genCode.append("def abstract(self,state):\n")
     genCode.append(baseIndent + "if self.__replayBacktrack:\n")
-    genCode.append(baseIndent + baseIndent + "return state\n")        
+    genCode.append(baseIndent + baseIndent + "return state\n")
     st = baseIndent + "return ( "
     i = 0
     for p in poolSet:
         if p not in absSet:
             st += "state[" + str(i) + "],"
-            st += "state[" + str(i+1) + "],"            
+            st += "state[" + str(i+1) + "],"
         else:
             st += "{k: (" + absSet[p] + "(v) if v != None else None) for k, v in " + "(state[" + str(i) + "]).iteritems()},"
-            st += "state[" + str(i+1) + "],"            
+            st += "state[" + str(i+1) + "],"
         i += 2
     st = st[:-1]
     genCode.append(st + ")\n")
-    
+
     genCode.append("def backtrack(self,old):\n")
     genCode.append(baseIndent + "if self.__replayBacktrack:\n")
     genCode.append(baseIndent + baseIndent + "self.replay(self.replayable(old))\n")
@@ -1546,7 +1546,7 @@ def main():
 
     if len(assumeSet) != 0:
         genCode.append("def checkAssumptions(self):\n")
-        genCode.append(baseIndent + "self.__assumptionViolated = None\n")        
+        genCode.append(baseIndent + "self.__assumptionViolated = None\n")
         for p in assumeSet:
             genCode.append(baseIndent + "try: assumeResult = " + p)
             genCode.append(baseIndent + "except: assumeResult = True\n")
@@ -1556,7 +1556,7 @@ def main():
             genCode.append(baseIndent + baseIndent + "self.__assumptionViolated = ''' " + p[:-1] + " '''\n")
             genCode.append(baseIndent + baseIndent + "return False\n")
         genCode.append(baseIndent + "return True\n")
-    
+
     genCode.append("def check(self):\n")
     if (propSet != []) or (len(poolType) > 0):
         genCode.append(baseIndent + "try:\n")
@@ -1569,7 +1569,7 @@ def main():
             pname = poolPrefix + p.replace("%","")
             genCode.append(baseIndent+ baseIndent + baseIndent + "for __pind in " + pname + ":" + "\n")
             genCode.append(baseIndent+ baseIndent + baseIndent + baseIndent + "assert (" + pname + "[__pind] == None) or (type("+pname+"[__pind]) == " + poolType[p] + ")\n")
-            
+
         for (p, u) in propSet:
             okExcepts = ""
             for e in ignoredExcepts:
@@ -1610,7 +1610,7 @@ def main():
                     genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as exc:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + "raised = exc\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
-                
+
         genCode.append(baseIndent + baseIndent + "# END CHECK CODE\n")
         genCode.append(baseIndent + "except KeyboardInterrupt as e:\n")
         genCode.append(baseIndent + baseIndent + "raise e\n")
@@ -1629,7 +1629,7 @@ def main():
 
     ######################## REQUIRED FOR PACKAGING TSTL ##########################
     is_py3 = sys.version_info[0] > 2
-    with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:    
+    with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:
         for l in boilerplate:
             if is_py3:
                 l = l.decode()
@@ -1642,7 +1642,7 @@ def main():
                     l = l.decode()
                 outf.write(baseIndent + l)
     ###############################################################################
-                
+
     outf.close()
 
 

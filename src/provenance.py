@@ -75,8 +75,8 @@ while pos < len(possible):
     pos = endPos + 1
 
 sut.saveTest(newTest,newTestName)
-    
-    
-        
-    
-    
+
+
+
+
+
