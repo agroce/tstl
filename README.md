@@ -476,7 +476,7 @@ of advice:  `<outputdir>` should probably be a ramdisk, unless you
 want to really hammer your SSD (don't even think about doing this on
 an actual hard drive).
 
-You should also also try the `--persist` option to `tstl_afl_fuzz`, which
+You should also try the `--persist` option to `tstl_afl_fuzz`, which
 in will often improve fuzzing speed by a large margin, and
 dramatically improve afl results (since throughput is so critical); however, 
 this is somewhat less well-tested than the non-persistent mode.  With
@@ -584,7 +584,7 @@ For more details on TSTL, the best starting point is a comprehensive
 journal paper in STTT:
 http://agroce.github.io/sttt17.pdf.
 There are also NASA Formal Methods (NFM) and International Symposium
-on Software Testing and Analsysis (ISSTA) 2015 papers at
+on Software Testing and Analysis (ISSTA) 2015 papers at
 http://agroce.github.io/nfm15.pdf and
 http://agroce.github.io/issta15.pdf, with some implementation
 details or concepts that are not present in the more up-to-date and
