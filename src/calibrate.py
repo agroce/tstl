@@ -21,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=None,
                         help='Random seed (default = None).')
-    
+
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
 
@@ -36,17 +36,17 @@ def make_config(pargs, parser):
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
-    return nt_config   
+    return nt_config
 
 
 def main():
 
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
-    print(('Calibrating using config={}'.format(config)))    
+    print(('Calibrating using config={}'.format(config)))
 
     calibFile = open(".tstl_calibration",'w')
-    
+
     sut = SUT.sut()
 
     R = random.Random()
@@ -68,7 +68,7 @@ def main():
     noCovCount = 0
     for i in range(0,30):
         oldOut.write(str(i)+"...")
-        oldOut.flush()        
+        oldOut.flush()
         (t,ok) = sut.makeTest(100,R,stopFail=False)
         noCovCount += 1
         if (time.time() - start) > 30:
@@ -88,10 +88,10 @@ def main():
         (t,ok) = sut.makeTest(100,R,stopFail=False)
         covCount += 1
         if (time.time() - start) > 30:
-            oldOut.write("TIMEOUT AT "+str(time.time()-start))            
+            oldOut.write("TIMEOUT AT "+str(time.time()-start))
             break
-    covTime = time.time()-start    
-    
+    covTime = time.time()-start
+
     sys.stdout = oldOut
 
     print ()
@@ -140,5 +140,5 @@ def main():
     print ("\nLOWEST LOC-BASED PROBABILITY ACTIONS:")
     for c in sortLOC[-3:]:
         print ("  ",c,round(classP[c],5))
-    
+
     calibFile.close()

@@ -10,15 +10,15 @@ from collections import defaultdict
 
 def main():
     R = random.Random()
-    
+
     repeats = 0
-    
+
     pid = str(os.getpid())
-    
+
     depth = int(sys.argv[1])
-    
+
     sut = SUT.sut()
-    
+
     taken = defaultdict(lambda: 0)
     takenClass = defaultdict(lambda: 0)
     allTaken = defaultdict(lambda: 0)
@@ -28,7 +28,7 @@ def main():
 
     start = time.time()
     lastEpoch = 0
-    
+
     count = 0
     sut.standardSwarm(R)
     print(sut.swarmConfig())
@@ -38,14 +38,14 @@ def main():
         sut.restart()
         path = []
         i = 0
-        count += 1        
+        count += 1
         while len(path) < depth:
             possible = sut.actions()
             possible = sorted(possible,
                                   key = lambda act:(
                                       allTakenClass[sut.actionClass(act)],
                                       allTaken[act[0]],
-                                      takenClass[(sut.actionClass(act),i)],                                      
+                                      takenClass[(sut.actionClass(act),i)],
                                       taken[(act[0],i)]
                                       )
                                   )
@@ -61,14 +61,14 @@ def main():
                 break
             path.append(a)
             #takenPath[sut.captureReplay(path)] += 1
-            taken[(a[0],i)] += 1            
-            takenClass[(sut.actionClass(a),i)] += 1         
+            taken[(a[0],i)] += 1
+            takenClass[(sut.actionClass(a),i)] += 1
             allTaken[(a[0])] += 1
-            allTakenClass[sut.actionClass(a)] += 1            
+            allTakenClass[sut.actionClass(a)] += 1
             ok = sut.safely(a)
             if not ok:
                 print("FALIURE IN TEST",count)
-                sut.saveTest(path,"failure.exhaust." + pid + ".test")                
+                sut.saveTest(path,"failure.exhaust." + pid + ".test")
                 sut.prettyPrintTest(path)
                 print(sut.failure())
                 sys.exit(255)
@@ -104,7 +104,7 @@ def main():
                 print("="*20)
                 for c in sorted(list(allTakenClass.keys()),key = lambda ac: allTakenClass[ac]):
                     print(c,allTakenClass[c])
-                print("="*20)                
+                print("="*20)
                 for a in sorted(list(allTaken.keys()),key = lambda act: allTaken[act]):
                     print(a,allTaken[a])
 

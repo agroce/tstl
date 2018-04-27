@@ -31,7 +31,7 @@ def __updateCov(self,extendCov=False):
 
 def silenceCoverage(self):
     self.__cov._warn_no_data = False
-                                
+
 def internalReport(self):
     print("TSTL INTERNAL COVERAGE REPORT:")
     if self.__oldCovData == None:
@@ -58,23 +58,23 @@ def internalReport(self):
     for (f,l) in self.__allStatements:
         if f not in self.__oldCovData.measured_files():
             print("WARNING:",(f,l),"IS NOT IN COVERAGEDATA")
-    print("TSTL BRANCH COUNT:",len(self.__allBranches))                
+    print("TSTL BRANCH COUNT:",len(self.__allBranches))
     print("TSTL STATEMENT COUNT:",len(self.__allStatements))
-                
+
 def cleanCov(self):
     self.__newBranches = set()
     self.__newStatements = set()
     self.__currBranches = set()
     self.__currStatements = set()
     self.__newCurrBranches = set()
-    self.__newCurrStatements = set()    
+    self.__newCurrStatements = set()
     if self.__oldCovData == None:
         self.__oldCovData = coverage.CoverageData()
     if self.__cov.get_data() == None:
         return
     self.__oldCovData.update(self.__cov.get_data())
     self.__cov.erase()
-                    
+
 def resetCov(self):
     self.__cov.erase()
     self.__oldCovData = None
@@ -85,7 +85,7 @@ def resetCov(self):
     self.__currBranches = set()
     self.__currStatements = set()
     self.__newCurrBranches = set()
-    self.__newCurrStatements = set()    
+    self.__newCurrStatements = set()
 
 def report(self, filename):
     if self.__oldCovData != None:
@@ -102,7 +102,7 @@ def report(self, filename):
 def htmlReport(self, dir):
     if self.__oldCovData != None:
         self.__oldCovData.write_file(dir + "/.tmpcov")
-        self.__cov.combine([dir + "/.tmpcov"])    
+        self.__cov.combine([dir + "/.tmpcov"])
     r = -1
     try:
         r = self.__cov.html_report(morfs=self.__modules, directory=dir,
@@ -138,14 +138,14 @@ def startCoverage(self):
     self.__collectCov = True
 
 def stopCoverage(self):
-    self.__collectCov = False    
+    self.__collectCov = False
 
 def coversBranches(self, branches, catchUncaught=False, checkProp=False):
     def coverPred(test):
         try:
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except KeyboardInterrupt as e:
-            raise e                  
+            raise e
         except:
             pass
         cb = self.currBranches()
@@ -160,7 +160,7 @@ def coversStatements(self, statements, catchUncaught=False, checkProp=False):
         try:
             self.replay(test, catchUncaught=catchUncaught,checkProp=checkProp)
         except KeyboardInterrupt as e:
-            raise e                  
+            raise e
         except:
             pass
         cs = self.currStatements()
@@ -175,7 +175,7 @@ def coversAll(self, statements, branches, catchUncaught=False, checkProp=False):
         try:
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except KeyboardInterrupt as e:
-            raise e                  
+            raise e
         except:
             pass
         cs = self.currStatements()
@@ -194,7 +194,7 @@ def coversMore(self, statements, branches, catchUncaught=False, checkProp=False)
         try:
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except KeyboardInterrupt as e:
-            raise e                  
+            raise e
         except:
             pass
         cs = self.currStatements()
@@ -210,7 +210,7 @@ def coversMore(self, statements, branches, catchUncaught=False, checkProp=False)
                 return True
         for s in cs:
             if s not in statements:
-                return True            
+                return True
         return False
     return coverPred
 
@@ -228,7 +228,7 @@ def coverDecompose(self,test,verbose=False,catchUncaught=False,checkProp=False):
     coverages.reverse()
 
     allSCoverages = set([])
-    allBCoverages = set([])    
+    allBCoverages = set([])
     for (s,b) in coverages:
         allSCoverages.update(set(s))
         allBCoverages.update(set(b))
@@ -265,4 +265,4 @@ def coverDecompose(self,test,verbose=False,catchUncaught=False,checkProp=False):
         coverages = newCoverages
         i += 1
     return tests
-            
+

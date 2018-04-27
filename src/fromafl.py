@@ -23,7 +23,7 @@ def main():
     aflswarm = "--aflswarm" in sys.argv
     if aflswarm:
         sys.argv.remove("--aflswarm")
-    
+
     outputDir = sys.argv[1]
     files = sys.argv[2:]
 

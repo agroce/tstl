@@ -52,7 +52,7 @@ def rangeOrNone(v):
         return None
     except:
         return None
-    
+
 def merge(s1,s2):
     b1 = breaksApart(s1)
     b2 = breaksApart(s2)
@@ -118,11 +118,11 @@ def collapse(strings):
                     cstrings.remove(s2)
                     cstrings.append(m)
                     changed = True
-                    break                
+                    break
             if changed:
                 break
     return cstrings
-                
+
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located
@@ -137,7 +137,7 @@ def main():
     if "--help" in sys.argv:
         print("Usage:  tstl_graph <outfile> <depth> <width> [<seed>] [<traces> (default 1)] [<skip> (default none)]")
         sys.exit(0)
-    
+
     outfile = sys.argv[1]
     depth = int(sys.argv[2])
     k = int(sys.argv[3])
@@ -205,7 +205,7 @@ def main():
                 if name == aname:
                     newLast = state
                     dot.node(state,name,penwidth="3.0",shape='box')
-                    dot.edge(last,state,penwidth="3.0")            
+                    dot.edge(last,state,penwidth="3.0")
                 else:
                     dot.node(state,name,fontsize="10.0")
                     dot.edge(last,state)

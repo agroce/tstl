@@ -18,7 +18,7 @@ def main():
         print("Options:")
         print(" --notRaw:      corpus files are not raw TSTL tests, but action classes")
         sys.exit(0)
-    
+
     sut = SUT.sut()
     classes = []
     nacts = len(sut.actions())
@@ -26,7 +26,7 @@ def main():
         if sut.actionClass(a) not in classes:
             classes.append(sut.actionClass(a))
 
-    #print len(classes)        
+    #print len(classes)
 
     n = int(sys.argv[2])
     outfile = sys.argv[1]

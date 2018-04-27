@@ -20,13 +20,13 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', metavar='filename', type=str, default=None,
                             help='Path to the test to be reduced.')
-    parser.add_argument('--noFresh', action='store_true',                            
-                        help='Do not perform fresh value generalization.')     
-    parser.add_argument('--noCheck', action='store_true',                            
-                        help='Do not check properties.') 
-    parser.add_argument('--matchException', action='store_true',                            
+    parser.add_argument('--noFresh', action='store_true',
+                        help='Do not perform fresh value generalization.')
+    parser.add_argument('--noCheck', action='store_true',
+                        help='Do not check properties.')
+    parser.add_argument('--matchException', action='store_true',
                         help='Force test to fail with same exception as original (does not work for sandboxes).')
-    parser.add_argument('--coverage', action='store_true',                            
+    parser.add_argument('--coverage', action='store_true',
                         help='Reduce with respect to maintaining code coverage, not failure.')
     parser.add_argument('-k', '--keepLast', action='store_true',
                         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
@@ -39,8 +39,8 @@ def parse_args():
     parser.add_argument('--quietSandbox', action='store_true',
                         help="Run sandbox in a quieter mode.")
     parser.add_argument('--timeout', type=int, default=None,
-                        help='Timeout for sandbox reductions (only works on unix-like systems).')    
-    
+                        help='Timeout for sandbox reductions (only works on unix-like systems).')
+
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
 
@@ -55,7 +55,7 @@ def make_config(pargs, parser):
     arg_list = [pdict[k] for k in key_list]
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
-    return nt_config   
+    return nt_config
 
 def sandboxReplay(test):
     global timeout
@@ -73,14 +73,14 @@ def sandboxReplay(test):
         cmd = "ulimit -t " + timeout + "; " + cmd
     start = time.time()
     subprocess.call([cmd],shell=True)
-    if not "--quietSandbox" in sys.argv:    
+    if not "--quietSandbox" in sys.argv:
         print("ELAPSED:",time.time()-start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
-            if not "--quietSandbox" in sys.argv:            
+            if not "--quietSandbox" in sys.argv:
                 print("TEST SUCCEEDS")
             return False
-    if not "--quietSandbox" in sys.argv:        
+    if not "--quietSandbox" in sys.argv:
         print("TEST FAILS")
     print("SANDBOX RUN FAILS: TEST LENGTH NOW",len(test))
     return True
@@ -96,17 +96,17 @@ def main():
     sut = SUT.sut()
 
     timeout = config.timeout
-    
+
     if not config.coverage:
         try:
             sut.stopCoverage()
         except:
             pass
-    
+
     t = sut.loadTest(config.infile)
 
     f = None
-    
+
     if config.matchException:
         print("RUNNING TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
         assert (sut.fails(t))
@@ -114,7 +114,7 @@ def main():
         print("ERROR:",f)
         print("TRACEBACK:")
         traceback.print_tb(f[2],file=sys.stdout)
-    
+
     if not config.sandbox:
         pred = (lambda x: sut.failsCheck(x,failure=f))
         if not config.noCheck:
@@ -134,4 +134,4 @@ def main():
     start = time.time()
     sut.generalize(t,pred,verbose=config.verbose,fresh=not config.noFresh,keepLast=config.keepLast)
     print("GENERALIZED IN",time.time()-start,"SECONDS")
-    
+
