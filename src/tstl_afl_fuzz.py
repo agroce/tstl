@@ -96,6 +96,7 @@ def main():
         if P.poll() is None:
             try:
                 P.kill()
+                P.wait()
                 print ("KILLED TSTL CORPUS GENERATION")
             except OSError:
                 pass
@@ -120,5 +121,6 @@ def main():
     while (time.time() - start) < (config.timeout - config.corpusBudget):
         time.sleep(1)
     P.kill()
+    P.wait()
     print("KILLED AFL SUBPROCESS")
     print("DONE TESTING")
