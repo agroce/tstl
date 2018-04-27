@@ -93,7 +93,7 @@ def main():
         P = subprocess.Popen([corpusCmd], shell=True)
         while (time.time() - start) < corpusTimeout:
             time.sleep(1)
-        if P.poll() != None:
+        if P.poll() is None:
             try:
                 P.kill()
                 print ("KILLED TSTL CORPUS GENERATION")
