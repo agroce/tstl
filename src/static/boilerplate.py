@@ -693,7 +693,7 @@ def bytesToTest(self, data, swarm=False):
         self.standardSwarm(R)
         data = data[4:]
         alen = len(self.actions())
-    for i in range(0,(len(data)/bytes)):
+    for i in range(0,(len(data)//bytes)):
         index = struct.unpack(fmt,data[i*bytes:(i*bytes)+bytes])[0] % alen
         test.append(self.actions()[index])
     return test
