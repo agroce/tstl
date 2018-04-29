@@ -23,6 +23,8 @@ def parse_args():
                         help='Where to put corpus files (default aflinputs)')
     parser.add_argument('--output', type=str, default="afloutputs",
                         help='Where to put afl fuzzing output (default afloutputs)')
+    parser.add_argument('--resume', action='store_true',
+                        help='Resume interrupted fuzzing; ignores --input, --output should point to old session')    
     parser.add_argument('--burst', action='store_true',
                         help='Build corpus in burst mode; overrides most other corpus options')
     parser.add_argument('--noCheck', action='store_true',
@@ -67,41 +69,47 @@ def main():
     config = make_config(parsed_args, parser)
     print(('Fuzzing with afl using config={}'.format(config)))
 
-    if not os.path.exists(config.input):
-        os.mkdir(config.input)
+    if not config.resume:
+        if not os.path.exists(config.input):
+            os.mkdir(config.input)
 
-    if config.burst:
-        corpusTimeout = 60
-    else:
-        corpusTimeout = config.corpusBudget
-
-    if corpusTimeout:
-        start = time.time()
-        corpusCmd = ["tstl_aflcorpus", config.input, str(config.depth), str(config.corpusBudget)]
         if config.burst:
-            corpusCmd += ["--burst"]
-        if config.swarm:
-            corpusCmd += ["--swarm"]
-        if config.noCheck:
-            corpusCmd += ["--noCheck"]
-        if config.noCover:
-            corpusCmd += ["--noCover"]
-        if config.noReduce:
-            corpusCmd += ["--noReduce"]
-        if config.skipFails:
-            corpusCmd += ["--skipFails"]
-        P = subprocess.Popen(corpusCmd)
-        while (time.time() - start) < corpusTimeout:
-            time.sleep(1)
-        if P.poll() is None:
-            try:
-                P.terminate()
-                P.wait()
-                print ("KILLED TSTL CORPUS GENERATION")
-            except OSError:
-                pass
+            corpusTimeout = 60
+        else:
+            corpusTimeout = config.corpusBudget
 
-    aflCmd = ["py-afl-fuzz", "-t", config.aflTimeout, "-m", str(config.aflMemory), "-i", config.input, "-o", config.output]
+        if corpusTimeout:
+            start = time.time()
+            corpusCmd = ["tstl_aflcorpus", config.input, str(config.depth), str(config.corpusBudget)]
+            if config.burst:
+                corpusCmd += ["--burst"]
+            if config.swarm:
+                corpusCmd += ["--swarm"]
+            if config.noCheck:
+                corpusCmd += ["--noCheck"]
+            if config.noCover:
+                corpusCmd += ["--noCover"]
+            if config.noReduce:
+                corpusCmd += ["--noReduce"]
+            if config.skipFails:
+                corpusCmd += ["--skipFails"]
+            P = subprocess.Popen(corpusCmd)
+            while (time.time() - start) < corpusTimeout:
+                time.sleep(1)
+            if P.poll() is None:
+                try:
+                    P.terminate()
+                    P.wait()
+                    print ("KILLED TSTL CORPUS GENERATION")
+                except OSError:
+                    pass
+
+    aflCmd = ["py-afl-fuzz", "-t", config.aflTimeout, "-m", str(config.aflMemory)]
+    if not config.resume:
+        aflCmd += ["-i", config.input]
+    else:
+        aflCmd += ["-i-"]
+    aflCmd += ["-o", config.output]
     if not config.thorough:
         aflCmd += ["-d"]
     aflCmd += ["--", "tstl_afl"]
