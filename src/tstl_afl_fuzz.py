@@ -111,11 +111,12 @@ def main():
         aflCmd += ["--noCheck"]
     if config.persist:
         aflCmd += ["--persist"]
+    aflCmdStr = " ".join(aflCmd)
     if not config.instrumentAll:
         os.putenv("PYTHON_AFL_TSTL","TRUE")
     else:
         os.unsetenv("PYTHON_AFL_TSTL")
-    print ("RUNNING AFL WITH COMMAND LINE:",aflCmd)
+    print ("RUNNING AFL WITH COMMAND LINE:",aflCmdStr)
     start = time.time()
     P = subprocess.Popen(aflCmd)
     while (time.time() - start) < (config.timeout - config.corpusBudget):
