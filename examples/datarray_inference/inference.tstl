@@ -20,11 +20,11 @@ pool: <event> 3
 
 <ename> := "E" + str(<[1..5]>)
 
-{Exception} <event> := [datarray.DataArray(psplit(<P>), axes = [<ename>])]
+{Exception} <event> := datarray.DataArray(psplit(<P>), axes = [<ename>])
 {Exception} <ename,1> != <ename,2> -> <event> := [datarray.DataArray([[psplit(<P>)],psplit(<P>)],[<ename>,<ename>])]
 
 <cpts> := []
-~<cpts>.append(<event>[0])
+~<cpts>.append(<event>)
 
 <evidence> := {}
 ~<evidence>.update([(<ename>,0)])
