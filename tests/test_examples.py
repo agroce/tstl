@@ -11,7 +11,7 @@ class TestExamples(TestCase):
     def test_examples(self):
         os.chdir("examples")
         
-        noTests = False
+        noTests = True
 
         compileFailures = []
         expectedCompile = []
