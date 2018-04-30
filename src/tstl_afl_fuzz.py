@@ -114,8 +114,10 @@ def main():
     aflCmdStr = " ".join(aflCmd)
     if not config.instrumentAll:
         os.putenv("PYTHON_AFL_TSTL","TRUE")
-    else:
+        aflCmdStr = "PYTHON_AFL_TSTL=TRUE " + aflCmdStr
+    elif os.getenv("PYTHON_AFL_TSTL") is not None:
         os.unsetenv("PYTHON_AFL_TSTL")
+        aflCmdStr = "env -u PYTHON_AFL_TSTL " + aflCmdStr
     print ("RUNNING AFL WITH COMMAND LINE:",aflCmdStr)
     start = time.time()
     P = subprocess.Popen(aflCmd)
