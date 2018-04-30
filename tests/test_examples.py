@@ -9,7 +9,7 @@ from unittest import TestCase
 
 class TestExamples(TestCase):
     def test_examples(self):
-        os.chdir("../examples")
+        os.chdir("examples")
         
         noTests = False
 
