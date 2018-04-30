@@ -1408,13 +1408,11 @@ def main():
             genCode.append(baseIndent + "if self.__collectCov: self.__cov.start()\n")
     genCode.append("# BEGIN RELOAD CODE\n")
     if not config.noReload:
-        genCode.append(baseIndent + "if self.__doReload:\n")
-        for l in import_modules:
-            s = baseIndent + baseIndent + 'reload({})\n'.format(l)
-            genCode.append(s)
-    #for l in import_froms:
-    #    s = baseIndent + l
-    #    genCode.append(s)
+        if len(import_modules) > 0:
+            genCode.append(baseIndent + "if self.__doReload:\n")
+            for l in import_froms:
+                s = baseIndent + l
+                genCode.append(s)
     genCode.append("# END RELOAD CODE\n")
     if (not config.noCover) and config.coverReload:
         genCode.append(baseIndent + "if self.__collectCov: self.__cov.stop()\n")
