@@ -1,0 +1,23 @@
+<@
+def initialize():
+    global state
+    state = 0
+
+def foo(n):
+    global state
+    if (state == 2) and (state == n):
+       return
+    if n == (state+1):
+        state = n	
+    return 1 / 0
+@>
+
+log: state
+
+pool: <int> 1
+
+init: initialize()
+
+<int> := <[0,1,2,3]>
+
+{ZeroDivisionError} foo(<int>)

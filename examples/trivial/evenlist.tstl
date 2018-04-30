@@ -1,0 +1,15 @@
+pool: <int> 10
+
+pool: <list> 10
+pool: <elist> 10
+
+<int> := <[-10..10]>
+~<int> += 1
+~<int> -= 1
+~<int> *= 10
+
+<list> := []
+<list>.append(<int>)
+
+(len(<list,1>) % 2) == 0 -> <elist> := <list>
+print (<elist>)
