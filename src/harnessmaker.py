@@ -1410,8 +1410,8 @@ def main():
     if not config.noReload:
         if len(import_modules) > 0:
             genCode.append(baseIndent + "if self.__doReload:\n")
-            for l in import_froms:
-                s = baseIndent + l
+            for l in import_modules:
+                s = baseIndent + baseIndent + 'reload({})\n'.format(l)
                 genCode.append(s)
     genCode.append("# END RELOAD CODE\n")
     if (not config.noCover) and config.coverReload:
