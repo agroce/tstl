@@ -34,6 +34,8 @@ setup(
     tstl_calibrate = src.calibrate:main
     """,
     keywords='testing tstl',
+    test_suite='nose.collector',
+    tests_require=['nose'],
     classifiers=[
       "Intended Audience :: Developers",
       "Development Status :: 4 - Beta",
