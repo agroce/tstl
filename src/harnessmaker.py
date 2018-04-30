@@ -909,7 +909,7 @@ def main():
                     forVerbose.append(g)
                     if (not twiddle):
                         changes.append(g.replace("[","_used[") + "=True")
-                g += " != None"
+                g = "not (" + g + " is None)"
                 guardConds.append(g)
             for (used,twiddle) in drhs:
                 if (used,twiddle) in hrhs:
@@ -936,7 +936,7 @@ def main():
                 if gval not in forVerbose:
                     forVerbose.append(gval)
                 g = g.replace("[", "_used[")
-                gguard = "((" + g + ") or (" + gval + " == None) or (self.__relaxUsedRestriction))"
+                gguard = "((" + g + ") or (" + gval + " is None) or (self.__relaxUsedRestriction))"
                 guardConds.append(gguard)
                 changes.append(g + "=False")
 
@@ -1524,7 +1524,7 @@ def main():
             st += "state[" + str(i) + "],"
             st += "state[" + str(i+1) + "],"
         else:
-            st += "{k: (" + absSet[p] + "(v) if v != None else None) for k, v in " + "(state[" + str(i) + "]).iteritems()},"
+            st += "{k: (" + absSet[p] + "(v) if not (v is None) else None) for k, v in " + "(state[" + str(i) + "]).iteritems()},"
             st += "state[" + str(i+1) + "],"
         i += 2
     st = st[:-1]
@@ -1591,7 +1591,7 @@ def main():
             if u != []:
                 pr = baseIndent + baseIndent + "if True"
                 for use in u:
-                    pr += " and (" + use + " != None)"
+                    pr += " and (not (" + use + " is None))"
                     if use not in checkGlobals:
                         genCode.append(baseIndent + baseIndent + "# GLOBAL " + use + "\n")
                         checkGlobals.append(use)
