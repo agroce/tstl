@@ -111,7 +111,7 @@ class TestExamples(TestCase):
         print ("TIMEOUTS:",timeoutFailures)
         print ("TESTING FAILURES:",testingFailures)
         self.assertTrue(sorted(compileFailures) == sorted(expectedCompile))
-        self.assertTrue(sorted(bytecodeFailures) == sorted(expectedBytecode))
         # These aren't even running, so need subset
+        self.assertTrue(set(bytecodeFailures).issubset(set(expectedBytecode)))
         self.assertTrue(set(timeoutFailures).issubset(set(expectedTimeout)))
         self.assertTrue(set(testingFailures).issubset(set(expectedTesting)))
