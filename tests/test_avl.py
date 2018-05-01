@@ -19,5 +19,14 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_rt","--noCover"])
         self.assertEqual(r,255)
 
+        r = subprocess.call(["tstl_rt","--swarm"])
+        self.assertEqual(r,255)
+
+        r = subprocess.call(["tstl_rt","--exploit","0.8","--Pmutate","0.8"])
+        self.assertEqual(r,255)
+
+        r = subprocess.call(["tstl_rt","--multiple","--timeout","60"])
+        self.assertEqual(r,255)                        
+
         os.chdir("../..")
         
