@@ -19,5 +19,5 @@ class TestAFL(TestCase):
         self.assertEqual(r, 0)
 
         assertTrue(glob.glob("afltest.*") != [])
-        
+
         os.chdir("../..")
