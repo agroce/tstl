@@ -173,8 +173,8 @@ def main():
     for i in range(0, traces):
         d = 0
         s = 0
-        state = str(i) + "\<init\>"
-        dot.node(state, "\<init\>", penwidth="3.0", shape='box')
+        state = str(i) + r"\<init\>"
+        dot.node(state, r"\<init\>", penwidth="3.0", shape='box')
 
         t = SUT.sut()
         t.restart()
