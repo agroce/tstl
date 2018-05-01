@@ -9,8 +9,9 @@ install:
 env:
 - TRAVIS=TRUE
 script:
+- pyflakes src/*.py
+- pycodestyle src/*.py --max-line-length 180 --statistics --ignore W503,W504,E704
+- pycodestyle src/static/*.py --max-line-length 180 --statistics --ignore W503,W504,E704
 - python setup.py install
 - nosetests --verbose
-- pyflakes src/*.py
-- pycodestyle src/*.py --max-line-length 180
-- pycodestyle src/static/*.py --max-line-length 180
+
