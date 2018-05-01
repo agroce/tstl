@@ -16,9 +16,8 @@ install:
 - pip install pycodestyle
 - pip install python-afl
 env:
-- TRAVIS=TRUE
-- CYTHON_VERSION=0.19
-- CYTHON_VERSION=
+- TRAVIS=TRUE CYTHON_VERSION=0.19
+- TRAVIS=TRUE CYTHON_VERSION=
 script:
 - pyflakes src/*.py
 - pyflakes tests/*.py
