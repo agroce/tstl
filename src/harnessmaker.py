@@ -879,13 +879,13 @@ def main():
 
     # ------------------------------------------ #
     newLogs = []
-    for l in logSet:
-        refl = l
+    for line in logSet:
+        refl = line
         for p in poolSet:
             if p in refSet:
                 pRaw = poolPrefix + p.replace("%", "")
-                refl = l.replace(pRaw, pRaw + "_REF")
-        if refl != l:
+                refl = line.replace(pRaw, pRaw + "_REF")
+        if refl != line:
             for base in referenceMap:
                 # base is not a regex; treat it like a function name
                 if re.match(r"^[a-zA-Z_0-9]+$", refl):
@@ -894,7 +894,7 @@ def main():
                 else:   # base is a regex; treat it like one
                     refl = re.sub(base, referenceMap[base], refl)
         newLogs.append(l)
-        if refl != l:
+        if refl != line:
             newLogs.append(refl)
     logSet = newLogs
 
@@ -2007,7 +2007,7 @@ def main():
     with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:
         for line in boilerplate:
             if is_py3:
-                line = l.decode()
+                line = line.decode()
             outf.write(baseIndent + line)
 
     if not config.noCover:
