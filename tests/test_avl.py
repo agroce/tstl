@@ -11,7 +11,7 @@ class TestAVL(TestCase):
     def test_examples(self):
         dnull = open(os.devnull,'w')
         
-        os.chdir("examples/avl")
+        os.chdir("examples/AVL")
         
         r = subprocess.call(["tstl","avlbuggy.tstl"])
         self.assertEqual(r,0)
