@@ -66,7 +66,10 @@ class TestExamples(TestCase):
                     if noTests or skipThis or (f == "c"):
                             print ("OK!")
                             os.remove("sut.py")
-                            os.remove("sut.pyc")
+                            try:
+                                os.remove("sut.pyc")
+                            except OSError:
+                                pass
                             continue
                     print ("RUNNING",end="...")
                     sys.stdout.flush()
@@ -92,8 +95,12 @@ class TestExamples(TestCase):
                         else:
                             print ("OK!")
                     os.remove("sut.py")
-                    os.remove("sut.pyc")
-                    os.remove(".output")
+                    try:
+                        os.remove("sut.pyc")
+                    except OSError:
+                        pass
+                    try:
+                        os.remove(".output")
                 os.chdir("..")
                 sys.stdout.flush()
 
