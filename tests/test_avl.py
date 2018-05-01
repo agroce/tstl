@@ -17,7 +17,6 @@ class TestAVL(TestCase):
         self.assertEqual(r,0)
 
         r = subprocess.call(["tstl_rt","--noCover"])
-
-        self.assertEqual(r,256)
+        self.assertEqual(r,255)
 
         
