@@ -8,7 +8,7 @@ import sys
 from unittest import TestCase
 
 class TestAVL(TestCase):
-    def test_examples(self):
+    def test_AVL(self):
         dnull = open(os.devnull,'w')
         
         os.chdir("examples/AVL")
@@ -18,6 +18,21 @@ class TestAVL(TestCase):
 
         r = subprocess.call(["tstl_rt","--noCover","--output",".avltest"],stdout=dnull)
         self.assertEqual(r,255)
+
+        r = subprocess.call(["tstl_replay",".avltest"],stdout=dnull)
+        self.assertEqual(r,255)
+
+        r = subprocess.call(["tstl_reduce",".avltest",".avltest.norm"],stdout=dnull)
+        self.assertEqual(r,0)
+
+        r = subprocess.call(["tstl_generalize",".avltest.norm"],stdout=dnull)
+        self.assertEqual(r,0)
+
+        r = subprocess.call(["tstl_standalone",".avltest.norm",".avltest.norm.py"],stdout=dnull)
+        self.assertEqual(r,0)
+
+        r = subprocess.call(["python",".avltest.norm.py"],stdout=dnull)
+        self.assertEqual(r,1)
 
         r = subprocess.call(["tstl_rt","--swarm","--output",".avltest"],stdout=dnull)
         self.assertEqual(r,255)
@@ -29,10 +44,27 @@ class TestAVL(TestCase):
         self.assertEqual(r,255)
 
         r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize","--output",".avltest"],stdout=dnull)
-        self.assertEqual(r,255)                                
+        self.assertEqual(r,255)                       
 
-        for f in glob.glob(".avltest.*.test*"):
+        for f in glob.glob(".avltest*"):
             os.remove(f)
-        
+
+        r = subprocess.call(["tstl","avlnew.tstl"],stdout=dnull)
+        self.assertEqual(r,0)
+
+        r = subprocess.call(["tstl_rt","--timeout","30"],stdout=dnull)
+        self.assertEqual(r,0)
+
+        r = subprocess.call(["tstl_rt","--timeout","30","--noCover"],stdout=dnull)
+        self.assertEqual(r,0)        
+
+        r = subprocess.call(["tstl_rt","--timeout","30","--swarm"],stdout=dnull)
+        self.assertEqual(r,0)
+
+        r = subprocess.call(["tstl_rt","--timeout","30","--exploit","0.8","--Pmutate","0.8"],stdout=dnull)
+        self.assertEqual(r,0)
+
+        os.remove("coverage.out")
+
         os.chdir("../..")
         

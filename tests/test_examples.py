@@ -13,6 +13,8 @@ class TestExamples(TestCase):
         
         noTests = True
 
+        skipTravis = ["redis","simplejson","solc","sortedcontainers","pystan"]
+        
         compileFailures = []
         expectedCompile = []
         bytecodeFailures = []
@@ -45,7 +47,7 @@ class TestExamples(TestCase):
                         print ()
                         os.remove("sut.py")
                         continue
-                    if os.getenv("TRAVIS") == "TRUE":
+                    if (os.getenv("TRAVIS") == "TRUE") and (t in skipTravis):
                         print ("OK")
                         continue
                     print ("COMPILING TO BYTECODE",end="...")
