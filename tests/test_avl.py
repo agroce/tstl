@@ -50,6 +50,7 @@ class TestAVL(TestCase):
         self.assertEqual(r,255)
 
         r = subprocess.call(["tstl_triage",".avltest*"],stdout=dnull)
+        self.assertEqual(r,0)
         
         r = subprocess.call(["tstl","avlnew.tstl"],stdout=dnull)
         self.assertEqual(r,0)
