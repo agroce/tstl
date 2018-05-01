@@ -9,9 +9,16 @@ from unittest import TestCase
 
 
 class TestExamples(TestCase):
-    def test_examples(self):
+    def setUp(self):
         os.chdir("examples")
 
+    def tearDown(self):
+        if os.path.basename(os.getcwd()) == "examples":
+            os.chdir("..")
+        else:
+            os.chdir("../..")
+
+    def test_examples(self):
         noTests = True
 
         skipTravis = [
@@ -129,5 +136,3 @@ class TestExamples(TestCase):
         self.assertTrue(set(bytecodeFailures).issubset(set(expectedBytecode)))
         self.assertTrue(set(timeoutFailures).issubset(set(expectedTimeout)))
         self.assertTrue(set(testingFailures).issubset(set(expectedTesting)))
-
-        os.chdir("..")
