@@ -13,7 +13,7 @@ script:
 - pyflakes tests/*.py
 - pycodestyle src/*.py --max-line-length 180 --statistics --ignore W503,W504,E704
 - pycodestyle src/static/*.py --max-line-length 180 --statistics --ignore W503,W504,E704
-- pycodestyle tests/*.py
+- pycodestyle tests/*.py --max-line-length 180 --statistics
 - python setup.py install
 - nosetests --verbose
 
