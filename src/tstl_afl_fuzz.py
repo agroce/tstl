@@ -5,6 +5,7 @@ import time
 import argparse
 import os
 import subprocess
+import glob
 from collections import namedtuple
 
 
@@ -162,8 +163,15 @@ def main():
         P = subprocess.Popen(aflCmd)
     else:
         with open(os.devnull,'w') as dnull:
-            P = subprocess.Popen(aflCmd,stdout=dnull)            
+            P = subprocess.Popen(aflCmd,stdout=dnull)
+    originalFails = glob.glob("aflfail.*")
     while (time.time() - start) < (config.timeout - config.corpusBudget):
+        if config.quiet:
+            newGlob = glob.glob("aflfail.*")
+            failDiff = len(newGlob)-len(originalFails)
+            if failDiff > 0:
+                print(failDiff,"NEW FAILING TESTS GENERATED; NOW",len(originalFails)+failDiff,"FAILING TESTS")
+                originalFails = newGlob
         time.sleep(1)
     P.terminate()
     P.wait()
