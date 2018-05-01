@@ -26,7 +26,10 @@ class TestAVL(TestCase):
         self.assertEqual(r,255)
 
         r = subprocess.call(["tstl_rt","--multiple","--timeout","60"])
-        self.assertEqual(r,255)                        
+        self.assertEqual(r,255)
+
+        r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize"])
+        self.assertEqual(r,255)                                
 
         os.chdir("../..")
         
