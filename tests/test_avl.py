@@ -14,10 +14,10 @@ class TestAVL(TestCase):
         os.chdir("examples/avl")
         
         r = subprocess.call(["tstl","avlbuggy.tstl"])
-        self.assertTrue(r == 0)
+        self.assertEqual(r,0)
 
         r = subprocess.call(["tstl_rt","--noCover"])
 
-        self.assertTrue(r == 256)
+        self.assertEqual(r,256)
 
         
