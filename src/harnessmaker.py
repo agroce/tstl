@@ -18,7 +18,7 @@ from collections import namedtuple, OrderedDict
 # For packaging harnessmaker to tstl package
 import pkg_resources
 
-############## GLOBAL VARIABLES #############
+# GLOBAL VARIABLES
 # These variables will be modified when needed
 
 config = None
@@ -31,7 +31,6 @@ baseIndent = ""
 poolPrefix = None
 genCode = None
 originalCode = {}
-#############################################
 
 def parse_args():
     """
@@ -295,12 +294,14 @@ def replaceRefs(str):
             newStr = newStr.replace("REF:" + pRaw, pRaw+"_REF")
     return newStr
 
+
 actCount = 0
 def genAct():
     global actCount
     s = "act" + str(actCount)
     actCount += 1
     return s
+
 
 guardCount = 0
 def genGuard():
@@ -450,7 +451,7 @@ def main():
             fileLine = str(l).replace("\r","")
             l = preprocess_angle_brackets(l)
             l = l.replace("\r","")
-            if len(l)>1:
+            if len(l) > 1:
                 if l[-2] == "'":
                     l = l[:-1] + ' ' + "\n"
                 if l[-2] == "\\":
@@ -481,7 +482,7 @@ def main():
             if inside_literal_block or l[0] == "@":
                 if l[0] == "@":
                     l = l[1:]
-                if "import" in l: #re.match("import ", l):
+                if "import" in l: # re.match("import ", l):
                     #outf.write(l[:])
                     # import, so set up reloading
                     module_names = parse_import_line(l)
@@ -624,14 +625,14 @@ def main():
             ignoredExcepts.append(c.replace("exception: ",""))
         elif cs[0] == "pool:":
             poolSet[cs[1]] = int(cs[2])
-            if (len(cs)>3) and ("REF" in cs):
+            if (len(cs) > 3) and ("REF" in cs):
                 refSet.append(cs[1])
                 poolSet[cs[1]+"_REF"] = int(cs[2])
-            if (len(cs)>3) and ("CONST" in cs):
+            if (len(cs) > 3) and ("CONST" in cs):
                 constSet.append(cs[1])
-            if (len(cs)>3) and ("OPAQUE" in cs):
+            if (len(cs) > 3) and ("OPAQUE" in cs):
                 opaqueSet.append(cs[1])
-            if (len(cs)>3) and ("OPAQUEREF" in cs):
+            if (len(cs) > 3) and ("OPAQUEREF" in cs):
                 opaqueSet.append(cs[1]+"_REF")
             if (":" in cs):
                 tpos = cs.index(":")
@@ -649,7 +650,7 @@ def main():
             leftMeth = re.match(r"METHOD\((\S+)\)", refLeft)
             if leftMeth:
                 method = leftMeth.groups()[0]
-                refLeft = r"(\S+)\."+ method + "\(\)"
+                refLeft = r"(\S+)\." + method + "\(\)"
             leftCall = re.match(r"CALL\((\S+)\)", refLeft)
             if leftCall:
                 function = leftCall.groups()[0]
@@ -886,7 +887,7 @@ def main():
                 found = subC.find(p)
                 while (found != -1):
                     use = subC[found:subC.find("]", found)+1]
-                    twiddle = (found > 0) and (subC[found-1]=='~')
+                    twiddle = (found > 0) and (subC[found-1] == '~')
                     if (found >= eqPos):
                         if use not in earlylhs:
                             prhs.append((use,twiddle))
@@ -909,7 +910,7 @@ def main():
                     forVerbose.append(g)
                     if (not twiddle):
                         changes.append(g.replace("[","_used[") + "=True")
-                g = "not (" + g + " is None)"
+                g += " is not None"
                 guardConds.append(g)
             for (used,twiddle) in drhs:
                 if (used,twiddle) in hrhs:
@@ -1047,7 +1048,7 @@ def main():
         if assumeSet != []:
             genCode.append(baseIndent + "if not self.checkAssumptions(): return\n")
         d = "self.__test.append(("
-        d += "'''" + newC[:-1] +" ''',"
+        d += "'''" + newC[:-1] + " ''',"
         d += "self." + guard + ","
         d += "self." + act + "))\n"
         genCode.append(baseIndent + d)
@@ -1056,7 +1057,7 @@ def main():
         if logSet != []:
             genCode.append(baseIndent + "self.log('''" + newC[:-1] + "''')\n")
         if checkRaised:
-            genCode.append(baseIndent + "raised = None\n");
+            genCode.append(baseIndent + "raised = None\n")
         genCode.append(baseIndent + "if self.__verboseActions:\n")
         genCode.append(baseIndent + baseIndent + "__bV = {}\n")
         genCode.append(baseIndent + baseIndent + "print ('ACTION:',self.prettyName('''" + newC[:-1] + " '''))\n")
@@ -1217,7 +1218,7 @@ def main():
         allNames[newC[:-1]] = newCguard
 
         d = "self.__actions.append(("
-        d += "'''" + newC[:-1] +" ''',"
+        d += "'''" + newC[:-1] + " ''',"
         d += "self." + guard + ","
         d += "self." + act + "))\n"
         actDefs.append(d)
@@ -1524,7 +1525,7 @@ def main():
             st += "state[" + str(i) + "],"
             st += "state[" + str(i+1) + "],"
         else:
-            st += "{k: (" + absSet[p] + "(v) if not (v is None) else None) for k, v in " + "(state[" + str(i) + "]).iteritems()},"
+            st += "{k: (" + absSet[p] + "(v) if (v is not None) else None) for k, v in " + "(state[" + str(i) + "]).iteritems()},"
             st += "state[" + str(i+1) + "],"
         i += 2
     st = st[:-1]
@@ -1565,8 +1566,8 @@ def main():
         checkGlobals = []
         for p in poolType:
             pname = poolPrefix + p.replace("%","")
-            genCode.append(baseIndent+ baseIndent + baseIndent + "for __pind in " + pname + ":" + "\n")
-            genCode.append(baseIndent+ baseIndent + baseIndent + baseIndent + "assert (" + pname + "[__pind] == None) or (type("+pname+"[__pind]) == " + poolType[p] + ")\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + "for __pind in " + pname + ":" + "\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "assert (" + pname + "[__pind] == None) or (type("+pname+"[__pind]) == " + poolType[p] + ")\n")
 
         for (p, u) in propSet:
             okExcepts = ""
@@ -1591,7 +1592,7 @@ def main():
             if u != []:
                 pr = baseIndent + baseIndent + "if True"
                 for use in u:
-                    pr += " and (not (" + use + " is None))"
+                    pr += " and (" + use + " is not None)"
                     if use not in checkGlobals:
                         genCode.append(baseIndent + baseIndent + "# GLOBAL " + use + "\n")
                         checkGlobals.append(use)
@@ -1603,7 +1604,7 @@ def main():
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "raised = exc\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "if self.__verboseActions: print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
             else:
-                genCode.append (baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p))
+                genCode.append(baseIndent + baseIndent + tryPrefix + "assert " + replaceRefs(p))
                 if okExcepts != "":
                     genCode.append(baseIndent + baseIndent + "except (" + okExcepts + ") as exc:\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + "raised = exc\n")
@@ -1625,7 +1626,7 @@ def main():
     for c in genCode:
         outf.write(baseIndent + c.replace("True and (","("))
 
-    ######################## REQUIRED FOR PACKAGING TSTL ##########################
+    # REQUIRED FOR PACKAGING TSTL #
     is_py3 = sys.version_info[0] > 2
     with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:
         for l in boilerplate:
@@ -1639,7 +1640,6 @@ def main():
                 if is_py3:
                     l = l.decode()
                 outf.write(baseIndent + l)
-    ###############################################################################
 
     outf.close()
 

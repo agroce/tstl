@@ -41,8 +41,8 @@ def main():
         if " # CHECK POOL INIT" not in str:
             return str
 
-        newStr = str.replace("(not (",'("')
-        newStr = newStr.replace(" is None)",'" in globals()')
+        newStr = str.replace("(",'("')
+        newStr = newStr.replace(" is not None)",'" in globals()')
         return newStr.replace("# CHECK POOL INIT","")
 
         print("STR=",str)
