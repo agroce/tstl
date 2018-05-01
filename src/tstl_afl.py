@@ -41,7 +41,7 @@ def runTest():
     for a in test:
         if a[1]():
             if showActions:
-                print (sut.prettyName(a[0]))
+                print(sut.prettyName(a[0]))
             ok = sut.safely(a)
             if (not noSave) and not ok:
                 i = 0
