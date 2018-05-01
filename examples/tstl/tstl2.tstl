@@ -5,11 +5,11 @@
 def prettyPrintTest(sut, test):
     print("PRETTY PRINTING TEST")
     if test == None:
-       return
+        return
     i = 0
     for s in test:
-    	print("STEP",i,sut.prettyName(s[0]))
-	i += 1
+        print("STEP",i,sut.prettyName(s[0]))
+        i += 1
 @>
 
 pool: <rand> 1
