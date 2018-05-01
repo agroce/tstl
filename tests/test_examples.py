@@ -129,3 +129,5 @@ class TestExamples(TestCase):
         self.assertTrue(set(bytecodeFailures).issubset(set(expectedBytecode)))
         self.assertTrue(set(timeoutFailures).issubset(set(expectedTimeout)))
         self.assertTrue(set(testingFailures).issubset(set(expectedTesting)))
+
+        os.chdir("..")

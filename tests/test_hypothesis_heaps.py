@@ -6,7 +6,7 @@ from unittest import TestCase
 
 
 class TestHypothesisHeap(TestCase):
-    def test_Hypothesis_Heap(self):
+    def test_hypothesis_heap(self):
         dnull = open(os.devnull, 'w')
 
         os.chdir("examples/hypothesis_heaps")
