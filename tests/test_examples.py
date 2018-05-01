@@ -47,7 +47,7 @@ class TestExamples(TestCase):
                         print ()
                         os.remove("sut.py")
                         continue
-                    if (os.getenv("TRAVIS") == "TRUE") and (t in skipTravis):
+                    if (os.getenv("TRAVIS") == "TRUE") and (f in skipTravis):
                         print ("OK")
                         continue
                     print ("COMPILING TO BYTECODE",end="...")
