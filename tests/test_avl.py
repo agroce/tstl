@@ -31,7 +31,7 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_standalone",".avltest.norm",".avltest.norm.py"],stdout=dnull)
         self.assertEqual(r,0)
 
-        r = subprocess.call(["python",".avltest.norm.py"],stdout=dnull)
+        r = subprocess.call(["python",".avltest.norm.py"],stdout=dnull,stderr=dnull)
         self.assertEqual(r,1)
 
         r = subprocess.call(["tstl_rt","--swarm","--output",".avltest"],stdout=dnull)
