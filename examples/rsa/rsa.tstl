@@ -6,13 +6,12 @@ def breakStr(s,p):
     p = p % len(s)
     c = ""
     for i in xrange(0,len(s)):
-    	if i != p:
-	   c += s[i]
-	else:
-	   if s[i] != "*":
-	      c += "*"
-	   else:
-	      c += "?"
+        if i != p:
+                c += s[i]
+        elif s[i] != "*":
+                c += "*"
+        else:
+            c += "?"
     return c
 @>
 
