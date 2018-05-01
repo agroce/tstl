@@ -67,8 +67,15 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_rt","--timeout","30","--swarm"],stdout=dnull)
         self.assertEqual(r,0)
 
-        r = subprocess.call(["tstl_rt","--timeout","30","--exploit","0.8","--Pmutate","0.8"],stdout=dnull)
+        r = subprocess.call(["tstl_rt","--timeout","30","--exploit","0.8","--Pmutate","0.8","--trackMaxCoverage",".avltest.maxcov"],
+                            stdout=dnull)
         self.assertEqual(r,0)
+
+        r = subprocess.call(["tstl_standalone",".avltest.maxcov",".avltest.maxcov.py","--regression","--verbose"],stdout=dnull)
+        self.assertEqual(r,0)
+
+        r = subprocess.call(["python",".avltest.maxcov.py"],stdout=dnull,stderr=dnull)
+        self.assertEqual(r,0)        
 
         r = subprocess.call(["tstl_regress .avltest*"],shell=True,stdout=dnull)
         self.assertEqual(r,0)        
