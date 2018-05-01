@@ -80,7 +80,7 @@ def main():
             if (sig not in signatures):
                 signatures[sig] = (fn, t, sut.failure(),
                                    sut.prettyName(t[-1][0]), 1)
-            elif (len(t) < signatures[sig][1]):
+            elif (len(t) < len(signatures[sig][1])):
                 signatures[sig] = (fn, t, sut.failure(), sut.prettyName(
                     t[-1][0]), signatures[sig][4] + 1)
 
