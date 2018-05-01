@@ -11,6 +11,7 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def main():
     if "--help" in sys.argv:
         print("Usage:  tstl_fromafl <outputdir> <files> [--aflswarm]")
@@ -27,6 +28,6 @@ def main():
 
     i = 0
     for f in files:
-        t = sut.loadTest(f,afl=True,swarm=aflswarm)
-        sut.saveTest(t,outputDir+"/"+os.path.basename(f)+".test")
+        t = sut.loadTest(f, afl=True, swarm=aflswarm)
+        sut.saveTest(t, outputDir+"/"+os.path.basename(f)+".test")
         i += 1

@@ -11,10 +11,12 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def main():
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_markov <outfile> <prefix size> <test files> [--notRaw]")
+        print(
+            "Usage:  tstl_markov <outfile> <prefix size> <test files> [--notRaw]")
         print("Options:")
         print(" --notRaw:      corpus files are not raw TSTL tests, but action classes")
         sys.exit(0)
@@ -48,31 +50,31 @@ def main():
     chains = {}
 
     for t in tests:
-        for pos in range(n+1,len(t)):
+        for pos in range(n+1, len(t)):
             prefix = tuple(t[pos-n:pos])
             #print prefix,"==>",t[pos]
             if prefix not in chains:
                 chains[prefix] = []
             chains[prefix].append(t[pos])
 
-    mout = open(outfile,'w')
+    mout = open(outfile, 'w')
     mout.write(str(n)+"\n")
 
     for c in chains:
-            print("PREFIX:",c)
-            mout.write("START CLASS\n")
-            for ac in c:
-                mout.write(ac+"\n")
-            mout.write("END CLASS\n")
-            counts = {}
-            total = 0.0
-            for suffix in chains[c]:
-                    total += 1
-                    if suffix not in counts:
-                            counts[suffix] = 0
-                    counts[suffix] += 1
-            for suffix in counts:
-                    print(suffix,counts[suffix]/total)
-                    mout.write(str(counts[suffix]/total) + " %%%% "+suffix+"\n")
+        print("PREFIX:", c)
+        mout.write("START CLASS\n")
+        for ac in c:
+            mout.write(ac+"\n")
+        mout.write("END CLASS\n")
+        counts = {}
+        total = 0.0
+        for suffix in chains[c]:
+            total += 1
+            if suffix not in counts:
+                counts[suffix] = 0
+            counts[suffix] += 1
+        for suffix in counts:
+            print(suffix, counts[suffix]/total)
+            mout.write(str(counts[suffix]/total) + " %%%% "+suffix+"\n")
 
     mout.close()

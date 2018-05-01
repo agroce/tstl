@@ -16,6 +16,7 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=None,
@@ -23,6 +24,7 @@ def parse_args():
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
+
 
 def make_config(pargs, parser):
     """
@@ -44,7 +46,7 @@ def main():
     config = make_config(parsed_args, parser)
     print(('Calibrating using config={}'.format(config)))
 
-    calibFile = open(".tstl_calibration",'w')
+    calibFile = open(".tstl_calibration", 'w')
 
     sut = SUT.sut()
 
@@ -56,19 +58,20 @@ def main():
     print ("CALIBRATING COST OF COVERAGE...\n")
 
     oldOut = sys.stdout
-    fnull = open(os.devnull,'w')
+    fnull = open(os.devnull, 'w')
     sys.stdout = fnull
 
     sut.stopCoverage()
 
-    oldOut.write("GENERATING 30 TESTS (OR 30+s of TESTS) WITHOUT COVERAGE...\n")
+    oldOut.write(
+        "GENERATING 30 TESTS (OR 30+s of TESTS) WITHOUT COVERAGE...\n")
     oldOut.flush()
     start = time.time()
     noCovCount = 0
-    for i in range(0,30):
+    for i in range(0, 30):
         oldOut.write(str(i)+"...")
         oldOut.flush()
-        (t,ok) = sut.makeTest(100,R,stopFail=False)
+        (t, ok) = sut.makeTest(100, R, stopFail=False)
         noCovCount += 1
         if (time.time() - start) > 30:
             oldOut.write("TIMEOUT AT "+str(time.time()-start))
@@ -77,14 +80,15 @@ def main():
 
     sut.startCoverage()
 
-    oldOut.write("\n\nGENERATING 30 TESTS (OR 30+s of TESTS) WITH COVERAGE...\n")
+    oldOut.write(
+        "\n\nGENERATING 30 TESTS (OR 30+s of TESTS) WITH COVERAGE...\n")
 
     start = time.time()
     covCount = 0
-    for i in range(0,30):
+    for i in range(0, 30):
         oldOut.write(str(i)+"...")
         oldOut.flush()
-        (t,ok) = sut.makeTest(100,R,stopFail=False)
+        (t, ok) = sut.makeTest(100, R, stopFail=False)
         covCount += 1
         if (time.time() - start) > 30:
             oldOut.write("TIMEOUT AT "+str(time.time()-start))
@@ -100,23 +104,24 @@ def main():
     covR = (covCount*100)/covTime
     noCovR = (noCovCount*100)/noCovTime
     if covR < noCovR:
-        print ("WITH COVERAGE:",covR,"ACTIONS/s")
-        print ("WITHOUT COVERAGE:",noCovR,"ACTIONS/s")
+        print ("WITH COVERAGE:", covR, "ACTIONS/s")
+        print ("WITHOUT COVERAGE:", noCovR, "ACTIONS/s")
         overhead = (noCovR-covR)/noCovR
-        print ("COVERAGE OVERHEAD:",str(round(overhead*100,2))+"%")
+        print ("COVERAGE OVERHEAD:", str(round(overhead*100, 2))+"%")
     else:
         print ("NO DETECTABLE COVERAGE OVERHEAD")
     calibFile.write("COVERAGE OVERHEAD: " + str(overhead))
 
     print ("="*80)
     print ("ESTIMATING LINES OF CODE IN ACTIONS...\n")
-    subprocess.call(["tstl_rt --timeout 180 --generateLOC .tstl_calibration_loc --noCover"],shell=True,stdout=fnull,stderr=fnull)
+    subprocess.call(["tstl_rt --timeout 180 --generateLOC .tstl_calibration_loc --noCover"],
+                    shell=True, stdout=fnull, stderr=fnull)
     classLOCVals = {}
     for c in sut.actionClasses():
         classLOCVals[c] = 0.0
     totalLOCs = 0.0
     num0 = 0.0
-    with open(".tstl_calibration_loc",'r') as cf:
+    with open(".tstl_calibration_loc", 'r') as cf:
         for l in cf:
             ls = l.split(" %%%% ")
             c = ls[0]
@@ -132,12 +137,13 @@ def main():
                 classP[c] = (0.20/num0)
             else:
                 classP[c] = (classLOCVals[c]/totalLOCs)
-    sortLOC = sorted(classLOCVals.keys(),key=lambda x:classP[x],reverse=True)
+    sortLOC = sorted(classLOCVals.keys(),
+                     key=lambda x: classP[x], reverse=True)
     print ("HIGHEST LOC-BASED PROBABILITY ACTIONS:")
     for c in sortLOC[:3]:
-        print ("  ",c,round(classP[c],5))
+        print ("  ", c, round(classP[c], 5))
     print ("\nLOWEST LOC-BASED PROBABILITY ACTIONS:")
     for c in sortLOC[-3:]:
-        print ("  ",c,round(classP[c],5))
+        print ("  ", c, round(classP[c], 5))
 
     calibFile.close()

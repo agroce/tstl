@@ -3,13 +3,14 @@ from graphviz import Digraph
 import random
 import os
 
+
 def breakByNumber(s):
     breaks = []
     curr = ""
-    for c in range(0,len(s)):
+    for c in range(0, len(s)):
         if curr == "":
             curr += s[c]
-        elif (s[c] in ['0','1','2','3','4','5','6','7','8','9']) == (curr[-1] in ['0','1','2','3','4','5','6','7','8','9']):
+        elif (s[c] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) == (curr[-1] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']):
             curr += s[c]
         else:
             breaks.append(curr)
@@ -17,6 +18,7 @@ def breakByNumber(s):
     if curr != "":
         breaks.append(curr)
     return breaks
+
 
 def breaksApart(s):
     breaks1 = []
@@ -38,22 +40,25 @@ def breaksApart(s):
             breaks2.append(b1)
     return breaks2
 
+
 def intOrNone(v):
     try:
         return int(v)
     except:
         return None
 
+
 def rangeOrNone(v):
     try:
         if "<[" in v:
             vs = v.split("..")
-            return (int(vs[0][2:]),int(vs[1][:-2]))
+            return (int(vs[0][2:]), int(vs[1][:-2]))
         return None
     except:
         return None
 
-def merge(s1,s2):
+
+def merge(s1, s2):
     b1 = breaksApart(s1)
     b2 = breaksApart(s2)
     if len(b1) != len(b2):
@@ -70,29 +75,33 @@ def merge(s1,s2):
             r1 = rangeOrNone(b1[i])
             r2 = rangeOrNone(b2[i])
             if (v1 is not None):
-                if (v2 is not None): # 2 values
-                    if (min(v1,v2) + 1 == max(v1,v2)):
-                        merged += "<[" + str(min(v1,v2)) + ".." + str(max(v1,v2)) + "]>"
+                if (v2 is not None):  # 2 values
+                    if (min(v1, v2) + 1 == max(v1, v2)):
+                        merged += "<[" + str(min(v1, v2)) + \
+                            ".." + str(max(v1, v2)) + "]>"
                     else:
                         return None
-                elif (r2 is not None): # value and range
-                    (low2,high2) = r2
+                elif (r2 is not None):  # value and range
+                    (low2, high2) = r2
                     if (v1 == (low2 - 1)) or (v1 == (high2 + 1)):
-                        merged += "<[" + str(min(v1,low2)) + ".." + str(max(v1,high2)) + "]>"
+                        merged += "<[" + str(min(v1, low2)) + \
+                            ".." + str(max(v1, high2)) + "]>"
                     else:
                         return None
             elif (r1 is not None):
-                if (v2 is not None): # range and value
-                    (low1,high1) = r1
+                if (v2 is not None):  # range and value
+                    (low1, high1) = r1
                     if (v2 == (low1 - 1)) or (v2 == (high1 + 1)):
-                        merged += "<[" + str(min(v2,low1)) + ".." + str(max(v2,high1)) + "]>"
+                        merged += "<[" + str(min(v2, low1)) + \
+                            ".." + str(max(v2, high1)) + "]>"
                     else:
                         return None
-                elif (r2 is not None): # range and range
-                    (low1,high1) = r1
-                    (low2,high2) = r2
+                elif (r2 is not None):  # range and range
+                    (low1, high1) = r1
+                    (low2, high2) = r2
                     if ((high1+1) == low2) or ((high2+1) == low1):
-                        merged += "<[" + str(min(low1,low2)) + ".." + str(max(high1,high2)) + "]>"
+                        merged += "<[" + str(min(low1, low2)) + \
+                            ".." + str(max(high1, high2)) + "]>"
                     else:
                         return None
                 else:
@@ -103,6 +112,7 @@ def merge(s1,s2):
             return None
     return merged
 
+
 def collapse(strings):
     changed = True
     cstrings = list(strings)
@@ -112,7 +122,7 @@ def collapse(strings):
             for s2 in cstrings:
                 if (s1 == s2):
                     continue
-                m = merge(s1,s2)
+                m = merge(s1, s2)
                 if m is not None:
                     cstrings.remove(s1)
                     cstrings.remove(s2)
@@ -132,10 +142,12 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def main():
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_graph <outfile> <depth> <width> [<seed>] [<traces> (default 1)] [<skip> (default none)]")
+        print(
+            "Usage:  tstl_graph <outfile> <depth> <width> [<seed>] [<traces> (default 1)] [<skip> (default none)]")
         sys.exit(0)
 
     outfile = sys.argv[1]
@@ -153,15 +165,16 @@ def main():
     else:
         skiplen = -1
 
-    print("Producing graph of",traces,"traces with depth",depth,"and width",k,"starting from",skiplen)
+    print("Producing graph of", traces, "traces with depth",
+          depth, "and width", k, "starting from", skiplen)
 
     dot = Digraph(comment="Depth " + str(depth))
 
-    for i in range(0,traces):
+    for i in range(0, traces):
         d = 0
         s = 0
         state = str(i) + "\<init\>"
-        dot.node(state, "\<init\>", penwidth="3.0",shape='box')
+        dot.node(state, "\<init\>", penwidth="3.0", shape='box')
 
         t = SUT.sut()
         t.restart()
@@ -201,13 +214,13 @@ def main():
                 state = str(i) + "s" + str(s)
                 if name == aname:
                     newLast = state
-                    dot.node(state,name,penwidth="3.0",shape='box')
-                    dot.edge(last,state,penwidth="3.0")
+                    dot.node(state, name, penwidth="3.0", shape='box')
+                    dot.edge(last, state, penwidth="3.0")
                 else:
-                    dot.node(state,name,fontsize="10.0")
-                    dot.edge(last,state)
+                    dot.node(state, name, fontsize="10.0")
+                    dot.edge(last, state)
             last = newLast
             t.safely(act)
             d += 1
 
-    dot.render(outfile,view=True)
+    dot.render(outfile, view=True)

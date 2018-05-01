@@ -15,6 +15,7 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('testglob', metavar='filename', type=str, default=None,
@@ -26,6 +27,7 @@ def parse_args():
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
+
 
 def make_config(pargs, parser):
     """
@@ -40,8 +42,10 @@ def make_config(pargs, parser):
     nt_config = Config(*arg_list)
     return nt_config
 
+
 def noDigits(str):
-    return "".join(filter(lambda x:not x.isdigit(),str))
+    return "".join(filter(lambda x: not x.isdigit(), str))
+
 
 def main():
 
@@ -68,18 +72,20 @@ def main():
             e = repr(sut.failure())
             e = e[:e.find("<traceback object at 0x")] + ")"
             l = t[-1][0]
-            sig = (noDigits(e),noDigits(l))
+            sig = (noDigits(e), noDigits(l))
             if (sig not in signatures):
-                signatures[sig] = (fn,t,sut.failure(),sut.prettyName(t[-1][0]),1)
+                signatures[sig] = (fn, t, sut.failure(),
+                                   sut.prettyName(t[-1][0]), 1)
             elif (len(t) < signatures[sig][1]):
-                signatures[sig] = (fn,t,sut.failure(),sut.prettyName(t[-1][0]),signatures[sig][4]+1)
+                signatures[sig] = (fn, t, sut.failure(), sut.prettyName(
+                    t[-1][0]), signatures[sig][4]+1)
 
-    for sig in sorted(signatures.keys(),key=lambda x:signatures[x][4],reverse=True):
+    for sig in sorted(signatures.keys(), key=lambda x: signatures[x][4], reverse=True):
         print ("="*80)
-        print ("TEST:",signatures[sig][0],"LENGTH:",len(signatures[sig][1]))
-        print ("OPERATION:",signatures[sig][3])
+        print ("TEST:", signatures[sig][0], "LENGTH:", len(signatures[sig][1]))
+        print ("OPERATION:", signatures[sig][3])
         print ("FAILURE:")
-        traceback.print_tb(signatures[sig][2][2],file=sys.stdout)
-        print ("COUNT:",signatures[sig][4])
+        traceback.print_tb(signatures[sig][2][2], file=sys.stdout)
+        print ("COUNT:", signatures[sig][4])
         if config.showTests:
             sut.prettyPrintTest(signatures[sig][1])

@@ -8,6 +8,7 @@ import os
 import math
 from collections import defaultdict
 
+
 def main():
     R = random.Random()
 
@@ -32,8 +33,8 @@ def main():
     count = 0
     sut.standardSwarm(R)
     print(sut.swarmConfig())
-    totalPaths = int(math.pow(len(sut.actions()),depth))
-    print(totalPaths,"UPPER BOUND ON POSSIBLE TESTS")
+    totalPaths = int(math.pow(len(sut.actions()), depth))
+    print(totalPaths, "UPPER BOUND ON POSSIBLE TESTS")
     while count < totalPaths:
         sut.restart()
         path = []
@@ -42,11 +43,11 @@ def main():
         while len(path) < depth:
             possible = sut.actions()
             possible = sorted(possible,
-                              key=lambda act:(
+                              key=lambda act: (
                                   allTakenClass[sut.actionClass(act)],
                                   allTaken[act[0]],
-                                  takenClass[(sut.actionClass(act),i)],
-                                  taken[(act[0],i)]))
+                                  takenClass[(sut.actionClass(act), i)],
+                                  taken[(act[0], i)]))
 
             a = None
             for act in possible:
@@ -59,22 +60,22 @@ def main():
                 break
             path.append(a)
             #takenPath[sut.captureReplay(path)] += 1
-            taken[(a[0],i)] += 1
-            takenClass[(sut.actionClass(a),i)] += 1
+            taken[(a[0], i)] += 1
+            takenClass[(sut.actionClass(a), i)] += 1
             allTaken[(a[0])] += 1
             allTakenClass[sut.actionClass(a)] += 1
             ok = sut.safely(a)
             if not ok:
-                print("FALIURE IN TEST",count)
-                sut.saveTest(path,"failure.exhaust." + pid + ".test")
+                print("FALIURE IN TEST", count)
+                sut.saveTest(path, "failure.exhaust." + pid + ".test")
                 sut.prettyPrintTest(path)
                 print(sut.failure())
                 sys.exit(255)
             if not ("--noCheck" in sys.argv):
                 okCheck = sut.check()
                 if not okCheck:
-                    print("PROPERTY VIOLATION IN TEST",count)
-                    sut.saveTest(path,"failure.exhaust." + pid + ".test")
+                    print("PROPERTY VIOLATION IN TEST", count)
+                    sut.saveTest(path, "failure.exhaust." + pid + ".test")
                     sut.prettyPrintTest(path)
                     print(sut.failure())
                     sys.exit(255)
@@ -89,24 +90,24 @@ def main():
         epoch = int((time.time()-start)/2)
         if epoch > lastEpoch:
             lastEpoch = epoch
-            print(time.time()-start,"ELAPSED",count,"TESTS",repeats,"REPEATS", end=' ')
+            print(time.time()-start, "ELAPSED", count, "TESTS", repeats, "REPEATS", end=' ')
             if not ("--noCover" in sys.argv):
-                print("[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]", end=' ')
+                print("[", len(sut.allStatements()), "stmts", len(sut.allBranches()), "branches ]", end=' ')
             print()
             if ("--verbose" in sys.argv):
                 print("*"*50)
-                print("PATH #",count)
+                print("PATH #", count)
                 sut.prettyPrintTest(path)
                 print()
                 print("COUNTS:")
                 print("="*20)
-                for c in sorted(list(allTakenClass.keys()),key=lambda ac: allTakenClass[ac]):
-                    print(c,allTakenClass[c])
+                for c in sorted(list(allTakenClass.keys()), key=lambda ac: allTakenClass[ac]):
+                    print(c, allTakenClass[c])
                 print("="*20)
-                for a in sorted(list(allTaken.keys()),key=lambda act: allTaken[act]):
-                    print(a,allTaken[a])
+                for a in sorted(list(allTaken.keys()), key=lambda act: allTaken[act]):
+                    print(a, allTaken[a])
 
-    print(repeats,"TOTAL REPEATED TESTS",len(takenFull),"DISTINCT TESTS")
+    print(repeats, "TOTAL REPEATED TESTS", len(takenFull), "DISTINCT TESTS")
 
 
 main()

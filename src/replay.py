@@ -13,6 +13,7 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def trace_lines(frame, event, arg):
     if event != 'line':
         return
@@ -21,6 +22,7 @@ def trace_lines(frame, event, arg):
     line_no = frame.f_lineno
     print('   %s line %s' % (func_name, line_no))
     sys.stdout.flush()
+
 
 def trace_calls(frame, event, arg):
     if event != 'call':
@@ -36,10 +38,12 @@ def trace_calls(frame, event, arg):
     sys.stdout.flush()
     return trace_lines
 
+
 def main():
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--delay secs] [--trace] [--afl] [--aflswarm]")
+        print(
+            "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--delay secs] [--trace] [--afl] [--aflswarm]")
         print("Options:")
         print("--noCheck:      do not run property checks")
         print("--logging:      set the logging level for the test")
@@ -70,10 +74,11 @@ def main():
         except:
             goodToTrace = True
         if not goodToTrace:
-            print("CANNOT TRACE WHEN SUT IS COMPILED WITH COVERAGE.  REBUILD WITH --noCover")
+            print(
+                "CANNOT TRACE WHEN SUT IS COMPILED WITH COVERAGE.  REBUILD WITH --noCover")
             sys.exit(1)
 
-    rout = open("replay.out",'w')
+    rout = open("replay.out", 'w')
 
     file = sys.argv[1]
     nocheck = "--noCheck" in sys.argv
@@ -120,11 +125,12 @@ def main():
     if "--hideOpaque" in sys.argv:
         sut.verboseOpaque(False)
     if "--afl" not in sys.argv:
-        with open(file,'r') as f:
+        with open(file, 'r') as f:
             theTest = f.readlines()
     else:
-        readTest = sut.loadTest(file,afl=True,swarm=("--aflswarm" in sys.argv))
-        theTest = map(lambda x:x[0]+"\n",readTest)
+        readTest = sut.loadTest(
+            file, afl=True, swarm=("--aflswarm" in sys.argv))
+        theTest = map(lambda x: x[0]+"\n", readTest)
     for l in theTest:
         name = l[:-1]
         if name == "<<RESTART>>":
@@ -142,7 +148,7 @@ def main():
             action = sut.playable(name)
             if "--showActions" in sys.argv:
                 print(sut.prettyName(action[0]))
-            if action[1](): # check the guard
+            if action[1]():  # check the guard
                 if "--trace" in sys.argv:
                     sys.settrace(trace_calls)
                 stepOk = sut.safely(action)
@@ -151,12 +157,12 @@ def main():
                 if not stepOk:
                     print("FAILED STEP")
                     print(sut.failure())
-                    traceback.print_tb(sut.failure()[2],file=sys.stdout)
+                    traceback.print_tb(sut.failure()[2], file=sys.stdout)
                     if "--internal" in sys.argv:
                         sut.internalReport()
 
                     if "--coverage" in sys.argv:
-                        print(sut.report("coverage.out"),"PERCENT COVERED")
+                        print(sut.report("coverage.out"), "PERCENT COVERED")
 
                     if htmlOut is not None:
                         sut.htmlReport(htmlOut)
@@ -166,12 +172,12 @@ def main():
                 if not checkResult:
                     print("FAILED PROPERTY")
                     print(sut.failure())
-                    traceback.print_tb(sut.failure()[2],file=sys.stdout)
+                    traceback.print_tb(sut.failure()[2], file=sys.stdout)
                     if "--internal" in sys.argv:
                         sut.internalReport()
 
                     if "--coverage" in sys.argv:
-                        print(sut.report("coverage.out"),"PERCENT COVERED")
+                        print(sut.report("coverage.out"), "PERCENT COVERED")
 
                     if htmlOut is not None:
                         sut.htmlReport(htmlOut)
@@ -187,7 +193,7 @@ def main():
         sut.internalReport()
 
     if "--coverage" in sys.argv:
-        print(sut.report("coverage.out"),"PERCENT COVERED")
+        print(sut.report("coverage.out"), "PERCENT COVERED")
 
     if htmlOut is not None:
         sut.htmlReport(htmlOut)

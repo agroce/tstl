@@ -13,10 +13,12 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def main():
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running] [--afl] [--aflswarm]")
+        print(
+            "Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running] [--afl] [--aflswarm]")
         print("Options:")
         print(" --glob:         <test files> are glob expressions (used when too many files to use shell expansion)")
         print(" --noCheck:      do not run property checks")
@@ -91,9 +93,9 @@ def main():
     stime = time.time()
     for f in files:
         totalTests += 1
-        print("RUNNING TEST",f)
+        print("RUNNING TEST", f)
         try:
-            t = sut.loadTest(f,afl=afl,swarm=aflswarm)
+            t = sut.loadTest(f, afl=afl, swarm=aflswarm)
         except KeyError:
             print("INVALID TEST, SKIPPING...")
             invalidTests.append(f)
@@ -102,7 +104,7 @@ def main():
         try:
             ok = sut.replay(t, checkProp=(not ignoreProps))
         except Exception as e:
-            print("EXCEPTION RAISED:",e)
+            print("EXCEPTION RAISED:", e)
         if not nocover:
             if (len(sut.newCurrBranches()) == 0) and (len(sut.newCurrStatements()) == 0):
                 noNewCover.append(f)
@@ -111,42 +113,45 @@ def main():
         if running:
             if sut.newCurrBranches() != set([]):
                 for b in sut.newCurrBranches():
-                    print("New branch:",b)
+                    print("New branch:", b)
             if sut.newCurrStatements() != set([]):
                 for s in sut.newCurrStatements():
-                    print("New statement:",s)
+                    print("New statement:", s)
         if not ok:
-            print("TEST",f,"FAILED:")
+            print("TEST", f, "FAILED:")
             print(sut.failure())
             failedTests.append(f)
             anyFailed = True
             if not keepGoing:
                 sys.exit(255)
-        print(time.time()-stime,"ELAPSED")
+        print(time.time()-stime, "ELAPSED")
         if not nocover:
-            print("STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches()))
+            print("STATEMENTS:", len(sut.allStatements()),
+                  "BRANCHES:", len(sut.allBranches()))
             if f not in noNewCover:
-                print("NEW STATEMENTS:",len(sut.newCurrStatements()), "BRANCHES:",len(sut.newCurrBranches()))
+                print("NEW STATEMENTS:", len(sut.newCurrStatements()),
+                      "BRANCHES:", len(sut.newCurrBranches()))
         sys.stdout.flush()
 
     if not nocover:
         sut.internalReport()
-        print(sut.report("coverage.out"),"PERCENT COVERED")
+        print(sut.report("coverage.out"), "PERCENT COVERED")
 
     if htmlOut is not None:
         sut.htmlReport(htmlOut)
 
     if (not nocover) and (len(noNewCover) > 0):
         for f in noNewCover:
-            print("TEST",f,"REDUNDANT WITH RESPECT TO COVERAGE")
+            print("TEST", f, "REDUNDANT WITH RESPECT TO COVERAGE")
         print ()
-        print (len(newCover),"TESTS NEEDED FOR FULL COVERAGE:",", ".join(newCover))
+        print (len(newCover), "TESTS NEEDED FOR FULL COVERAGE:",
+               ", ".join(newCover))
         print ()
 
-    print("EXECUTED",totalTests,"TESTS")
+    print("EXECUTED", totalTests, "TESTS")
 
     if len(invalidTests) > 0:
-        print(len(invalidTests),"INVALID TESTS:")
+        print(len(invalidTests), "INVALID TESTS:")
         for f in invalidTests:
             print(f, end=' ')
         print()
@@ -154,7 +159,7 @@ def main():
     if not anyFailed:
         print("ALL TESTS SUCCESSFUL")
     else:
-        print(len(failedTests),"FAILED TESTS:")
+        print(len(failedTests), "FAILED TESTS:")
         for f in failedTests:
             print(f, end=' ')
         print()

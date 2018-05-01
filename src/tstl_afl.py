@@ -14,22 +14,25 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def makeInt(s):
     try:
         return int(s)
     except:
         return None
 
+
 def runTest():
     global swarm, showActions, noCheck, alwaysSave, noSave, sut
 
-    bytesin = os.read(0,1024*1024)  # yes, puts a limit on test length, but not a very important one probably!
+    # yes, puts a limit on test length, but not a very important one probably!
+    bytesin = os.read(0, 1024*1024)
 
     if swarm:
         R = random.Random()
         if len(bytesin) < 4:
             os._exit(0)
-        R.seed(struct.unpack("<L",bytesin[0:4])[0])
+        R.seed(struct.unpack("<L", bytesin[0:4])[0])
         sut.standardSwarm(R)
         bytesin = bytesin[4:]
 
@@ -42,21 +45,25 @@ def runTest():
             ok = sut.safely(a)
             if (not noSave) and not ok:
                 i = 0
-                saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+                saveFile = "aflfail." + \
+                    str(os.getpid()) + "." + str(i) + ".test"
                 while os.path.exists(saveFile):
                     i += 1
-                    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
-                sut.saveTest(sut.test(),saveFile)
+                    saveFile = "aflfail." + \
+                        str(os.getpid()) + "." + str(i) + ".test"
+                sut.saveTest(sut.test(), saveFile)
             assert(ok)
             if not noCheck:
                 checkResult = sut.check()
                 if (not noSave) and not checkResult:
                     i = 0
-                    saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
+                    saveFile = "aflfail." + \
+                        str(os.getpid()) + "." + str(i) + ".test"
                     while os.path.exists(saveFile):
                         i += 1
-                        saveFile = "aflfail." + str(os.getpid()) + "." + str(i) + ".test"
-                    sut.saveTest(sut.test(),saveFile)
+                        saveFile = "aflfail." + \
+                            str(os.getpid()) + "." + str(i) + ".test"
+                    sut.saveTest(sut.test(), saveFile)
                 assert(checkResult)
     if alwaysSave:
         i = 0
@@ -64,13 +71,15 @@ def runTest():
         while os.path.exists(saveFile):
             i += 1
             saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"
-        sut.saveTest(sut.test(),saveFile)
+        sut.saveTest(sut.test(), saveFile)
+
 
 def main():
     global swarm, showActions, noCheck, alwaysSave, noSave, sut
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_afl [--noCheck] [--swarm] [--verbose] [--showActions] [--noSave] [--alwaysSave]")
+        print(
+            "Usage:  tstl_afl [--noCheck] [--swarm] [--verbose] [--showActions] [--noSave] [--alwaysSave]")
         print("Options:")
         print(" --noCheck:      do not run property checks")
         print(" --swarm         use first four bytes to determine a swarm configuration")

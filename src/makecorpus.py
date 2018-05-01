@@ -14,9 +14,11 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def main():
     if "--help" in sys.argv:
-        print("Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noCheck] [--noReduce] [--noCover] [--swarm] [--skipFails]")
+        print(
+            "Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noCheck] [--noReduce] [--noCover] [--swarm] [--skipFails]")
         print("Options:")
         print(" --noCheck:       do not check properties")
         print(" --noReduce:      do not reduce inputs by coverage")
@@ -57,24 +59,24 @@ def main():
     while (time.time()-stime) < timeout:
         i += 1
         if swarm:
-            seed = R.randint(0,2**32)
+            seed = R.randint(0, 2**32)
             Rswarm.seed(seed)
             sut.standardSwarm(Rswarm)
-        (t,ok) = sut.makeTest(length,R,stopFail=True,checkProp=checkProp)
+        (t, ok) = sut.makeTest(length, R, stopFail=True, checkProp=checkProp)
         if ((not noCover) and (not burst) and (len(sut.newCurrBranches()) == 0) and
                 len(sut.newCurrStatements()) == 0):
             continue
         else:
-            print ("INPUT",i,"GENERATED",end=" ")
+            print ("INPUT", i, "GENERATED", end=" ")
             if (not noCover) and (not burst):
-                print ("NEW BRANCHES:",len(sut.newCurrBranches()),end=" ")
+                print ("NEW BRANCHES:", len(sut.newCurrBranches()), end=" ")
             type = "branch" + str(len(sut.newCurrBranches()))
-        if ok: # failing tests won't work with afl
+        if ok:  # failing tests won't work with afl
             if (not burst) and (not noCover) and (not noReduce):
                 b = set(sut.currBranches())
                 s = set(sut.currStatements())
-                pred = sut.coversAll(s,b,checkProp=True,catchUncaught=False)
-                r = sut.reduce(t,pred,verbose=False)
+                pred = sut.coversAll(s, b, checkProp=True, catchUncaught=False)
+                r = sut.reduce(t, pred, verbose=False)
             else:
                 r = t
         elif skipFails:
@@ -88,14 +90,15 @@ def main():
         # always alpha convert to make actions clearer to afl, easier to splice
         r = sut.alphaConvert(r)
         if ok and (not burst) and (not noCover) and (not noReduce):
-            print ("REDUCED LENGTH:",len(r))
+            print ("REDUCED LENGTH:", len(r))
         if not burst:
             sut.prettyPrintTest(r)
         print ("="*80)
         if not swarm:
-            sut.saveTest(r,outputDir + "/tstl." + type + "." + pid + "." + str(i) + ".afl",afl=True)
+            sut.saveTest(r, outputDir + "/tstl." + type + "." +
+                         pid + "." + str(i) + ".afl", afl=True)
         else:
             bytes = sut.testToBytes(r)
-            with open(outputDir + "/tstl." + type + "." + pid + "." + str(i) + ".afl",'wb') as f:
-                f.write(struct.pack("<L",seed))
+            with open(outputDir + "/tstl." + type + "." + pid + "." + str(i) + ".afl", 'wb') as f:
+                f.write(struct.pack("<L", seed))
                 f.write(bytes)

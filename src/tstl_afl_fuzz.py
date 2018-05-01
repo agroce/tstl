@@ -7,6 +7,7 @@ import os
 import subprocess
 from collections import namedtuple
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--timeout', type=int, default=86400,
@@ -51,6 +52,7 @@ def parse_args():
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
 
+
 def make_config(pargs, parser):
     """
     Process the raw arguments, returning a namedtuple object holding the
@@ -63,6 +65,7 @@ def make_config(pargs, parser):
     Config = namedtuple('Config', key_list)
     nt_config = Config(*arg_list)
     return nt_config
+
 
 def main():
 
@@ -81,7 +84,8 @@ def main():
 
         if corpusTimeout:
             start = time.time()
-            corpusCmd = ["tstl_aflcorpus", config.input, str(config.depth), str(config.corpusBudget)]
+            corpusCmd = ["tstl_aflcorpus", config.input,
+                         str(config.depth), str(config.corpusBudget)]
             if config.burst:
                 corpusCmd += ["--burst"]
             if config.swarm:
@@ -126,12 +130,12 @@ def main():
         aflCmd += ["--persist"]
     aflCmdStr = " ".join(aflCmd)
     if not config.instrumentAll:
-        os.putenv("PYTHON_AFL_TSTL","TRUE")
+        os.putenv("PYTHON_AFL_TSTL", "TRUE")
         aflCmdStr = "PYTHON_AFL_TSTL=TRUE " + aflCmdStr
     elif os.getenv("PYTHON_AFL_TSTL") is not None:
         os.unsetenv("PYTHON_AFL_TSTL")
         aflCmdStr = "env -u PYTHON_AFL_TSTL " + aflCmdStr
-    print ("RUNNING AFL WITH COMMAND LINE:",aflCmdStr)
+    print ("RUNNING AFL WITH COMMAND LINE:", aflCmdStr)
     start = time.time()
     P = subprocess.Popen(aflCmd)
     while (time.time() - start) < (config.timeout - config.corpusBudget):

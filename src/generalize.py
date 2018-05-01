@@ -16,6 +16,7 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', metavar='filename', type=str, default=None,
@@ -44,6 +45,7 @@ def parse_args():
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
 
+
 def make_config(pargs, parser):
     """
     Process the raw arguments, returning a namedtuple object holding the
@@ -57,12 +59,13 @@ def make_config(pargs, parser):
     nt_config = Config(*arg_list)
     return nt_config
 
+
 def sandboxReplay(test):
     global timeout
     if "--quietSandbox" not in sys.argv:
-        print("ATTEMPTING SANDBOX REPLAY WITH",len(test),"STEPS")
+        print("ATTEMPTING SANDBOX REPLAY WITH", len(test), "STEPS")
     tmpName = "tmptest." + str(os.getpid()) + ".test"
-    tmptest = open(tmpName,'w')
+    tmptest = open(tmpName, 'w')
     for s in test:
         tmptest.write(s[0] + "\n")
     tmptest.close()
@@ -72,9 +75,9 @@ def sandboxReplay(test):
     if timeout is not None:
         cmd = "ulimit -t " + timeout + "; " + cmd
     start = time.time()
-    subprocess.call([cmd],shell=True)
+    subprocess.call([cmd], shell=True)
     if "--quietSandbox" not in sys.argv:
-        print("ELAPSED:",time.time()-start)
+        print("ELAPSED:", time.time()-start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
             if "--quietSandbox" not in sys.argv:
@@ -82,8 +85,9 @@ def sandboxReplay(test):
             return False
     if "--quietSandbox" not in sys.argv:
         print("TEST FAILS")
-    print("SANDBOX RUN FAILS: TEST LENGTH NOW",len(test))
+    print("SANDBOX RUN FAILS: TEST LENGTH NOW", len(test))
     return True
+
 
 def main():
 
@@ -111,26 +115,29 @@ def main():
         print("RUNNING TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
         assert (sut.fails(t))
         f = sut.failure()
-        print("ERROR:",f)
+        print("ERROR:", f)
         print("TRACEBACK:")
-        traceback.print_tb(f[2],file=sys.stdout)
+        traceback.print_tb(f[2], file=sys.stdout)
 
     if not config.sandbox:
-        pred = (lambda x: sut.failsCheck(x,failure=f))
+        pred = (lambda x: sut.failsCheck(x, failure=f))
         if not config.noCheck:
-            pred = (lambda x: sut.fails(x,failure=f))
+            pred = (lambda x: sut.fails(x, failure=f))
     else:
         pred = sandboxReplay
 
     if config.coverage:
         print("EXECUTING TEST TO OBTAIN COVERAGE...")
-        sut.replay(t,checkPropcheckProp=not config.noCheck,catchUncaught=config.uncaught)
+        sut.replay(t, checkPropcheckProp=not config.noCheck,
+                   catchUncaught=config.uncaught)
         b = set(sut.currBranches())
         s = set(sut.currStatements())
-        print("PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS")
-        pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+        print("PRESERVING", len(b), "BRANCHES AND", len(s), "STATEMENTS")
+        pred = sut.coversAll(
+            s, b, checkProp=not config.noCheck, catchUncaught=config.uncaught)
 
     print("GENERALIZING...")
     start = time.time()
-    sut.generalize(t,pred,verbose=config.verbose,fresh=not config.noFresh,keepLast=config.keepLast)
-    print("GENERALIZED IN",time.time()-start,"SECONDS")
+    sut.generalize(t, pred, verbose=config.verbose,
+                   fresh=not config.noFresh, keepLast=config.keepLast)
+    print("GENERALIZED IN", time.time()-start, "SECONDS")

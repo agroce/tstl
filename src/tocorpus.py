@@ -11,6 +11,7 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def main():
     if "--help" in sys.argv:
         print("Usage:  tstl_toafl <outputdir> <files>")
@@ -24,5 +25,5 @@ def main():
     i = 0
     for f in files:
         t = sut.loadTest(f)
-        sut.saveTest(t,outputDir+"/"+os.path.basename(f)+".afl",afl=True)
+        sut.saveTest(t, outputDir+"/"+os.path.basename(f)+".afl", afl=True)
         i += 1

@@ -17,6 +17,7 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', metavar='filename', type=str, default=None,
@@ -49,7 +50,7 @@ def parse_args():
                         help='Number of times to check for nondeterministic behavior.')
     parser.add_argument('--checkProcessDeterminism', action='store_true',
                         help='Reduce with respect to test being process deterministic.')
-    parser.add_argument('--iterate',action='store_true',
+    parser.add_argument('--iterate', action='store_true',
                         help='Use iterative approach to check process determinism.')
     parser.add_argument('--probability', type=float, default=None,
                         help='Ensure predicate fails with this probability.')
@@ -93,6 +94,7 @@ def parse_args():
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
 
+
 def make_config(pargs, parser):
     """
     Process the raw arguments, returning a namedtuple object holding the
@@ -106,12 +108,13 @@ def make_config(pargs, parser):
     nt_config = Config(*arg_list)
     return nt_config
 
+
 def sandboxReplay(test):
     global timeout
     if "--quietSandbox" not in sys.argv:
-        print("ATTEMPTING SANDBOX REPLAY WITH",len(test),"STEPS")
+        print("ATTEMPTING SANDBOX REPLAY WITH", len(test), "STEPS")
     tmpName = "tmptest." + str(os.getpid()) + ".test"
-    tmptest = open(tmpName,'w')
+    tmptest = open(tmpName, 'w')
     for s in test:
         tmptest.write(s[0] + "\n")
     tmptest.close()
@@ -121,9 +124,9 @@ def sandboxReplay(test):
     if timeout is not None:
         cmd = "ulimit -t " + timeout + "; " + cmd
     start = time.time()
-    subprocess.call([cmd],shell=True)
+    subprocess.call([cmd], shell=True)
     if "--quietSandbox" not in sys.argv:
-        print("ELAPSED:",time.time()-start)
+        print("ELAPSED:", time.time()-start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
             if "--quietSandbox" not in sys.argv:
@@ -131,12 +134,13 @@ def sandboxReplay(test):
             return False
     if "--quietSandbox" not in sys.argv:
         print("TEST FAILS")
-    print("SANDBOX RUN FAILS: TEST LENGTH NOW",len(test))
-    bestreduce = open("lastreduction." + str(os.getpid()) + ".test",'w')
+    print("SANDBOX RUN FAILS: TEST LENGTH NOW", len(test))
+    bestreduce = open("lastreduction." + str(os.getpid()) + ".test", 'w')
     for l in open(tmpName):
         bestreduce.write(l)
     bestreduce.close()
     return True
+
 
 def main():
 
@@ -163,7 +167,7 @@ def main():
         if config.seed is not None:
             R.seed(config.seed)
 
-    r = sut.loadTest(config.infile,afl=config.afl,swarm=config.aflswarm)
+    r = sut.loadTest(config.infile, afl=config.afl, swarm=config.aflswarm)
 
     f = None
 
@@ -171,60 +175,67 @@ def main():
         print("EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
         assert (sut.fails(r))
         f = sut.failure()
-        print("ERROR:",f)
+        print("ERROR:", f)
         print("TRACEBACK:")
-        traceback.print_tb(f[2],file=sys.stdout)
+        traceback.print_tb(f[2], file=sys.stdout)
 
     if not config.sandbox:
-        pred = (lambda x: sut.failsCheck(x,failure=f))
+        pred = (lambda x: sut.failsCheck(x, failure=f))
         if not config.noCheck:
-            pred = (lambda x: sut.fails(x,failure=f))
+            pred = (lambda x: sut.fails(x, failure=f))
     else:
         pred = sandboxReplay
 
     if config.coverage or config.coverMore or (config.decompose and not config.noNormalize):
         print("EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION...")
-        sut.replay(r,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+        sut.replay(r, checkProp=not config.noCheck,
+                   catchUncaught=config.uncaught)
         b = set(sut.currBranches())
         s = set(sut.currStatements())
-        print("PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS")
+        print("PRESERVING", len(b), "BRANCHES AND", len(s), "STATEMENTS")
         if config.coverMore:
-            pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+            pred = sut.coversMore(
+                s, b, checkProp=not config.noCheck, catchUncaught=config.uncaught)
         else:
-            pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+            pred = sut.coversAll(
+                s, b, checkProp=not config.noCheck, catchUncaught=config.uncaught)
 
     if config.checkDeterminism:
-        pred = (lambda t: sut.nondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
+        pred = (lambda t: sut.nondeterministic(t, delay=config.determinismDelay, tries=config.determinismTries,
                                                delay0=config.determinismDelay0))
 
     if config.checkStepDeterminism:
-        pred = (lambda t: sut.stepNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
+        pred = (lambda t: sut.stepNondeterministic(t, delay=config.determinismDelay, tries=config.determinismTries,
                                                    delay0=config.determinismDelay0))
 
     if config.checkProcessDeterminism:
-        pred = (lambda t: sut.processNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
+        pred = (lambda t: sut.processNondeterministic(t, delay=config.determinismDelay, tries=config.determinismTries,
                                                       iterate=config.iterate))
 
     if config.probability is not None:
         Ppred = pred
-        pred = (lambda t: sut.forceP(t,Ppred,P=config.probability,samples=config.samples,replications=config.replications))
+        pred = (lambda t: sut.forceP(t, Ppred, P=config.probability,
+                                     samples=config.samples, replications=config.replications))
 
-    print("STARTING WITH TEST OF LENGTH",len(r))
+    print("STARTING WITH TEST OF LENGTH", len(r))
     if not config.noReduce:
         start = time.time()
         print("REDUCING...")
         if (not config.multiple) and (not config.decompose):
-            r = sut.reduce(r,pred,verbose=config.verbose,tryFast=not config.ddmin,keepLast=config.keepLast,rgen=R)
+            r = sut.reduce(r, pred, verbose=config.verbose,
+                           tryFast=not config.ddmin, keepLast=config.keepLast, rgen=R)
         elif config.multiple:
-            rs = sut.reductions(r,pred,verbose=config.verbose,recursive=config.recursive,limit=config.limit,keepLast=config.keepLast,tryFast=not config.ddmin)
+            rs = sut.reductions(r, pred, verbose=config.verbose, recursive=config.recursive,
+                                limit=config.limit, keepLast=config.keepLast, tryFast=not config.ddmin)
         elif config.decompose:
             print("DECOMPOSING...")
-            rs = sut.coverDecompose(r,verbose=config.verbose,checkProp=not config.noCheck,catchUncaught=config.uncaught)
-        print("REDUCED IN",time.time()-start,"SECONDS")
+            rs = sut.coverDecompose(
+                r, verbose=config.verbose, checkProp=not config.noCheck, catchUncaught=config.uncaught)
+        print("REDUCED IN", time.time()-start, "SECONDS")
         if (not config.multiple) and (not config.decompose):
-            print("NEW LENGTH",len(r))
+            print("NEW LENGTH", len(r))
         else:
-            print("NEW LENGTHS",list(map(len,rs)))
+            print("NEW LENGTHS", list(map(len, rs)))
     if not config.noAlpha:
         print("ALPHA CONVERTING...")
         if (not config.multiple) and (not config.decompose):
@@ -235,7 +246,8 @@ def main():
         start = time.time()
         print("NORMALIZING...")
         if (not config.multiple) and (not config.decompose):
-            r = sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast,tryFast=not config.ddmin)
+            r = sut.normalize(r, pred, verbose=config.verbose,
+                              keepLast=config.keepLast, tryFast=not config.ddmin)
         else:
             newrs = []
             for r in rs:
@@ -245,47 +257,53 @@ def main():
                     print("EXECUTING TEST TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
                     assert (sut.fails(r))
                     f = sut.failure()
-                    print("ERROR:",f)
+                    print("ERROR:", f)
                     print("TRACEBACK:")
-                    traceback.print_tb(f[2],file=sys.stdout)
+                    traceback.print_tb(f[2], file=sys.stdout)
 
                 if not config.sandbox:
-                    pred = (lambda x: sut.failsCheck(x,failure=f))
+                    pred = (lambda x: sut.failsCheck(x, failure=f))
                     if not config.noCheck:
-                        pred = (lambda x: sut.fails(x,failure=f))
+                        pred = (lambda x: sut.fails(x, failure=f))
                 else:
                     pred = sandboxReplay
 
                 if config.coverage or config.coverMore or (config.decompose and not config.noNormalize):
                     print("EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION...")
-                    sut.replay(r,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+                    sut.replay(r, checkProp=not config.noCheck,
+                               catchUncaught=config.uncaught)
                     b = set(sut.currBranches())
                     s = set(sut.currStatements())
-                    print("PRESERVING",len(b),"BRANCHES AND",len(s),"STATEMENTS")
+                    print("PRESERVING", len(b),
+                          "BRANCHES AND", len(s), "STATEMENTS")
                     if config.coverMore:
-                        pred = sut.coversMore(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+                        pred = sut.coversMore(
+                            s, b, checkProp=not config.noCheck, catchUncaught=config.uncaught)
                     else:
-                        pred = sut.coversAll(s,b,checkProp=not config.noCheck,catchUncaught=config.uncaught)
+                        pred = sut.coversAll(
+                            s, b, checkProp=not config.noCheck, catchUncaught=config.uncaught)
 
-                newrs.append(sut.normalize(r,pred,verbose=config.verbose,keepLast=config.keepLast,tryFast=not config.ddmin))
+                newrs.append(sut.normalize(r, pred, verbose=config.verbose,
+                                           keepLast=config.keepLast, tryFast=not config.ddmin))
             rs = newrs
-        print("NORMALIZED IN",time.time()-start,"SECONDS")
+        print("NORMALIZED IN", time.time()-start, "SECONDS")
         if (not config.multiple) and (not config.decompose):
-            print("NEW LENGTH",len(r))
+            print("NEW LENGTH", len(r))
         else:
-            print("NEW LENGTHS",list(map(len,rs)))
+            print("NEW LENGTHS", list(map(len, rs)))
     if (not config.multiple) and (not config.decompose):
-        sut.saveTest(r,config.outfile,afl=config.writeafl)
+        sut.saveTest(r, config.outfile, afl=config.writeafl)
         sut.prettyPrintTest(r)
         print()
-        print("TEST WRITTEN TO",config.outfile)
+        print("TEST WRITTEN TO", config.outfile)
     else:
         i = 0
         for r in rs:
             print("TEST #"+str(i)+":")
-            sut.saveTest(r,config.outfile+"."+str(i)+".test",afl=config.writeafl)
+            sut.saveTest(r, config.outfile+"."+str(i) +
+                         ".test", afl=config.writeafl)
             sut.prettyPrintTest(r)
             print()
-            print("TEST WRITTEN TO",config.outfile+"."+str(i))
+            print("TEST WRITTEN TO", config.outfile+"."+str(i))
             print()
             i += 1

@@ -11,10 +11,12 @@ sys.path.append(current_working_dir)
 if "--help" not in sys.argv:
     import sut as SUT
 
+
 def main():
 
     if "--help" in sys.argv:
-        print("Usage:  tstl_standalone <test file> <output Python file> [<sut file>] [--noCheck] [--noRefs] [--regression] [--verbose]")
+        print(
+            "Usage:  tstl_standalone <test file> <output Python file> [<sut file>] [--noCheck] [--noRefs] [--regression] [--verbose]")
         print("  default for <sut file> is sut.py")
         print("Options:")
         print(" --noCheck:      do not include property checks")
@@ -41,11 +43,11 @@ def main():
         if " # CHECK POOL INIT" not in str:
             return str
 
-        newStr = str.replace("(",'("')
-        newStr = newStr.replace(" is not None)",'" in globals()')
-        return newStr.replace("# CHECK POOL INIT","")
+        newStr = str.replace("(", '("')
+        newStr = newStr.replace(" is not None)", '" in globals()')
+        return newStr.replace("# CHECK POOL INIT", "")
 
-    outf = open(outFile,'w')
+    outf = open(outFile, 'w')
     startPrelim = False
     startCheck = False
     startReload = False
@@ -68,7 +70,8 @@ def main():
         if startPrelim:
             outf.write(l)
         if startCheck:
-            outf.write(globalCheck(t.prettyName(l.replace("# GLOBAL ", "global "))))
+            outf.write(globalCheck(t.prettyName(
+                l.replace("# GLOBAL ", "global "))))
         if startReload:
             reloadCode.append(l.lstrip())
         if startInit:
@@ -127,7 +130,7 @@ def main():
             outf.write("check()\n")
         if makeRegression:
             v = t.shallowState()
-            for (p,vals) in v:
+            for (p, vals) in v:
                 if t.prettyName(p) not in name:
                     continue
                 if p in t.opaque():
@@ -140,7 +143,8 @@ def main():
                     if vals[i] is not None:
                         pname = t.prettyName(p + "[" + str(i) + "]")
                         #outf.write("print (repr("+pname+"))\n")
-                        outf.write("assert (repr(" + absFun + "("+pname+')) == (' + repr(repr(vals[i])) + '))\n')
+                        outf.write(
+                            "assert (repr(" + absFun + "("+pname+')) == (' + repr(repr(vals[i])) + '))\n')
 
     outf.write('\n\nprint ("TEST COMPLETED SUCCESSFULLY")\n')
     outf.close()
