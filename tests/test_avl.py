@@ -13,22 +13,22 @@ class TestAVL(TestCase):
         
         os.chdir("examples/AVL")
         
-        r = subprocess.call(["tstl","avlbuggy.tstl"])
+        r = subprocess.call(["tstl","avlbuggy.tstl"],stdout=dnull)
         self.assertEqual(r,0)
 
-        r = subprocess.call(["tstl_rt","--noCover","--output",".avltest"])
+        r = subprocess.call(["tstl_rt","--noCover","--output",".avltest"],stdout=dnull)
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_rt","--swarm","--output",".avltest"])
+        r = subprocess.call(["tstl_rt","--swarm","--output",".avltest"],stdout=dnull)
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_rt","--exploit","0.8","--Pmutate","0.8","--output",".avltest"])
+        r = subprocess.call(["tstl_rt","--exploit","0.8","--Pmutate","0.8","--output",".avltest"],stdout=dnull)
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--output",".avltest"])
+        r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--output",".avltest"],stdout=dnull)
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize","--output",".avltest"])
+        r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize","--output",".avltest"],stdout=dnull)
         self.assertEqual(r,255)                                
 
         for f in glob.glob(".avltest.*.test*"):
