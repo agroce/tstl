@@ -44,7 +44,7 @@ def main():
             return str
 
         newStr = str.replace("(", '("')
-        newStr = newStr.replace(" is not None)", '" in globals()')
+        newStr = newStr.replace(" is not None)", '" in globals())')
         return newStr.replace("# CHECK POOL INIT", "")
 
     outf = open(outFile, 'w')
