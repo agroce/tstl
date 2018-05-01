@@ -8,7 +8,8 @@ import os
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-import sut as SUT
+if not "--help" in sys.argv:
+    import sut as SUT
 
 def main():
     if "--help" in sys.argv:
@@ -25,5 +26,3 @@ def main():
         t = sut.loadTest(f)
         sut.saveTest(t,outputDir+"/"+os.path.basename(f)+".afl",afl=True)
         i += 1
-
-

@@ -112,7 +112,7 @@ def main():
             lastWasHtml = False
 
     sut.restart()
-    if logLevel != None:
+    if logLevel is not None:
         sut.setLog(logLevel)
     i = 0
     if verbose:
@@ -158,7 +158,7 @@ def main():
                     if "--coverage" in sys.argv:
                         print(sut.report("coverage.out"),"PERCENT COVERED")
 
-                    if htmlOut != None:
+                    if htmlOut is not None:
                         sut.htmlReport(htmlOut)
                     sys.exit(255)
             if not nocheck:
@@ -173,11 +173,11 @@ def main():
                     if "--coverage" in sys.argv:
                         print(sut.report("coverage.out"),"PERCENT COVERED")
 
-                    if htmlOut != None:
+                    if htmlOut is not None:
                         sut.htmlReport(htmlOut)
 
                     sys.exit(255)
-            if delay != None:
+            if delay is not None:
                 time.sleep(delay)
         i += 1
 
@@ -189,7 +189,7 @@ def main():
     if "--coverage" in sys.argv:
         print(sut.report("coverage.out"),"PERCENT COVERED")
 
-    if htmlOut != None:
+    if htmlOut is not None:
         sut.htmlReport(htmlOut)
 
     sys.exit(0)

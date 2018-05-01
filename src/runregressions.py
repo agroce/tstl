@@ -72,9 +72,9 @@ def main():
     if "--keepGoing" in sys.argv:
         keepGoing = True
     if "--afl" in sys.argv:
-       afl = True
+        afl = True
     if "--aflswarm" in sys.argv:
-       aflswarm = True
+        aflswarm = True
 
     if verbose:
         sut.verbose(True)
@@ -133,7 +133,7 @@ def main():
         sut.internalReport()
         print(sut.report("coverage.out"),"PERCENT COVERED")
 
-    if htmlOut != None:
+    if htmlOut is not None:
         sut.htmlReport(htmlOut)
 
     if (not nocover) and (len(noNewCover) > 0):

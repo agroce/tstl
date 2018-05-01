@@ -365,7 +365,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
             print("Normalized test has",len(test),"steps")
             print("NORMALIZED IN",time.time()-startSimplify,"SECONDS")
             sut.saveTest(test,config.output.replace(".test",".normalized.test"))
-        if (config.genDepth != None) and (test not in [x[0] for x in failures]) and (test not in cloudFailures):
+        if (config.genDepth is not None) and (test not in [x[0] for x in failures]) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print("GENERATING GENERALIZATION CLOUD")
             (cloudFound,matchTest,thisCloud) = sut.generalize(test, failProp, silent=True, returnCollect=True, depth=config.genDepth, targets = allClouds)
@@ -392,15 +392,15 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         reduceTime += time.time()-startReduce
 
     i = 0
-    if ((config.output != None) and (test not in [x[0] for x in failures])) or (config.quickTests):
+    if ((config.output is not None) and (test not in [x[0] for x in failures])) or (config.quickTests):
         outname = config.output
-        if (outname != None) and config.multiple and not newCov:
+        if (outname is not None) and config.multiple and not newCov:
             outname += ("." + str(failFileCount))
             failFileCount += 1
         if config.quickTests and newCov:
             allQuickTests.append(list(test))
             outname = "quick" + str(quickCount) + ".test"
-            if config.sequencesFromTests != None:
+            if config.sequencesFromTests is not None:
                 nseq = 0
                 for i in range(0,len(test)):
                     seq = test[i:i+config.sequenceSize]
@@ -438,7 +438,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         print("SAVING TEST AS",outname)
         sut.saveTest(test,outname)
 
-    if config.failedLogging != None:
+    if config.failedLogging is not None:
         sut.setLog(config.failedLogging)
     print("FINAL VERSION OF TEST, WITH LOGGED REPLAY:")
     if not config.silentFail:
@@ -467,7 +467,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
                     localizeBFail[b] = 0
                 localizeBFail[b] += 1
         f = sut.failure()
-        if f != None:
+        if f is not None:
             print("ERROR:",f)
             print("TRACEBACK:")
             traceback.print_tb(f[2],file=sys.stdout)
@@ -480,7 +480,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
             repeatCount += 1
         else:
             failures.append((test,sut.failure()))
-            if config.genDepth != None:
+            if config.genDepth is not None:
                 failCloud[sut.captureReplay(test)] = thisCloud
                 for c in thisCloud:
                     allClouds[c] = True
@@ -503,7 +503,7 @@ def buildActivePool():
                     print()
                 sut.replay(r,checkProp=not(config.noCheck),catchUncaught=True)
                 fullPool.append((r,set(sut.currBranches()), set(sut.currStatements())))
-                if config.savePool != None:
+                if config.savePool is not None:
                     pname = config.savePool+".pool."+str(poolCount)+".test"
                     print ("SAVING POOL TEST AS",pname)
                     sut.saveTest(r,pname)
@@ -630,7 +630,7 @@ def tryExploit():
                 print ("COVERAGE INCREASE DURING MUTATION")
                 if not config.reducePool:
                     fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
-                    if config.savePool != None:
+                    if config.savePool is not None:
                         pname = config.savePool+".pool."+str(poolCount)+".test"
                         print ("SAVING POOL TEST AS",pname)
                         sut.saveTest(list(sut.test()),pname)
@@ -667,7 +667,7 @@ def collectExploitable():
             print("COLLECTING DUE TO NEW COVERAGE:",len(sut.newBranches()),len(sut.newStatements()))
         if not config.reducePool:
             fullPool.append((list(sut.test()), set(sut.currBranches()), set(sut.currStatements())))
-            if config.savePool != None:
+            if config.savePool is not None:
                 pname = config.savePool+".pool."+str(poolCount)+".test"
                 print ("SAVING POOL TEST AS",pname)
                 sut.saveTest(list(sut.test()),pname)
@@ -682,18 +682,18 @@ def collectExploitable():
 def printStatus(elapsed,step=None):
     global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage, testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
     print("TEST #"+str(ntests), end=' ')
-    if step != None:
+    if step is not None:
         print("STEP #"+str(step), end=' ')
     print("("+str(datetime.timedelta(seconds=elapsed))+")",(datetime.datetime.now()).ctime(), end=' ')
     if (not config.noCover) and (not config.postCover):
         print("[",len(sut.allStatements()),"stmts",len(sut.allBranches()),"branches ]", end=' ')
         if testsWithNoNewCoverage > 0:
             print("(no cov+ for",testsWithNoNewCoverage,"tests)", end=' ')
-    if (config.exploit != None):
+    if (config.exploit is not None):
         print("[ POOLS: full",len(fullPool),"active",len(activePool),"]", end=' ')
     print(nops, "TOTAL ACTIONS (" + str(round(nops/elapsed,2)) + "/s)", end=' ')
     print("(test " + str(round(thisOps/thisElapsed,2)) + "/s)", end=' ')
-    if (config.exploit != None) and (totalExploits > 0):
+    if (config.exploit is not None) and (totalExploits > 0):
         print("["+str(exploitsWithNewCoverage),"cov+ exploits /",str(totalExploits)+"]",end=' ')
     if (not config.noCover) and (not config.postCover):
         print(testsWithNewCoverage,"cov+ tests")
@@ -740,11 +740,11 @@ def main():
     failures = []
     cloudFailures = []
 
-    if config.genDepth != None:
+    if config.genDepth is not None:
         failCloud = {}
         allClouds = {}
 
-    if config.exploit != None:
+    if config.exploit is not None:
         fullPool = []
         poolCount = 0
         reducePool = []
@@ -753,7 +753,7 @@ def main():
     hintPool = []
     hintValueCounts = {}
 
-    if config.quickAnalysis or (config.exploit != None):
+    if config.quickAnalysis or (config.exploit is not None):
         branchCoverageCount = {}
         statementCoverageCount = {}
 
@@ -762,7 +762,7 @@ def main():
         uniquef = open("unique.corpus",'w')
         allUniquePaths = []
 
-    if config.readPool != None:
+    if config.readPool is not None:
         startRead = time.time()
         for f in glob.glob(config.readPool+".pool.*.test"):
             t = sut.loadTest(f)
@@ -825,7 +825,7 @@ def main():
             allQuickTests.append(t)
             sut.replay(t,catchUncaught=True,checkProp=(not config.noCheck))
             # quick tests are obviously good sources for exploitation
-            if (config.exploit != None) and (not config.noCoverageExploit):
+            if (config.exploit is not None) and (not config.noCoverageExploit):
                 for b in sut.currBranches():
                     if b not in branchCoverageCount:
                         branchCoverageCount[b] = 1
@@ -849,7 +849,7 @@ def main():
         bestCov = (0,0)
         bestTest = []
 
-    if config.logging != None:
+    if config.logging is not None:
         sut.setLog(config.logging)
 
     if config.profile:
@@ -859,7 +859,7 @@ def main():
             profileTime[a] = 0.0
             profileCount[a] = 0
 
-    if config.markov != None:
+    if config.markov is not None:
         mprobs = {}
         prefix = []
         probs = []
@@ -898,7 +898,7 @@ def main():
 
     checkResult = True
 
-    if config.generateLOC != None:
+    if config.generateLOC is not None:
         if not config.noCover:
             print("ERROR: cannot use --generateLOC without --noCover, instrumentations interfere with each other")
             sys.exit(255)
@@ -919,12 +919,12 @@ def main():
         featureStatsS = {}
         featureStatsA = {}
 
-    if config.swarmProbs != None:
+    if config.swarmProbs is not None:
         swarmClassProbs = sut.readProbFile(config.swarmProbs)
     else:
         swarmClassProbs = None
 
-    if config.biasLOC != None:
+    if config.biasLOC is not None:
         classLOCVals = {}
         for c in sut.actionClasses():
             classLOCVals[c] = 0.0
@@ -946,7 +946,7 @@ def main():
             else:
                 classP.append((classLOCVals[c]/totalLOCs,c))
 
-    if config.probs != None:
+    if config.probs is not None:
         classP = sut.readProbFile(config.probs,returnList=True)
 
     if config.equalProbs:
@@ -1005,10 +1005,10 @@ def main():
             if config.progress:
                 print("CONFIG:",(sut.swarmConfig()))
 
-        if config.highLowSwarm != None:
+        if config.highLowSwarm is not None:
             classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)
 
-        if config.swarmSwitch != None:
+        if config.swarmSwitch is not None:
             lastSwitch = 0
             switches = []
             for i in range(0,config.swarmSwitch):
@@ -1028,7 +1028,7 @@ def main():
 
         testFailed = False
 
-        if (config.exploit != None) and (((time.time() - start) >= config.startExploit) and (testsWithNoNewCoverage >= config.startExploitStall)):
+        if (config.exploit is not None) and (((time.time() - start) >= config.startExploit) and (testsWithNoNewCoverage >= config.startExploitStall)):
             if neverExploited:
                 print("** STARTING EXPLOITATION OF TESTS AT TIME",time.time()-start,"AFTER",testsWithNoNewCoverage,"TESTS WITH NO NEW COVERAGE **")
                 neverExploited = False
@@ -1060,16 +1060,16 @@ def main():
             if config.verbose:
                 print("GENERATING STEP",s, end=' ')
                 sys.stdout.flush()
-            if (config.swarmSwitch != None) and (s in switches):
-                if config.highLowSwarm == None:
+            if (config.swarmSwitch is not None) and (s in switches):
+                if config.highLowSwarm is None:
                     sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP, noDependencies=config.noSwarmDependencies)
                     if config.progress:
                         print("NEW CONFIG:",(sut.swarmConfig()))
                 else:
                     classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)
 
-            if (config.swarmLength != None) and (((s + 1) % config.swarmLength) == 0):
-                if config.highLowSwarm == None:
+            if (config.swarmLength is not None) and (((s + 1) % config.swarmLength) == 0):
+                if config.highLowSwarm is None:
                     sut.standardSwarm(R,file=config.swarmProbs,P=config.swarmP, noDependencies=config.noSwarmDependencies)
                     if config.progress:
                         print("NEW CONFIG:",(sut.swarmConfig()))
@@ -1077,11 +1077,11 @@ def main():
                     classP = sut.highLowSwarm(R,file=config.swarmProbs,highProb=config.highLowSwarm)
 
             startGuard = time.time()
-            tryStutter = (a != None) and (a[1]()) and ((config.stutter != None) or config.greedyStutter)
+            tryStutter = (a is not None) and (a[1]()) and ((config.stutter is not None) or config.greedyStutter)
 
-            if (currentSequence != None) and (R.random() < config.sequenceP):
+            if (currentSequence is not None) and (R.random() < config.sequenceP):
                 a = None
-                while a == None:
+                while a is None:
                     if currentSequencePos < len(currentSequence):
                         a = currentSequence[currentSequencePos]
                         currentSequencePos += 1
@@ -1093,14 +1093,14 @@ def main():
                         # Not enabled, move to next step in the sequence
                         a = None
             elif tryStutter:
-                if (config.stutter == None) or (R.random() > config.stutter):
+                if (config.stutter is None) or (R.random() > config.stutter):
                     tryStutter = False
                 if (config.greedyStutter) and sawNew:
                         print("TRYING TO STUTTER DUE TO COVERAGE GAIN")
                         tryStutter = True
             else:
-                if (config.markov == None) or (R.random() > config.markovP):
-                    if (config.highLowSwarm == None) and (config.probs == None) and (not config.LOCProbs) and (not config.equalProbs):
+                if (config.markov is None) or (R.random() > config.markovP):
+                    if (config.highLowSwarm is None) and (config.probs is None) and (not config.LOCProbs) and (not config.equalProbs):
                         a = sut.randomEnabled(R)
                     else:
                         a = sut.randomEnabledClassProbs(R,classP)
@@ -1110,10 +1110,10 @@ def main():
                         a = sut.randomEnabled(R)
                     else:
                         a = sut.randomEnabledClassProbs(R,mprobs[prefix])
-                        if a == None:
+                        if a is None:
                             a = sut.randomEnabled(R)
 
-            if a == None:
+            if a is None:
                 #sut.prettyPrintTest(sut.test())
                 print("WARNING: DEADLOCK (NO ENABLED ACTIONS)")
 
@@ -1129,7 +1129,7 @@ def main():
                     printStatus(elapsed,step=s)
                     lastInterval = thisInterval
                     sys.stdout.flush()
-            if a == None:
+            if a is None:
                 print("TERMINATING TEST DUE TO NO ENABLED ACTIONS, AT LENGTH",len(sut.test()))
                 break
             if tryStutter:
@@ -1150,7 +1150,7 @@ def main():
                 quickClassCounts[sut.actionClass(a)] += 1
             if config.showActions:
                 print("STEP #"+str(s),sut.prettyName(a[0]))
-            if config.generateLOC != None:
+            if config.generateLOC is not None:
                 lastLOCs = 0
                 lastFuncs = {}
                 sys.settrace(traceLOC)
@@ -1159,7 +1159,7 @@ def main():
             if config.checkDeterminism:
                 trajectory.append(sut.trajectoryItem())
 
-            if config.generateLOC != None:
+            if config.generateLOC is not None:
                 sys.settrace(None)
                 aclass = sut.actionClass(a)
                 if aclass not in actLOCs:
@@ -1173,11 +1173,11 @@ def main():
                 profileTime[sut.actionClass(a)] += thisOpTime
                 profileCount[sut.actionClass(a)] += 1
             opTime += thisOpTime
-            if sut.warning() != None:
+            if sut.warning() is not None:
                 print("SUT WARNING:",sut.warning())
             if tryStutter:
                 print("DONE STUTTERING")
-            if (stepOk or config.uncaught) and config.noCheck and (config.exploit != None):
+            if (stepOk or config.uncaught) and config.noCheck and (config.exploit is not None):
                 collectExploitable()
             if (not config.uncaught) and (not stepOk):
                 testFailed = True
@@ -1193,7 +1193,7 @@ def main():
             if not config.noCheck:
                 checkResult = sut.check()
                 checkTime += time.time()-startCheck
-                if checkResult and (stepOk or config.uncaught) and (config.exploit != None):
+                if checkResult and (stepOk or config.uncaught) and (config.exploit is not None):
                     collectExploitable()
 
             if not checkResult:
@@ -1274,11 +1274,11 @@ def main():
                         uniquef.flush()
                 sut.backtrack(olds)
 
-            if (config.stopWhenBranches != None):
+            if (config.stopWhenBranches is not None):
                 if len(sut.allBranches()) >= config.stopWhenBranches:
                     print("STOPPING TEST DUE TO REACHING BRANCH COVERAGE TARGET, TERMINATED AT LENGTH",len(sut.test()),"TIME",time.time()-start)
                     break
-            if config.stopWhenStatements != None:
+            if config.stopWhenStatements is not None:
                 if len(sut.allStatements()) >= config.stopWhenStatements:
                     print("STOPPING TEST DUE TO REACHING STATEMENT COVERAGE TARGET, TERMINATED AT LENGTH",len(sut.test()),"TIME",time.time()-start)
                     break
@@ -1287,7 +1287,7 @@ def main():
                 print("STOPPING TEST DUE TO TIMEOUT, TERMINATED AT LENGTH",len(sut.test()))
                 break
 
-            if config.stopTestWhenThroughputBelow != None:
+            if config.stopTestWhenThroughputBelow is not None:
                 if thisOps > 10: # initial counts are likely to be inaccurate
                     throughput = (thisOps/thisElapsed)
                     if throughput < config.stopTestWhenThroughputBelow:
@@ -1371,7 +1371,7 @@ def main():
                     else:
                         featureStatsS[s][1][act] += 1
 
-        if (config.exploit != None) and (not config.quickAnalysis):
+        if (config.exploit is not None) and (not config.quickAnalysis):
             for b in sut.currBranches():
                 if b not in branchCoverageCount:
                     branchCoverageCount[b] = 1
@@ -1499,7 +1499,7 @@ def main():
         if config.checkProcessDeterminism and not testFailed:
             print ("CHECKING PROCESS DETERMINISM...")
             nondeterministic = sut.findProcessNondeterminism(replayTest,verbose=True,tries=config.determinismTries,
-                                                                 delay=config.determinismDelay)
+                                                             delay=config.determinismDelay)
             if nondeterministic != -1:
                 if not config.noAlphaConvert:
                     alphaReplay = sut.alphaConvert(replayTest[:nondeterministic])
@@ -1547,15 +1547,15 @@ def main():
             if nondeterministic:
                 break
 
-        if (config.stopWhenNoCoverage != None):
+        if (config.stopWhenNoCoverage is not None):
             if testsWithNoNewCoverage >= config.stopWhenNoCoverage:
                 print("STOPPING TESTING DUE TO LACK OF NEW COVERAGE FOR",testsWithNoNewCoverage,"TESTS")
                 break
-        if (config.stopWhenBranches != None):
+        if (config.stopWhenBranches is not None):
             if len(sut.allBranches()) >= config.stopWhenBranches:
                 print("STOPPING TESTING DUE TO REACHING BRANCH COVERAGE TARGET")
                 break
-        if config.stopWhenStatements != None:
+        if config.stopWhenStatements is not None:
             if len(sut.allStatements()) >= config.stopWhenStatements:
                 print("STOPPING TESTING DUE TO REACHING STATEMENT COVERAGE TARGET")
                 break
@@ -1588,7 +1588,7 @@ def main():
         uniquef.close()
 
     if config.computeFeatureStats:
-        fstatsf = open ("feature.stats."+str(os.getpid())+"."+str(R.randrange(1000,10000)),'w')
+        fstatsf = open("feature.stats."+str(os.getpid())+"."+str(R.randrange(1000,10000)),'w')
         fstatsf.write("TESTS:"+str(ntests)+"\n")
         for act in featureStatsA:
             fstatsf.write(act + " %%ACTCOUNT%% " + str(featureStatsA[act]) + "\n")
@@ -1688,7 +1688,7 @@ def main():
             print("FAILURE",n)
             sut.prettyPrintTest(test)
             n += 1
-            if err != None:
+            if err is not None:
                 print("ERROR:", err)
                 print("TRACEBACK:")
                 traceback.print_tb(err[2],file=sys.stdout)
@@ -1709,7 +1709,7 @@ def main():
                             elif test1[k] != test2[k]:
                                 print("STEP",k,test1[k][0],"-->",test2[k][0])
 
-    if config.generateLOC != None:
+    if config.generateLOC is not None:
         with open(config.generateLOC,'w') as f:
             for c in actLOCs:
                 f.write(c + " %%%% " + str(float(sum(actLOCs[c])) / len(actLOCs[c])) + "\n")
@@ -1780,7 +1780,6 @@ def main():
     else:
         sys.exit(255)
 
+
 if __name__ == '__main__':
     main()
-
-

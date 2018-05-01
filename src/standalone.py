@@ -45,18 +45,6 @@ def main():
         newStr = newStr.replace(" is not None)",'" in globals()')
         return newStr.replace("# CHECK POOL INIT","")
 
-        print("STR=",str)
-        condBegin = str.find("(")
-        theCheck = str[condBegin+1:str.find(" != None):")]
-        print(theCheck)
-        strNew = str[:condBegin+1] + '"' + theCheck + '"' + str[str.find(" != None):"):]
-        print(strNew)
-        strNew = strNew.replace(" != None"," in globals()")
-        print(strNew)
-        strNew = strNew.replace("# CHECK POOL INIT","")
-        print(strNew)
-        return strNew
-
     outf = open(outFile,'w')
     startPrelim = False
     startCheck = False
@@ -113,7 +101,7 @@ def main():
             for i in initCode:
                 outf.write(i)
         name = l[:-1]
-        if t.getPreCode(name) != None:
+        if t.getPreCode(name) is not None:
             for p in t.getPreCode(name):
                 outf.write(t.prettyName(p) + "\n")
         if makeRegression:
@@ -127,10 +115,10 @@ def main():
             outf.write("  " + t.prettyName(name) + "\n")
             outf.write("except (" + t.getOkExceptions(name) + "):\n")
             outf.write("  pass\n")
-        if t.getPropCode(name) != None:
+        if t.getPropCode(name) is not None:
             outf.write("assert " + t.prettyName(t.getPropCode(name)) + "\n")
         if checkRefs:
-            if t.getRefCode(name) != None:
+            if t.getRefCode(name) is not None:
                 for r in t.getRefCode(name):
                     outf.write("try:\n")
                     outf.write("  " + t.prettyName(r) + "\n")
@@ -145,12 +133,12 @@ def main():
                     continue
                 if p in t.opaque():
                     continue
-                if t.abstraction(p) != None:
+                if t.abstraction(p) is not None:
                     absFun = t.abstraction(p)
                 else:
                     absFun = ""
                 for i in vals:
-                    if vals[i] != None:
+                    if vals[i] is not None:
                         pname = t.prettyName(p + "[" + str(i) + "]")
                         #outf.write("print (repr("+pname+"))\n")
                         outf.write("assert (repr(" + absFun + "("+pname+')) == (' + repr(repr(vals[i])) + '))\n')

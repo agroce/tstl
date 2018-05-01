@@ -11,7 +11,8 @@ import os
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-import sut as SUT
+if not "--help" in sys.argv:
+    import sut as SUT
 
 def main():
     if "--help" in sys.argv:
@@ -93,9 +94,9 @@ def main():
             sut.prettyPrintTest(r)
         print ("="*80)
         if not swarm:
-            sut.saveTest(r,outputDir + "/tstl." + type +"." + pid + "." + str(i) + ".afl",afl=True)
+            sut.saveTest(r,outputDir + "/tstl." + type + "." + pid + "." + str(i) + ".afl",afl=True)
         else:
             bytes = sut.testToBytes(r)
-            with open(outputDir + "/tstl." + type +"." + pid + "." + str(i) + ".afl",'wb') as f:
+            with open(outputDir + "/tstl." + type + "." + pid + "." + str(i) + ".afl",'wb') as f:
                 f.write(struct.pack("<L",seed))
                 f.write(bytes)

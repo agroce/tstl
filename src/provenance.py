@@ -12,6 +12,7 @@ def abstraction(s):
     else:
         return (sut.actionClass(s),s[3])
 
+
 seedFiles = sys.argv[1]
 test = sys.argv[2]
 newTestName = sys.argv[3]
@@ -75,8 +76,3 @@ while pos < len(possible):
     pos = endPos + 1
 
 sut.saveTest(newTest,newTestName)
-
-
-
-
-

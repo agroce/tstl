@@ -18,7 +18,7 @@ if not "--help" in sys.argv:
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('testglob', metavar='filename', type=str, default=None,
-                         help='Glob for tests to run.')
+                        help='Glob for tests to run.')
     parser.add_argument('--noCheck', action='store_true',
                         help='Do not check properties.')
     parser.add_argument('--showTests', action='store_true',

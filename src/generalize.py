@@ -19,7 +19,7 @@ if not "--help" in sys.argv:
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', metavar='filename', type=str, default=None,
-                            help='Path to the test to be reduced.')
+                        help='Path to the test to be reduced.')
     parser.add_argument('--noFresh', action='store_true',
                         help='Do not perform fresh value generalization.')
     parser.add_argument('--noCheck', action='store_true',
@@ -69,7 +69,7 @@ def sandboxReplay(test):
     cmd = "tstl_replay " + tmpName
     if "--noCheck" in sys.argv:
         cmd += " --noCheck"
-    if timeout != None:
+    if timeout is not None:
         cmd = "ulimit -t " + timeout + "; " + cmd
     start = time.time()
     subprocess.call([cmd],shell=True)
@@ -134,4 +134,3 @@ def main():
     start = time.time()
     sut.generalize(t,pred,verbose=config.verbose,fresh=not config.noFresh,keepLast=config.keepLast)
     print("GENERALIZED IN",time.time()-start,"SECONDS")
-

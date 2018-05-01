@@ -28,7 +28,7 @@ for f in glob.glob(sys.argv[1]):
             else:
                 lowLevel[src] = [f]
 
-sources =  {}
+sources = {}
 for f in set(highLevel.keys()):
     sources[f] = sut.loadTest(f)
 
@@ -66,4 +66,3 @@ hsrcs = sorted(list(highLevel.keys()), key=lambda x:len(highLevel[x]))
 
 for s in hsrcs:
     print(s,len(highLevel[s]))
-

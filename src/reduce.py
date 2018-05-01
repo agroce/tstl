@@ -20,9 +20,9 @@ if not "--help" in sys.argv:
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', metavar='filename', type=str, default=None,
-                            help='Path to the test to be reduced.')
+                        help='Path to the test to be reduced.')
     parser.add_argument('outfile', metavar='filename', type=str, default=None,
-                            help='Path to the test to be reduced.')
+                        help='Path to the test to be reduced.')
     parser.add_argument('--noCheck', action='store_true',
                         help='Do not check properties.')
     parser.add_argument('--noReduce', action='store_true',
@@ -118,7 +118,7 @@ def sandboxReplay(test):
     cmd = "tstl_replay " + tmpName
     if "--noCheck" in sys.argv:
         cmd += " --noCheck"
-    if timeout != None:
+    if timeout is not None:
         cmd = "ulimit -t " + timeout + "; " + cmd
     start = time.time()
     subprocess.call([cmd],shell=True)
@@ -160,7 +160,7 @@ def main():
     if config.random:
         R = random.Random()
 
-        if config.seed != None:
+        if config.seed is not None:
             R.seed(config.seed)
 
     r = sut.loadTest(config.infile,afl=config.afl,swarm=config.aflswarm)
@@ -195,7 +195,7 @@ def main():
 
     if config.checkDeterminism:
         pred = (lambda t: sut.nondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
-                                                   delay0=config.determinismDelay0))
+                                               delay0=config.determinismDelay0))
 
     if config.checkStepDeterminism:
         pred = (lambda t: sut.stepNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
@@ -205,7 +205,7 @@ def main():
         pred = (lambda t: sut.processNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,iterate=config.iterate))
 
 
-    if config.probability != None:
+    if config.probability is not None:
         Ppred = pred
         pred = (lambda t: sut.forceP(t,Ppred,P=config.probability,samples=config.samples,replications=config.replications))
 
@@ -289,6 +289,3 @@ def main():
             print("TEST WRITTEN TO",config.outfile+"."+str(i))
             print()
             i += 1
-
-
-

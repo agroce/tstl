@@ -842,7 +842,7 @@ def main():
         if assumeSet == []:
             guardConds = []
         else:
-            guardConds = ["(self.__assumptionViolated == None)"]
+            guardConds = ["(self.__assumptionViolated is None)"]
 
         changes = []
 
@@ -1372,7 +1372,7 @@ def main():
 
     genCode.append("def restart(self):\n")
     if assumeSet != []:
-            genCode.append(baseIndent + "if self.__assumptionViolated != None:\n")
+            genCode.append(baseIndent + "if self.__assumptionViolated is not None:\n")
             genCode.append(baseIndent + baseIndent + "self.enableAllAssume()\n")
             genCode.append(baseIndent + "self.__assumptionViolated = None\n")
     if finallySet != []:
@@ -1438,7 +1438,7 @@ def main():
 
     genCode.append("def log(self, name):\n")
     if logSet != []:
-        genCode.append(baseIndent + "if self.__log == None:\n")
+        genCode.append(baseIndent + "if self.__log is None:\n")
         genCode.append(baseIndent + baseIndent + "return\n")
         for l in logSet:
             ls = l.split()
@@ -1461,7 +1461,7 @@ def main():
 
     genCode.append("def logPost(self, name):\n")
     if logSet != []:
-        genCode.append(baseIndent + "if self.__log == None:\n")
+        genCode.append(baseIndent + "if self.__log is None:\n")
         genCode.append(baseIndent + baseIndent + "return\n")
         for lv in logSet:
             ls = lv.split()
@@ -1567,7 +1567,7 @@ def main():
         for p in poolType:
             pname = poolPrefix + p.replace("%","")
             genCode.append(baseIndent + baseIndent + baseIndent + "for __pind in " + pname + ":" + "\n")
-            genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "assert (" + pname + "[__pind] == None) or (type("+pname+"[__pind]) == " + poolType[p] + ")\n")
+            genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "assert (" + pname + "[__pind] is None) or (type("+pname+"[__pind]) == " + poolType[p] + ")\n")
 
         for (p, u) in propSet:
             okExcepts = ""

@@ -42,13 +42,11 @@ def main():
         while len(path) < depth:
             possible = sut.actions()
             possible = sorted(possible,
-                                  key = lambda act:(
-                                      allTakenClass[sut.actionClass(act)],
-                                      allTaken[act[0]],
-                                      takenClass[(sut.actionClass(act),i)],
-                                      taken[(act[0],i)]
-                                      )
-                                  )
+                              key = lambda act:(
+                                  allTakenClass[sut.actionClass(act)],
+                                  allTaken[act[0]],
+                                  takenClass[(sut.actionClass(act),i)],
+                                  taken[(act[0],i)]))
 
             a = None
             for act in possible:
@@ -56,7 +54,7 @@ def main():
                     a = act
                     break
             a = sut.randomEnabled(R)
-            if a == None:
+            if a is None:
                 print("DEADLOCK!")
                 break
             path.append(a)
@@ -109,5 +107,6 @@ def main():
                     print(a,allTaken[a])
 
     print(repeats,"TOTAL REPEATED TESTS",len(takenFull),"DISTINCT TESTS")
+
 
 main()

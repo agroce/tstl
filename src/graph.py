@@ -69,26 +69,26 @@ def merge(s1,s2):
             v2 = intOrNone(b2[i])
             r1 = rangeOrNone(b1[i])
             r2 = rangeOrNone(b2[i])
-            if (v1 != None):
-                if (v2 != None): # 2 values
+            if (v1 is not None):
+                if (v2 is not None): # 2 values
                     if (min(v1,v2) + 1 == max(v1,v2)):
                         merged += "<[" + str(min(v1,v2)) + ".." + str(max(v1,v2)) + "]>"
                     else:
                         return None
-                elif (r2 != None): # value and range
+                elif (r2 is not None): # value and range
                     (low2,high2) = r2
                     if (v1 == (low2 - 1)) or (v1 == (high2 + 1)):
                         merged += "<[" + str(min(v1,low2)) + ".." + str(max(v1,high2)) + "]>"
                     else:
                         return None
-            elif (r1 != None):
-                if (v2 != None): # range and value
+            elif (r1 is not None):
+                if (v2 is not None): # range and value
                     (low1,high1) = r1
                     if (v2 == (low1 - 1)) or (v2 == (high1 + 1)):
                         merged += "<[" + str(min(v2,low1)) + ".." + str(max(v2,high1)) + "]>"
                     else:
                         return None
-                elif (r2 != None): # range and range
+                elif (r2 is not None): # range and range
                     (low1,high1) = r1
                     (low2,high2) = r2
                     if ((high1+1) == low2) or ((high2+1) == low1):
@@ -113,7 +113,7 @@ def collapse(strings):
                 if (s1 == s2):
                     continue
                 m = merge(s1,s2)
-                if m != None:
+                if m is not None:
                     cstrings.remove(s1)
                     cstrings.remove(s2)
                     cstrings.append(m)
