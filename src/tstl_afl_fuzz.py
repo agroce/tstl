@@ -49,7 +49,7 @@ def parse_args():
         default=100,
         help='Test depth for corpus construction (default 100)')
     parser.add_argument('--quiet', action='store_true',
-                        help='Redirect afl-fuzz to /dev/null.')    
+                        help='Redirect afl-fuzz to /dev/null.')
     parser.add_argument('--swarm', action='store_true',
                         help='Use swarm testing.')
     parser.add_argument('--noCover', action='store_true',
@@ -168,9 +168,9 @@ def main():
     while (time.time() - start) < (config.timeout - config.corpusBudget):
         if config.quiet:
             newGlob = glob.glob("aflfail.*")
-            failDiff = len(newGlob)-len(originalFails)
+            failDiff = len(newGlob) - len(originalFails)
             if failDiff > 0:
-                print(failDiff,"NEW FAILING TESTS GENERATED; NOW",len(originalFails)+failDiff,"FAILING TESTS")
+                print(failDiff, "NEW FAILING TESTS GENERATED; NOW", len(originalFails) + failDiff, "FAILING TESTS")
                 originalFails = newGlob
         time.sleep(1)
     P.terminate()
