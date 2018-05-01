@@ -499,50 +499,50 @@ def main():
     origContLine = ""
 
     with open(config.tstl, 'r') as fp:
-        for l in fp:
-            if l[-1] != "\n":
-                l += "\n"
-            fileLine = str(l).replace("\r", "")
-            l = preprocess_angle_brackets(l)
-            l = l.replace("\r", "")
-            if len(l) > 1:
-                if l[-2] == "'":
-                    l = l[:-1] + ' ' + "\n"
-                if l[-2] == "\\":
+        for line in fp:
+            if line[-1] != "\n":
+                line += "\n"
+            fileLine = str(line).replace("\r", "")
+            line = preprocess_angle_brackets(line)
+            line = line.replace("\r", "")
+            if len(line) > 1:
+                if line[-2] == "'":
+                    line = line[:-1] + ' ' + "\n"
+                if line[-2] == "\\":
                     continuedLine = True
                     origContLine += fileLine[:-2]
-                    contLine += l[:-2]
+                    contLine += line[:-2]
                     continue
                 elif continuedLine:
-                    l = contLine + l
+                    line = contLine + line
                     fileLine = origContLine + fileLine
                     contLine = ""
                     origContLine = ""
                     continuedLine = False
-            if l[0] == "#":
+            if line[0] == "#":
                 continue  # COMMENT
-            if (l.split() != []) and (l.split()[0][0] == "#"):
+            if (line.split() != []) and (line.split()[0][0] == "#"):
                 continue  # also COMMENT
 
-            if re.match("<@", l):
+            if re.match("<@", line):
                 # XXX: Any line with <@ will be ignored
                 inside_literal_block = True
                 continue
 
-            if re.match("@>", l):
+            if re.match("@>", line):
                 inside_literal_block = False
                 continue
 
-            if inside_literal_block or l[0] == "@":
-                if l[0] == "@":
-                    l = l[1:]
-                if "import" in l:  # re.match("import ", l):
-                    # outf.write(l[:])
+            if inside_literal_block or line[0] == "@":
+                if line[0] == "@":
+                    line = line[1:]
+                if "import" in line:  # re.match("import ", line):
+                    # outf.write(line[:])
                     # import, so set up reloading
-                    module_names = parse_import_line(l)
+                    module_names = parse_import_line(line)
                     import_modules += module_names
 
-                if re.match("def guarded", l):
+                if re.match("def guarded", line):
                     if function_code != []:
                         if anyPRE:
                             outf.write(baseIndent + "__pre = {}\n")
@@ -551,50 +551,50 @@ def main():
                             outf.write(fl)
                     # guarded function, append the speculation argument and
                     # continue
-                    outf.write(l.replace("):", ", SPECULATIVE_CALL = False):"))
+                    outf.write(line.replace("):", ", SPECULATIVE_CALL = False):"))
                     inside_function = True
                     anyPRE = False
                     function_code = []
-                elif l.find("def ") == 0:
+                elif line.find("def ") == 0:
                     if function_code != []:
                         if anyPRE:
                             outf.write(baseIndent + "__pre = {}\n")
                         for fl in function_code:
                             outf.write(fl)
-                    outf.write(l)
+                    outf.write(line)
                     inside_function = True
                     anyPRE = False
                     function_code = []
                 elif inside_function:
-                    if l.find("%COMMIT%") != -1:
+                    if line.find("%COMMIT%") != -1:
 
                         # commit point in a guarded function definition
                         outf.write(
-                            l.replace(
+                            line.replace(
                                 "%COMMIT%",
                                 "if SPECULATIVE_CALL: return True"))
-                    m = re.match(r".*PRE%\((.+)\)%.*", l)
+                    m = re.match(r".*PRE%\((.+)\)%.*", line)
                     while m:
                         anyPRE = True
                         pre_expr = m.groups()[0]
                         spre_expr = "'''" + pre_expr + "'''"
-                        l = l.replace("PRE%(" + pre_expr + ")%",
-                                      "__pre[" + spre_expr + "]", 1)
+                        line = line.replace("PRE%(" + pre_expr + ")%",
+                                            "__pre[" + spre_expr + "]", 1)
                         function_code = [
                             (baseIndent + "__pre[" + spre_expr + "] = " + pre_expr + "\n")] + function_code
-                        m = re.match(r".*PRE%\((.+)\)%.*", l)
-                    function_code.append(l)
+                        m = re.match(r".*PRE%\((.+)\)%.*", line)
+                    function_code.append(line)
                 else:
-                    outf.write(l)
-            elif l[0] == "*":       # include action multiple times
-                spos = l.find(" ")
-                times = int(l[1:spos])
-                originalCode[l[spos:]] = fileLine
+                    outf.write(line)
+            elif line[0] == "*":       # include action multiple times
+                spos = line.find(" ")
+                times = int(line[1:spos])
+                originalCode[line[spos:]] = fileLine
                 for n in range(0, times):
-                    code.append(l[spos:])
+                    code.append(line[spos:])
             else:
-                originalCode[l] = fileLine[:-1]
-                code.append(l)
+                originalCode[line] = fileLine[:-1]
+                code.append(line)
     if function_code != []:
         if anyPRE:
             outf.write(baseIndent + "__pre = {}\n")
@@ -1784,14 +1784,14 @@ def main():
             ls = lv.split()
             if ls[0] != "POST":
                 continue
-            l = lv.replace("POST ", "")
+            line = lv.replace("POST ", "")
             ls = ls[1:]
             try:
                 level = int(ls[0])
-                lcode = l[l.find(ls[1]):]
+                lcode = line[line.find(ls[1]):]
             except ValueError:
                 level = 0
-                lcode = l
+                lcode = line
             genCode.append(
                 baseIndent +
                 "if (self.__log == 'All') or (self.__log >= " +
@@ -2005,17 +2005,17 @@ def main():
     # REQUIRED FOR PACKAGING TSTL #
     is_py3 = sys.version_info[0] > 2
     with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:
-        for l in boilerplate:
+        for line in boilerplate:
             if is_py3:
-                l = l.decode()
-            outf.write(baseIndent + l)
+                line = l.decode()
+            outf.write(baseIndent + line)
 
     if not config.noCover:
         with pkg_resources.resource_stream('src', 'static/boilerplate_cov.py') as boilerplate_cov:
-            for l in boilerplate_cov:
+            for line in boilerplate_cov:
                 if is_py3:
-                    l = l.decode()
-                outf.write(baseIndent + l)
+                    line = line.decode()
+                outf.write(baseIndent + line)
 
     outf.close()
 
