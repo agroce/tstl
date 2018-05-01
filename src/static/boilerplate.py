@@ -606,10 +606,10 @@ def readProbFile(self, file, returnList=False):
             classProb[c] = prob
     if not returnList:
         return classProb
-    l = []
+    pl = []
     for k in classProb:
-        l.append((classProb[k], k))
-    return l
+        pl.append((classProb[k], k))
+    return pl
 
 
 def standardSwarm(

@@ -87,10 +87,10 @@ def main():
     logLevel = None
     if "--logging" in sys.argv:
         lastWasLogging = False
-        for l in sys.argv:
+        for line in sys.argv:
             if lastWasLogging:
                 logLevel = int(l)
-            if l == "--logging":
+            if line == "--logging":
                 lastWasLogging = True
             else:
                 lastWasLogging = False
@@ -98,10 +98,10 @@ def main():
     delay = None
     if "--delay" in sys.argv:
         lastWasDelay = False
-        for l in sys.argv:
+        for line in sys.argv:
             if lastWasDelay:
                 delay = float(l)
-            if l == "--delay":
+            if line == "--delay":
                 lastWasDelay = True
             else:
                 lastWasDelay = False
@@ -132,8 +132,8 @@ def main():
         readTest = sut.loadTest(
             file, afl=True, swarm=("--aflswarm" in sys.argv))
         theTest = map(lambda x: x[0] + "\n", readTest)
-    for l in theTest:
-        name = l[:-1]
+    for line in theTest:
+        name = line[:-1]
         if name == "<<RESTART>>":
             if "--showActions" in sys.argv:
                 print("<<RESTART>>")
@@ -144,7 +144,7 @@ def main():
         else:
             if verbose:
                 print("STEP #" + str(i) + ":", end=' ')
-            rout.write(l)
+            rout.write(line)
             rout.flush()
             action = sut.playable(name)
             if "--showActions" in sys.argv:

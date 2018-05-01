@@ -307,7 +307,7 @@ def expandRange(original, trackOriginal=False):
     for index, line in enumerate(newVersion):
         if config.debug:
             print (index, line)
-        for refPool in re.findall("%([^%,]*)\s*,\s*(\d+)%", line):
+        for refPool in re.findall(r"%([^%,]*)\s*,\s*(\d+)%", line):
             # it finds e.g., ('LIST', '2') if you have   ~%LIST,2%   in your
             # .tstl file
             poolName, refIndex = refPool
@@ -316,14 +316,14 @@ def expandRange(original, trackOriginal=False):
             # in your .tstl file, and in this particular line they were expanded to e.g.,
             # ~%LIST% [2] = ~%LIST% [3] + [%INT% [0], %INT% [0]]
             # then poolOccurences will be ['2', '3']
-            poolOccurences = re.findall("%" + poolName + "%\s*\[(\d+)\]", line)
+            poolOccurences = re.findall("%" + poolName + r"%\s*\[(\d+)\]", line)
 
             # refIndex is 2, so the actual pool used for the secons %LIST% is
             # poolOccurences[1]
             actualPoolUsed = poolOccurences[int(refIndex) - 1]
             # replace   ~%LIST,2%    with    self.p_LIST[3]
 
-            line = re.sub("~?%(" + poolName + ")\s*,\s*(" + refIndex + ")%",
+            line = re.sub("~?%(" + poolName + r")\s*,\s*(" + refIndex + ")%",
                           poolPrefix + "\\1[" + actualPoolUsed + "]", line)
             if trackOriginal:
                 originalCode[line] = originalCode[newVersion[index]]
@@ -719,7 +719,7 @@ def main():
             leftMeth = re.match(r"METHOD\((\S+)\)", refLeft)
             if leftMeth:
                 method = leftMeth.groups()[0]
-                refLeft = r"(\S+)\." + method + "\(\)"
+                refLeft = r"(\S+)\." + method + r"\(\)"
             leftCall = re.match(r"CALL\((\S+)\)", refLeft)
             if leftCall:
                 function = leftCall.groups()[0]
@@ -1024,7 +1024,7 @@ def main():
         newC = newC.replace("~" + poolPrefix, poolPrefix)
         newC = replaceRefs(newC)
 
-        bad = re.findall("%\w*%", newC)
+        bad = re.findall(r"%\w*%", newC)
         for b in bad:
             if b in warnedAbout:
                 continue
@@ -1122,10 +1122,10 @@ def main():
         beforeSig = afterSig = checkSig = ""
         if expectCode:
             beforeSig = re.sub(
-                '([^\(]+)\(', "\\1_before(", expectCode, count=1)
-            afterSig = re.sub('([^\(]+)\(', "\\1_after(", expectCode, count=1)
+                r"([^\(]+)\(", "\\1_before(", expectCode, count=1)
+            afterSig = re.sub(r"([^\(]+)\(", "\\1_after(", expectCode, count=1)
             checkSig = re.sub(
-                '([^\(]+)\(',
+                r"([^\(]+)\(",
                 "\\1_check(__before_res, __after_res, ",
                 expectCode,
                 count=1)

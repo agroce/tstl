@@ -58,32 +58,32 @@ def main():
 
     outf.write("from __future__ import print_function\n\n")
 
-    for l in open(sutFile):
-        if "END STANDALONE CODE" in l:
+    for line in open(sutFile):
+        if "END STANDALONE CODE" in line:
             startPrelim = False
-        if "END CHECK CODE" in l:
+        if "END CHECK CODE" in line:
             startCheck = False
-        if "END RELOAD CODE" in l:
+        if "END RELOAD CODE" in line:
             startReload = False
-        if "END INITIALIZATION CODE" in l:
+        if "END INITIALIZATION CODE" in line:
             startInit = False
         if startPrelim:
-            outf.write(l)
+            outf.write(line)
         if startCheck:
             outf.write(globalCheck(t.prettyName(
-                l.replace("# GLOBAL ", "global "))))
+                line.replace("# GLOBAL ", "global "))))
         if startReload:
-            reloadCode.append(l.lstrip())
+            reloadCode.append(line.lstrip())
         if startInit:
-            initCode.append(l.lstrip())
-        if "BEGIN STANDALONE CODE" in l:
+            initCode.append(line.lstrip())
+        if "BEGIN STANDALONE CODE" in line:
             startPrelim = True
-        if checkProps and ("BEGIN CHECK CODE" in l):
+        if checkProps and ("BEGIN CHECK CODE" in line):
             startCheck = True
             outf.write("\n\ndef check():\n")
-        if "BEGIN RELOAD CODE" in l:
+        if "BEGIN RELOAD CODE" in line:
             startReload = True
-        if "BEGIN INITIALIZATION CODE" in l:
+        if "BEGIN INITIALIZATION CODE" in line:
             startInit = True
 
     outf.write("\n\n")
@@ -93,8 +93,8 @@ def main():
 
     outf.write("\n\n")
 
-    for l in open(testFile):
-        if l == "<<RESTART>>":
+    for line in open(testFile):
+        if line == "<<RESTART>>":
             if makeRegression:
                 t.restart()
             outf.write("\n# RESTART\n\n")
@@ -102,7 +102,7 @@ def main():
                 outf.write(r)
             for i in initCode:
                 outf.write(i)
-        name = l[:-1]
+        name = line[:-1]
         if t.getPreCode(name) is not None:
             for p in t.getPreCode(name):
                 outf.write(t.prettyName(p) + "\n")

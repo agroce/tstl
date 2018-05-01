@@ -71,8 +71,8 @@ def main():
         if fails:
             e = repr(sut.failure())
             e = e[:e.find("<traceback object at 0x")] + ")"
-            l = t[-1][0]
-            sig = (noDigits(e), noDigits(l))
+            line = t[-1][0]
+            sig = (noDigits(e), noDigits(line))
             if (sig not in signatures):
                 signatures[sig] = (fn, t, sut.failure(),
                                    sut.prettyName(t[-1][0]), 1)
