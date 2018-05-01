@@ -44,7 +44,7 @@ class TestAVL(TestCase):
         self.assertEqual(r,255)
 
         r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize","--output",".avltest"],stdout=dnull)
-        self.assertEqual(r,255)                       
+        self.assertEqual(r,255)
 
         for f in glob.glob(".avltest*"):
             os.remove(f)
@@ -56,7 +56,7 @@ class TestAVL(TestCase):
         self.assertEqual(r,0)
 
         r = subprocess.call(["tstl_rt","--timeout","30","--noCover"],stdout=dnull)
-        self.assertEqual(r,0)        
+        self.assertEqual(r,0)
 
         r = subprocess.call(["tstl_rt","--timeout","30","--swarm"],stdout=dnull)
         self.assertEqual(r,0)

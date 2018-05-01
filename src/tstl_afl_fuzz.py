@@ -16,17 +16,17 @@ def parse_args():
     parser.add_argument('--aflTimeout', type=str, default="5000",
                         help='afl timeout (default 5000)')
     parser.add_argument('--autoTimeout', action='store_true',
-                        help='Use automatic calibration to determine timeout')        
+                        help='Use automatic calibration to determine timeout')
     parser.add_argument('--aflMemory', type=str, default="4096",
                         help='afl memory limit (default 4096)')
     parser.add_argument('--autoMemory', action='store_true',
-                        help='Use automatic calibration to determine memory')            
+                        help='Use automatic calibration to determine memory')
     parser.add_argument('--input', type=str, default="aflinputs",
                         help='Where to put corpus files (default aflinputs)')
     parser.add_argument('--output', type=str, default="afloutputs",
                         help='Where to put afl fuzzing output (default afloutputs)')
     parser.add_argument('--resume', action='store_true',
-                        help='Resume interrupted fuzzing; ignores --input, --output should point to old session')    
+                        help='Resume interrupted fuzzing; ignores --input, --output should point to old session')
     parser.add_argument('--burst', action='store_true',
                         help='Build corpus in burst mode; overrides most other corpus options')
     parser.add_argument('--noCheck', action='store_true',

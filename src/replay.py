@@ -31,7 +31,7 @@ def trace_calls(frame, event, arg):
         # Ignore write() calls from print statements
         return
     line_no = frame.f_lineno
-    filename = co.co_filename    
+    filename = co.co_filename
     print('Call to %s on line %s of %s' % (func_name, line_no, filename))
     sys.stdout.flush()
     return trace_lines
