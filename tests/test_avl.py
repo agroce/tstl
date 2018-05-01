@@ -46,8 +46,10 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize","--output",".avltest"],stdout=dnull)
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_regress .avltest*"],shell=True)
+        r = subprocess.call(["tstl_regress .avltest*"],shell=True,stdout=dnull)
         self.assertEqual(r,255)
+
+        r = subprocess.call(["tstl_triage",".avltest*"],stdout=dnull)
         
         r = subprocess.call(["tstl","avlnew.tstl"],stdout=dnull)
         self.assertEqual(r,0)
@@ -64,7 +66,7 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_rt","--timeout","30","--exploit","0.8","--Pmutate","0.8"],stdout=dnull)
         self.assertEqual(r,0)
 
-        r = subprocess.call(["tstl_regress .avltest*"],shell=True)
+        r = subprocess.call(["tstl_regress .avltest*"],shell=True,stdout=dnull)
         self.assertEqual(r,0)        
 
         for f in glob.glob(".avltest*"):
