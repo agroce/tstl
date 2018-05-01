@@ -26,9 +26,9 @@ class TestAFL(TestCase):
 
         for f in glob.glob("afltest.*"):
             os.remove(f)
-        
+
         r = subprocess.call(
             ["tstl_afl_fuzz", "--corpusBudget", "0", "--timeout", "60", "--quiet"])
         self.assertEqual(r, 0)
 
-        self.assertTrue(glob.glob("afltest.*") != [])        
+        self.assertTrue(glob.glob("afltest.*") != [])

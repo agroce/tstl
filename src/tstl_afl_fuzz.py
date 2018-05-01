@@ -162,8 +162,8 @@ def main():
     if not config.quiet:
         P = subprocess.Popen(aflCmd)
     else:
-        with open(os.devnull,'w') as dnull:
-            P = subprocess.Popen(aflCmd,stdout=dnull)
+        with open(os.devnull, 'w') as dnull:
+            P = subprocess.Popen(aflCmd, stdout=dnull)
     originalFails = glob.glob("aflfail.*")
     while (time.time() - start) < (config.timeout - config.corpusBudget):
         if config.quiet:
