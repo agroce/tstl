@@ -89,7 +89,7 @@ def main():
         lastWasLogging = False
         for line in sys.argv:
             if lastWasLogging:
-                logLevel = int(l)
+                logLevel = int(line)
             if line == "--logging":
                 lastWasLogging = True
             else:
@@ -100,7 +100,7 @@ def main():
         lastWasDelay = False
         for line in sys.argv:
             if lastWasDelay:
-                delay = float(l)
+                delay = float(line)
             if line == "--delay":
                 lastWasDelay = True
             else:
