@@ -721,7 +721,7 @@ def buildActivePool():
                 if config.savePool is not None:
                     pname = config.savePool + ".pool." + \
                         str(poolCount) + ".test"
-                    print ("SAVING POOL TEST AS", pname)
+                    print("SAVING POOL TEST AS", pname)
                     sut.saveTest(r, pname)
                     poolCount += 1
                 # Have to make sure if we got some new coverage out of this it's in the coverage map
@@ -858,14 +858,14 @@ def tryExploit():
                             catchUncaught=config.uncaught)
             if (len(sut.newCurrBranches()) != 0) or (
                     len(sut.newCurrStatements()) != 0):
-                print ("COVERAGE INCREASE DURING MUTATION")
+                print("COVERAGE INCREASE DURING MUTATION")
                 if not config.reducePool:
                     fullPool.append((list(sut.test()), set(
                         sut.currBranches()), set(sut.currStatements())))
                     if config.savePool is not None:
                         pname = config.savePool + ".pool." + \
                             str(poolCount) + ".test"
-                        print ("SAVING POOL TEST AS", pname)
+                        print("SAVING POOL TEST AS", pname)
                         sut.saveTest(list(sut.test()), pname)
                         poolCount += 1
                 else:
@@ -908,7 +908,7 @@ def collectExploitable():
                 sut.currBranches()), set(sut.currStatements())))
             if config.savePool is not None:
                 pname = config.savePool + ".pool." + str(poolCount) + ".test"
-                print ("SAVING POOL TEST AS", pname)
+                print("SAVING POOL TEST AS", pname)
                 sut.saveTest(list(sut.test()), pname)
                 poolCount += 1
         else:
@@ -1013,7 +1013,7 @@ def main():
             fullPool.append((t, set(sut.currBranches()),
                              set(sut.currStatements())))
         poolCount = len(fullPool)
-        print ("READ", poolCount, "POOL TESTS IN",
+        print("READ", poolCount, "POOL TESTS IN",
                time.time() - startRead, "SECONDS")
 
     # MAJOR SPEED GAIN:  IF NOT MEASURING COVERGE, NO NEED TO RECOMPILE, JUST
@@ -1807,7 +1807,7 @@ def main():
             break
 
         if config.checkProcessDeterminism and not testFailed:
-            print ("CHECKING PROCESS DETERMINISM...")
+            print("CHECKING PROCESS DETERMINISM...")
             nondeterministic = sut.findProcessNondeterminism(
                 replayTest,
                 verbose=True,
@@ -1820,13 +1820,13 @@ def main():
                 else:
                     alphaReplay = list(replayTest[:nondeterministic])
                 sut.prettyPrintTest(replayTest[:nondeterministic])
-                print (
+                print(
                     "TEST WAS NOT PROCESS DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
                 sut.saveTest(alphaReplay, "ndfail.test")
                 break
 
         if config.checkDeterminism and not testFailed:
-            print ("CHECKING DETERMINISM...")
+            print("CHECKING DETERMINISM...")
             for replayTry in range(0, config.determinismTries):
                 replayi = 0
                 sut.restart()
@@ -1849,8 +1849,8 @@ def main():
                                                     replayTest[:replayi + 1])
                                             sut.prettyPrintTest(
                                                 replayTest[:replayi + 1])
-                                            print ("MISMATCH IN REPLAY VALUE:")
-                                            print (
+                                            print("MISMATCH IN REPLAY VALUE:")
+                                            print(
                                                 "   ",
                                                 sut.prettyName(
                                                     p + "[" + str(pv) + "]"),
@@ -1863,10 +1863,10 @@ def main():
                     except KeyboardInterrupt as e:
                         raise e
                     except Exception as e:
-                        print ("WARNING:", e)
+                        print("WARNING:", e)
                     replayi += 1
                 if nondeterministic:
-                    print (
+                    print(
                         "TEST WAS NOT DETERMINISTIC!  WRITING FAILURE AS ndfail.test")
                     sut.saveTest(alphaReplay, "ndfail.test")
                     break

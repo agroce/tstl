@@ -306,7 +306,7 @@ def expandRange(original, trackOriginal=False):
 
     for index, line in enumerate(newVersion):
         if config.debug:
-            print (index, line)
+            print(index, line)
         for refPool in re.findall(r"%([^%,]*)\s*,\s*(\d+)%", line):
             # it finds e.g., ('LIST', '2') if you have   ~%LIST,2%   in your
             # .tstl file
@@ -1151,7 +1151,7 @@ def main():
         genCode.append(baseIndent + "if self.__verboseActions:\n")
         genCode.append(baseIndent + baseIndent + "__bV = {}\n")
         genCode.append(baseIndent + baseIndent +
-                       "print ('ACTION:',self.prettyName('''" + newC[:-1] + " '''))\n")
+                       "print('ACTION:',self.prettyName('''" + newC[:-1] + " '''))\n")
         for p in forVerbose:
             if baseVersion(p) not in opaqueSet:
                 genCode.append(
@@ -1161,7 +1161,7 @@ def main():
                     p +
                     "'''] = repr(" +
                     p +
-                    "); print (self.prettyName('''" +
+                    "); print(self.prettyName('''" +
                     p +
                     "''') + ' =', __bV['''" +
                     p +
@@ -1180,7 +1180,7 @@ def main():
                     p +
                     "'''] = repr(" +
                     p +
-                    "); print (self.prettyName('''" +
+                    "); print(self.prettyName('''" +
                     p +
                     "''') + ' =', __bV['''" +
                     p +
@@ -1198,7 +1198,7 @@ def main():
                     p +
                     "'''] = repr(" +
                     p +
-                    "); print (self.prettyName('''" +
+                    "); print(self.prettyName('''" +
                     p +
                     "''') + ' =', __bV['''" +
                     p +
@@ -1217,7 +1217,7 @@ def main():
                     p +
                     "'''] = repr(" +
                     p +
-                    "); print (self.prettyName('''" +
+                    "); print(self.prettyName('''" +
                     p +
                     "''') + ' =', __bV['''" +
                     p +
@@ -1262,7 +1262,7 @@ def main():
             genCode.append(
                 baseIndent +
                 baseIndent +
-                "if self.__verboseActions: print ('RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
+                "if self.__verboseActions: print('RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
             if config.checkFailureDeterminism:
                 genCode.append(baseIndent + baseIndent +
                                "failedAgain = False\n")
@@ -1276,11 +1276,11 @@ def main():
                     baseIndent +
                     baseIndent +
                     baseIndent +
-                    "if self.__verboseActions: print ('RAISED EXCEPTION:',type(exc2),exc2,'ON RETRY')\n")
+                    "if self.__verboseActions: print('RAISED EXCEPTION:',type(exc2),exc2,'ON RETRY')\n")
                 genCode.append(
                     baseIndent +
                     baseIndent +
-                    "if self.__verboseActions and not failedAgain: print ('DID NOT RAISE EXPECTED EXCEPTION ON RETRY')\n")
+                    "if self.__verboseActions and not failedAgain: print('DID NOT RAISE EXPECTED EXCEPTION ON RETRY')\n")
                 genCode.append(
                     baseIndent +
                     baseIndent +
@@ -1297,7 +1297,7 @@ def main():
             genCode.append(
                 baseIndent +
                 baseIndent +
-                "if self.__verboseActions: print ('RAISED WARNING EXCEPTION:',type(raised),raised)\n")
+                "if self.__verboseActions: print('RAISED WARNING EXCEPTION:',type(raised),raised)\n")
             genCode.append(baseIndent + baseIndent +
                            "self.__warning = raised\n")
 
@@ -1306,7 +1306,7 @@ def main():
         genCode.append(
             baseIndent +
             baseIndent +
-            "if self.__verboseActions: print ('RAISED EXCEPTION:',type(raised),raised)\n")
+            "if self.__verboseActions: print('RAISED EXCEPTION:',type(raised),raised)\n")
         genCode.append(baseIndent + baseIndent + "raise\n")
 
         genCode.append(baseIndent + "finally:\n")
@@ -1337,7 +1337,7 @@ def main():
                         baseIndent +
                         "if __aV != __bV['''" +
                         p +
-                        "''']: print ('=>',self.prettyName('''" +
+                        "''']: print('=>',self.prettyName('''" +
                         p +
                         "''') + ' =',__aV, ':',type(" +
                         p +
@@ -1369,7 +1369,7 @@ def main():
                         baseIndent +
                         "if __aV != __bV['''" +
                         p +
-                        "''']: print ('=>',self.prettyName('''" +
+                        "''']: print('=>',self.prettyName('''" +
                         p +
                         "''') + ' =',__aV, ':',type(" +
                         p +
@@ -1394,7 +1394,7 @@ def main():
             genCode.append(baseIndent + "try:\n")
             genCode.append(baseIndent +
                            baseIndent +
-                           "if self.__verboseActions: print ('REFERENCE ACTION:',self.prettyName('''" +
+                           "if self.__verboseActions: print('REFERENCE ACTION:',self.prettyName('''" +
                            refC[:-
                                 1] +
                            " '''))\n")
@@ -1406,7 +1406,7 @@ def main():
             genCode.append(
                 baseIndent +
                 baseIndent +
-                "if self.__verboseActions: print ('REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised)\n")
+                "if self.__verboseActions: print('REFERENCE ACTION RAISED EXCEPTION:',type(refRaised),refRaised)\n")
             genCode.append(baseIndent + "try: self.__refRaised = refRaised\n")
             genCode.append(baseIndent + "except: pass\n")
 
@@ -1422,7 +1422,7 @@ def main():
                         baseIndent +
                         "if __aV != __bV['''" +
                         p +
-                        "''']: print ('=>',self.prettyName('''" +
+                        "''']: print('=>',self.prettyName('''" +
                         p +
                         "''') + ' =',__aV, ':',type(" +
                         p +
@@ -1442,7 +1442,7 @@ def main():
                         baseIndent +
                         "if __aV != __bV['''" +
                         p +
-                        "''']: print ('=>',self.prettyName('''" +
+                        "''']: print('=>',self.prettyName('''" +
                         p +
                         "''') + ' =',__aV, ':',type(" +
                         p +
@@ -1468,7 +1468,7 @@ def main():
                     "try: assert result == result_REF, \" (%s) == (%s) \" % (result, result_REF)\n")
                 genCode.append(baseIndent + "except UnboundLocalError: pass\n")
         genCode.append(
-            baseIndent + "if self.__verboseActions: print ('='*50)\n")
+            baseIndent + "if self.__verboseActions: print('='*50)\n")
         if logSet != []:
             genCode.append(
                 baseIndent + "self.logPost('''" + newC[:-1] + "''')\n")
@@ -1890,7 +1890,7 @@ def main():
             genCode.append(baseIndent + "if not assumeResult:\n")
             genCode.append(baseIndent +
                            baseIndent +
-                           "print ('** ASSUMPTION VIOLATED:',self.prettyName(''' " +
+                           "print('** ASSUMPTION VIOLATED:',self.prettyName(''' " +
                            p[:-
                              1] +
                            " '''),'**')\n")

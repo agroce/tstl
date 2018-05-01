@@ -84,11 +84,11 @@ def main():
             signatures.keys(),
             key=lambda x: signatures[x][4],
             reverse=True):
-        print ("=" * 80)
-        print ("TEST:", signatures[sig][0], "LENGTH:", len(signatures[sig][1]))
-        print ("OPERATION:", signatures[sig][3])
-        print ("FAILURE:")
+        print("=" * 80)
+        print("TEST:", signatures[sig][0], "LENGTH:", len(signatures[sig][1]))
+        print("OPERATION:", signatures[sig][3])
+        print("FAILURE:")
         traceback.print_tb(signatures[sig][2][2], file=sys.stdout)
-        print ("COUNT:", signatures[sig][4])
+        print("COUNT:", signatures[sig][4])
         if config.showTests:
             sut.prettyPrintTest(signatures[sig][1])

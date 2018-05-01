@@ -124,7 +124,7 @@ def main():
                 try:
                     P.terminate()
                     P.wait()
-                    print ("KILLED TSTL CORPUS GENERATION")
+                    print("KILLED TSTL CORPUS GENERATION")
                 except OSError:
                     pass
 
@@ -154,7 +154,7 @@ def main():
     elif os.getenv("PYTHON_AFL_TSTL") is not None:
         os.unsetenv("PYTHON_AFL_TSTL")
         aflCmdStr = "env -u PYTHON_AFL_TSTL " + aflCmdStr
-    print ("RUNNING AFL WITH COMMAND LINE:", aflCmdStr)
+    print("RUNNING AFL WITH COMMAND LINE:", aflCmdStr)
     start = time.time()
     P = subprocess.Popen(aflCmd)
     while (time.time() - start) < (config.timeout - config.corpusBudget):

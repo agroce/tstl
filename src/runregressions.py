@@ -144,10 +144,10 @@ def main():
     if (not nocover) and (len(noNewCover) > 0):
         for f in noNewCover:
             print("TEST", f, "REDUNDANT WITH RESPECT TO COVERAGE")
-        print ()
-        print (len(newCover), "TESTS NEEDED FOR FULL COVERAGE:",
+        print()
+        print(len(newCover), "TESTS NEEDED FOR FULL COVERAGE:",
                ", ".join(newCover))
-        print ()
+        print()
 
     print("EXECUTED", totalTests, "TESTS")
 

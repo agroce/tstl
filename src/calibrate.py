@@ -54,8 +54,8 @@ def main():
     if config.seed:
         R.seed(config.seed)
 
-    print ("=" * 80)
-    print ("CALIBRATING COST OF COVERAGE...\n")
+    print("=" * 80)
+    print("CALIBRATING COST OF COVERAGE...\n")
 
     oldOut = sys.stdout
     fnull = open(os.devnull, 'w')
@@ -97,23 +97,23 @@ def main():
 
     sys.stdout = oldOut
 
-    print ()
-    print ()
+    print()
+    print()
     sys.stdout.flush()
 
     covR = (covCount * 100) / covTime
     noCovR = (noCovCount * 100) / noCovTime
     if covR < noCovR:
-        print ("WITH COVERAGE:", covR, "ACTIONS/s")
-        print ("WITHOUT COVERAGE:", noCovR, "ACTIONS/s")
+        print("WITH COVERAGE:", covR, "ACTIONS/s")
+        print("WITHOUT COVERAGE:", noCovR, "ACTIONS/s")
         overhead = (noCovR - covR) / noCovR
-        print ("COVERAGE OVERHEAD:", str(round(overhead * 100, 2)) + "%")
+        print("COVERAGE OVERHEAD:", str(round(overhead * 100, 2)) + "%")
     else:
-        print ("NO DETECTABLE COVERAGE OVERHEAD")
+        print("NO DETECTABLE COVERAGE OVERHEAD")
     calibFile.write("COVERAGE OVERHEAD: " + str(overhead))
 
-    print ("=" * 80)
-    print ("ESTIMATING LINES OF CODE IN ACTIONS...\n")
+    print("=" * 80)
+    print("ESTIMATING LINES OF CODE IN ACTIONS...\n")
     subprocess.call(
         ["tstl_rt --timeout 180 --generateLOC .tstl_calibration_loc --noCover"],
         shell=True,
@@ -142,11 +142,11 @@ def main():
                 classP[c] = (classLOCVals[c] / totalLOCs)
     sortLOC = sorted(classLOCVals.keys(),
                      key=lambda x: classP[x], reverse=True)
-    print ("HIGHEST LOC-BASED PROBABILITY ACTIONS:")
+    print("HIGHEST LOC-BASED PROBABILITY ACTIONS:")
     for c in sortLOC[:3]:
-        print ("  ", c, round(classP[c], 5))
-    print ("\nLOWEST LOC-BASED PROBABILITY ACTIONS:")
+        print("  ", c, round(classP[c], 5))
+    print("\nLOWEST LOC-BASED PROBABILITY ACTIONS:")
     for c in sortLOC[-3:]:
-        print ("  ", c, round(classP[c], 5))
+        print("  ", c, round(classP[c], 5))
 
     calibFile.close()

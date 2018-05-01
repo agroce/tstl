@@ -1041,17 +1041,17 @@ def findProcessNondeterminism(
                     action = int(out1l[i].split(":")[0].split("#")[1]) + 1
                 if out1l[i] != out2l[i]:
                     if verbose:
-                        print ("=" * 50)
-                        print ("DIFFERENCE FOUND AT STEP", action)
-                        print (out1l[i])
-                        print ("  VS.")
-                        print (out2l[i])
-                        print ("=" * 50)
+                        print("=" * 50)
+                        print("DIFFERENCE FOUND AT STEP", action)
+                        print(out1l[i])
+                        print("  VS.")
+                        print(out2l[i])
+                        print("=" * 50)
                     break
             return action
         else:
             if verbose:
-                print ("NO DIFFERENCES IN OUTPUT FILES")
+                print("NO DIFFERENCES IN OUTPUT FILES")
     return -1
 
 
@@ -1065,7 +1065,7 @@ def iterateFindProcessNondeterminism(
         tries=1):
     i = 1
     if verbose:
-        print ("TRYING WITH LENGTH:", i)
+        print("TRYING WITH LENGTH:", i)
     p = self.findProcessNondeterminism(
         t[:i], ignoreExceptions, verbose, delay, tries)
     while (p == -1) and (i < len(t)):
@@ -1076,7 +1076,7 @@ def iterateFindProcessNondeterminism(
             if (i > len(t)):
                 i = len(t)
         if verbose:
-            print ("TRYING WITH LENGTH:", i)
+            print("TRYING WITH LENGTH:", i)
         p = self.findProcessNondeterminism(
             t[:i], ignoreExceptions, verbose, delay, tries)
     return p
@@ -1312,7 +1312,7 @@ def reduce(
     if amplify:
         currBest = pred(test)
         if verbose:
-            print ("Starting best value:", currBest)
+            print("Starting best value:", currBest)
 
     if findLocations:
         ntest = []
@@ -1381,7 +1381,7 @@ def reduce(
                         currBest = v
                         v = True
                         if verbose:
-                            print ("New best value:", currBest)
+                            print("New best value:", currBest)
                     else:
                         v = False
                 else:
@@ -1390,7 +1390,7 @@ def reduce(
                 if stopFound:
                     return (tc + addLast)
                 if verbose == "SHOW":
-                    print ("REMOVED:")
+                    print("REMOVED:")
                     self.prettyPrintRemoved(tb, tc)
                 tb = tc
                 if not noResetSplit:
@@ -1420,7 +1420,7 @@ def reduce(
                             print("Guard pruning reduced test length to",
                                   len(newtb + addLast))
                             if verbose == "SHOW":
-                                print ("REMOVED:")
+                                print("REMOVED:")
                                 self.prettyPrintRemoved(tb, newtb)
                     tb = newtb
                 if tryFast:

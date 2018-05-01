@@ -32,7 +32,7 @@ def main():
 
     pid = str(os.getpid())
 
-    print ("GENERATING INITIAL AFL INPUTS...")
+    print("GENERATING INITIAL AFL INPUTS...")
 
     outputDir = sys.argv[1]
     length = int(sys.argv[2])
@@ -67,9 +67,9 @@ def main():
                                                == 0) and len(sut.newCurrStatements()) == 0):
             continue
         else:
-            print ("INPUT", i, "GENERATED", end=" ")
+            print("INPUT", i, "GENERATED", end=" ")
             if (not noCover) and (not burst):
-                print ("NEW BRANCHES:", len(sut.newCurrBranches()), end=" ")
+                print("NEW BRANCHES:", len(sut.newCurrBranches()), end=" ")
             type = "branch" + str(len(sut.newCurrBranches()))
         if ok:  # failing tests won't work with afl
             if (not burst) and (not noCover) and (not noReduce):
@@ -80,20 +80,20 @@ def main():
             else:
                 r = t
         elif skipFails:
-            print ("SKIPPING FAILED TEST...")
+            print("SKIPPING FAILED TEST...")
             continue
         else:
             type = "nearfail"
-            print ("SAVING ALL BUT LAST STEP OF FAILED TEST")
+            print("SAVING ALL BUT LAST STEP OF FAILED TEST")
             r = t[:-1]
 
         # always alpha convert to make actions clearer to afl, easier to splice
         r = sut.alphaConvert(r)
         if ok and (not burst) and (not noCover) and (not noReduce):
-            print ("REDUCED LENGTH:", len(r))
+            print("REDUCED LENGTH:", len(r))
         if not burst:
             sut.prettyPrintTest(r)
-        print ("=" * 80)
+        print("=" * 80)
         if not swarm:
             sut.saveTest(r, outputDir + "/tstl." + type + "." +
                          pid + "." + str(i) + ".afl", afl=True)
