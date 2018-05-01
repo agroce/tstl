@@ -18,6 +18,6 @@ class TestAFL(TestCase):
             ["tstl_afl_fuzz", "--corpusBudget", "30", "--timeout", "300"], stdout=dnull)
         self.assertEqual(r, 0)
 
-        assertTrue(glob.glob("afltest.*") != [])
+        self.assertTrue(glob.glob("afltest.*") != [])
 
         os.chdir("../..")
