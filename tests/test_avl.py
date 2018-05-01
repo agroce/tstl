@@ -6,10 +6,14 @@ from unittest import TestCase
 
 
 class TestAVL(TestCase):
+    def setUp(self):
+        os.chdir("examples/AVL")
+
+    def tearDown(self):
+        os.chdir("../..")
+
     def test_AVL(self):
         dnull = open(os.devnull, 'w')
-
-        os.chdir("examples/AVL")
 
         r = subprocess.call(["tstl", "avlbuggy.tstl"], stdout=dnull)
         self.assertEqual(r, 0)
@@ -131,5 +135,3 @@ class TestAVL(TestCase):
             os.remove(f)
 
         os.remove("coverage.out")
-
-        os.chdir("../..")

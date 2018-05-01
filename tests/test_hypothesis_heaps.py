@@ -6,10 +6,14 @@ from unittest import TestCase
 
 
 class TestHypothesisHeap(TestCase):
+    def setUp(self):
+        os.chdir("examples/hypothesis_heaps")
+
+    def tearDown(self):
+        os.chdir("../..")
+
     def test_hypothesis_heap(self):
         dnull = open(os.devnull, 'w')
-
-        os.chdir("examples/hypothesis_heaps")
 
         r = subprocess.call(["tstl", "heaps.tstl"], stdout=dnull)
         self.assertEqual(r, 0)
@@ -45,5 +49,3 @@ class TestHypothesisHeap(TestCase):
             os.remove(f)
 
         os.remove("coverage.out")
-
-        os.chdir("../..")

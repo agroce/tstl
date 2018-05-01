@@ -6,10 +6,14 @@ from unittest import TestCase
 
 
 class TestAFL(TestCase):
+    def setUp(self):
+        os.chdir("examples/hypothesis_heaps")
+
+    def tearDown(self):
+        os.chdir("../..")
+
     def test_AFL(self):
         dnull = open(os.devnull, 'w')
-
-        os.chdir("examples/hypothesis_heaps")
 
         r = subprocess.call(["tstl", "heaps.tstl"], stdout=dnull)
         self.assertEqual(r, 0)
@@ -19,5 +23,3 @@ class TestAFL(TestCase):
         self.assertEqual(r, 0)
 
         self.assertTrue(glob.glob("afltest.*") != [])
-
-        os.chdir("../..")
