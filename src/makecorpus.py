@@ -52,7 +52,6 @@ def main():
     R = random.Random()
     Rswarm = random.Random()
 
-    acts = sut.actions()
     i = 0
     stime = time.time()
     while (time.time()-stime) < timeout:

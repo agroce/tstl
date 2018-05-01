@@ -23,7 +23,7 @@ def main():
     takenClass = defaultdict(lambda: 0)
     allTaken = defaultdict(lambda: 0)
     allTakenClass = defaultdict(lambda: 0)
-    takenPath = defaultdict(lambda: 0)
+    #takenPath = defaultdict(lambda: 0)
     takenFull = {}
 
     start = time.time()

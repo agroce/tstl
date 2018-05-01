@@ -10,7 +10,6 @@ import argparse
 import glob
 import datetime
 import inspect
-import copy
 from collections import namedtuple
 
 # Appending current working directory to sys.path

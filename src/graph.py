@@ -167,9 +167,6 @@ def main():
         t.restart()
 
         s = 0
-
-        states = []
-
         d = 1
 
         last = state

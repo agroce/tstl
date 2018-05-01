@@ -21,7 +21,6 @@ def main():
 
     sut = SUT.sut()
     classes = []
-    nacts = len(sut.actions())
     for a in sut.actions():
         if sut.actionClass(a) not in classes:
             classes.append(sut.actionClass(a))

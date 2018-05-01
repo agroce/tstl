@@ -25,13 +25,12 @@ def runTest():
     bytesin = os.read(0,1024*1024)  # yes, puts a limit on test length, but not a very important one probably!
 
     if swarm:
+        R = random.Random()
         if len(bytesin) < 4:
             os._exit(0)
         R.seed(struct.unpack("<L",bytesin[0:4])[0])
         sut.standardSwarm(R)
         bytesin = bytesin[4:]
-
-    alen = len(sut.actions())
 
     test = sut.bytesToTest(bytesin)
 
@@ -89,11 +88,7 @@ def main():
 
     sut.restart()
 
-    if "--swarm" in sys.argv:
-        swarm = True
-        R = random.Random()
-    else:
-        swarm = False
+    swarm = "--swarm" in sys.argv
     showActions = "--showActions" in sys.argv
     if "--verbose" in sys.argv:
         sut.verbose(True)

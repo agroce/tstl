@@ -1,8 +1,5 @@
 from __future__ import print_function
 
-import random
-import struct
-import time
 import sys
 import os
 
@@ -26,8 +23,6 @@ def main():
 
     outputDir = sys.argv[1]
     files = sys.argv[2:]
-
-    acts = sut.actions()
 
     i = 0
     for f in files:
