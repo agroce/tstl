@@ -6,6 +6,7 @@ python:
 install:
 - pip install pyflakes
 - pip install pycodestyle
+- pip install python-afl
 env:
 - TRAVIS=TRUE
 script:
