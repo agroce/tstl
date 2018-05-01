@@ -25,6 +25,9 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_reduce",".avltest",".avltest.norm"],stdout=dnull)
         self.assertEqual(r,0)
 
+        r = subprocess.call(["tstl_replay",".avltest.norm","--verbose"],stdout=dnull)
+        self.assertEqual(r,255)        
+
         r = subprocess.call(["tstl_generalize",".avltest.norm"],stdout=dnull)
         self.assertEqual(r,0)
 
