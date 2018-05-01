@@ -3,12 +3,22 @@ python:
 - "2.7"
 - "3.3"
 - "3.6"
+before_install:
+- if [[ $TRAVIS_PYTHON_VERSION = 3.2 ]]; then true ${CYTHON_VERSION:=0.26.1}; fi
+- cython_suffix=${CYTHON_VERSION:+==$CYTHON_VERSION}
 install:
+- mkdir deps
+- wget http://lcamtuf.coredump.cx/afl/releases/afl-latest.tgz -O deps/afl.tar.gz
+- tar -xvzf deps/afl.tar.gz -C deps/
+- make -C deps/afl-*/ install PREFIX=~/.local
+- pip install --verbose cython${cython_suffix}
 - pip install pyflakes
 - pip install pycodestyle
 - pip install python-afl
 env:
 - TRAVIS=TRUE
+- CYTHON_VERSION=0.19
+- CYTHON_VERSION=
 script:
 - pyflakes src/*.py
 - pyflakes tests/*.py
