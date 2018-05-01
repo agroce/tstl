@@ -1,6 +1,6 @@
-dist: trusty
-sudo: true
 language: python
+dist: trusty
+sudo: required
 python:
 - "2.7"
 - "3.3"
