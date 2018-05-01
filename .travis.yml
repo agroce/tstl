@@ -11,7 +11,7 @@ before_install:
 install:
 - git clone --depth=50 --branch=master https://github.com/agroce/afl.git agroce/afl
 - make -C agroce/afl install PREFIX=~/.local
-- sudo echo core >/proc/sys/kernel/core_pattern
+- echo core >/proc/sys/kernel/core_pattern
 - pip install --verbose cython${cython_suffix}
 - pip install pyflakes
 - pip install pycodestyle
