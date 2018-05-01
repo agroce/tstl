@@ -29,5 +29,5 @@ def main():
     i = 0
     for f in files:
         t = sut.loadTest(f, afl=True, swarm=aflswarm)
-        sut.saveTest(t, outputDir+"/"+os.path.basename(f)+".test")
+        sut.saveTest(t, outputDir + "/" + os.path.basename(f) + ".test")
         i += 1

@@ -12,8 +12,11 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--timeout', type=int, default=86400,
                         help='Total time budget for testing')
-    parser.add_argument('--corpusBudget', type=int, default=600,
-                        help='Time budget for generating a corpus to get afl started (default 5 minutes)')
+    parser.add_argument(
+        '--corpusBudget',
+        type=int,
+        default=600,
+        help='Time budget for generating a corpus to get afl started (default 5 minutes)')
     parser.add_argument('--aflTimeout', type=str, default="5000",
                         help='afl timeout (default 5000)')
     parser.add_argument('--autoTimeout', action='store_true',
@@ -24,16 +27,26 @@ def parse_args():
                         help='Use automatic calibration to determine memory')
     parser.add_argument('--input', type=str, default="aflinputs",
                         help='Where to put corpus files (default aflinputs)')
-    parser.add_argument('--output', type=str, default="afloutputs",
-                        help='Where to put afl fuzzing output (default afloutputs)')
-    parser.add_argument('--resume', action='store_true',
-                        help='Resume interrupted fuzzing; ignores --input, --output should point to old session')
-    parser.add_argument('--burst', action='store_true',
-                        help='Build corpus in burst mode; overrides most other corpus options')
+    parser.add_argument(
+        '--output',
+        type=str,
+        default="afloutputs",
+        help='Where to put afl fuzzing output (default afloutputs)')
+    parser.add_argument(
+        '--resume',
+        action='store_true',
+        help='Resume interrupted fuzzing; ignores --input, --output should point to old session')
+    parser.add_argument(
+        '--burst',
+        action='store_true',
+        help='Build corpus in burst mode; overrides most other corpus options')
     parser.add_argument('--noCheck', action='store_true',
                         help='Do not check properties')
-    parser.add_argument('--depth', type=int, default=100,
-                        help='Test depth for corpus construction (default 100)')
+    parser.add_argument(
+        '--depth',
+        type=int,
+        default=100,
+        help='Test depth for corpus construction (default 100)')
     parser.add_argument('--swarm', action='store_true',
                         help='Use swarm testing.')
     parser.add_argument('--noCover', action='store_true',
@@ -42,12 +55,18 @@ def parse_args():
                         help='Do not reduce corpus tests')
     parser.add_argument('--skipFails', action='store_true',
                         help='Skip over failed tests during corpus generation')
-    parser.add_argument('--thorough', action='store_true',
-                        help='Include afl deterministic steps (slows things down A LOT)')
-    parser.add_argument('--instrumentAll', action='store_true',
-                        help='Instrument TSTL harness as well (usually not a good idea)')
-    parser.add_argument('--persist', action='store_true',
-                        help='Use persistent mode (experimental and not recommended')
+    parser.add_argument(
+        '--thorough',
+        action='store_true',
+        help='Include afl deterministic steps (slows things down A LOT)')
+    parser.add_argument(
+        '--instrumentAll',
+        action='store_true',
+        help='Instrument TSTL harness as well (usually not a good idea)')
+    parser.add_argument(
+        '--persist',
+        action='store_true',
+        help='Use persistent mode (experimental and not recommended')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)

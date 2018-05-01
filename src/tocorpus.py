@@ -25,5 +25,11 @@ def main():
     i = 0
     for f in files:
         t = sut.loadTest(f)
-        sut.saveTest(t, outputDir+"/"+os.path.basename(f)+".afl", afl=True)
+        sut.saveTest(
+            t,
+            outputDir +
+            "/" +
+            os.path.basename(f) +
+            ".afl",
+            afl=True)
         i += 1

@@ -18,7 +18,7 @@ if "--help" not in sys.argv:
 def makeInt(s):
     try:
         return int(s)
-    except:
+    except BaseException:
         return None
 
 
@@ -26,7 +26,7 @@ def runTest():
     global swarm, showActions, noCheck, alwaysSave, noSave, sut
 
     # yes, puts a limit on test length, but not a very important one probably!
-    bytesin = os.read(0, 1024*1024)
+    bytesin = os.read(0, 1024 * 1024)
 
     if swarm:
         R = random.Random()
@@ -93,7 +93,7 @@ def main():
 
     try:
         sut.stopCoverage()
-    except:
+    except BaseException:
         pass
 
     sut.restart()

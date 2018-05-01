@@ -54,7 +54,7 @@ def main():
     if config.seed:
         R.seed(config.seed)
 
-    print ("="*80)
+    print ("=" * 80)
     print ("CALIBRATING COST OF COVERAGE...\n")
 
     oldOut = sys.stdout
@@ -69,14 +69,14 @@ def main():
     start = time.time()
     noCovCount = 0
     for i in range(0, 30):
-        oldOut.write(str(i)+"...")
+        oldOut.write(str(i) + "...")
         oldOut.flush()
         (t, ok) = sut.makeTest(100, R, stopFail=False)
         noCovCount += 1
         if (time.time() - start) > 30:
-            oldOut.write("TIMEOUT AT "+str(time.time()-start))
+            oldOut.write("TIMEOUT AT " + str(time.time() - start))
             break
-    noCovTime = time.time()-start
+    noCovTime = time.time() - start
 
     sut.startCoverage()
 
@@ -86,14 +86,14 @@ def main():
     start = time.time()
     covCount = 0
     for i in range(0, 30):
-        oldOut.write(str(i)+"...")
+        oldOut.write(str(i) + "...")
         oldOut.flush()
         (t, ok) = sut.makeTest(100, R, stopFail=False)
         covCount += 1
         if (time.time() - start) > 30:
-            oldOut.write("TIMEOUT AT "+str(time.time()-start))
+            oldOut.write("TIMEOUT AT " + str(time.time() - start))
             break
-    covTime = time.time()-start
+    covTime = time.time() - start
 
     sys.stdout = oldOut
 
@@ -101,21 +101,24 @@ def main():
     print ()
     sys.stdout.flush()
 
-    covR = (covCount*100)/covTime
-    noCovR = (noCovCount*100)/noCovTime
+    covR = (covCount * 100) / covTime
+    noCovR = (noCovCount * 100) / noCovTime
     if covR < noCovR:
         print ("WITH COVERAGE:", covR, "ACTIONS/s")
         print ("WITHOUT COVERAGE:", noCovR, "ACTIONS/s")
-        overhead = (noCovR-covR)/noCovR
-        print ("COVERAGE OVERHEAD:", str(round(overhead*100, 2))+"%")
+        overhead = (noCovR - covR) / noCovR
+        print ("COVERAGE OVERHEAD:", str(round(overhead * 100, 2)) + "%")
     else:
         print ("NO DETECTABLE COVERAGE OVERHEAD")
     calibFile.write("COVERAGE OVERHEAD: " + str(overhead))
 
-    print ("="*80)
+    print ("=" * 80)
     print ("ESTIMATING LINES OF CODE IN ACTIONS...\n")
-    subprocess.call(["tstl_rt --timeout 180 --generateLOC .tstl_calibration_loc --noCover"],
-                    shell=True, stdout=fnull, stderr=fnull)
+    subprocess.call(
+        ["tstl_rt --timeout 180 --generateLOC .tstl_calibration_loc --noCover"],
+        shell=True,
+        stdout=fnull,
+        stderr=fnull)
     classLOCVals = {}
     for c in sut.actionClasses():
         classLOCVals[c] = 0.0
@@ -134,9 +137,9 @@ def main():
                 num0 += 1
         for c in sut.actionClasses():
             if classLOCVals[c] == 0.0:
-                classP[c] = (0.20/num0)
+                classP[c] = (0.20 / num0)
             else:
-                classP[c] = (classLOCVals[c]/totalLOCs)
+                classP[c] = (classLOCVals[c] / totalLOCs)
     sortLOC = sorted(classLOCVals.keys(),
                      key=lambda x: classP[x], reverse=True)
     print ("HIGHEST LOC-BASED PROBABILITY ACTIONS:")

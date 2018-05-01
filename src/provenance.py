@@ -58,22 +58,23 @@ while pos < len(possible):
     while ok and (endPos < len(possible)):
         ok = False
         preImageReduce = [x for x in possible[endPos]
-                          if (x[0], x[1]-1) in previous]
+                          if (x[0], x[1] - 1) in previous]
         if len(preImageReduce) > 0:
             endPos += 1
             ok = True
             previous = preImageReduce
         else:
-            print(pos-1, "-", endPos-1, [(x[0][1], x[1]) for x in previous])
-            for i in range(pos-1, endPos):
+            print(pos - 1, "-", endPos - 1,
+                  [(x[0][1], x[1]) for x in previous])
+            for i in range(pos - 1, endPos):
                 print("    ", i, t[i][0], end=' ')
                 if previous != []:
                     annotation = previous[0][0][1] + ":" + \
-                        str(previous[0][1]-((endPos-1)-i))
+                        str(previous[0][1] - ((endPos - 1) - i))
                 else:
                     annotation = ""
                 print("ANNOTATION:", annotation)
-                newTest.append(t[i]+(annotation,))
+                newTest.append(t[i] + (annotation,))
     if endPos < len(possible):
         previous = possible[endPos]
     pos = endPos + 1

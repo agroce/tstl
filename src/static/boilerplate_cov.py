@@ -47,7 +47,10 @@ def internalReport(self):
                     print("WARNING:", a, "VISITED BUT MISSING FROM COVERAGEDATA")
         for a in adata:
             if (src_file, a) not in self.__allBranches:
-                print ("WARNING:", a, "IN COVERAGEDATA BUT NOT IN TSTL COVERAGE")
+                print (
+                    "WARNING:",
+                    a,
+                    "IN COVERAGEDATA BUT NOT IN TSTL COVERAGE")
         ldata = list(set(self.__oldCovData.lines(src_file)))
         print(src_file, "LINES:", len(ldata), sorted(ldata))
         for (f, l) in self.__allStatements:
@@ -112,8 +115,11 @@ def htmlReport(self, dir):
         self.__cov.combine([dir + "/.tmpcov"])
     r = -1
     try:
-        r = self.__cov.html_report(morfs=self.__modules, directory=dir,
-                                   title="TSTL Coverage Report", show_missing=True)
+        r = self.__cov.html_report(
+            morfs=self.__modules,
+            directory=dir,
+            title="TSTL Coverage Report",
+            show_missing=True)
     finally:
         return r
 
@@ -164,7 +170,7 @@ def coversBranches(self, branches, catchUncaught=False, checkProp=False):
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except KeyboardInterrupt as e:
             raise e
-        except:
+        except BaseException:
             pass
         cb = self.currBranches()
         for b in branches:
@@ -180,7 +186,7 @@ def coversStatements(self, statements, catchUncaught=False, checkProp=False):
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except KeyboardInterrupt as e:
             raise e
-        except:
+        except BaseException:
             pass
         cs = self.currStatements()
         for s in statements:
@@ -190,13 +196,18 @@ def coversStatements(self, statements, catchUncaught=False, checkProp=False):
     return coverPred
 
 
-def coversAll(self, statements, branches, catchUncaught=False, checkProp=False):
+def coversAll(
+        self,
+        statements,
+        branches,
+        catchUncaught=False,
+        checkProp=False):
     def coverPred(test):
         try:
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except KeyboardInterrupt as e:
             raise e
-        except:
+        except BaseException:
             pass
         cs = self.currStatements()
         for s in statements:
@@ -210,13 +221,18 @@ def coversAll(self, statements, branches, catchUncaught=False, checkProp=False):
     return coverPred
 
 
-def coversMore(self, statements, branches, catchUncaught=False, checkProp=False):
+def coversMore(
+        self,
+        statements,
+        branches,
+        catchUncaught=False,
+        checkProp=False):
     def coverPred(test):
         try:
             self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
         except KeyboardInterrupt as e:
             raise e
-        except:
+        except BaseException:
             pass
         cs = self.currStatements()
         for s in statements:
@@ -238,15 +254,28 @@ def coversMore(self, statements, branches, catchUncaught=False, checkProp=False)
 
 def coversSame(self, test, catchUncaught=False, checkProp=False):
     self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
-    return self.coversAll(self.currStatements(), self.currBranches(), catchUncaught=catchUncaught, checkProp=checkProp)
+    return self.coversAll(
+        self.currStatements(),
+        self.currBranches(),
+        catchUncaught=catchUncaught,
+        checkProp=checkProp)
 
 
 def coversMoreThan(self, test, catchUncaught=False, checkProp=False):
     self.replay(test, catchUncaught=catchUncaught, checkProp=checkProp)
-    return self.coversMore(self.currStatements(), self.currBranches(), catchUncaught=catchUncaught, checkProp=checkProp)
+    return self.coversMore(
+        self.currStatements(),
+        self.currBranches(),
+        catchUncaught=catchUncaught,
+        checkProp=checkProp)
 
 
-def coverDecompose(self, test, verbose=False, catchUncaught=False, checkProp=False):
+def coverDecompose(
+        self,
+        test,
+        verbose=False,
+        catchUncaught=False,
+        checkProp=False):
     (result, coverages) = self.replay(test, returnCov=True,
                                       catchUncaught=catchUncaught, checkProp=checkProp)
     tests = []
@@ -266,10 +295,16 @@ def coverDecompose(self, test, verbose=False, catchUncaught=False, checkProp=Fal
     while (len(allSCoverages) != 0) or (len(allBCoverages) != 0):
         (sgoal, bgoal) = coverages[0]
         if verbose:
-            print("CONSTRUCTING TEST #"+str(i), "WITH GOAL",
+            print("CONSTRUCTING TEST #" + str(i), "WITH GOAL",
                   len(sgoal), "STATEMENTS AND", len(bgoal), "BRANCHES")
-        t = self.reduce(test, self.coversAll(
-            sgoal, bgoal, catchUncaught=catchUncaught, checkProp=checkProp), verbose=verbose)
+        t = self.reduce(
+            test,
+            self.coversAll(
+                sgoal,
+                bgoal,
+                catchUncaught=catchUncaught,
+                checkProp=checkProp),
+            verbose=verbose)
         tests.append(t)
         self.replay(t, catchUncaught=catchUncaught, checkProp=checkProp)
         currS = set(self.currStatements())

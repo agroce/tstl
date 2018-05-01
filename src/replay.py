@@ -64,14 +64,14 @@ def main():
     if not (("--coverage" in sys.argv) or ("--internal" in sys.argv)):
         try:
             sut.stopCoverage()
-        except:
+        except BaseException:
             pass
 
     if ("--trace" in sys.argv):
         goodToTrace = False
         try:
             sut.stopCoverage()
-        except:
+        except BaseException:
             goodToTrace = True
         if not goodToTrace:
             print(
@@ -130,7 +130,7 @@ def main():
     else:
         readTest = sut.loadTest(
             file, afl=True, swarm=("--aflswarm" in sys.argv))
-        theTest = map(lambda x: x[0]+"\n", readTest)
+        theTest = map(lambda x: x[0] + "\n", readTest)
     for l in theTest:
         name = l[:-1]
         if name == "<<RESTART>>":
@@ -142,7 +142,7 @@ def main():
             sut.restart()
         else:
             if verbose:
-                print("STEP #"+str(i)+":", end=' ')
+                print("STEP #" + str(i) + ":", end=' ')
             rout.write(l)
             rout.flush()
             action = sut.playable(name)

@@ -57,7 +57,7 @@ def main():
 
     try:
         sut.stopCoverage()
-    except:
+    except BaseException:
         pass
 
     signatures = {}
@@ -78,10 +78,13 @@ def main():
                                    sut.prettyName(t[-1][0]), 1)
             elif (len(t) < signatures[sig][1]):
                 signatures[sig] = (fn, t, sut.failure(), sut.prettyName(
-                    t[-1][0]), signatures[sig][4]+1)
+                    t[-1][0]), signatures[sig][4] + 1)
 
-    for sig in sorted(signatures.keys(), key=lambda x: signatures[x][4], reverse=True):
-        print ("="*80)
+    for sig in sorted(
+            signatures.keys(),
+            key=lambda x: signatures[x][4],
+            reverse=True):
+        print ("=" * 80)
         print ("TEST:", signatures[sig][0], "LENGTH:", len(signatures[sig][1]))
         print ("OPERATION:", signatures[sig][3])
         print ("FAILURE:")

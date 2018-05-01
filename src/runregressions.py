@@ -58,7 +58,7 @@ def main():
         nocover = True
         try:
             sut.stopCoverage()
-        except:
+        except BaseException:
             pass
     if "--glob" in sys.argv:
         newFiles = []
@@ -106,7 +106,8 @@ def main():
         except Exception as e:
             print("EXCEPTION RAISED:", e)
         if not nocover:
-            if (len(sut.newCurrBranches()) == 0) and (len(sut.newCurrStatements()) == 0):
+            if (len(sut.newCurrBranches()) == 0) and (
+                    len(sut.newCurrStatements()) == 0):
                 noNewCover.append(f)
             else:
                 newCover.append(f)
@@ -124,7 +125,7 @@ def main():
             anyFailed = True
             if not keepGoing:
                 sys.exit(255)
-        print(time.time()-stime, "ELAPSED")
+        print(time.time() - stime, "ELAPSED")
         if not nocover:
             print("STATEMENTS:", len(sut.allStatements()),
                   "BRANCHES:", len(sut.allBranches()))

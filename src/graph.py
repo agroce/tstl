@@ -27,8 +27,8 @@ def breaksApart(s):
         p1 = s2.find("<[")
         p2 = s2.find("]>")
         breaks1.append(s2[:p1])
-        breaks1.append(s2[p1:p2+2])
-        s2 = s2[p2+2:]
+        breaks1.append(s2[p1:p2 + 2])
+        s2 = s2[p2 + 2:]
     breaks1.append(s2)
     breaks2 = []
     for b1 in breaks1:
@@ -44,7 +44,7 @@ def breaksApart(s):
 def intOrNone(v):
     try:
         return int(v)
-    except:
+    except BaseException:
         return None
 
 
@@ -54,7 +54,7 @@ def rangeOrNone(v):
             vs = v.split("..")
             return (int(vs[0][2:]), int(vs[1][:-2]))
         return None
-    except:
+    except BaseException:
         return None
 
 
@@ -99,7 +99,7 @@ def merge(s1, s2):
                 elif (r2 is not None):  # range and range
                     (low1, high1) = r1
                     (low2, high2) = r2
-                    if ((high1+1) == low2) or ((high2+1) == low1):
+                    if ((high1 + 1) == low2) or ((high2 + 1) == low1):
                         merged += "<[" + str(min(low1, low2)) + \
                             ".." + str(max(high1, high2)) + "]>"
                     else:
@@ -202,7 +202,7 @@ def main():
             eqnexts = collapse(eqnexts)
             eqnexts = [x for x in eqnexts if x != aname]
             random.shuffle(eqnexts)
-            eqnexts = eqnexts[-(k-1):]
+            eqnexts = eqnexts[-(k - 1):]
             mid = len(eqnexts) / 2
             if ((len(eqnexts) % 2) != 0):
                 if midFlip:

@@ -144,7 +144,15 @@ def main():
                         pname = t.prettyName(p + "[" + str(i) + "]")
                         #outf.write("print (repr("+pname+"))\n")
                         outf.write(
-                            "assert (repr(" + absFun + "("+pname+')) == (' + repr(repr(vals[i])) + '))\n')
+                            "assert (repr(" +
+                            absFun +
+                            "(" +
+                            pname +
+                            ')) == (' +
+                            repr(
+                                repr(
+                                    vals[i])) +
+                            '))\n')
 
     outf.write('\n\nprint ("TEST COMPLETED SUCCESSFULLY")\n')
     outf.close()

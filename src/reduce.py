@@ -32,46 +32,87 @@ def parse_args():
                         help="Do not normalize/simplify test.")
     parser.add_argument('--noAlpha', action='store_true',
                         help="Do not alpha convert test.")
-    parser.add_argument('--matchException', action='store_true',
-                        help='Force test to fail with same exception as original (does not work for sandboxes).')
-    parser.add_argument('--coverage', action='store_true',
-                        help='Reduce with respect to maintaining code coverage, not failure.')
-    parser.add_argument('--coverMore', action='store_true',
-                        help='Only allow reductions that increase code coverage.')
-    parser.add_argument('--checkDeterminism', action='store_true',
-                        help='Reduce with respect to test being deterministic (final state).')
-    parser.add_argument('--checkStepDeterminism', action='store_true',
-                        help='Reduce with respect to test being deterministic (visible value).')
+    parser.add_argument(
+        '--matchException',
+        action='store_true',
+        help='Force test to fail with same exception as original (does not work for sandboxes).')
+    parser.add_argument(
+        '--coverage',
+        action='store_true',
+        help='Reduce with respect to maintaining code coverage, not failure.')
+    parser.add_argument(
+        '--coverMore',
+        action='store_true',
+        help='Only allow reductions that increase code coverage.')
+    parser.add_argument(
+        '--checkDeterminism',
+        action='store_true',
+        help='Reduce with respect to test being deterministic (final state).')
+    parser.add_argument(
+        '--checkStepDeterminism',
+        action='store_true',
+        help='Reduce with respect to test being deterministic (visible value).')
     parser.add_argument('--determinismDelay', type=float, default=1.0,
                         help='Time delay for nondeterminism check.')
-    parser.add_argument('--determinismDelay0', type=float, default=None,
-                        help='Time delay for INITIAL run in nondeterminism check.')
-    parser.add_argument('--determinismTries', type=int, default=1,
-                        help='Number of times to check for nondeterministic behavior.')
-    parser.add_argument('--checkProcessDeterminism', action='store_true',
-                        help='Reduce with respect to test being process deterministic.')
-    parser.add_argument('--iterate', action='store_true',
-                        help='Use iterative approach to check process determinism.')
+    parser.add_argument(
+        '--determinismDelay0',
+        type=float,
+        default=None,
+        help='Time delay for INITIAL run in nondeterminism check.')
+    parser.add_argument(
+        '--determinismTries',
+        type=int,
+        default=1,
+        help='Number of times to check for nondeterministic behavior.')
+    parser.add_argument(
+        '--checkProcessDeterminism',
+        action='store_true',
+        help='Reduce with respect to test being process deterministic.')
+    parser.add_argument(
+        '--iterate',
+        action='store_true',
+        help='Use iterative approach to check process determinism.')
     parser.add_argument('--probability', type=float, default=None,
                         help='Ensure predicate fails with this probability.')
-    parser.add_argument('--samples', type=int, default=10,
-                        help='Use this many samples to check probability (default 10).')
-    parser.add_argument('--replications', type=int, default=1,
-                        help='Use this many replications to check probability (default 1).')
-    parser.add_argument('-k', '--keepLast', action='store_true',
-                        help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
-    parser.add_argument('--uncaught', action='store_true',
-                        help='Allow uncaught exceptions in actions (for coverage-based reduction).')
-    parser.add_argument('--ddmin', action='store_true',
-                        help="Use standard binary-search-like delta-debugging, not greedy one-step method.")
-    parser.add_argument('--decompose', action='store_true',
-                        help="Perform decomposition by coverage (assumes coverage based reduction).  Produces multiple tests.")
+    parser.add_argument(
+        '--samples',
+        type=int,
+        default=10,
+        help='Use this many samples to check probability (default 10).')
+    parser.add_argument(
+        '--replications',
+        type=int,
+        default=1,
+        help='Use this many replications to check probability (default 1).')
+    parser.add_argument(
+        '-k',
+        '--keepLast',
+        action='store_true',
+        help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
+    parser.add_argument(
+        '--uncaught',
+        action='store_true',
+        help='Allow uncaught exceptions in actions (for coverage-based reduction).')
+    parser.add_argument(
+        '--ddmin',
+        action='store_true',
+        help="Use standard binary-search-like delta-debugging, not greedy one-step method.")
+    parser.add_argument(
+        '--decompose',
+        action='store_true',
+        help="Perform decomposition by coverage (assumes coverage based reduction).  Produces multiple tests.")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Produce multiple reductions.")
-    parser.add_argument('--recursive', type=int, default=1,
-                        help='How many recursive levels of comb-block to apply (default 1).')
-    parser.add_argument('--limit', type=int, default=None,
-                        help='Limit on combinations generated in comb-block (default None).')
+    parser.add_argument(
+        '--recursive',
+        type=int,
+        default=1,
+        help='How many recursive levels of comb-block to apply (default 1).')
+    parser.add_argument(
+        '--limit',
+        type=int,
+        default=None,
+        help='Limit on combinations generated in comb-block (default None).')
     parser.add_argument('--random', action='store_true',
                         help="Randomize order of reductions.")
     parser.add_argument('--seed', type=int, default=None,
@@ -82,8 +123,11 @@ def parse_args():
                         help="Use sandbox reduction.")
     parser.add_argument('--quietSandbox', action='store_true',
                         help="Run sandbox in a quieter mode.")
-    parser.add_argument('--timeout', type=int, default=None,
-                        help='Timeout for sandbox reductions (only works on unix-like systems).')
+    parser.add_argument(
+        '--timeout',
+        type=int,
+        default=None,
+        help='Timeout for sandbox reductions (only works on unix-like systems).')
     parser.add_argument('--afl', action='store_true',
                         help="Read in tests in afl format.")
     parser.add_argument('--aflswarm', action='store_true',
@@ -126,7 +170,7 @@ def sandboxReplay(test):
     start = time.time()
     subprocess.call([cmd], shell=True)
     if "--quietSandbox" not in sys.argv:
-        print("ELAPSED:", time.time()-start)
+        print("ELAPSED:", time.time() - start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
             if "--quietSandbox" not in sys.argv:
@@ -157,7 +201,7 @@ def main():
     if not ((config.coverage) or (config.coverMore) or (config.decompose)):
         try:
             sut.stopCoverage()
-        except:
+        except BaseException:
             pass
 
     R = None
@@ -186,7 +230,8 @@ def main():
     else:
         pred = sandboxReplay
 
-    if config.coverage or config.coverMore or (config.decompose and not config.noNormalize):
+    if config.coverage or config.coverMore or (
+            config.decompose and not config.noNormalize):
         print("EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION...")
         sut.replay(r, checkProp=not config.noCheck,
                    catchUncaught=config.uncaught)
@@ -195,43 +240,80 @@ def main():
         print("PRESERVING", len(b), "BRANCHES AND", len(s), "STATEMENTS")
         if config.coverMore:
             pred = sut.coversMore(
-                s, b, checkProp=not config.noCheck, catchUncaught=config.uncaught)
+                s,
+                b,
+                checkProp=not config.noCheck,
+                catchUncaught=config.uncaught)
         else:
             pred = sut.coversAll(
-                s, b, checkProp=not config.noCheck, catchUncaught=config.uncaught)
+                s,
+                b,
+                checkProp=not config.noCheck,
+                catchUncaught=config.uncaught)
 
     if config.checkDeterminism:
-        pred = (lambda t: sut.nondeterministic(t, delay=config.determinismDelay, tries=config.determinismTries,
-                                               delay0=config.determinismDelay0))
+        pred = (
+            lambda t: sut.nondeterministic(
+                t,
+                delay=config.determinismDelay,
+                tries=config.determinismTries,
+                delay0=config.determinismDelay0))
 
     if config.checkStepDeterminism:
-        pred = (lambda t: sut.stepNondeterministic(t, delay=config.determinismDelay, tries=config.determinismTries,
-                                                   delay0=config.determinismDelay0))
+        pred = (
+            lambda t: sut.stepNondeterministic(
+                t,
+                delay=config.determinismDelay,
+                tries=config.determinismTries,
+                delay0=config.determinismDelay0))
 
     if config.checkProcessDeterminism:
-        pred = (lambda t: sut.processNondeterministic(t, delay=config.determinismDelay, tries=config.determinismTries,
-                                                      iterate=config.iterate))
+        pred = (
+            lambda t: sut.processNondeterministic(
+                t,
+                delay=config.determinismDelay,
+                tries=config.determinismTries,
+                iterate=config.iterate))
 
     if config.probability is not None:
         Ppred = pred
-        pred = (lambda t: sut.forceP(t, Ppred, P=config.probability,
-                                     samples=config.samples, replications=config.replications))
+        pred = (
+            lambda t: sut.forceP(
+                t,
+                Ppred,
+                P=config.probability,
+                samples=config.samples,
+                replications=config.replications))
 
     print("STARTING WITH TEST OF LENGTH", len(r))
     if not config.noReduce:
         start = time.time()
         print("REDUCING...")
         if (not config.multiple) and (not config.decompose):
-            r = sut.reduce(r, pred, verbose=config.verbose,
-                           tryFast=not config.ddmin, keepLast=config.keepLast, rgen=R)
+            r = sut.reduce(
+                r,
+                pred,
+                verbose=config.verbose,
+                tryFast=not config.ddmin,
+                keepLast=config.keepLast,
+                rgen=R)
         elif config.multiple:
-            rs = sut.reductions(r, pred, verbose=config.verbose, recursive=config.recursive,
-                                limit=config.limit, keepLast=config.keepLast, tryFast=not config.ddmin)
+            rs = sut.reductions(
+                r,
+                pred,
+                verbose=config.verbose,
+                recursive=config.recursive,
+                limit=config.limit,
+                keepLast=config.keepLast,
+                tryFast=not config.ddmin)
         elif config.decompose:
             print("DECOMPOSING...")
             rs = sut.coverDecompose(
-                r, verbose=config.verbose, checkProp=not config.noCheck, catchUncaught=config.uncaught)
-        print("REDUCED IN", time.time()-start, "SECONDS")
+                r,
+                verbose=config.verbose,
+                checkProp=not config.noCheck,
+                catchUncaught=config.uncaught)
+        print("REDUCED IN", time.time() - start, "SECONDS")
         if (not config.multiple) and (not config.decompose):
             print("NEW LENGTH", len(r))
         else:
@@ -246,8 +328,12 @@ def main():
         start = time.time()
         print("NORMALIZING...")
         if (not config.multiple) and (not config.decompose):
-            r = sut.normalize(r, pred, verbose=config.verbose,
-                              keepLast=config.keepLast, tryFast=not config.ddmin)
+            r = sut.normalize(
+                r,
+                pred,
+                verbose=config.verbose,
+                keepLast=config.keepLast,
+                tryFast=not config.ddmin)
         else:
             newrs = []
             for r in rs:
@@ -268,7 +354,8 @@ def main():
                 else:
                     pred = sandboxReplay
 
-                if config.coverage or config.coverMore or (config.decompose and not config.noNormalize):
+                if config.coverage or config.coverMore or (
+                        config.decompose and not config.noNormalize):
                     print("EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION...")
                     sut.replay(r, checkProp=not config.noCheck,
                                catchUncaught=config.uncaught)
@@ -283,10 +370,15 @@ def main():
                         pred = sut.coversAll(
                             s, b, checkProp=not config.noCheck, catchUncaught=config.uncaught)
 
-                newrs.append(sut.normalize(r, pred, verbose=config.verbose,
-                                           keepLast=config.keepLast, tryFast=not config.ddmin))
+                newrs.append(
+                    sut.normalize(
+                        r,
+                        pred,
+                        verbose=config.verbose,
+                        keepLast=config.keepLast,
+                        tryFast=not config.ddmin))
             rs = newrs
-        print("NORMALIZED IN", time.time()-start, "SECONDS")
+        print("NORMALIZED IN", time.time() - start, "SECONDS")
         if (not config.multiple) and (not config.decompose):
             print("NEW LENGTH", len(r))
         else:
@@ -299,11 +391,11 @@ def main():
     else:
         i = 0
         for r in rs:
-            print("TEST #"+str(i)+":")
-            sut.saveTest(r, config.outfile+"."+str(i) +
+            print("TEST #" + str(i) + ":")
+            sut.saveTest(r, config.outfile + "." + str(i) +
                          ".test", afl=config.writeafl)
             sut.prettyPrintTest(r)
             print()
-            print("TEST WRITTEN TO", config.outfile+"."+str(i))
+            print("TEST WRITTEN TO", config.outfile + "." + str(i))
             print()
             i += 1

@@ -25,22 +25,34 @@ def parse_args():
                         help='Do not perform fresh value generalization.')
     parser.add_argument('--noCheck', action='store_true',
                         help='Do not check properties.')
-    parser.add_argument('--matchException', action='store_true',
-                        help='Force test to fail with same exception as original (does not work for sandboxes).')
-    parser.add_argument('--coverage', action='store_true',
-                        help='Reduce with respect to maintaining code coverage, not failure.')
-    parser.add_argument('-k', '--keepLast', action='store_true',
-                        help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
-    parser.add_argument('--uncaught', action='store_true',
-                        help='Allow uncaught exceptions in actions (for coverage-based reduction).')
+    parser.add_argument(
+        '--matchException',
+        action='store_true',
+        help='Force test to fail with same exception as original (does not work for sandboxes).')
+    parser.add_argument(
+        '--coverage',
+        action='store_true',
+        help='Reduce with respect to maintaining code coverage, not failure.')
+    parser.add_argument(
+        '-k',
+        '--keepLast',
+        action='store_true',
+        help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
+    parser.add_argument(
+        '--uncaught',
+        action='store_true',
+        help='Allow uncaught exceptions in actions (for coverage-based reduction).')
     parser.add_argument('--verbose', type=str, default=None,
                         help='Level of verbosity for reduction.')
     parser.add_argument('--sandbox', action='store_true',
                         help="Use sandbox reduction.")
     parser.add_argument('--quietSandbox', action='store_true',
                         help="Run sandbox in a quieter mode.")
-    parser.add_argument('--timeout', type=int, default=None,
-                        help='Timeout for sandbox reductions (only works on unix-like systems).')
+    parser.add_argument(
+        '--timeout',
+        type=int,
+        default=None,
+        help='Timeout for sandbox reductions (only works on unix-like systems).')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -77,7 +89,7 @@ def sandboxReplay(test):
     start = time.time()
     subprocess.call([cmd], shell=True)
     if "--quietSandbox" not in sys.argv:
-        print("ELAPSED:", time.time()-start)
+        print("ELAPSED:", time.time() - start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
             if "--quietSandbox" not in sys.argv:
@@ -104,7 +116,7 @@ def main():
     if not config.coverage:
         try:
             sut.stopCoverage()
-        except:
+        except BaseException:
             pass
 
     t = sut.loadTest(config.infile)
@@ -140,4 +152,4 @@ def main():
     start = time.time()
     sut.generalize(t, pred, verbose=config.verbose,
                    fresh=not config.noFresh, keepLast=config.keepLast)
-    print("GENERALIZED IN", time.time()-start, "SECONDS")
+    print("GENERALIZED IN", time.time() - start, "SECONDS")

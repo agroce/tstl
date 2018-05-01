@@ -56,15 +56,15 @@ def main():
 
     i = 0
     stime = time.time()
-    while (time.time()-stime) < timeout:
+    while (time.time() - stime) < timeout:
         i += 1
         if swarm:
             seed = R.randint(0, 2**32)
             Rswarm.seed(seed)
             sut.standardSwarm(Rswarm)
         (t, ok) = sut.makeTest(length, R, stopFail=True, checkProp=checkProp)
-        if ((not noCover) and (not burst) and (len(sut.newCurrBranches()) == 0) and
-                len(sut.newCurrStatements()) == 0):
+        if ((not noCover) and (not burst) and (len(sut.newCurrBranches())
+                                               == 0) and len(sut.newCurrStatements()) == 0):
             continue
         else:
             print ("INPUT", i, "GENERATED", end=" ")
@@ -93,7 +93,7 @@ def main():
             print ("REDUCED LENGTH:", len(r))
         if not burst:
             sut.prettyPrintTest(r)
-        print ("="*80)
+        print ("=" * 80)
         if not swarm:
             sut.saveTest(r, outputDir + "/tstl." + type + "." +
                          pid + "." + str(i) + ".afl", afl=True)

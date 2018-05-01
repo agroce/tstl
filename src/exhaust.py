@@ -81,30 +81,36 @@ def main():
                     sys.exit(255)
             i += 1
         if ("--ultraVerbose" in sys.argv):
-            print("="*25)
+            print("=" * 25)
             sut.prettyPrintTest(path)
         p = sut.captureReplay(path)
         if p in takenFull:
             repeats += 1
         takenFull[p] = True
-        epoch = int((time.time()-start)/2)
+        epoch = int((time.time() - start) / 2)
         if epoch > lastEpoch:
             lastEpoch = epoch
-            print(time.time()-start, "ELAPSED", count, "TESTS", repeats, "REPEATS", end=' ')
+            print(time.time() - start, "ELAPSED", count, "TESTS", repeats, "REPEATS", end=' ')
             if not ("--noCover" in sys.argv):
                 print("[", len(sut.allStatements()), "stmts", len(sut.allBranches()), "branches ]", end=' ')
             print()
             if ("--verbose" in sys.argv):
-                print("*"*50)
+                print("*" * 50)
                 print("PATH #", count)
                 sut.prettyPrintTest(path)
                 print()
                 print("COUNTS:")
-                print("="*20)
-                for c in sorted(list(allTakenClass.keys()), key=lambda ac: allTakenClass[ac]):
+                print("=" * 20)
+                for c in sorted(
+                        list(
+                            allTakenClass.keys()),
+                        key=lambda ac: allTakenClass[ac]):
                     print(c, allTakenClass[c])
-                print("="*20)
-                for a in sorted(list(allTaken.keys()), key=lambda act: allTaken[act]):
+                print("=" * 20)
+                for a in sorted(
+                        list(
+                            allTaken.keys()),
+                        key=lambda act: allTaken[act]):
                     print(a, allTaken[a])
 
     print(repeats, "TOTAL REPEATED TESTS", len(takenFull), "DISTINCT TESTS")
