@@ -31,7 +31,7 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize","--output",".avltest"])
         self.assertEqual(r,255)                                
 
-        for f in glob.glob(".avltest.*.test"):
+        for f in glob.glob(".avltest.*.test*"):
             os.remove(f)
         
         os.chdir("../..")
