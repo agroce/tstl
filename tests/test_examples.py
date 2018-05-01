@@ -9,9 +9,6 @@ from unittest import TestCase
 
 class TestExamples(TestCase):
     def test_examples(self):
-        if os.getenv("TRAVIS") == "TRUE":
-            return
-        
         os.chdir("examples")
         
         noTests = True
@@ -47,6 +44,9 @@ class TestExamples(TestCase):
                         compileFailures.append(f+"/"+t)
                         print ()
                         os.remove("sut.py")
+                        continue
+                    if os.getenv("TRAVIS") == "TRUE":
+                        print ("OK")
                         continue
                     print ("COMPILING TO BYTECODE",end="...")
                     sys.stdout.flush()
