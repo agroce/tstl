@@ -12,5 +12,5 @@ script:
 - python setup.py install
 - nosetests --verbose
 - pyflakes src/*.py
-- pycodestyle src/*.py --max-line-length 180 --ignore W605,E722,E741,W503,W504,E704
-- pycodestyle src/static/*.py --max-line-length 180 --ignore W605,E722,E741,W503,W504,E704
+- pycodestyle src/*.py --max-line-length 180 --ignore E741
+- pycodestyle src/static/*.py --max-line-length 180 --ignore E741
