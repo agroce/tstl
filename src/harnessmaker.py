@@ -893,7 +893,7 @@ def main():
                         r'\b' + base + r'\b', referenceMap[base], refl)
                 else:   # base is a regex; treat it like one
                     refl = re.sub(base, referenceMap[base], refl)
-        newLogs.append(l)
+        newLogs.append(line)
         if refl != line:
             newLogs.append(refl)
     logSet = newLogs

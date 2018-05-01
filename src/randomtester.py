@@ -1014,7 +1014,7 @@ def main():
                              set(sut.currStatements())))
         poolCount = len(fullPool)
         print("READ", poolCount, "POOL TESTS IN",
-               time.time() - startRead, "SECONDS")
+              time.time() - startRead, "SECONDS")
 
     # MAJOR SPEED GAIN:  IF NOT MEASURING COVERGE, NO NEED TO RECOMPILE, JUST
     # RUN --noCover

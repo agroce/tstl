@@ -146,7 +146,7 @@ def main():
             print("TEST", f, "REDUNDANT WITH RESPECT TO COVERAGE")
         print()
         print(len(newCover), "TESTS NEEDED FOR FULL COVERAGE:",
-               ", ".join(newCover))
+              ", ".join(newCover))
         print()
 
     print("EXECUTED", totalTests, "TESTS")
