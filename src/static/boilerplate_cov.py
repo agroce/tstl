@@ -47,7 +47,7 @@ def internalReport(self):
                     print("WARNING:", a, "VISITED BUT MISSING FROM COVERAGEDATA")
         for a in adata:
             if (src_file, a) not in self.__allBranches:
-                print (
+                print(
                     "WARNING:",
                     a,
                     "IN COVERAGEDATA BUT NOT IN TSTL COVERAGE")
