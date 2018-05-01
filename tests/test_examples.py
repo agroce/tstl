@@ -99,8 +99,7 @@ class TestExamples(TestCase):
                         os.remove("sut.pyc")
                     except OSError:
                         pass
-                    try:
-                        os.remove(".output")
+                    os.remove(".output")
                 os.chdir("..")
                 sys.stdout.flush()
 
