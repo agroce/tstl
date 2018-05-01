@@ -10,9 +10,9 @@ largest = 0
 
 def wrapNeg(i):
     if i < 0:
-       return "(" + str(i) + ")"
+        return "(" + str(i) + ")"
     else:
-	return str(i)
+        return str(i)
 
 def evalCheck(expr):
     global cache, hits, largest
@@ -44,10 +44,16 @@ def heval(s):
        return cache[s]
     hs = s.replace("/"," `div` ")
     p = subprocess.Popen(['ghci'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
-    output, output_err = p.communicate(hs)
-    for l in output.split("\n"):
-    	if l.find("Prelude> ") == 0:
-	   return int(l.split("Prelude> ")[1])
+    output, output_err = p.communicate(bytes(hs.encode('utf-8')))
+    output = str(output)
+    nstart = output.split("Prelude> ")[1]
+    print (nstart)
+    num = ""
+    pos = 0
+    while nstart[pos].isdigit():
+        num += nstart[pos]
+        pos += 1
+    return int(num)
 @>
 
 pool: <expr> 10
