@@ -3,14 +3,14 @@ def __updateCov(self,extendCov=False):
         self.__newBranches = set()
         self.__newStatements = set()
     newCov = self.__cov.get_data()
-    if self.__oldCovData == None:
+    if self.__oldCovData is None:
         self.__oldCovData = coverage.CoverageData()
     self.__oldCovData.update(newCov)
-    if newCov.measured_files() == None:
+    if newCov.measured_files() is None:
         return
     for src_file in newCov.measured_files():
         thisArcs = newCov.arcs(src_file)
-        if thisArcs == None:
+        if thisArcs is None:
             continue # assume if we have arcs we have lines
         for arc in thisArcs:
             branch = (src_file, arc)
@@ -34,7 +34,7 @@ def silenceCoverage(self):
 
 def internalReport(self):
     print("TSTL INTERNAL COVERAGE REPORT:")
-    if self.__oldCovData == None:
+    if self.__oldCovData is None:
         return
     for src_file in self.__oldCovData.measured_files():
         adata = self.__oldCovData.arcs(src_file)
@@ -68,9 +68,9 @@ def cleanCov(self):
     self.__currStatements = set()
     self.__newCurrBranches = set()
     self.__newCurrStatements = set()
-    if self.__oldCovData == None:
+    if self.__oldCovData is None:
         self.__oldCovData = coverage.CoverageData()
-    if self.__cov.get_data() == None:
+    if self.__cov.get_data() is None:
         return
     self.__oldCovData.update(self.__cov.get_data())
     self.__cov.erase()
@@ -88,7 +88,7 @@ def resetCov(self):
     self.__newCurrStatements = set()
 
 def report(self, filename):
-    if self.__oldCovData != None:
+    if self.__oldCovData is not None:
         self.__oldCovData.write_file(filename)
         self.__cov.combine([filename])
     outf = open(filename,'w')
@@ -100,13 +100,13 @@ def report(self, filename):
         return r
 
 def htmlReport(self, dir):
-    if self.__oldCovData != None:
+    if self.__oldCovData is not None:
         self.__oldCovData.write_file(dir + "/.tmpcov")
         self.__cov.combine([dir + "/.tmpcov"])
     r = -1
     try:
         r = self.__cov.html_report(morfs=self.__modules, directory=dir,
-                                      title="TSTL Coverage Report",show_missing=True)
+                                   title="TSTL Coverage Report",show_missing=True)
     finally:
         return r
 
@@ -265,4 +265,3 @@ def coverDecompose(self,test,verbose=False,catchUncaught=False,checkProp=False):
         coverages = newCoverages
         i += 1
     return tests
-

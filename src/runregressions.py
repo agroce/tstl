@@ -10,7 +10,7 @@ import glob
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-if not "--help" in sys.argv:
+if "--help" not in sys.argv:
     import sut as SUT
 
 def main():
@@ -125,7 +125,7 @@ def main():
         print(time.time()-stime,"ELAPSED")
         if not nocover:
             print("STATEMENTS:",len(sut.allStatements()), "BRANCHES:",len(sut.allBranches()))
-            if not f in noNewCover:
+            if f not in noNewCover:
                 print("NEW STATEMENTS:",len(sut.newCurrStatements()), "BRANCHES:",len(sut.newCurrBranches()))
         sys.stdout.flush()
 

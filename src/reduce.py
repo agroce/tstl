@@ -14,7 +14,7 @@ from collections import namedtuple
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-if not "--help" in sys.argv:
+if "--help" not in sys.argv:
     import sut as SUT
 
 def parse_args():
@@ -108,7 +108,7 @@ def make_config(pargs, parser):
 
 def sandboxReplay(test):
     global timeout
-    if not "--quietSandbox" in sys.argv:
+    if "--quietSandbox" not in sys.argv:
         print("ATTEMPTING SANDBOX REPLAY WITH",len(test),"STEPS")
     tmpName = "tmptest." + str(os.getpid()) + ".test"
     tmptest = open(tmpName,'w')
@@ -122,14 +122,14 @@ def sandboxReplay(test):
         cmd = "ulimit -t " + timeout + "; " + cmd
     start = time.time()
     subprocess.call([cmd],shell=True)
-    if not "--quietSandbox" in sys.argv:
+    if "--quietSandbox" not in sys.argv:
         print("ELAPSED:",time.time()-start)
     for l in open("replay.out"):
         if "TEST REPLAYED SUCCESSFULLY" in l:
-            if not "--quietSandbox" in sys.argv:
+            if "--quietSandbox" not in sys.argv:
                 print("TEST SUCCEEDS")
             return False
-    if not "--quietSandbox" in sys.argv:
+    if "--quietSandbox" not in sys.argv:
         print("TEST FAILS")
     print("SANDBOX RUN FAILS: TEST LENGTH NOW",len(test))
     bestreduce = open("lastreduction." + str(os.getpid()) + ".test",'w')

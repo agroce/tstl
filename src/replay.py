@@ -10,7 +10,7 @@ import time
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-if not "--help" in sys.argv:
+if "--help" not in sys.argv:
     import sut as SUT
 
 def trace_lines(frame, event, arg):
@@ -119,7 +119,7 @@ def main():
         sut.verbose(True)
     if "--hideOpaque" in sys.argv:
         sut.verboseOpaque(False)
-    if not "--afl" in sys.argv:
+    if "--afl" not in sys.argv:
         with open(file,'r') as f:
             theTest = f.readlines()
     else:

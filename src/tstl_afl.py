@@ -11,7 +11,7 @@ import random
 current_working_dir = os.getcwd()
 sys.path.append(current_working_dir)
 
-if not "--help" in sys.argv:
+if "--help" not in sys.argv:
     import sut as SUT
 
 def makeInt(s):
