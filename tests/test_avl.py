@@ -16,20 +16,23 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl","avlbuggy.tstl"])
         self.assertEqual(r,0)
 
-        r = subprocess.call(["tstl_rt","--noCover"])
+        r = subprocess.call(["tstl_rt","--noCover","--output",".avltest"])
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_rt","--swarm"])
+        r = subprocess.call(["tstl_rt","--swarm","--output",".avltest"])
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_rt","--exploit","0.8","--Pmutate","0.8"])
+        r = subprocess.call(["tstl_rt","--exploit","0.8","--Pmutate","0.8","--output",".avltest"])
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_rt","--multiple","--timeout","60"])
+        r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--output",".avltest"])
         self.assertEqual(r,255)
 
-        r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize"])
+        r = subprocess.call(["tstl_rt","--multiple","--timeout","60","--noCover","--normalize","--output",".avltest"])
         self.assertEqual(r,255)                                
 
+        for f in glob.glob(".avltest.*.test"):
+            os.remove(f)
+        
         os.chdir("../..")
         
