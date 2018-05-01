@@ -118,7 +118,7 @@ class TestAVL(TestCase):
         self.assertEqual(r, 0)
 
         r = subprocess.call(["python", ".avltest.maxcov.py"],
-                            stdout=dnull, stderr=dnull)
+                            stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(
