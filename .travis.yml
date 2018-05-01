@@ -16,7 +16,7 @@ install:
 - pip install pycodestyle
 - pip install python-afl
 env:
-- TRAVIS=TRUE CYTHON_VERSION=
+- TRAVIS=TRUE CYTHON_VERSION= AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=TRUE
 script:
 - pyflakes src/*.py
 - pyflakes tests/*.py
