@@ -19,4 +19,5 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_rt","--noCover"])
         self.assertEqual(r,255)
 
+        os.chdir("../..")
         
