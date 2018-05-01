@@ -63,7 +63,11 @@ def main():
     signatures = {}
 
     for fn in glob.glob(config.testglob):
-        t = sut.loadTest(fn)
+        try:
+            t = sut.loadTest(fn)
+        except BaseException:
+            print("INVALID TEST CASE:", fn)
+            continue
         if not config.noCheck:
             fails = sut.failsAny(t)
         else:
