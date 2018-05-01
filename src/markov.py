@@ -27,7 +27,7 @@ def main():
         if sut.actionClass(a) not in classes:
             classes.append(sut.actionClass(a))
 
-    #print len(classes)
+    # print len(classes)
 
     n = int(sys.argv[2])
     outfile = sys.argv[1]
@@ -52,7 +52,7 @@ def main():
     for t in tests:
         for pos in range(n + 1, len(t)):
             prefix = tuple(t[pos - n:pos])
-            #print prefix,"==>",t[pos]
+            # print prefix,"==>",t[pos]
             if prefix not in chains:
                 chains[prefix] = []
             chains[prefix].append(t[pos])

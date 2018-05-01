@@ -43,7 +43,8 @@ def main():
 
     if "--help" in sys.argv:
         print(
-            "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage] [--internal] [--html directory] [--delay secs] [--trace] [--afl] [--aflswarm]")
+            "Usage:  tstl_replay <test file> [--noCheck] [--logging loglevel] [--verbose] [--showActions] [--coverage]"
+            + " [--internal] [--html directory] [--delay secs] [--trace] [--afl] [--aflswarm]")
         print("Options:")
         print("--noCheck:      do not run property checks")
         print("--logging:      set the logging level for the test")
@@ -136,7 +137,7 @@ def main():
         if name == "<<RESTART>>":
             if "--showActions" in sys.argv:
                 print("<<RESTART>>")
-            #print "RESTART"
+            # print "RESTART"
             rout.write("<<RESTART>>\n")
             rout.flush()
             sut.restart()

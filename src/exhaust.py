@@ -24,7 +24,7 @@ def main():
     takenClass = defaultdict(lambda: 0)
     allTaken = defaultdict(lambda: 0)
     allTakenClass = defaultdict(lambda: 0)
-    #takenPath = defaultdict(lambda: 0)
+    # takenPath = defaultdict(lambda: 0)
     takenFull = {}
 
     start = time.time()
@@ -59,7 +59,7 @@ def main():
                 print("DEADLOCK!")
                 break
             path.append(a)
-            #takenPath[sut.captureReplay(path)] += 1
+            # takenPath[sut.captureReplay(path)] += 1
             taken[(a[0], i)] += 1
             takenClass[(sut.actionClass(a), i)] += 1
             allTaken[(a[0])] += 1

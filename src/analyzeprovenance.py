@@ -14,7 +14,6 @@ for f in glob.glob(sys.argv[1]):
         t = sut.loadTest(f)
     except KeyError:
         continue
-    #print f
     for s in t:
         if len(s) > 3:
             src = s[3]

@@ -285,7 +285,6 @@ def randomEnabledClassProbs(self, rgen, probs):
             padd = pac / (len(probs) - 1)
             newprobs = []
             for (pac, tac2) in probs:
-                #print pac,tac2
                 if tac2 == tac:
                     continue
                 newprobs.append((pac + padd, tac2))
@@ -680,7 +679,6 @@ def standardSwarm(
                         changed = True
         newEnabled.extend(forcedAdd)
 
-    #print "SWARMING WITH CONFIGURATION:",newEnabled
     self.__swarmConfig = newEnabled
     enabledActions = []
     for a in self.__actions:
@@ -984,7 +982,7 @@ def failsAny(self, test, verbose=False, failure=None):
             return True
         return False
     if r is False:
-        #self.__failure = sys.exc_info()
+        # self.__failure = sys.exc_info()
         if (failure is None) or ((self.__failure[0] == failure[0]) and (
                 repr(self.__failure[1]) == repr(failure[1]))):
             return True
@@ -1527,7 +1525,6 @@ def reductions(
         sys.stdout.flush()
         for i in range(1, len(filterActs)):
             ncombos = 0
-            #print "SIZE",i
             if verbose:
                 print("ANALYZING SIZE", i, "COMBINATIONS")
             combs = combinations(filterActs, i)
@@ -1542,11 +1539,9 @@ def reductions(
                 if cs in analyzed:
                     continue
                 analyzed.append(cs)
-                #print "COMBO:",map(lambda x:self.prettyName(x[0]), cs)
                 skipCombo = False
                 for iset in impossibleSets:
                     if [x for x in iset if x not in cs] == []:
-                        #print "SKIPPING, IMPOSSIBLE"
                         skipCombo = True
                         break
                 if skipCombo:
@@ -1581,7 +1576,6 @@ def reductions(
                             anyNew = True
                         if verbose:
                             print("ADDING NEW TEST OF LENGTH", len(rfilter1))
-                        #print "ADDING NEW TEST OF LENGTH",len(rfilter1)
                         reductions.append(rfilter1)
                 if pfilter2:
                     rfilter2 = self.reduce(
@@ -1596,7 +1590,6 @@ def reductions(
                             anyNew = True
                         if verbose:
                             print("ADDING NEW TEST OF LENGTH", len(rfilter2))
-                        #print "ADDING NEW TEST OF LENGTH",len(rfilter2)
                         reductions.append(rfilter2)
                 if (not pfilter1) and (not pfilter2):
                     if cs not in impossibleSets:
@@ -1606,7 +1599,6 @@ def reductions(
                         impossibleSets.append(cs)
             if verbose:
                 print("ANALYZED", ncombos, "COMBINATIONS")
-            #print "ANALYZED",ncombos,"COMBINATIONS"
 
     return reductions
 
@@ -2250,7 +2242,8 @@ def normalize(
         self.swapPoolStep,
         self.swapActionOrderStep,
         self.reduceLengthStep]
-    #simplifiers = [self.noReassignStep, self.replaceAllStep, self.replaceSingleStep, self.swapActionOrderStep, self.reduceLengthStep]
+    # simplifiers = [self.noReassignStep, self.replaceAllStep, self.replaceSingleStep, self.swapActionOrderStep,
+    #                self.reduceLengthStep]
     # Default approach tries a reduce after any change
     reduceOnChange = True
     if speed == "SLOW":
@@ -2413,8 +2406,6 @@ def generalize(
         targets=None,
         fresh=True):
 
-    #print self.__consts
-
     if collected is None:
         collected = {}
 
@@ -2470,12 +2461,9 @@ def generalize(
         if fresh:
             for v in self.freshSimpleVariants(
                     test[i][0], test[:i], canReplace):
-                #print "="*50
-                #print "FRESH SIMPLE, i = ",i
                 testC = test[:i] + v + test[i + 1:]
                 # self.prettyPrintTest(testC)
                 if pred(testC) and self.allEnabled(testC):
-                    #print "SUCCESS!"
                     canMakeSimple[i].append(v)
     if not silent:
         noOrder = []

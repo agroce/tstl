@@ -142,7 +142,6 @@ def main():
                 for i in vals:
                     if vals[i] is not None:
                         pname = t.prettyName(p + "[" + str(i) + "]")
-                        #outf.write("print (repr("+pname+"))\n")
                         outf.write(
                             "assert (repr(" +
                             absFun +

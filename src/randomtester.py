@@ -179,7 +179,8 @@ def parse_args():
         '--biasLOC',
         type=str,
         default=None,
-        help="Read LOC data file to bias testing by LOC estimates for actions.  Uses files produced by --generateLOC.  Any file of the same structure (action class / LOC count pairs, with ' %%%% ' separating) will work, however.")
+        help="Read LOC data file to bias testing by LOC estimates for actions.  Uses files produced by --generateLOC.  "
+        + "Any file of the same structure (action class / LOC count pairs, with ' %%%% ' separating) will work, however.")
     parser.add_argument(
         '--LOCBaseline',
         type=float,
@@ -620,15 +621,15 @@ def handle_failure(
             anyNewCov = False
             for s in sut.allStatements():
                 if s not in beforeReduceS:
-                    #print "NEW STATEMENT DURING REDUCTION",s
+                    # print "NEW STATEMENT DURING REDUCTION",s
                     if (s not in sut.currStatements()):
-                        #print "STATEMENT FOUND THEN LOST DURING REDUCTION"
+                        # print "STATEMENT FOUND THEN LOST DURING REDUCTION"
                         anyNewCov = True
             for b in sut.allBranches():
                 if b not in beforeReduceB:
-                    #print "NEW BRANCH DURING REDUCTION",b
+                    # print "NEW BRANCH DURING REDUCTION",b
                     if (s not in sut.currBranches()):
-                        #print "BRANCH FOUND THEN LOST DURING REDUCTION"
+                        # print "BRANCH FOUND THEN LOST DURING REDUCTION"
                         anyNewCov = True
             if anyNewCov:
                 print(
@@ -944,10 +945,11 @@ def printStatus(elapsed, step=None):
 
 
 def main():
-    global failCount, sut, config, reduceTime, quickCount, repeatCount, failures, cloudFailures, R, opTime, checkTime, guardTime, restartTime, nops, ntests, fulltest, currtest, failCloud, allClouds, thisOps, thisElapsed, testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
-    global failFileCount
-    global fullPool, activePool, branchCoverageCount, statementCoverageCount, localizeSFail, localizeBFail, reducePool, poolCount
-    global hintPool, hintValueCounts
+    global failCount, sut, config, reduceTime, quickCount, repeatCount, failures, cloudFailures, R, opTime, checkTime
+    global guardTime, restartTime, nops, ntests, fulltest, currtest, failCloud, allClouds, thisOps, thisElapsed
+    global testsWithNewCoverage, exploitsWithNewCoverage, totalExploits, failFileCount
+    global fullPool, activePool, branchCoverageCount, statementCoverageCount, localizeSFail, localizeBFail, reducePool
+    global poolCount, hintPool, hintValueCounts
     global allQuickTests
     global allTheTests
     global lastLOCs, lastFuncs
@@ -1705,7 +1707,7 @@ def main():
             currB = sut.currBranches()
             currS = sut.currStatements()
             clen = len(currTest)
-            #print "GATHERING QUICK ANALYSIS DATA FOR",len(currB),"BRANCHES"
+            # print "GATHERING QUICK ANALYSIS DATA FOR",len(currB),"BRANCHES"
             for b in currB:
                 if config.fastQuickAnalysis and (b in quickDoneB):
                     continue
@@ -1749,7 +1751,7 @@ def main():
                     if c not in quickAnalysisBCounts[b]:
                         quickAnalysisBCounts[b][c] = 0
                     quickAnalysisBCounts[b][c] += 1
-                #print "GATHERING QUICK ANALYSIS DATA FOR",len(currS),"STATEMENTS"
+                # print "GATHERING QUICK ANALYSIS DATA FOR",len(currS),"STATEMENTS"
             for s in currS:
                 if config.fastQuickAnalysis and (s in quickDoneS):
                     continue
@@ -1963,8 +1965,8 @@ def main():
                 "APPEARS", quickAnalysisRawCounts[a], "TIMES IN REDUCED TESTS")
             print("APPEARS IN", quickAnalysisCounts[a], "REDUCED TESTS (" + str(
                 round((quickAnalysisCounts[a] / (quickAnalysisTotal * 1.0)) * 100, 2)) + "%)")
-            #baselineRate = quickClassCounts[a]/(totalTaken*1.0)
-            #reducedRate = quickAnalysisRawCounts[a]/(quickAnalysisTotal*1.0)
+            # baselineRate = quickClassCounts[a]/(totalTaken*1.0)
+            # reducedRate = quickAnalysisRawCounts[a]/(quickAnalysisTotal*1.0)
             # if reducedRate > 0.0:
             #    print "RATIO:",(baselineRate/reducedRate)
             # else:

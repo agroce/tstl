@@ -192,7 +192,7 @@ def parse_import_line(line):
     global import_froms
     global need_imports
 
-    #print "IMPORT:",line
+    # print "IMPORT:",line
     raw = line.split('import ')
     if "from " in line:
         import_froms.append(line)
@@ -1702,10 +1702,10 @@ def main():
     genCode.append(baseIndent + baseIndent + "pass\n")
     if not config.noCover:
         genCode.append(baseIndent + "if self.__collectCov: self.cleanCov()\n")
-        #genCode.append(baseIndent + baseIndent + "self.__currBranches = set()\n")
-        #genCode.append(baseIndent + "self.__currStatements = set()\n")
-        #genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
-        #genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
+        # genCode.append(baseIndent + baseIndent + "self.__currBranches = set()\n")
+        # genCode.append(baseIndent + "self.__currStatements = set()\n")
+        # genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
+        # genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
         if config.coverReload:
             genCode.append(
                 baseIndent + "if self.__collectCov: self.__cov.start()\n")
