@@ -47,6 +47,8 @@ def parse_args():
         type=int,
         default=100,
         help='Test depth for corpus construction (default 100)')
+    parser.add_argument('--quiet', action='store_true',
+                        help='Redirect afl-fuzz to /dev/null.')    
     parser.add_argument('--swarm', action='store_true',
                         help='Use swarm testing.')
     parser.add_argument('--noCover', action='store_true',
@@ -156,7 +158,11 @@ def main():
         aflCmdStr = "env -u PYTHON_AFL_TSTL " + aflCmdStr
     print("RUNNING AFL WITH COMMAND LINE:", aflCmdStr)
     start = time.time()
-    P = subprocess.Popen(aflCmd)
+    if not config.quiet:
+        P = subprocess.Popen(aflCmd)
+    else:
+        with open(os.devnull,'w') as dnull:
+            P = subprocess.Popen(aflCmd,stdout=dnull)            
     while (time.time() - start) < (config.timeout - config.corpusBudget):
         time.sleep(1)
     P.terminate()
