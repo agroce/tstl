@@ -36,7 +36,6 @@ def main():
     length = int(sys.argv[2])
     timeout = int(sys.argv[3])
 
-
     burst = "--burst" in sys.argv
     checkProp = "--noCheck" not in sys.argv
     noReduce = "--noReduce" in sys.argv

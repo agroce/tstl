@@ -393,8 +393,6 @@ def main():
         print("Documentation at https://github.com/agroce/tstl")
         sys.exit(0)
 
-
-
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
     print(('Generating harness core using config={}'.format(config)))
@@ -956,7 +954,6 @@ def main():
             print(originalCode[corig])
             print("*"*70)
 
-
         interestingGuard = ""
         newCguard = ""
         if newC.find(" -> ") > -1:
@@ -1147,7 +1144,6 @@ def main():
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + baseIndent + "if __aV != __bV['''" + p + "''']: print ('=>',self.prettyName('''" + p + "''') + ' =',__aV, ':',type(" + p + "))\n")
                     genCode.append(baseIndent + baseIndent + baseIndent + baseIndent + "except: pass\n")
 
-
         if not config.noCover:
             genCode.append(baseIndent + baseIndent + "if self.__collectCov: self.__cov.stop(); self.__updateCov()\n")
 
@@ -1243,7 +1239,6 @@ def main():
             if comparing:
                 d = "self.__refCode[" + "'''" + newC[:-1] + " '''].append(\"assert result == result_REF, \\\" (%s) == (%s) \\\" % (result, result_REF)\\n\")\n"
                 actDefs.append(d)
-
 
         if postCode:
             d = "self.__propCode[" + "'''" + newC[:-1] + " '''] = \"\"\"" + postCode + " \"\"\"\n"
@@ -1433,8 +1428,6 @@ def main():
             genCode.append(baseIndent + "try: hvals.append(" + replaceRefs(h[:-1]) + ")\n")
             genCode.append(baseIndent + "except: hvals.append(None)\n")
         genCode.append(baseIndent + "return hvals\n")
-
-
 
     genCode.append("def log(self, name):\n")
     if logSet != []:

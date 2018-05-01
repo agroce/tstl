@@ -42,7 +42,7 @@ def main():
         while len(path) < depth:
             possible = sut.actions()
             possible = sorted(possible,
-                              key = lambda act:(
+                              key=lambda act:(
                                   allTakenClass[sut.actionClass(act)],
                                   allTaken[act[0]],
                                   takenClass[(sut.actionClass(act),i)],
@@ -100,10 +100,10 @@ def main():
                 print()
                 print("COUNTS:")
                 print("="*20)
-                for c in sorted(list(allTakenClass.keys()),key = lambda ac: allTakenClass[ac]):
+                for c in sorted(list(allTakenClass.keys()),key=lambda ac: allTakenClass[ac]):
                     print(c,allTakenClass[c])
                 print("="*20)
-                for a in sorted(list(allTaken.keys()),key = lambda act: allTaken[act]):
+                for a in sorted(list(allTaken.keys()),key=lambda act: allTaken[act]):
                     print(a,allTaken[a])
 
     print(repeats,"TOTAL REPEATED TESTS",len(takenFull),"DISTINCT TESTS")

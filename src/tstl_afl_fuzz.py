@@ -48,7 +48,6 @@ def parse_args():
     parser.add_argument('--persist', action='store_true',
                         help='Use persistent mode (experimental and not recommended')
 
-
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
 

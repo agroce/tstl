@@ -58,15 +58,15 @@ def parse_args():
                         help='Allow uncaught exceptions in actions.')
     parser.add_argument('--checkDeterminism', action='store_true',
                         help='Check determinism of pool objects.')
-    parser.add_argument('--determinismTries', type=int, default = 1,
+    parser.add_argument('--determinismTries', type=int, default=1,
                         help='Number of tries to catch nondeterminism (default 1).')
-    parser.add_argument('--determinismDelay', type=float, default = 0,
+    parser.add_argument('--determinismDelay', type=float, default=0,
                         help='Delay when checking for nondeterminism (default 0).')
     parser.add_argument('--checkProcessDeterminism', action='store_true',
                         help='Check that tests are process deterministic.')
-    parser.add_argument('--processDetTries', type=int, default = 1,
+    parser.add_argument('--processDetTries', type=int, default=1,
                         help='Number of tries to catch process nondeterminism (default 1).')
-    parser.add_argument('--processDetDelay', type=float, default = 0,
+    parser.add_argument('--processDetDelay', type=float, default=0,
                         help='Delay when checking process nondeterminism (default 0).')
     parser.add_argument('-q', '--quickTests', action='store_true',
                         help="Produce quick tests for coverage (save a test for each newly reached coverage target).")
@@ -203,7 +203,7 @@ def parse_args():
     parser.add_argument('--noSwarmDependencies', action='store_true',
                         help="[EXPERIMENTAL] This forces swarm to not use dependencies.  Not so much experimental as just a bad idea.")
     parser.add_argument('--genDepth', type=int, default=None,
-                        help = "[EXPERIMENTAL] Generalization depth for cloud overlap comparisons (default = None).")
+                        help="[EXPERIMENTAL] Generalization depth for cloud overlap comparisons (default = None).")
     parser.add_argument('--stutter', type=float, default=None,
                         help="[EXPERIMENTAL] Repeat last action if still enabled with P = <stutter>.")
     parser.add_argument('--greedyStutter', action='store_true',
@@ -240,7 +240,7 @@ def make_config(pargs, parser):
     return nt_config
 
 
-def traceLOC(frame,event,arg):
+def traceLOC(frame, event, arg):
     global lastLOCs,lastFuncs
     if event != "call":
         return traceLOC
@@ -260,7 +260,7 @@ def traceLOC(frame,event,arg):
     lastLOCs += loc
     return traceLOC
 
-def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = False, becauseStatementCov = False):
+def handle_failure(test, msg, checkFail, newCov=False, becauseBranchCov=False, becauseStatementCov=False):
     global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount,fulltest, allQuickTests
     global allTheTests
     if config.postCover:
@@ -337,7 +337,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         print("REDUCING...")
         startReduce = time.time()
         original = test
-        test = sut.reduce(test, failProp, True, keepLast = config.keepLast, tryFast = not config.ddmin)
+        test = sut.reduce(test, failProp, True, keepLast=config.keepLast, tryFast=not config.ddmin)
         if not newCov:
             sut.saveTest(test,config.output.replace(".test",".reduced.test"))
         print("Reduced test has",len(test),"steps")
@@ -350,7 +350,8 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         sut.prettyPrintTest(test)
         if config.essentials:
             print("FINDING ESSENTIAL ELEMENTS OF REDUCED TEST")
-            (canRemove, cannotRemove) = sut.reduceEssentials(test, original, failProp, True, keepLast = config.keepLast, tryFast = not config.ddmin)
+            (canRemove, cannotRemove) = sut.reduceEssentials(test, original, failProp, True, keepLast=config.keepLast,
+                                                             tryFast=not config.ddmin)
             print(len(canRemove),len(cannotRemove))
             for (c,reducec) in canRemove:
                 print("CAN BE REMOVED:",[x[0] for x in c])
@@ -360,15 +361,16 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         if config.normalize:
             startSimplify = time.time()
             print("NORMALIZING...")
-            test = sut.normalize(test, failProp, True, keepLast = config.keepLast, verbose = True, speed = config.speed, noReassigns = config.noReassign, useCache=False,
-                                 tryFast=not config.ddmin)
+            test = sut.normalize(test, failProp, True, keepLast=config.keepLast, verbose=True, speed=config.speed,
+                                 noReassigns=config.noReassign, useCache=False, tryFast=not config.ddmin)
             print("Normalized test has",len(test),"steps")
             print("NORMALIZED IN",time.time()-startSimplify,"SECONDS")
             sut.saveTest(test,config.output.replace(".test",".normalized.test"))
         if (config.genDepth is not None) and (test not in [x[0] for x in failures]) and (test not in cloudFailures):
             startCheckCloud = time.time()
             print("GENERATING GENERALIZATION CLOUD")
-            (cloudFound,matchTest,thisCloud) = sut.generalize(test, failProp, silent=True, returnCollect=True, depth=config.genDepth, targets = allClouds)
+            (cloudFound, matchTest, thisCloud) = sut.generalize(test, failProp, silent=True, returnCollect=True,
+                                                                depth=config.genDepth, targets=allClouds)
             print("CLOUD GENERATED IN",time.time()-startCheckCloud,"SECONDS")
             print("CLOUD LENGTH =",len(thisCloud))
             if cloudFound:
@@ -387,7 +389,7 @@ def handle_failure(test, msg, checkFail, newCov = False, becauseBranchCov = Fals
         if config.generalize and (test not in [x[0] for x in failures]):
             startGeneralize = time.time()
             print("GENERALIZING...")
-            sut.generalize(test, failProp, verbose = True)
+            sut.generalize(test, failProp, verbose=True)
             print("GENERALIZED IN",time.time()-startGeneralize,"SECONDS")
         reduceTime += time.time()-startReduce
 
@@ -579,7 +581,6 @@ def buildActivePool():
                         added = True
                         break
 
-
     # for now a stupid fixed last-n is used, since we know higher values are at the end
     if config.useHints:
         activePool.extend([x[0] for x in hintPool[-config.exploitBestHint:]])
@@ -679,7 +680,7 @@ def collectExploitable():
                 print("SAVING TEST FOR REDUCTION")
             reducePool.append((list(sut.test()),set(sut.newBranches()),set(sut.newStatements())))
 
-def printStatus(elapsed,step=None):
+def printStatus(elapsed, step=None):
     global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage, testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
     print("TEST #"+str(ntests), end=' ')
     if step is not None:
@@ -721,7 +722,6 @@ def main():
     parsed_args, parser = parse_args()
     config = make_config(parsed_args, parser)
     print(('Random testing using config={}'.format(config)))
-
 
     R = random.Random(config.seed)
 
@@ -812,7 +812,6 @@ def main():
                     provenance.append(seq[j] + (f + ":" + str(i+j),))
                 sequences.append(provenance)
         print(len(sequences),"SEQUENCES")
-
 
     if config.readQuick:
         print("REPLAYING QUICK TESTS")
@@ -1037,7 +1036,7 @@ def main():
                 totalExploits += 1
             if not exploitOk:
                 testFailed = True
-                sut.replay(sut.test(),checkProp = not config.noCheck)
+                sut.replay(sut.test(),checkProp=not config.noCheck)
                 handle_failure(sut.test(), "FAILURE DURING MUTATION", False)
                 if not config.multiple:
                     print("STOPPING TESTING DUE TO FAILED TEST")
@@ -1260,7 +1259,7 @@ def main():
                         print("ANALYZING NEW UNIQUE VALUE:",u)
                     else:
                         continue
-                    r = sut.reduce(currTest, sut.coversUnique(u), keepLast=False, tryFast = not config.ddmin)
+                    r = sut.reduce(currTest, sut.coversUnique(u), keepLast=False, tryFast=not config.ddmin)
                     rc = list(map(sut.actionClass, r))
                     sut.replay(r)
                     for ru in sut.uniqueVals():
@@ -1409,7 +1408,7 @@ def main():
                     branchCoverageCount[b] = 0
                     quickAnalysisReducedB[b] = 0
                 branchCoverageCount[b] += 1
-                r = sut.reduce(currTest,sut.coversBranches([b]),keepLast=False, tryFast=not config.ddmin)
+                r = sut.reduce(currTest, sut.coversBranches([b]), keepLast=False, tryFast=not config.ddmin)
                 print("REDUCED FROM",clen,"TO",len(r))
                 sys.stdout.flush()
                 sut.replay(r)
@@ -1452,7 +1451,7 @@ def main():
                     quickAnalysisReducedS[s] = 0
                 statementCoverageCount[s] += 1
                 print("ANALYZING STATEMENT",s)
-                r = sut.reduce(currTest,sut.coversStatements([s]),keepLast=False, tryFast=not config.ddmin)
+                r = sut.reduce(currTest, sut.coversStatements([s]), keepLast=False, tryFast=not config.ddmin)
                 print("REDUCED FROM",clen,"TO",len(r))
                 sys.stdout.flush()
                 sut.replay(r)
@@ -1635,7 +1634,7 @@ def main():
 
         print("*" * 70)
         print("DETAILED BRANCH ANALYSIS")
-        branchCoverageCountSort = sorted(list(branchCoverageCount.keys()), key = lambda x: branchCoverageCount[x])
+        branchCoverageCountSort = sorted(list(branchCoverageCount.keys()), key=lambda x: branchCoverageCount[x])
         for b in branchCoverageCountSort:
             print("="*50)
             print("BRANCH:",b)
@@ -1652,7 +1651,7 @@ def main():
                 print(a,str(round(quickAnalysisBCounts[b][a]/(branchCoverageCount[b]*1.0)*100,2))+"%")
         print("*" * 70)
         print("DETAILED STATEMENT ANALYSIS")
-        statementCoverageCountSort = sorted(list(statementCoverageCount.keys()), key = lambda x: statementCoverageCount[x])
+        statementCoverageCountSort = sorted(list(statementCoverageCount.keys()), key=lambda x: statementCoverageCount[x])
         for s in statementCoverageCountSort:
             print("="*50)
             print("STATEMENT:",s)
@@ -1731,7 +1730,7 @@ def main():
         for a in profileTime:
             if profileCount[a] != 0:
                 averages.append((a,profileTime[a]/profileCount[a]))
-        averages = sorted(averages, key = lambda x: x[1])
+        averages = sorted(averages, key=lambda x: x[1])
         maxAvg = averages[-1][1]
         minAvg = averages[0][1]
         sumAvg = sum([x[1] for x in averages])
@@ -1759,8 +1758,8 @@ def main():
             if denom == 0.0:
                 continue
             scoresB[b] = localizeBFail[b]/denom
-        sortedS = sorted(list(scoresS.keys()),key = lambda x:scoresS[x],reverse=True)
-        sortedB = sorted(list(scoresB.keys()),key = lambda x:scoresB[x],reverse=True)
+        sortedS = sorted(list(scoresS.keys()),key=lambda x:scoresS[x],reverse=True)
+        sortedB = sorted(list(scoresB.keys()),key=lambda x:scoresB[x],reverse=True)
         print("FAULT LOCALIZATION RESULTS (TOP",config.localizeTop," RESULTS)")
         print("STATEMENTS:")
         for s in sortedS[:config.localizeTop]:

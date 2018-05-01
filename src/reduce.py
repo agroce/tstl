@@ -202,8 +202,8 @@ def main():
                                                    delay0=config.determinismDelay0))
 
     if config.checkProcessDeterminism:
-        pred = (lambda t: sut.processNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,iterate=config.iterate))
-
+        pred = (lambda t: sut.processNondeterministic(t,delay=config.determinismDelay,tries=config.determinismTries,
+                                                      iterate=config.iterate))
 
     if config.probability is not None:
         Ppred = pred

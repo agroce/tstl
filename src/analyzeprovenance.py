@@ -34,7 +34,7 @@ for f in set(highLevel.keys()):
 
 print("DETAILED PROVENANCE SUMMARY:")
 
-lsrcs = sorted(list(lowLevel.keys()), key=lambda x:len(lowLevel[x]))
+lsrcs = sorted(list(lowLevel.keys()), key=lambda x: len(lowLevel[x]))
 
 print()
 print()
@@ -44,17 +44,17 @@ classes = {}
 for s in lsrcs:
     ss = s.split(":")
     srcAct = sources[ss[0]][int(ss[1])]
-    print(s,len(lowLevel[s]),sut.prettyName(srcAct[0]))
+    print(s, len(lowLevel[s]), sut.prettyName(srcAct[0]))
     c = sut.actionClass(srcAct)
     if c in classes:
         classes[c].extend(lowLevel[s])
     else:
         classes[c] = lowLevel[s]
 
-csrcs = sorted(list(classes.keys()),key=lambda x:len(classes[x]))
+csrcs = sorted(list(classes.keys()), key=lambda x: len(classes[x]))
 
 for c in csrcs:
-    print(c,len(classes[c]))
+    print(c, len(classes[c]))
 
 
 print()
@@ -62,7 +62,7 @@ print()
 
 print("FILE LEVEL PROVENANCE SUMMARY:")
 
-hsrcs = sorted(list(highLevel.keys()), key=lambda x:len(highLevel[x]))
+hsrcs = sorted(list(highLevel.keys()), key=lambda x: len(highLevel[x]))
 
 for s in hsrcs:
-    print(s,len(highLevel[s]))
+    print(s, len(highLevel[s]))
