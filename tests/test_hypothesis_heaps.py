@@ -47,5 +47,3 @@ class TestHypothesisHeap(TestCase):
 
         for f in glob.glob(".heaptest*"):
             os.remove(f)
-
-        os.remove("coverage.out")
