@@ -31,7 +31,7 @@ class TestExamples(TestCase):
         justCompile = ["gmpy2", "arcpy", "tstl", "stringh", "pyfakefs",
                        "osquery", "datarray_inference", "dateutil"]
 
-        silent = ["avl", "maze"]
+        silent = ["AVL", "maze"]
 
         compileFailures = []
         expectedCompile = []
@@ -102,7 +102,7 @@ class TestExamples(TestCase):
                         "--uncaught",
                         "--noCover"]
                     start = time.time()
-                    if ("avl" in f) or ("maze" in f):
+                    if f in silent:
                         p = subprocess.Popen(rtCmd, stdout=dnull)
                     else:
                         p = subprocess.Popen(rtCmd)                        
