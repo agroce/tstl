@@ -28,15 +28,23 @@ class TestExamples(TestCase):
             "sortedcontainers",
             "pystan"]
 
-        justCompile = ["gmpy2", "arcpy", "tstl", "stringh", "pyfakefs",
-                       "osquery", "datarray_inference", "dateutil"]
+        justCompile = [
+            "gmpy2",
+            "arcpy",
+            "tstl",
+            "stringh",
+            "pyfakefs",
+            "osquery",
+            "datarray_inference",
+            "dateutil",
+            "tictactoe"]
 
         compileFailures = []
         expectedCompile = []
         bytecodeFailures = []
         expectedBytecode = ['arcpy/arcpy1.tstl', 'arcpy/arcpy5.tstl']
         timeoutFailures = []
-        expectedTimeout = ['arrow/arrow.tstl']
+        expectedTimeout = ['arrow/arrow.tstl', 'sympy/sympy.tstl', 'tensorflow/tf.tstl']
         testingFailures = []
         expectedTesting = []
 
@@ -92,7 +100,7 @@ class TestExamples(TestCase):
                     rtCmd = [
                         "tstl_rt",
                         "--timeout",
-                        "40",
+                        "45",
                         "--timedProgress",
                         "10",
                         "--noCheck",
@@ -100,7 +108,8 @@ class TestExamples(TestCase):
                         "--silentSUT"]
                     start = time.time()
                     p = subprocess.Popen(rtCmd)
-                    while (p.poll() is None) and ((time.time() - start) < 70):
+                    # Big timeout is for huge coverage dumps like sympy
+                    while (p.poll() is None) and ((time.time() - start) < 120):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
