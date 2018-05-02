@@ -97,16 +97,15 @@ class TestExamples(TestCase):
                     rtCmd = [
                         "tstl_rt",
                         "--timeout",
-                        "10",
+                        "40",
                         "--noCheck",
                         "--uncaught",
                         "--noCover"]
                     start = time.time()
-                    if f not in silent:
-                        p = subprocess.Popen(rtCmd)
+                    if ("avl" in f) or ("maze" in f):
+                        p = subprocess.Popen(rtCmd, stdout=dnull)
                     else:
-                        with open(os.devnull(), 'w') as dnull:
-                            p = subprocess.Popen(rtCmd, stdout=dnull)
+                        p = subprocess.Popen(rtCmd)                        
                     while (p.poll() is None) and ((time.time() - start) < 20):
                         time.sleep(1)
                     if p.poll() is None:
