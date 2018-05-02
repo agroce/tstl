@@ -20,7 +20,7 @@ install:
 - pip install bintrees
 - pip install biopython
 - pip install datarray
-- pip install python-rsa
+- pip install rsa
 - pip install sympy
 - pip install z3
 - pip install tensorflow
