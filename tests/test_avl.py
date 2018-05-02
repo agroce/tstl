@@ -19,7 +19,7 @@ class TestAVL(TestCase):
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_rt", "--noCover", "--output", ".avltest"], stdout=dnull)
+            ["tstl_rt", "--noCover", "--output", ".avltest", "--silentSUT"])
         self.assertEqual(r, 255)
 
         r = subprocess.call(["tstl_replay", ".avltest"], stdout=dnull)
@@ -81,6 +81,21 @@ class TestAVL(TestCase):
         r = subprocess.call(
             ["tstl_regress .avltest*"],
             shell=True,
+            stdout=dnull)
+        self.assertEqual(r, 255)
+
+        r = subprocess.call(
+            ["tstl_rt", "--timeout", "60",
+             "--noCover",
+             "--generateLOC", ".avltest.loc",
+             "--uncaught", "--noCheck"],
+            stdout=dnull)
+        self.assertEqual(r, 0)
+
+        r = subprocess.call(
+            ["tstl_rt", "--timeout", "60",
+             "--biasLOC", ".avltest.loc",
+             "--multiple", "--output", ".avltest"],
             stdout=dnull)
         self.assertEqual(r, 255)
 

@@ -19,7 +19,7 @@ class TestHypothesisHeap(TestCase):
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_rt", "--noCover", "--output", ".heaptest"], stdout=dnull)
+            ["tstl_rt", "--noCover", "--output", ".heaptest"])
         self.assertEqual(r, 255)
 
         r = subprocess.call(["tstl_replay", ".heaptest"], stdout=dnull)
