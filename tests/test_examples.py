@@ -92,13 +92,15 @@ class TestExamples(TestCase):
                     rtCmd = [
                         "tstl_rt",
                         "--timeout",
-                        "61",
+                        "40",
+                        "--timedProgress",
+                        "10",
                         "--noCheck",
                         "--uncaught",
                         "--silentSUT"]
                     start = time.time()
                     p = subprocess.Popen(rtCmd)
-                    while (p.poll() is None) and ((time.time() - start) < 60):
+                    while (p.poll() is None) and ((time.time() - start) < 70):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
@@ -116,7 +118,6 @@ class TestExamples(TestCase):
                         os.remove("sut.pyc")
                     except OSError:
                         pass
-                    os.remove(".output")
                 os.chdir("..")
                 sys.stdout.flush()
 
