@@ -1,9 +1,6 @@
 @import avl
 @import math
 
-# tells TSTL where the source code of the module tested is, to enable code coverage
-source: avl.py
-
 # @ indicates raw python code, such as imports, and is usually not parsed by TSTL, but available for use in testing
 
 # below is a larger block of raw python code, in <@...@> (put these on their own line), defining some functions used in testing

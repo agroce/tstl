@@ -21,8 +21,6 @@ def test_after_reduce(sut):
     sut.setLog(2)
 @>
 
-source: avl.py
-
 log: 1 %AVL%.inorder()
 log: POST 1 %AVL%.inorder()
 
