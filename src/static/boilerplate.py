@@ -14,6 +14,8 @@ t.actions()
 def setReplayBacktrack(self, val):
     self.__replayBacktrack = val
 
+def SUTName(self):
+    return self.__SUTName
 
 def test(self):
     """
