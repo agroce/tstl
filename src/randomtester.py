@@ -138,6 +138,10 @@ def parse_args():
         '--keepLast',
         action='store_true',
         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
+    parser.add_argument(
+        '--noPruneGuards',
+        action='store_true',
+        help="Do not prune based on guards (useful in determinism checks)")
     parser.add_argument('--swarmP', type=float, default=0.5,
                         help="Swarm inclusion probability.")
     parser.add_argument(
@@ -519,7 +523,8 @@ def handle_failure(
         startReduce = time.time()
         original = test
         test = sut.reduce(test, failProp, True,
-                          keepLast=config.keepLast, tryFast=not config.ddmin)
+                          keepLast=config.keepLast, tryFast=not config.ddmin,
+                          pruneGuards=not config.noPruneGuards)
         if not newCov:
             sut.saveTest(test, config.output.replace(".test", ".reduced.test"))
         print("Reduced test has", len(test), "steps")
@@ -534,7 +539,9 @@ def handle_failure(
         if config.essentials:
             print("FINDING ESSENTIAL ELEMENTS OF REDUCED TEST")
             (canRemove, cannotRemove) = sut.reduceEssentials(test, original,
-                                                             failProp, True, keepLast=config.keepLast, tryFast=not config.ddmin)
+                                                             failProp, True, keepLast=config.keepLast,
+                                                             tryFast=not config.ddmin,
+                                                             pruneGuards=not config.noPruneGuards)
             print(len(canRemove), len(cannotRemove))
             for (c, reducec) in canRemove:
                 print("CAN BE REMOVED:", [x[0] for x in c])
@@ -549,6 +556,7 @@ def handle_failure(
                 failProp,
                 True,
                 keepLast=config.keepLast,
+                pruneGuards=not config.noPruneGuards,
                 verbose=True,
                 speed=config.speed,
                 noReassigns=config.noReassign,
@@ -1559,7 +1567,8 @@ def main():
                     else:
                         continue
                     r = sut.reduce(currTest, sut.coversUnique(
-                        u), keepLast=False, tryFast=not config.ddmin)
+                        u), keepLast=False, tryFast=not config.ddmin,
+                        pruneGuards=not config.noPruneGuards)
                     rc = list(map(sut.actionClass, r))
                     sut.replay(r)
                     for ru in sut.uniqueVals():
@@ -1730,7 +1739,8 @@ def main():
                     quickAnalysisReducedB[b] = 0
                 branchCoverageCount[b] += 1
                 r = sut.reduce(currTest, sut.coversBranches(
-                    [b]), keepLast=False, tryFast=not config.ddmin)
+                    [b]), keepLast=False, tryFast=not config.ddmin,
+                    pruneGuards=not config.noPruneGuards)
                 print("REDUCED FROM", clen, "TO", len(r))
                 sys.stdout.flush()
                 sut.replay(r)
@@ -1774,7 +1784,8 @@ def main():
                 statementCoverageCount[s] += 1
                 print("ANALYZING STATEMENT", s)
                 r = sut.reduce(currTest, sut.coversStatements(
-                    [s]), keepLast=False, tryFast=not config.ddmin)
+                    [s]), keepLast=False, tryFast=not config.ddmin,
+                    pruneGuards=not config.noPruneGuards)
                 print("REDUCED FROM", clen, "TO", len(r))
                 sys.stdout.flush()
                 sut.replay(r)
