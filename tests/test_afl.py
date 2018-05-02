@@ -22,7 +22,7 @@ class TestAFL(TestCase):
             ["tstl_afl_fuzz", "--corpusBudget", "30", "--timeout", "60", "--quiet", "--persist"])
         self.assertEqual(r, 0)
 
-        self.assertTrue(glob.glob("afltest.*") != [])
+        self.assertTrue(glob.glob("aflfail.*") != [])
 
         for f in glob.glob("aflfail.*"):
             os.remove(f)
