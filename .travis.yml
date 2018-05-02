@@ -15,6 +15,16 @@ install:
 - pip install pyflakes
 - pip install pycodestyle
 - pip install python-afl
+- pip install arrow
+- pip install bidict
+- pip install bintrees
+- pip install biopython
+- pip install datarray
+- pip install dateutil
+- pip install python-rsa
+- pip install sympy
+- pip install z3
+- pip install tensorflow
 env:
 - TRAVIS=TRUE CYTHON_VERSION= AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=TRUE
 script:
