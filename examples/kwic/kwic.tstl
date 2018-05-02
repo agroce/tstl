@@ -7,9 +7,6 @@
 @import kwic
 @import mykwic
 
-source: kwic.py
-source: mykwic.py
-
 pool: <word> 5
 pool: <string> 5
 pool: <ignore> 5
