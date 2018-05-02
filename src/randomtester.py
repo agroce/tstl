@@ -554,7 +554,6 @@ def handle_failure(
             test = sut.normalize(
                 test,
                 failProp,
-                True,
                 keepLast=config.keepLast,
                 pruneGuards=not config.noPruneGuards,
                 verbose=True,
