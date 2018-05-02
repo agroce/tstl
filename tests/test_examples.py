@@ -37,7 +37,8 @@ class TestExamples(TestCase):
         testingFailures = []
         expectedTesting = []
 
-        justCompile = ["gmpy2", "arcpy", "tstl", "stringh", "pyfakefs", "osquery", "dateutil"]
+        justCompile = ["gmpy2", "arcpy", "tstl", "stringh", "pyfakefs",
+                       "osquery", "datarray_inference", "dateutil"]
 
         for f in os.listdir("."):
             if os.path.isdir(f):
