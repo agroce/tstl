@@ -684,6 +684,7 @@ def handle_failure(
             traceback.print_tb(f[2], file=sys.stdout)
         else:
             print("NO FAILURE!")
+            assert sut.failsAny(test)
     sys.stdout.flush()
     if (not newCov) and config.multiple:
         if (test in [x[0] for x in failures]) or (
