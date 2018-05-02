@@ -90,6 +90,10 @@ def parse_args():
         action='store_true',
         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument(
+        '--noPruneGuards',
+        action='store_true',
+        help="Do not prune based on guards (useful in determinism checks)")
+    parser.add_argument(
         '--uncaught',
         action='store_true',
         help='Allow uncaught exceptions in actions (for coverage-based reduction).')
@@ -296,6 +300,7 @@ def main():
                 verbose=config.verbose,
                 tryFast=not config.ddmin,
                 keepLast=config.keepLast,
+                pruneGuards=not config.noPruneGuards,
                 rgen=R)
         elif config.multiple:
             rs = sut.reductions(
@@ -305,6 +310,7 @@ def main():
                 recursive=config.recursive,
                 limit=config.limit,
                 keepLast=config.keepLast,
+                pruneGuards=not config.noPruneGuards,
                 tryFast=not config.ddmin)
         elif config.decompose:
             print("DECOMPOSING...")
@@ -333,6 +339,7 @@ def main():
                 pred,
                 verbose=config.verbose,
                 keepLast=config.keepLast,
+                pruneGuards=not config.noPruneGuards,
                 tryFast=not config.ddmin)
         else:
             newrs = []
@@ -376,6 +383,7 @@ def main():
                         pred,
                         verbose=config.verbose,
                         keepLast=config.keepLast,
+                        pruneGuards=not config.noPruneGuards,
                         tryFast=not config.ddmin))
             rs = newrs
         print("NORMALIZED IN", time.time() - start, "SECONDS")
