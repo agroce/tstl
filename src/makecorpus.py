@@ -26,7 +26,7 @@ def main():
         print(" --swarm:         use swarm format, generate tests using swarm")
         print(" --skipFails:     just pass over failures, don't try to fix")
         print(" --burst:         high speed, dumb version (let AFL sort 'em out)")
-        print(" --loudSUT:       show output from the SUT")        
+        print(" --loudSUT:       show output from the SUT")
         sys.exit(0)
 
     sut = SUT.sut()
@@ -36,7 +36,7 @@ def main():
     dnull = open(os.devnull, 'w')
     oldStdout = sys.stdout
     oldStderr = sys.stderr
-    
+
     print("GENERATING INITIAL AFL INPUTS...")
 
     outputDir = sys.argv[1]

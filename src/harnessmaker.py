@@ -1587,7 +1587,7 @@ def main():
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
         genCode.append(baseIndent + "self.__oldCovData = None\n")
     genInitialization()
-    genCode.append(baseIndent + 'self.__SUTName = """' + config.tstl.split(".tstl")[0] + '"""\n')    
+    genCode.append(baseIndent + 'self.__SUTName = """' + config.tstl.split(".tstl")[0] + '"""\n')
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")
     genCode.append(baseIndent + 'self.__poolPrefix = "' + poolPrefix + '"\n')

@@ -14,14 +14,16 @@ t.actions()
 def setReplayBacktrack(self, val):
     self.__replayBacktrack = val
 
-def SUTName(self):
-    return self.__SUTName
 
 def test(self):
     """
     Returns the current test as a sequence of (name, guard, actions)
     """
     return self.__test
+
+
+def SUTName(self):
+    return self.__SUTName
 
 
 def raised(self):
