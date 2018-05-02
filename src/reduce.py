@@ -90,7 +90,7 @@ def parse_args():
         action='store_true',
         help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
     parser.add_argument(
-        '--noPruneGuards,
+        '--noPruneGuards',
         action='store_true',
         help="Do not prune based on guards (useful in determinism checks)")
     parser.add_argument(
