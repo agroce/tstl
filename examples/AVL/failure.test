@@ -1,0 +1,14 @@
+self.p_int[0] = 2 
+self.p_int[1] = 12 
+self.p_avl[0] = avl.AVLTree() 
+self.p_int[2] = 14 
+self.p_avl[0].insert(self.p_int[0]) 
+self.p_avl[0].insert(self.p_int[1]) 
+self.p_avl[0].insert(self.p_int[2]) 
+self.p_int[0] = 1 
+self.p_int[3] = 10 
+self.p_avl[0].insert(self.p_int[0]) 
+self.p_avl[0].delete(self.p_int[0]) 
+self.p_avl[0].insert(self.p_int[3]) 
+self.p_int[2] = 3 
+self.p_avl[0].insert(self.p_int[2]) 

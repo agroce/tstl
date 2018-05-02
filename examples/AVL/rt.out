@@ -1,0 +1,241 @@
+Random testing using config=Config(noExceptionMatch=False, determinismDelay=0, silentSUT=True, generalize=False, localize=False, speed='FAST', probs=None, LOCBaseline=0.2, noAlphaConvert=False, markovP=1.0, essentials=False, noCoverageExploit=False, quickTests=False, html=None, noReassign=False, stopWhenNoCoverage=None, generateLOC=None, processDetDelay=0, computeFeatureStats=False, stopTestWhenNoCoverage=None, Pmutate=0.0, timeout=3600, output='failure.test', markov=None, noSwarmDependencies=False, startExploit=0.0, maxMustHitBranch=None, readPool=None, useHints=False, silentFail=False, highLowSwarm=None, maxMustHitStatement=None, equalProbs=False, progress=False, postCover=False, swarmLength=None, processDetTries=1, noCover=True, noEnumerateEnabled=False, full=False, swarmP=0.5, coverFile='coverage.out', replayable=False, swarmProbs=None, genDepth=None, exploitCeiling=0.5, logging=None, noCheck=False, throughput=False, uncaught=False, swarmSwitch=None, verbose=False, reducePool=False, exploit=None, fastQuickAnalysis=False, determinismTries=1, total=False, verboseExploit=False, swarm=False, sequenceP=1.0, biasLOC=None, timedProgress=30, relax=False, ddmin=False, stutter=None, readQuick=False, verboseActions=False, quickAnalysis=False, keepLast=False, sequenceSize=3, LOCProbs=False, sequencesFromTests=None, hideOpaque=False, maxTests=-1, trackMaxCoverage=None, useQuickSequences=False, exploitBestHint=1, failedLogging=None, stopWhenStatements=None, greedyStutter=False, seed=2263, stopWhenHitStatement=None, checkDeterminism=False, uniqueValuesAnalysis=False, normalize=False, startExploitStall=0, enumerateEnabled=False, stopTestWhenThroughputBelow=None, internal=False, profile=False, multiple=False, stopWhenBranches=None, running=False, compareFails=False, Pcrossover=0.2, savePool=None, stopWhenHitBranch=None, checkProcessDeterminism=False, depth=100, localizeTop=20, showActions=False)
+UNCAUGHT EXCEPTION
+ERROR: (<type 'exceptions.AttributeError'>, AttributeError("'NoneType' object has no attribute 'right'",), <traceback object at 0x103bf7ef0>)
+TRACEBACK:
+  File "/Users/alex/tstl/examples/AVL/sut.py", line 9574, in safely
+    act[2]()
+  File "/Users/alex/tstl/examples/AVL/sut.py", line 3358, in act83
+    self.p_avl[0].insert(self.p_int[0])
+  File "/Users/alex/tstl/examples/AVL/avlbug3.py", line 97, in insert
+    self.node.left.insert(key)
+  File "/Users/alex/tstl/examples/AVL/avlbug3.py", line 105, in insert
+    self.rebalance()
+  File "/Users/alex/tstl/examples/AVL/avlbug3.py", line 117, in rebalance
+    self.node.left.rrotate() # we're in case II
+  File "/Users/alex/tstl/examples/AVL/avlbug3.py", line 140, in rrotate
+    T = B.right.node
+Original test has 83 steps
+REDUCING...
+  12 [2:0] 
+-- < 2 [1:-1] 
+---- > 10 [0:0] L
+-- > 15 [1:0] 
+---- < 14 [0:0] L
+---- > 16 [0:0] L
+set([2, 10, 12, 14, 15, 16])
+  12 [2:0] 
+-- < 2 [1:-1] 
+---- > 10 [0:0] L
+-- > 15 [1:0] 
+---- < 14 [0:0] L
+---- > 16 [0:0] L
+set([2, 10, 12, 14, 15, 16])
+  12 [2:0] 
+-- < 2 [1:-1] 
+---- > 10 [0:0] L
+-- > 15 [1:0] 
+---- < 14 [0:0] L
+---- > 16 [0:0] L
+set([2, 10, 12, 14, 15, 16])
+Reduced test length to 82
+Guard pruning reduced test length to 80
+Reduced test length to 79
+Guard pruning reduced test length to 78
+Reduced test length to 77
+Guard pruning reduced test length to 76
+Reduced test length to 75
+Guard pruning reduced test length to 74
+Reduced test length to 73
+Reduced test length to 72
+Guard pruning reduced test length to 71
+Reduced test length to 70
+Reduced test length to 69
+Reduced test length to 68
+Reduced test length to 67
+Reduced test length to 66
+Reduced test length to 65
+Guard pruning reduced test length to 64
+Reduced test length to 63
+Reduced test length to 62
+Reduced test length to 61
+Guard pruning reduced test length to 60
+Reduced test length to 59
+Reduced test length to 58
+Guard pruning reduced test length to 57
+Reduced test length to 56
+Reduced test length to 55
+Guard pruning reduced test length to 54
+Reduced test length to 53
+Reduced test length to 52
+Reduced test length to 51
+Guard pruning reduced test length to 50
+Reduced test length to 49
+Reduced test length to 48
+Guard pruning reduced test length to 47
+Reduced test length to 46
+Reduced test length to 45
+Reduced test length to 44
+Reduced test length to 43
+Guard pruning reduced test length to 42
+Reduced test length to 41
+Reduced test length to 40
+Guard pruning reduced test length to 39
+Reduced test length to 38
+Guard pruning reduced test length to 37
+Reduced test length to 36
+Reduced test length to 35
+Reduced test length to 34
+Guard pruning reduced test length to 33
+Reduced test length to 32
+Guard pruning reduced test length to 31
+Reduced test length to 30
+Reduced test length to 29
+Guard pruning reduced test length to 28
+Reduced test length to 27
+Reduced test length to 26
+Reduced test length to 25
+Guard pruning reduced test length to 24
+Reduced test length to 23
+Guard pruning reduced test length to 22
+Reduced test length to 21
+Guard pruning reduced test length to 20
+Reduced test length to 19
+Reduced test length to 18
+Reduced test length to 17
+Reduced test length to 16
+Guard pruning reduced test length to 15
+Reduced test length to 14
+Reduced test has 14 steps
+REDUCED IN 0.156610012054 SECONDS
+Alpha converting test...
+int0 = 2                                                                 # STEP 0
+int1 = 12                                                                # STEP 1
+avl0 = avl.AVLTree()                                                     # STEP 2
+int2 = 14                                                                # STEP 3
+avl0.insert(int0)                                                        # STEP 4
+avl0.insert(int1)                                                        # STEP 5
+avl0.insert(int2)                                                        # STEP 6
+int0 = 1                                                                 # STEP 7
+int3 = 10                                                                # STEP 8
+avl0.insert(int0)                                                        # STEP 9
+avl0.delete(int0)                                                       # STEP 10
+avl0.insert(int3)                                                       # STEP 11
+int2 = 3                                                                # STEP 12
+avl0.insert(int2)                                                       # STEP 13
+
+SAVING TEST AS failure.test
+FINAL VERSION OF TEST, WITH LOGGED REPLAY:
+int0 = 2                                                                 # STEP 0
+ACTION: int0 = 2 
+int0 = None : <type 'NoneType'>
+=> int0 = 2 : <type 'int'>
+==================================================
+int1 = 12                                                                # STEP 1
+ACTION: int1 = 12 
+int1 = None : <type 'NoneType'>
+=> int1 = 12 : <type 'int'>
+==================================================
+avl0 = avl.AVLTree()                                                     # STEP 2
+ACTION: avl0 = avl.AVLTree() 
+avl0 = None : <type 'NoneType'>
+avl_REF0 = None : <type 'NoneType'>
+=> avl0 = <avlbug3.AVLTree instance at 0x103bf7170> : <type 'instance'>
+REFERENCE ACTION: avl_REF0 = set() 
+=> avl_REF0 = set([]) : <type 'set'>
+==================================================
+int2 = 14                                                                # STEP 3
+ACTION: int2 = 14 
+int2 = None : <type 'NoneType'>
+=> int2 = 14 : <type 'int'>
+==================================================
+avl0.insert(int0)                                                        # STEP 4
+ACTION: avl0.insert(int0) 
+int0 = 2 : <type 'int'>
+avl0 = <avlbug3.AVLTree instance at 0x103bf7170> : <type 'instance'>
+avl_REF0 = set([]) : <type 'set'>
+REFERENCE ACTION: avl_REF0.add(int0) 
+=> avl_REF0 = set([2]) : <type 'set'>
+==================================================
+avl0.insert(int1)                                                        # STEP 5
+ACTION: avl0.insert(int1) 
+int1 = 12 : <type 'int'>
+avl0 = <avlbug3.AVLTree instance at 0x103bf7170> : <type 'instance'>
+avl_REF0 = set([2]) : <type 'set'>
+REFERENCE ACTION: avl_REF0.add(int1) 
+=> avl_REF0 = set([2, 12]) : <type 'set'>
+==================================================
+avl0.insert(int2)                                                        # STEP 6
+ACTION: avl0.insert(int2) 
+int2 = 14 : <type 'int'>
+avl0 = <avlbug3.AVLTree instance at 0x103bf7170> : <type 'instance'>
+avl_REF0 = set([2, 12]) : <type 'set'>
+REFERENCE ACTION: avl_REF0.add(int2) 
+=> avl_REF0 = set([2, 12, 14]) : <type 'set'>
+==================================================
+int0 = 1                                                                 # STEP 7
+ACTION: int0 = 1 
+int0 = 2 : <type 'int'>
+=> int0 = 1 : <type 'int'>
+==================================================
+int3 = 10                                                                # STEP 8
+ACTION: int3 = 10 
+int3 = None : <type 'NoneType'>
+=> int3 = 10 : <type 'int'>
+==================================================
+avl0.insert(int0)                                                        # STEP 9
+ACTION: avl0.insert(int0) 
+int0 = 1 : <type 'int'>
+avl0 = <avlbug3.AVLTree instance at 0x103bf7170> : <type 'instance'>
+avl_REF0 = set([2, 12, 14]) : <type 'set'>
+REFERENCE ACTION: avl_REF0.add(int0) 
+=> avl_REF0 = set([1, 2, 12, 14]) : <type 'set'>
+==================================================
+avl0.delete(int0)                                                       # STEP 10
+ACTION: avl0.delete(int0) 
+int0 = 1 : <type 'int'>
+avl0 = <avlbug3.AVLTree instance at 0x103bf7170> : <type 'instance'>
+avl_REF0 = set([1, 2, 12, 14]) : <type 'set'>
+REFERENCE ACTION: avl_REF0.discard(int0) 
+=> avl_REF0 = set([2, 12, 14]) : <type 'set'>
+==================================================
+avl0.insert(int3)                                                       # STEP 11
+ACTION: avl0.insert(int3) 
+int3 = 10 : <type 'int'>
+avl0 = <avlbug3.AVLTree instance at 0x103bf7170> : <type 'instance'>
+avl_REF0 = set([2, 12, 14]) : <type 'set'>
+REFERENCE ACTION: avl_REF0.add(int3) 
+=> avl_REF0 = set([2, 12, 10, 14]) : <type 'set'>
+==================================================
+int2 = 3                                                                # STEP 12
+ACTION: int2 = 3 
+int2 = 14 : <type 'int'>
+=> int2 = 3 : <type 'int'>
+==================================================
+avl0.insert(int2)                                                       # STEP 13
+ACTION: avl0.insert(int2) 
+int2 = 3 : <type 'int'>
+avl0 = <avlbug3.AVLTree instance at 0x103bf7170> : <type 'instance'>
+avl_REF0 = set([2, 12, 10, 14]) : <type 'set'>
+RAISED EXCEPTION: <type 'exceptions.AttributeError'> 'NoneType' object has no attribute 'right'
+ERROR: (<type 'exceptions.AttributeError'>, AttributeError("'NoneType' object has no attribute 'right'",), <traceback object at 0x103b57fc8>)
+TRACEBACK:
+  File "/Users/alex/tstl/examples/AVL/sut.py", line 9574, in safely
+    act[2]()
+  File "/Users/alex/tstl/examples/AVL/sut.py", line 3490, in act85
+    self.p_avl[0].insert(self.p_int[2])
+  File "/Users/alex/tstl/examples/AVL/avlbug3.py", line 105, in insert
+    self.rebalance()
+  File "/Users/alex/tstl/examples/AVL/avlbug3.py", line 117, in rebalance
+    self.node.left.rrotate() # we're in case II
+  File "/Users/alex/tstl/examples/AVL/avlbug3.py", line 140, in rrotate
+    T = B.right.node
+STOPPING TESTING DUE TO FAILED TEST
+0.181859970093 TOTAL RUNTIME
+1 EXECUTED
+83 TOTAL TEST OPERATIONS
+0.00199484825134 TIME SPENT EXECUTING TEST OPERATIONS
+0.00138998031616 TIME SPENT EVALUATING GUARDS AND CHOOSING ACTIONS
+0.00816893577576 TIME SPENT CHECKING PROPERTIES
+0.0101637840271 TOTAL TIME SPENT RUNNING SUT
+0.000626802444458 TIME SPENT RESTARTING
+0.163240909576 TIME SPENT REDUCING TEST CASES
