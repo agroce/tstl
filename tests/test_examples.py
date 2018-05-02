@@ -19,7 +19,7 @@ class TestExamples(TestCase):
             os.chdir("../..")
 
     def test_examples(self):
-        noTests = True
+        noTests = False
 
         skipTravis = [
             "redis",
@@ -101,9 +101,8 @@ class TestExamples(TestCase):
                         "--noCover"]
                     start = time.time()
                     with open(".output", 'w') as ef:
-                        p = subprocess.Popen(rtCmd, stdout=ef, stderr=ef)
+                        p = subprocess.Popen(rtCmd)
                     while (p.poll() is None) and ((time.time() - start) < 20):
-                        print("RUNNING FOR", time.time() - start, "SECONDS")
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
