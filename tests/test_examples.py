@@ -103,7 +103,8 @@ class TestExamples(TestCase):
                         "--noCover"]
                     start = time.time()
                     if f in silent:
-                        p = subprocess.Popen(rtCmd, stdout=dnull)
+                        with open(os.devnull, 'w') as dnull:
+                            p = subprocess.Popen(rtCmd, stdout=dnull)
                     else:
                         p = subprocess.Popen(rtCmd)                        
                     while (p.poll() is None) and ((time.time() - start) < 60):
