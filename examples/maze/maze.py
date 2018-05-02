@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 mtext = '''
 | --------------|
 |               |
@@ -15,20 +17,20 @@ for l in mtext.split("\n")[1:]:
 start = (1,0)
 
 def drawMaze(pos):
-    print
-    print "X"*20
+    print ()
+    print ("X"*20)
     py = 0
     for l in mlist:
     	px = 0
     	for c in l:
 	    if (px,py) == pos:
-	       print "?",
+	       print ("?",end=" ")
 	    else:
-	       print c,
+	       print (c,end=" ")
 	    px += 1
 	print
 	py += 1
-    print "X"*20	
+    print ("X"*20)
 	
         
 

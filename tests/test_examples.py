@@ -19,6 +19,8 @@ class TestExamples(TestCase):
             os.chdir("../..")
 
     def test_examples(self):
+        PY3 = sys.version_info[0] == 3
+
         noTests = False
 
         skipTravis = [
@@ -27,6 +29,11 @@ class TestExamples(TestCase):
             "solc",
             "sortedcontainers",
             "pystan"]
+
+        skipPY3 = [
+            "microjson",
+            "XML",
+            "turtle"]
 
         justCompile = [
             "gmpy2",
@@ -38,6 +45,9 @@ class TestExamples(TestCase):
             "datarray_inference",
             "dateutil",
             "tictactoe"]
+
+        if PY3:
+            justCompile.extend(skipPY3)
 
         compileFailures = []
         expectedCompile = []
@@ -109,7 +119,7 @@ class TestExamples(TestCase):
                     start = time.time()
                     p = subprocess.Popen(rtCmd)
                     # Big timeout is for huge coverage dumps like sympy
-                    while (p.poll() is None) and ((time.time() - start) < 120):
+                    while (p.poll() is None) and ((time.time() - start) < 180):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
