@@ -2,11 +2,6 @@
 @import math
 @import copy
 
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/simplejson/__init__.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/simplejson/encoder.py
-source: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/simplejson/decoder.py
-
-
 <@
 MAXDEPTH = 15
 
