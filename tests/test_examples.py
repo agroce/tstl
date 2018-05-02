@@ -102,7 +102,8 @@ class TestExamples(TestCase):
                     start = time.time()
                     with open(".output", 'w') as ef:
                         p = subprocess.Popen(rtCmd, stdout=ef, stderr=ef)
-                    while (p.poll() is None) and ((time.time() - start) < 25):
+                    while (p.poll() is None) and ((time.time() - start) < 20):
+                        print("RUNNING FOR", time.time() - start, "SECONDS")
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
