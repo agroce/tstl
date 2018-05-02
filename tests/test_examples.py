@@ -28,6 +28,11 @@ class TestExamples(TestCase):
             "sortedcontainers",
             "pystan"]
 
+        justCompile = ["gmpy2", "arcpy", "tstl", "stringh", "pyfakefs",
+                       "osquery", "datarray_inference", "dateutil"]
+
+        silent = ["avl", "maze"]
+
         compileFailures = []
         expectedCompile = []
         bytecodeFailures = []
@@ -36,9 +41,6 @@ class TestExamples(TestCase):
         expectedTimeout = ['arrow/arrow.tstl']
         testingFailures = []
         expectedTesting = []
-
-        justCompile = ["gmpy2", "arcpy", "tstl", "stringh", "pyfakefs",
-                       "osquery", "datarray_inference", "dateutil"]
 
         for f in os.listdir("."):
             if os.path.isdir(f):
@@ -100,8 +102,11 @@ class TestExamples(TestCase):
                         "--uncaught",
                         "--noCover"]
                     start = time.time()
-                    with open(".output", 'w') as ef:
+                    if f not in silent:
                         p = subprocess.Popen(rtCmd)
+                    else:
+                        with open(os.devnull(), 'w') as dnull:
+                            p = subprocess.Popen(rtCmd, stdout=dnull)
                     while (p.poll() is None) and ((time.time() - start) < 20):
                         time.sleep(1)
                     if p.poll() is None:
