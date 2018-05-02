@@ -19,7 +19,7 @@ class TestAFL(TestCase):
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_afl_fuzz", "--corpusBudget", "15", "--timeout", "20", "--quiet", "--persist"], stdout=dnull)
+            ["tstl_afl_fuzz", "--corpusBudget", "15", "--timeout", "20", "--quiet", "--persist"])
         self.assertEqual(r, 0)
 
         self.assertTrue(glob.glob("aflfail.*") != [])
