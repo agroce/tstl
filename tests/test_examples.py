@@ -106,7 +106,7 @@ class TestExamples(TestCase):
                         p = subprocess.Popen(rtCmd, stdout=dnull)
                     else:
                         p = subprocess.Popen(rtCmd)                        
-                    while (p.poll() is None) and ((time.time() - start) < 20):
+                    while (p.poll() is None) and ((time.time() - start) < 60):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
