@@ -19,7 +19,7 @@ class TestExamples(TestCase):
             os.chdir("../..")
 
     def test_examples(self):
-        noTests = True
+        noTests = False
 
         skipTravis = [
             "redis",
