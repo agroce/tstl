@@ -522,7 +522,7 @@ def handle_failure(
         print("REDUCING...")
         startReduce = time.time()
         original = test
-        test = sut.reduce(test, failProp, True,
+        test = sut.reduce(test, failProp,
                           keepLast=config.keepLast, tryFast=not config.ddmin,
                           pruneGuards=not config.noPruneGuards)
         if not newCov:
@@ -539,9 +539,9 @@ def handle_failure(
         if config.essentials:
             print("FINDING ESSENTIAL ELEMENTS OF REDUCED TEST")
             (canRemove, cannotRemove) = sut.reduceEssentials(test, original,
-                                                             failProp, True, keepLast=config.keepLast,
-                                                             tryFast=not config.ddmin,
-                                                             pruneGuards=not config.noPruneGuards)
+                                                             failProp, keepLast=config.keepLast,
+                                                             pruneGuards=not config.noPruneGuards,
+                                                             tryFast=not config.ddmin)
             print(len(canRemove), len(cannotRemove))
             for (c, reducec) in canRemove:
                 print("CAN BE REMOVED:", [x[0] for x in c])
