@@ -925,7 +925,7 @@ def collectExploitable():
 
 def printStatus(elapsed, step=None):
     global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage, testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
-    print("TEST #" + str(ntests), end=' ')
+    print(sut.SUTName() + ":", "TEST #" + str(ntests), end=' ')
     if step is not None:
         print("STEP #" + str(step), end=' ')
     print("(" + str(datetime.timedelta(seconds=elapsed)) + ")", (datetime.datetime.now()).ctime(), end=' ')
