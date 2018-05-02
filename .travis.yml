@@ -19,8 +19,6 @@ install:
 - pip install bidict
 - pip install bintrees
 - pip install biopython
-- pip install datarray
-- pip install networkx
 - pip install rsa
 - pip install sympy
 - pip install z3
