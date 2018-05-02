@@ -25,13 +25,18 @@ def main():
         print(" --noCover:       do not check for new coverage")
         print(" --swarm:         use swarm format, generate tests using swarm")
         print(" --skipFails:     just pass over failures, don't try to fix")
-        print(" --burst:         high speed, dumb version (let afl sort 'em out)")
+        print(" --burst:         high speed, dumb version (let AFL sort 'em out)")
+        print(" --loudSUT:       show output from the SUT")        
         sys.exit(0)
 
     sut = SUT.sut()
 
     pid = str(os.getpid())
 
+    dnull = open(os.devnull, 'w')
+    oldStdout = sys.stdout
+    oldStderr = sys.stderr
+    
     print("GENERATING INITIAL AFL INPUTS...")
 
     outputDir = sys.argv[1]
@@ -44,6 +49,7 @@ def main():
     noCover = "--noCover" in sys.argv
     swarm = "--swarm" in sys.argv
     skipFails = "--skipFails" in sys.argv
+    loudSUT = "--loudSUT" in sys.argv
 
     if burst:
         timeout = 60
@@ -62,7 +68,13 @@ def main():
             seed = R.randint(0, 2**32)
             Rswarm.seed(seed)
             sut.standardSwarm(Rswarm)
+        if not loudSUT:
+            sys.stdout = dnull
+            sys.stderr = dnull
         (t, ok) = sut.makeTest(length, R, stopFail=True, checkProp=checkProp)
+        if not loudSUT:
+            sys.stdout = oldStdout
+            sys.stderr = oldStderr
         if ((not noCover) and (not burst) and (len(sut.newCurrBranches())
                                                == 0) and len(sut.newCurrStatements()) == 0):
             continue

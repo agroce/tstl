@@ -278,6 +278,8 @@ def parse_args():
                         help="Run in verbose mode.")
     parser.add_argument('--silentFail', action='store_true',
                         help="Don't make failure replays verbose.")
+    parser.add_argument('--silentSUT', action='store_true',
+                        help="Silence SUT actions (no output).")    
     parser.add_argument('--throughput', action='store_true',
                         help='Measure action throughput.')
     parser.add_argument('--profile', action='store_true',
@@ -957,6 +959,10 @@ def main():
     global stepsWithNoNewCoverage
     global sequences
 
+    dnull = open(os.devnull, 'w')
+    oldStdout = sys.stdout
+    oldStderr = sys.stderr
+
     testsWithNewCoverage = 0
     exploitsWithNewCoverage = 0
 
@@ -1428,7 +1434,13 @@ def main():
                 lastLOCs = 0
                 lastFuncs = {}
                 sys.settrace(traceLOC)
+            if config.silentSUT:
+                sys.stdout = dnull
+                sys.stderr = dnull
             stepOk = sut.safely(a)
+            if config.silentSUT:
+                sys.stdout = oldStdout
+                sys.stderr = oldStderr
 
             if config.checkDeterminism:
                 trajectory.append(sut.trajectoryItem())
