@@ -31,8 +31,6 @@ class TestExamples(TestCase):
         justCompile = ["gmpy2", "arcpy", "tstl", "stringh", "pyfakefs",
                        "osquery", "datarray_inference", "dateutil"]
 
-        silent = ["AVL", "maze"]
-
         compileFailures = []
         expectedCompile = []
         bytecodeFailures = []
@@ -53,12 +51,9 @@ class TestExamples(TestCase):
                     tstlCmd = ["tstl", t]
                     if "tensorflow" in f:
                         tstlCmd += ["--noReload"]
-                    with open(".output", 'w') as ef:
-                        r = subprocess.call(tstlCmd, stdout=ef, stderr=ef)
+                    r = subprocess.call(tstlCmd)
                     if r != 0:
                         print("FAILED TO COMPILE!")
-                        with open(".output", 'r') as ef:
-                            print(ef.read())
                         compileFailures.append(f + "/" + t)
                         print()
                         os.remove("sut.py")
@@ -97,30 +92,22 @@ class TestExamples(TestCase):
                     rtCmd = [
                         "tstl_rt",
                         "--timeout",
-                        "40",
+                        "61",
                         "--noCheck",
                         "--uncaught",
-                        "--noCover"]
+                        "--silentSUT"]
                     start = time.time()
-                    if f in silent:
-                        with open(os.devnull, 'w') as dnull:
-                            p = subprocess.Popen(rtCmd, stdout=dnull)
-                    else:
-                        p = subprocess.Popen(rtCmd)                        
+                    p = subprocess.Popen(rtCmd)
                     while (p.poll() is None) and ((time.time() - start) < 60):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
                         print("TIMEOUT!")
-                        with open(".output", 'r') as ef:
-                            print(ef.read())
                         timeoutFailures.append(f + "/" + t)
                     else:
                         r = p.returncode
                         if r != 0:
                             print("FAILED TO TEST!")
-                            with open(".output", 'r') as ef:
-                                print(ef.read())
                             testingFailures.append(f + "/" + t)
                         else:
                             print("OK!")
