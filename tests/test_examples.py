@@ -42,10 +42,10 @@ class TestExamples(TestCase):
         for f in os.listdir("."):
             if os.path.isdir(f):
                 os.chdir(f)
-                print ("=" * 80)
+                print("=" * 80)
                 for t in glob.glob("*.tstl"):
-                    print (f + "/" + t, end=":  ")
-                    print ("COMPILING", end="...")
+                    print(f + "/" + t, end=":  ")
+                    print("COMPILING", end="...")
                     sys.stdout.flush()
                     tstlCmd = ["tstl", t]
                     if "tensorflow" in f:
@@ -53,27 +53,27 @@ class TestExamples(TestCase):
                     with open(".output", 'w') as ef:
                         r = subprocess.call(tstlCmd, stdout=ef, stderr=ef)
                     if r != 0:
-                        print ("FAILED TO COMPILE!")
+                        print("FAILED TO COMPILE!")
                         with open(".output", 'r') as ef:
-                            print (ef.read())
+                            print(ef.read())
                         compileFailures.append(f + "/" + t)
-                        print ()
+                        print()
                         os.remove("sut.py")
                         continue
                     if (os.getenv("TRAVIS") == "TRUE") and (f in skipTravis):
-                        print ("OK")
+                        print("OK")
                         continue
-                    print ("COMPILING TO BYTECODE", end="...")
+                    print("COMPILING TO BYTECODE", end="...")
                     sys.stdout.flush()
                     try:
                         start = time.time()
                         py_compile.compile("sut.py", doraise=True)
-                        print ("NEEDED", round(time.time() - start, 2), "SECONDS", end="...")
+                        print("NEEDED", round(time.time() - start, 2), "SECONDS", end="...")
                     except py_compile.PyCompileError as e:
-                        print ("BYTECODE COMPILATION FAILED!")
-                        print (e)
+                        print("BYTECODE COMPILATION FAILED!")
+                        print(e)
                         bytecodeFailures.append(f + "/" + t)
-                        print ()
+                        print()
                         os.remove("sut.py")
                         continue
                     skipThis = False
@@ -82,14 +82,14 @@ class TestExamples(TestCase):
                             skipThis = True
                             break
                     if noTests or skipThis or (f == "c"):
-                        print ("OK!")
+                        print("OK!")
                         os.remove("sut.py")
                         try:
                             os.remove("sut.pyc")
                         except OSError:
                             pass
                         continue
-                    print ("RUNNING", end="...")
+                    print("RUNNING", end="...")
                     sys.stdout.flush()
                     rtCmd = [
                         "tstl_rt",
@@ -105,19 +105,19 @@ class TestExamples(TestCase):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
-                        print ("TIMEOUT!")
+                        print("TIMEOUT!")
                         with open(".output", 'r') as ef:
-                            print (ef.read())
+                            print(ef.read())
                         timeoutFailures.append(f + "/" + t)
                     else:
                         r = p.returncode
                         if r != 0:
-                            print ("FAILED TO TEST!")
+                            print("FAILED TO TEST!")
                             with open(".output", 'r') as ef:
-                                print (ef.read())
+                                print(ef.read())
                             testingFailures.append(f + "/" + t)
                         else:
-                            print ("OK!")
+                            print("OK!")
                     os.remove("sut.py")
                     try:
                         os.remove("sut.pyc")
@@ -127,10 +127,10 @@ class TestExamples(TestCase):
                 os.chdir("..")
                 sys.stdout.flush()
 
-        print ("COMPILATION FAILURES:", compileFailures)
-        print ("BYTECODE COMPILATION FAILURES:", bytecodeFailures)
-        print ("TIMEOUTS:", timeoutFailures)
-        print ("TESTING FAILURES:", testingFailures)
+        print("COMPILATION FAILURES:", compileFailures)
+        print("BYTECODE COMPILATION FAILURES:", bytecodeFailures)
+        print("TIMEOUTS:", timeoutFailures)
+        print("TESTING FAILURES:", testingFailures)
         self.assertTrue(sorted(compileFailures) == sorted(expectedCompile))
         # These aren't even running, so need subset
         self.assertTrue(set(bytecodeFailures).issubset(set(expectedBytecode)))
