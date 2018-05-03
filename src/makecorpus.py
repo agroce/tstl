@@ -87,7 +87,13 @@ def main():
             if (not burst) and (not noCover) and (not noReduce):
                 b = set(sut.currBranches())
                 s = set(sut.currStatements())
+                if not loudSUT:
+                    sys.stdout = dnull
+                    sys.stderr = dnull
                 pred = sut.coversAll(s, b, checkProp=True, catchUncaught=False)
+                if not loudSUT:
+                    sys.stdout = oldStdout
+                    sys.stderr = oldStderr
                 r = sut.reduce(t, pred, verbose=False)
             else:
                 r = t
