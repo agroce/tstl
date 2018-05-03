@@ -54,7 +54,7 @@ class TestExamples(TestCase):
         bytecodeFailures = []
         expectedBytecode = ['arcpy/arcpy1.tstl', 'arcpy/arcpy5.tstl']
         timeoutFailures = []
-        expectedTimeout = ['arrow/arrow.tstl', 'sympy/sympy.tstl', 'tensorflow/tf.tstl']
+        expectedTimeout = ['arrow/arrow.tstl']
         testingFailures = []
         expectedTesting = []
         freeTestingFailures = []
@@ -148,7 +148,7 @@ class TestExamples(TestCase):
                     start = time.time()
                     p = subprocess.Popen(rtCmd)
                     # Big timeout is for huge coverage dumps like sympy
-                    while (p.poll() is None) and ((time.time() - start) < 40):
+                    while (p.poll() is None) and ((time.time() - start) < 180):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
