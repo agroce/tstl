@@ -37,10 +37,12 @@ class TestExamples(TestCase):
             "turtle"]
 
         justCompile = [
+            "AVL",
             "arcpy",
             "datarray_inference",
             "dateutil",
             "gmpy2",
+            "hypothesis_heaps",
             "numpy",
             "osquery",
             "pyfakefs",
@@ -102,7 +104,7 @@ class TestExamples(TestCase):
                         continue
                     skipThis = False
                     for jc in justCompile:
-                        if jc in f:
+                        if jc == f:
                             skipThis = True
                             break
                     if noTests or skipThis or (f == "c"):
