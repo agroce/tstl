@@ -42,14 +42,16 @@ class TestExamples(TestCase):
             "tstl",
             "stringh",
             "pyfakefs",
-            "turtle",
-            "bidict",
-            "numpy",
-            "z3",
             "osquery",
             "datarray_inference",
             "dateutil",
             "tictactoe"]
+
+        problemsFree = [
+            "bidict",
+            "numpy",
+            "turtle",
+            "z3"]
 
         if PY3:
             justCompile.extend(skipPY3)
@@ -126,7 +128,7 @@ class TestExamples(TestCase):
                     start = time.time()
                     p = subprocess.Popen(rtCmd)
                     # Big timeout is for huge coverage dumps like sympy
-                    while (p.poll() is None) and ((time.time() - start) < 180):
+                    while (p.poll() is None) and ((time.time() - start) < 300):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
@@ -151,10 +153,13 @@ class TestExamples(TestCase):
                         ".freefail",
                         "--silentSUT"]
                     start = time.time()
-                    with open(os.devnull, 'w') as dnull:
-                        p = subprocess.Popen(rtCmd, stdout=dnull)
+                    if f not in problemsFree:
+                        with open(os.devnull, 'w') as dnull:
+                            p = subprocess.Popen(rtCmd, stdout=dnull)
+                    else:
+                        p = subprocess.Popen(rtCmd)
                     # Big timeout is for huge coverage dumps like sympy
-                    while (p.poll() is None) and ((time.time() - start) < 180):
+                    while (p.poll() is None) and ((time.time() - start) < 300):
                         time.sleep(1)
                     if p.poll() is None:
                         p.terminate()
@@ -167,6 +172,9 @@ class TestExamples(TestCase):
                             freeTestingFailures.append(f + "/" + t)
                         else:
                             if r == 255:
+                                rr0 = subprocess.call(["tstl_replay",
+                                                       ".freefail"])
+                                self.assertEqual(rr0, 255)
                                 rr1 = subprocess.call(["tstl_reduce",
                                                        ".freefail",
                                                        ".freesmall",
