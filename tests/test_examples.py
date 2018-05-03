@@ -64,7 +64,7 @@ class TestExamples(TestCase):
         bytecodeFailures = []
         expectedBytecode = ['arcpy/arcpy1.tstl', 'arcpy/arcpy5.tstl']
         timeoutFailures = []
-        expectedTimeout = ['arrow/arrow.tstl']
+        expectedTimeout = []
         testingFailures = []
         expectedTesting = []
         freeTestingFailures = []
