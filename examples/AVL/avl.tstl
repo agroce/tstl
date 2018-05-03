@@ -30,7 +30,6 @@ pool: %LIST% 1
 
 property: heightOk(%AVL%) 
 property: %AVL%.check_balanced()
-property: len(%AVL%.inorder()) < 12
 
 %LIST%:=[]
 ~%LIST%.append(%INT%) 
