@@ -518,6 +518,7 @@ def handle_failure(
             if checkFail or not justFails:
                 if not checkFail:
                     print("WARNING:  LIKELY STATE-CHANGING INVARIANT!")
+                    checkFail = True
                 if config.noExceptionMatch:
                     failProp = sut.failsCheck
                 else:
@@ -529,6 +530,8 @@ def handle_failure(
         test = sut.reduce(test, failProp,
                           keepLast=config.keepLast, tryFast=not config.ddmin,
                           pruneGuards=not config.noPruneGuards)
+        assert failProp(test)
+        sut.prettyPrintTest(test)
         if not newCov:
             sut.saveTest(test, config.output.replace(".test", ".reduced.test"))
         print("Reduced test has", len(test), "steps")
