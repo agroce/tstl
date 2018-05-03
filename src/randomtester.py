@@ -509,17 +509,21 @@ def handle_failure(
             failProp = sut.coversStatements(
                 sTarget, catchUncaught=True, checkProp=(not config.noCheck))
             assert failProp(test)
-        elif not checkFail:
+        else:
             if config.noExceptionMatch:
                 failProp = sut.fails
             else:
                 def failProp(x): return sut.fails(x, failure=f)
-        else:
-            if config.noExceptionMatch:
-                failProp = sut.failsCheck
-            else:
-                def failProp(x): return sut.failsCheck(x, failure=f)
+            justFails = failProp(test)
+            if checkFail or not justFails:
+                if not checkFail:
+                    print("WARNING:  LIKELY STATE-CHANGING INVARIANT!")
+                if config.noExceptionMatch:
+                    failProp = sut.failsCheck
+                else:
+                    def failProp(x): return sut.failsCheck(x, failure=f)
         print("REDUCING...")
+        assert failProp(test)
         startReduce = time.time()
         original = test
         test = sut.reduce(test, failProp,
