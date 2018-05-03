@@ -146,7 +146,8 @@ class TestExamples(TestCase):
                         ".freefail",
                         "--silentSUT"]
                     start = time.time()
-                    p = subprocess.Popen(rtCmd, stdout=dnull)
+                    with open(os.devnull, 'w') as dnull:
+                        p = subprocess.Popen(rtCmd, stdout=dnull)
                     # Big timeout is for huge coverage dumps like sympy
                     while (p.poll() is None) and ((time.time() - start) < 180):
                         time.sleep(1)
