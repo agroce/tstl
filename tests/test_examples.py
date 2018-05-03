@@ -56,6 +56,13 @@ class TestExamples(TestCase):
             "turtle",
             "z3"]
 
+        shouldFail = [
+            "newxml.tstl",
+            "nutshell.tstl",
+            "onestep.tstl",
+            "statechanginginvar.tstl",
+            "turtle.tstl"]
+
         if PY3:
             justCompile.extend(skipPY3)
 
@@ -154,6 +161,7 @@ class TestExamples(TestCase):
                         "--noCover",
                         "--output",
                         ".freefail.test",
+                        "--keepLast",
                         "--silentSUT"]
                     start = time.time()
                     if f not in problemsFree:
@@ -170,6 +178,10 @@ class TestExamples(TestCase):
                         timeoutFailures.append(f + "/" + t)
                     else:
                         r = p.returncode
+                        if t in shouldFail:
+                            if r != 255:
+                                print("FAILURE TO FIND BUG DURING FREE TESTING!")
+                                freeTestingFailures.append(f + "/" + t)
                         if r not in [0, 255]:
                             print("FAILURE DURING FREE TESTING!")
                             freeTestingFailures.append(f + "/" + t)
@@ -178,12 +190,18 @@ class TestExamples(TestCase):
                                 rr0 = subprocess.call(["tstl_replay",
                                                        ".freefail.test"])
                                 self.assertEqual(rr0, 255)
+                                if t == "onestep.tstl":
+                                    with open(".freefail.test", 'r') as ff:
+                                        self.assertEqual(len(ff.readlines()), 1)
                                 rr1 = subprocess.call(["tstl_reduce",
-                                                       ".freefail.test",
+                                                       ".freefail.full.test",
                                                        ".freesmall.test",
                                                        "--verbose",
                                                        "True"])
                                 self.assertEqual(rr1, 0)
+                                if t == "onestep.tstl":
+                                    with open(".freesmall.test", 'r') as ff:
+                                        self.assertEqual(len(ff.readlines()), 1)
                                 rr2 = subprocess.call(["tstl_replay",
                                                        ".freesmall.test"])
                                 self.assertEqual(rr2, 255)
