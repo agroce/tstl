@@ -1263,6 +1263,8 @@ def testCandidates(self, t, n):
     # Fix so that if n means removal is single items, you just return all the
     # relevant removals
     candidates = []
+    if t == []:
+        return [[]]
     s = int(len(t) / n)
     if (s == 1):
         n = len(t)
