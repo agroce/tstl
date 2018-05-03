@@ -33,6 +33,7 @@ class TestExamples(TestCase):
         skipPY3 = [
             "microjson",
             "XML",
+            "rsa",
             "turtle"]
 
         justCompile = [
