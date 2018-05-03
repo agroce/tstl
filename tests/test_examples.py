@@ -25,9 +25,9 @@ class TestExamples(TestCase):
 
         skipTravis = [
             "redis",
-            "simplejson",
+            # "simplejson",
             "solc",
-            "sortedcontainers",
+            # "sortedcontainers",
             "pystan"]
 
         skipPY3 = [
