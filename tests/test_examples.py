@@ -114,6 +114,8 @@ class TestExamples(TestCase):
                         except OSError:
                             pass
                         continue
+                    if f not in problemsFree:
+                        continue
                     print("RUNNING", end="...")
                     sys.stdout.flush()
                     rtCmd = [
