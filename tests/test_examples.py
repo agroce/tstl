@@ -39,6 +39,7 @@ class TestExamples(TestCase):
         justCompile = [
             "AVL",
             "arcpy",
+            "arrow",
             "datarray_inference",
             "dateutil",
             "gmpy2",
