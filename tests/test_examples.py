@@ -182,6 +182,7 @@ class TestExamples(TestCase):
         print("BYTECODE COMPILATION FAILURES:", bytecodeFailures)
         print("TIMEOUTS:", timeoutFailures)
         print("TESTING FAILURES:", testingFailures)
+        print("FREE TESTING FAILURES:", freeTestingFailures)
         self.assertTrue(sorted(compileFailures) == sorted(expectedCompile))
         # These aren't even running, so need subset
         self.assertTrue(set(bytecodeFailures).issubset(set(expectedBytecode)))
