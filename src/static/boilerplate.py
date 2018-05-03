@@ -1476,7 +1476,7 @@ def reduce(
                 else:
                     v = False
             if v:
-                return ([] + addLast)
+                return (tc + addLast)
             else:
                 return (tb + addLast)
 

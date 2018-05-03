@@ -530,11 +530,14 @@ def handle_failure(
         test = sut.reduce(test, failProp,
                           keepLast=config.keepLast, tryFast=not config.ddmin,
                           pruneGuards=not config.noPruneGuards)
-        assert failProp(test)
         sut.prettyPrintTest(test)
         if not newCov:
             sut.saveTest(test, config.output.replace(".test", ".reduced.test"))
         print("Reduced test has", len(test), "steps")
+        if not failProp(test):
+            print("REDUCED TEST DOES NOT FAIL:")
+            sut.prettyPrintTest(test)
+            assert False
         print("REDUCED IN", time.time() - startReduce, "SECONDS")
         if not config.noAlphaConvert:
             print("Alpha converting test...")
