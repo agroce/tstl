@@ -91,10 +91,10 @@ def main():
                     sys.stdout = dnull
                     sys.stderr = dnull
                 pred = sut.coversAll(s, b, checkProp=True, catchUncaught=False)
+                r = sut.reduce(t, pred, verbose=False)
                 if not loudSUT:
                     sys.stdout = oldStdout
                     sys.stderr = oldStderr
-                r = sut.reduce(t, pred, verbose=False)
             else:
                 r = t
         elif skipFails:
