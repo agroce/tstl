@@ -1429,7 +1429,7 @@ def reduce(
                     tb = newtb
                 if tryFast:
                     n = len(tb)
-                    truePos = (lastRemove + removePos) % len(tb)
+                    truePos = (lastRemove + removePos) % max(len(tb), 1)
                     lastRemove = truePos
                     if verbose == "VERY":
                         print("check #", truePos, removePos, lastRemove)
