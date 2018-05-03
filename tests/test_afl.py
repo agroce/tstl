@@ -29,7 +29,18 @@ class TestAFL(TestCase):
             os.remove(f)
 
         r = subprocess.call(
-            ["tstl_afl_fuzz", "--corpusBudget", "0", "--timeout", "60", "--quiet"])
+            ["tstl_afl_fuzz", "--corpusBudget", "0", "--timeout", "45", "--quiet"])
+        self.assertEqual(r, 0)
+
+        self.assertTrue(glob.glob("aflfail.*") != [])
+
+        subprocess.call(["rm", "-rf", "aflinputs"])
+
+        for f in glob.glob("aflfail.*"):
+            os.remove(f)
+
+        r = subprocess.call(
+            ["tstl_afl_fuzz", "--corpusBudget", "15", "--timeout", "60", "--quiet", "--swarm"])
         self.assertEqual(r, 0)
 
         self.assertTrue(glob.glob("aflfail.*") != [])
