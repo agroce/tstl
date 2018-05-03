@@ -57,6 +57,8 @@ class TestExamples(TestCase):
         expectedTimeout = ['arrow/arrow.tstl', 'sympy/sympy.tstl', 'tensorflow/tf.tstl']
         testingFailures = []
         expectedTesting = []
+        freeTestingFailures = []
+        expectedFreeTesting = []
 
         for f in os.listdir("."):
             if os.path.isdir(f):
@@ -128,8 +130,33 @@ class TestExamples(TestCase):
                     else:
                         r = p.returncode
                         if r != 0:
-                            print("FAILED TO TEST!")
+                            print("FAILED DURING UNFAILABLE TESTING!")
                             testingFailures.append(f + "/" + t)
+                        else:
+                            print("OK!")
+                    sys.stdout.flush()
+                    rtCmd = [
+                        "tstl_rt",
+                        "--timeout",
+                        "25",
+                        "--timedProgress",
+                        "10",
+                        "--noCover",
+                        "--silentSUT"]
+                    start = time.time()
+                    p = subprocess.Popen(rtCmd)
+                    # Big timeout is for huge coverage dumps like sympy
+                    while (p.poll() is None) and ((time.time() - start) < 40):
+                        time.sleep(1)
+                    if p.poll() is None:
+                        p.terminate()
+                        print("TIMEOUT DURING FREE TESTING!")
+                        timeoutFailures.append(f + "/" + t)
+                    else:
+                        r = p.returncode
+                        if r not in [0, 255]:
+                            print("FAILURE DURING FREE TESTING!")
+                            freeTestingFailures.append(f + "/" + t)
                         else:
                             print("OK!")
                     os.remove("sut.py")
@@ -149,3 +176,4 @@ class TestExamples(TestCase):
         self.assertTrue(set(bytecodeFailures).issubset(set(expectedBytecode)))
         self.assertTrue(set(timeoutFailures).issubset(set(expectedTimeout)))
         self.assertTrue(set(testingFailures).issubset(set(expectedTesting)))
+        self.assertTrue(set(freeTestingFailures).issubset(set(expectedFreeTesting)))

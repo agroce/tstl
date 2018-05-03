@@ -1,0 +1,12 @@
+@import statechanginginvar
+
+init: state = 0
+
+pool: <int> 5
+
+<int> := <[0..5]>
+
+statechanginginvar.foo(<int>)
+statechanginginvar.bar(<int>)
+
+property: statechanginginvar.check()
