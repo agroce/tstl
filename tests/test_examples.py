@@ -31,25 +31,24 @@ class TestExamples(TestCase):
             "pystan"]
 
         skipPY3 = [
-            "microjson",
             "XML",
+            "microjson",
             "rsa",
             "turtle"]
 
         justCompile = [
-            "gmpy2",
             "arcpy",
-            "tstl",
-            "stringh",
-            "pyfakefs",
-            "osquery",
             "datarray_inference",
             "dateutil",
-            "tictactoe"]
+            "gmpy2",
+            "numpy",
+            "osquery",
+            "pyfakefs",
+            "stringh",
+            "tstl"]
 
         problemsFree = [
             "bidict",
-            "numpy",
             "turtle",
             "z3"]
 
@@ -113,8 +112,6 @@ class TestExamples(TestCase):
                             os.remove("sut.pyc")
                         except OSError:
                             pass
-                        continue
-                    if f not in problemsFree:
                         continue
                     print("RUNNING", end="...")
                     sys.stdout.flush()
