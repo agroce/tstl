@@ -47,6 +47,7 @@ class TestExamples(TestCase):
             "osquery",
             "pyfakefs",
             "stringh",
+            "tictactoe",
             "tstl"]
 
         problemsFree = [
