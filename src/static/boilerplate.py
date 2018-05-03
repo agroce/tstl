@@ -1466,6 +1466,19 @@ def reduce(
                 test_after_reduce(self)
             except BaseException:
                 pass
+
+            if not findLocations:
+                v = pred([] + addLast)
+            else:
+                v = pred([(x[0], x[1], x[2]) for x in [] + addLast])
+            if amplify:
+                if v > currBest:
+                    v = True
+                else:
+                    v = False
+            if v:
+                return ([] + addLast)
+
             if not findLocations:
                 v = pred(tc + addLast)
             else:
