@@ -41,6 +41,8 @@ class TestExamples(TestCase):
             "tstl",
             "stringh",
             "pyfakefs",
+            "turtle",
+            "bidict",
             "osquery",
             "datarray_inference",
             "dateutil",
