@@ -61,7 +61,8 @@ class TestExamples(TestCase):
             "nutshell.tstl",
             "onestep.tstl",
             "statechanginginvar.tstl",
-            "turtle.tstl"]
+            "turtle.tstl",
+            "water.tstl"]
 
         if PY3:
             justCompile.extend(skipPY3)
