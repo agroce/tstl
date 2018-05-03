@@ -43,6 +43,8 @@ class TestExamples(TestCase):
             "pyfakefs",
             "turtle",
             "bidict",
+            "numpy",
+            "z3",
             "osquery",
             "datarray_inference",
             "dateutil",
