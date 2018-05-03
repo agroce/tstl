@@ -19,25 +19,25 @@ class TestAVL(TestCase):
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_rt", "--noCover", "--output", ".avltest", "--silentSUT"])
+            ["tstl_rt", "--noCover", "--output", ".avltest.test", "--silentSUT"])
         self.assertEqual(r, 255)
 
-        r = subprocess.call(["tstl_replay", ".avltest"], stdout=dnull)
+        r = subprocess.call(["tstl_replay", ".avltest.test"], stdout=dnull)
         self.assertEqual(r, 255)
 
         r = subprocess.call(
-            ["tstl_reduce", ".avltest", ".avltest.norm"], stdout=dnull)
+            ["tstl_reduce", ".avltest.test", ".avltest.norm.test"], stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_replay", ".avltest.norm", "--verbose"], stdout=dnull)
+            ["tstl_replay", ".avltest.norm.test", "--verbose"], stdout=dnull)
         self.assertEqual(r, 255)
 
-        r = subprocess.call(["tstl_generalize", ".avltest.norm"], stdout=dnull)
+        r = subprocess.call(["tstl_generalize", ".avltest.norm.test"], stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_standalone", ".avltest.norm", ".avltest.norm.py"], stdout=dnull)
+            ["tstl_standalone", ".avltest.norm.test", ".avltest.norm.py"], stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(["python", ".avltest.norm.py"],
@@ -45,7 +45,7 @@ class TestAVL(TestCase):
         self.assertEqual(r, 1)
 
         r = subprocess.call(
-            ["tstl_rt", "--swarm", "--output", ".avltest"], stdout=dnull)
+            ["tstl_rt", "--swarm", "--output", ".avltest.test"], stdout=dnull)
         self.assertEqual(r, 255)
 
         r = subprocess.call(["tstl_rt",
@@ -54,7 +54,7 @@ class TestAVL(TestCase):
                              "--Pmutate",
                              "0.8",
                              "--output",
-                             ".avltest"],
+                             ".avltest.test"],
                             stdout=dnull)
         self.assertEqual(r, 255)
 
@@ -63,7 +63,7 @@ class TestAVL(TestCase):
                              "--timeout",
                              "60",
                              "--output",
-                             ".avltest"],
+                             ".avltest.test"],
                             stdout=dnull)
         self.assertEqual(r, 255)
 
@@ -74,7 +74,7 @@ class TestAVL(TestCase):
                              "--noCover",
                              "--normalize",
                              "--output",
-                             ".avltest"],
+                             ".avltest.test"],
                             stdout=dnull)
         self.assertEqual(r, 255)
 
@@ -95,7 +95,7 @@ class TestAVL(TestCase):
         r = subprocess.call(
             ["tstl_rt", "--timeout", "60",
              "--biasLOC", ".avltest.loc",
-             "--multiple", "--output", ".avltest"],
+             "--multiple", "--output", ".avltest.test"],
             stdout=dnull)
         self.assertEqual(r, 255)
 
@@ -124,12 +124,12 @@ class TestAVL(TestCase):
                              "--Pmutate",
                              "0.8",
                              "--trackMaxCoverage",
-                             ".avltest.maxcov"],
+                             ".avltest.maxcov.test"],
                             stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(["tstl_standalone",
-                             ".avltest.maxcov",
+                             ".avltest.maxcov.test",
                              ".avltest.maxcov.py",
                              "--regression",
                              "--verbose"],

@@ -19,31 +19,31 @@ class TestHypothesisHeap(TestCase):
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_rt", "--noCover", "--output", ".heaptest"])
+            ["tstl_rt", "--noCover", "--output", ".heap.test"])
         self.assertEqual(r, 255)
 
-        r = subprocess.call(["tstl_replay", ".heaptest"], stdout=dnull)
+        r = subprocess.call(["tstl_replay", ".heap.test"], stdout=dnull)
         self.assertEqual(r, 255)
 
-        r = subprocess.call(["tstl_reduce", ".heaptest",
-                             ".heaptest.norm"], stdout=dnull)
+        r = subprocess.call(["tstl_reduce", ".heap.test",
+                             ".heap.norm.test"], stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_replay", ".heaptest.norm", "--verbose"], stdout=dnull)
+            ["tstl_replay", ".heap.norm.test", "--verbose"], stdout=dnull)
         self.assertEqual(r, 255)
 
         r = subprocess.call(
-            ["tstl_generalize", ".heaptest.norm"], stdout=dnull)
+            ["tstl_generalize", ".heap.norm.test"], stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_standalone", ".heaptest.norm", ".heaptest.norm.py"], stdout=dnull)
+            ["tstl_standalone", ".heap.norm.test", ".heap.norm.py"], stdout=dnull)
         self.assertEqual(r, 0)
 
-        r = subprocess.call(["python", ".heaptest.norm.py"],
+        r = subprocess.call(["python", ".heap.norm.py"],
                             stdout=dnull, stderr=dnull)
         self.assertEqual(r, 1)
 
-        for f in glob.glob(".heaptest*"):
+        for f in glob.glob(".heap*"):
             os.remove(f)

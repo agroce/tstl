@@ -152,7 +152,7 @@ class TestExamples(TestCase):
                         "10",
                         "--noCover",
                         "--output",
-                        ".freefail",
+                        ".freefail.test",
                         "--silentSUT"]
                     start = time.time()
                     if f not in problemsFree:
@@ -175,16 +175,16 @@ class TestExamples(TestCase):
                         else:
                             if r == 255:
                                 rr0 = subprocess.call(["tstl_replay",
-                                                       ".freefail"])
+                                                       ".freefail.test"])
                                 self.assertEqual(rr0, 255)
                                 rr1 = subprocess.call(["tstl_reduce",
-                                                       ".freefail",
-                                                       ".freesmall",
+                                                       ".freefail.test",
+                                                       ".freesmall.test",
                                                        "--verbose",
                                                        "True"])
                                 self.assertEqual(rr1, 0)
                                 rr2 = subprocess.call(["tstl_replay",
-                                                       ".freesmall"])
+                                                       ".freesmall.test"])
                                 self.assertEqual(rr2, 255)
                     os.remove("sut.py")
                     try:
