@@ -33,6 +33,24 @@ class TestAVL(TestCase):
             ["tstl_replay", ".avltest.norm.test", "--verbose"], stdout=dnull)
         self.assertEqual(r, 255)
 
+        r = subprocess.call(
+            ["tstl_reduce", ".avltest.test", ".avltest.keepnorm.test", "--keepLast"],
+            stdout=dnull)
+        self.assertEqual(r, 0)
+
+        r = subprocess.call(
+            ["tstl_replay", ".avltest.keepnorm.test"], stdout=dnull)
+        self.assertEqual(r, 255)
+
+        r = subprocess.call(
+            ["tstl_reduce", ".avltest.full.test", ".avltest.ddnorm.test", "--ddmin"],
+            stdout=dnull)
+        self.assertEqual(r, 0)
+
+        r = subprocess.call(
+            ["tstl_replay", ".avltest.ddnorm.test"], stdout=dnull)
+        self.assertEqual(r, 255)
+
         r = subprocess.call(["tstl_generalize", ".avltest.norm.test"], stdout=dnull)
         self.assertEqual(r, 0)
 
