@@ -142,6 +142,8 @@ class TestExamples(TestCase):
                         "--timedProgress",
                         "10",
                         "--noCover",
+                        "--output",
+                        ".freefail",
                         "--silentSUT"]
                     start = time.time()
                     p = subprocess.Popen(rtCmd)
@@ -158,7 +160,16 @@ class TestExamples(TestCase):
                             print("FAILURE DURING FREE TESTING!")
                             freeTestingFailures.append(f + "/" + t)
                         else:
-                            print("OK!")
+                            if r == 255:
+                                rr1 = subprocess.call(["tstl_reduce",
+                                                       ".freefail",
+                                                       ".freesmall",
+                                                       "--verbose",
+                                                       "True"])
+                                self.assertEqual(rr1, 0)
+                                rr2 = subprocess.call(["tstl_replay",
+                                                       ".freesmall"])
+                                self.assertEqual(rr2, 255)
                     os.remove("sut.py")
                     try:
                         os.remove("sut.pyc")
