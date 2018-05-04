@@ -1348,6 +1348,10 @@ def reduce(
     count = 0
     stests = {}
     while True:
+        # If there is nothing left in the test, either the null test fails,
+        # of you just need to return the keepLast item
+        if len(tb) == 0:
+            return tb + addLast
         if verbose or safeReduce:
             # We only perform a sanity check to avoid infinite loops if verbose
             # or if safeReduce is True
