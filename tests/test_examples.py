@@ -48,6 +48,7 @@ class TestExamples(TestCase):
             "osquery",
             "pyfakefs",
             "stringh",
+            "sympy",
             "tictactoe",
             "tstl"]
 
