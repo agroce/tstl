@@ -1,12 +1,12 @@
 from __future__ import print_function
 
-import sut as SUT
 import sys
 import random
 import time
 import os
 import math
 from collections import defaultdict
+import sut as SUT
 
 
 def main():
@@ -71,7 +71,7 @@ def main():
                 sut.prettyPrintTest(path)
                 print(sut.failure())
                 sys.exit(255)
-            if not ("--noCheck" in sys.argv):
+            if not "--noCheck" not in sys.argv:
                 okCheck = sut.check()
                 if not okCheck:
                     print("PROPERTY VIOLATION IN TEST", count)
@@ -80,7 +80,7 @@ def main():
                     print(sut.failure())
                     sys.exit(255)
             i += 1
-        if ("--ultraVerbose" in sys.argv):
+        if "--ultraVerbose" in sys.argv:
             print("=" * 25)
             sut.prettyPrintTest(path)
         p = sut.captureReplay(path)
@@ -91,10 +91,10 @@ def main():
         if epoch > lastEpoch:
             lastEpoch = epoch
             print(time.time() - start, "ELAPSED", count, "TESTS", repeats, "REPEATS", end=' ')
-            if not ("--noCover" in sys.argv):
+            if "--noCover" not in sys.argv:
                 print("[", len(sut.allStatements()), "stmts", len(sut.allBranches()), "branches ]", end=' ')
             print()
-            if ("--verbose" in sys.argv):
+            if "--verbose" in sys.argv:
                 print("*" * 50)
                 print("PATH #", count)
                 sut.prettyPrintTest(path)

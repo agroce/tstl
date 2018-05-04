@@ -1,7 +1,7 @@
 import sys
-from graphviz import Digraph
 import random
 import os
+from graphviz import Digraph
 
 
 def breakByNumber(s):

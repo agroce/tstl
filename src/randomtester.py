@@ -42,7 +42,8 @@ def parse_args():
     parser.add_argument(
         '--postCover',
         action='store_true',
-        help="No coverage during test generation/execution; compute coverage at end.  Adds runtime, for experiments on lightweight methods.")
+        help="No coverage during test generation/execution; compute coverage at end. " +
+        "Adds runtime, for experiments on lightweight methods.")
     parser.add_argument(
         '--html',
         type=str,
@@ -97,7 +98,7 @@ def parse_args():
         '-q',
         '--quickTests',
         action='store_true',
-        help="Produce quick tests for coverage (save a test for each newly reached coverage target).")
+        help="Produce quick tests for coverage (save a test all coverage targets).")
     parser.add_argument(
         '--readQuick',
         action='store_true',
@@ -128,16 +129,17 @@ def parse_args():
     parser.add_argument(
         '--enumerateEnabled',
         action='store_true',
-        help="Instead of guessing enabled actions, enumerate them; can speed testing greatly for cases where almost all actions are usually disabled.")
+        help="Instead of guessing enabled actions, enumerate them;" +
+        "can speed testing greatly for cases where almost all actions are usually disabled.")
     parser.add_argument(
         '--noEnumerateEnabled',
         action='store_true',
-        help="Turn off enumeration of enabled actions in SUTs compiled to default to that behavior.")
+        help="Turn off enumeration of enabled actions in SUTs compiled with that default.")
     parser.add_argument(
         '-k',
         '--keepLast',
         action='store_true',
-        help="Keep last action the same when reducing/normalizing: slippage avoidance heuristic.")
+        help="Keep last action the same when reducing: slippage avoidance heuristic.")
     parser.add_argument(
         '--noPruneGuards',
         action='store_true',
@@ -178,13 +180,16 @@ def parse_args():
         '--generateLOC',
         type=str,
         default=None,
-        help="Generate LOC data file to bias testing by LOC estimates for actions.  Parameter is the filename.")
+        help="Generate LOC data file to bias testing by LOC estimates for actions." +
+        "Parameter is the filename.")
     parser.add_argument(
         '--biasLOC',
         type=str,
         default=None,
-        help="Read LOC data file to bias testing by LOC estimates for actions.  Uses files produced by --generateLOC.  "
-        + "Any file of the same structure (action class / LOC count pairs, with ' %%%% ' separating) will work, however.")
+        help="Read LOC data file to bias testing by LOC estimates for actions. " +
+        "Uses files produced by --generateLOC. " +
+        "Any file of the same structure (action class / LOC count pairs, with ' %%%% '" +
+        "separating) will work, however.")
     parser.add_argument(
         '--LOCBaseline',
         type=float,
@@ -193,7 +198,8 @@ def parse_args():
     parser.add_argument(
         '--LOCProbs',
         action='store_true',
-        help="Guide testing by approximate relative lines of top-level code called by actions.  Note: much less effective than generateLOC/biasLOC in most cases")
+        help="Guide testing by approximate relative lines of top-level code in actions. " +
+        "Note: much less effective than generateLOC/biasLOC in most cases")
     parser.add_argument('--markov', type=str, default=None,
                         help="Guide testing by a Markov model file.")
     parser.add_argument(
@@ -205,14 +211,16 @@ def parse_args():
         '--sequencesFromTests',
         type=str,
         default=None,
-        help="Construct tests from subsequences of a collection of existing tests (glob pattern for tests, default None).")
+        help="Construct tests from subsequences of a collection of existing tests" +
+        "(glob pattern for tests, default None).")
     parser.add_argument('--sequenceP', type=float, default=1.0,
                         help="Probability to guide action choice by sequence.")
     parser.add_argument(
         '--sequenceSize',
         type=int,
         default=3,
-        help="Minimum size of a sequence (that is not an entire test) from the tests in the directory for --sequencesFromTests (default 3).")
+        help="Minimum size of a sequence (that is not an entire test) from the tests in the" +
+        "directory for --sequencesFromTests (default 3).")
     parser.add_argument('--useQuickSequences', action='store_true',
                         help="New quick tests add sequences.")
     parser.add_argument('-x', '--exploit', type=float, default=None,
@@ -225,12 +233,14 @@ def parse_args():
         '--startExploit',
         type=float,
         default=0.0,
-        help="Time at which exploitation starts (default 0.0, LOWER BOUND: this plus startExploitStall must hold).")
+        help="Time at which exploitation starts (default 0.0, LOWER BOUND: this plus" +
+        "startExploitStall must hold).")
     parser.add_argument(
         '--startExploitStall',
         type=int,
         default=0,
-        help="Number of no-new-coverage tests at which exploitation starts (default 0, LOWER BOUND: this plus startExploit must hold).")
+        help="Number of no-new-coverage tests at which exploitation starts (default 0," +
+        "LOWER BOUND: this plus startExploit must hold).")
     parser.add_argument("--verboseExploit", action='store_true',
                         help="Exploitation is verbose (info on pool, etc.).")
     parser.add_argument(
@@ -268,7 +278,7 @@ def parse_args():
     parser.add_argument(
         '--internal',
         action='store_true',
-        help="Produce internal coverage report at the end, as sanity check on coverage.py results.")
+        help="Produce internal coverage report at the end.")
     parser.add_argument(
         '--coverFile',
         type=str,
@@ -302,12 +312,12 @@ def parse_args():
         '--stopWhenNoCoverage',
         type=int,
         default=None,
-        help="Stop when there has been no additional coverage for this many tests (default None).")
+        help="Stop when no additional coverage for this many tests (default None).")
     parser.add_argument(
         '--stopTestWhenNoCoverage',
         type=int,
         default=None,
-        help="Stop test when there has been no additional coverage for this many steps (default None).")
+        help="Stop test when no additional coverage for this many steps (default None).")
     parser.add_argument(
         '--stopTestWhenThroughputBelow',
         type=float,
@@ -327,7 +337,8 @@ def parse_args():
         '--trackMaxCoverage',
         type=str,
         default=None,
-        help="Track test with highest branch/statement (tiebreaker) coverage and store in this file (default None).")
+        help="Track test with highest branch/statement (tiebreaker) coverage and store" +
+        "in this file (default None).")
     parser.add_argument(
         '--maxMustHitBranch',
         type=str,
@@ -351,12 +362,13 @@ def parse_args():
     parser.add_argument(
         '--noSwarmDependencies',
         action='store_true',
-        help="[EXPERIMENTAL] This forces swarm to not use dependencies.  Not so much experimental as just a bad idea.")
+        help="[EXPERIMENTAL] This forces swarm to not use dependencies. " +
+        "Not so much experimental as just a bad idea.")
     parser.add_argument(
         '--genDepth',
         type=int,
         default=None,
-        help="[EXPERIMENTAL] Generalization depth for cloud overlap comparisons (default = None).")
+        help="[EXPERIMENTAL] Generalization depth for cloud comparisons (default = None).")
     parser.add_argument(
         '--stutter',
         type=float,
@@ -373,7 +385,7 @@ def parse_args():
     parser.add_argument(
         '--quickAnalysis',
         action='store_true',
-        help="[EXPERIMENTAL] Reduce tests by branch coverage, collect action frequencies in reductions.")
+        help="[EXPERIMENTAL] Reduce tests by branch coverage, collect frequencies.")
     parser.add_argument(
         '--uniqueValuesAnalysis',
         action='store_true',
@@ -381,7 +393,8 @@ def parse_args():
     parser.add_argument(
         '--fastQuickAnalysis',
         action='store_true',
-        help="[EXPERIMENTAL] Quick analysis skips analyzing branch/statement if previously analyzed already covers.")
+        help="[EXPERIMENTAL] Quick analysis skips analyzing branch/statement if previously" +
+        "analyzed already covers.")
     parser.add_argument(
         '--speed',
         type=str,
@@ -641,13 +654,13 @@ def handle_failure(
             for s in sut.allStatements():
                 if s not in beforeReduceS:
                     # print "NEW STATEMENT DURING REDUCTION",s
-                    if (s not in sut.currStatements()):
+                    if s not in sut.currStatements():
                         # print "STATEMENT FOUND THEN LOST DURING REDUCTION"
                         anyNewCov = True
             for b in sut.allBranches():
                 if b not in beforeReduceB:
                     # print "NEW BRANCH DURING REDUCTION",b
-                    if (s not in sut.currBranches()):
+                    if s not in sut.currBranches():
                         # print "BRANCH FOUND THEN LOST DURING REDUCTION"
                         anyNewCov = True
             if anyNewCov:
@@ -951,7 +964,7 @@ def printStatus(elapsed, step=None):
         print("[", len(sut.allStatements()), "stmts", len(sut.allBranches()), "branches ]", end=' ')
         if testsWithNoNewCoverage > 0:
             print("(no cov+ for", testsWithNoNewCoverage, "tests)", end=' ')
-    if (config.exploit is not None):
+    if config.exploit is not None:
         print("[ POOLS: full", len(fullPool), "active", len(activePool), "]", end=' ')
     print(nops, "TOTAL ACTIONS (" + str(round(nops / elapsed, 2)) + "/s)", end=' ')
     print("(test " + str(round(thisOps / thisElapsed, 2)) + "/s)", end=' ')
@@ -1141,7 +1154,7 @@ def main():
                 markovN = int(l)
                 readSize = True
             elif "START CLASS" in l:
-                if (prefix != []):
+                if prefix != []:
                     mprobs[tuple(prefix)] = probs
                 prefix = []
                 probs = []
@@ -1337,11 +1350,11 @@ def main():
         thisStart = time.time()
         thisOps = 0
 
-        for s in range(0, config.depth):
+        for step in range(0, config.depth):
             if config.verbose:
-                print("GENERATING STEP", s, end=' ')
+                print("GENERATING STEP", step, end=' ')
                 sys.stdout.flush()
-            if (config.swarmSwitch is not None) and (s in switches):
+            if (config.swarmSwitch is not None) and (step in switches):
                 if config.highLowSwarm is None:
                     sut.standardSwarm(
                         R,
@@ -1355,7 +1368,7 @@ def main():
                         R, file=config.swarmProbs, highProb=config.highLowSwarm)
 
             if (config.swarmLength is not None) and (
-                    ((s + 1) % config.swarmLength) == 0):
+                    ((step + 1) % config.swarmLength) == 0):
                 if config.highLowSwarm is None:
                     sut.standardSwarm(
                         R,
@@ -1591,17 +1604,19 @@ def main():
                         uniquef.flush()
                 sut.backtrack(olds)
 
-            if (config.stopWhenBranches is not None):
+            if config.stopWhenBranches is not None:
                 if len(sut.allBranches()) >= config.stopWhenBranches:
                     print(
-                        "STOPPING TEST DUE TO REACHING BRANCH COVERAGE TARGET, TERMINATED AT LENGTH", len(
-                            sut.test()), "TIME", time.time() - start)
+                          "STOPPING TEST DUE TO REACHING BRANCH COVERAGE TARGET,"
+                          "TERMINATED AT LENGTH", len(sut.test()), "TIME",
+                          time.time() - start)
                     break
             if config.stopWhenStatements is not None:
                 if len(sut.allStatements()) >= config.stopWhenStatements:
                     print(
-                        "STOPPING TEST DUE TO REACHING STATEMENT COVERAGE TARGET, TERMINATED AT LENGTH", len(
-                            sut.test()), "TIME", time.time() - start)
+                          "STOPPING TEST DUE TO REACHING STATEMENT COVERAGE TARGET,",
+                          "TERMINATED AT LENGTH", len(sut.test()), "TIME",
+                          time.time() - start)
                     break
 
             if elapsed > config.timeout:
@@ -1682,7 +1697,7 @@ def main():
         if config.postCover:
             allTheTests.append(list(sut.test()))
 
-        if (config.computeFeatureStats):
+        if config.computeFeatureStats:
             for act in sut.swarmConfig():
                 if act in featureStatsA:
                     featureStatsA[act] += 1
@@ -1906,12 +1921,12 @@ def main():
             if nondeterministic:
                 break
 
-        if (config.stopWhenNoCoverage is not None):
+        if config.stopWhenNoCoverage is not None:
             if testsWithNoNewCoverage >= config.stopWhenNoCoverage:
                 print("STOPPING TESTING DUE TO LACK OF NEW COVERAGE FOR",
                       testsWithNoNewCoverage, "TESTS")
                 break
-        if (config.stopWhenBranches is not None):
+        if config.stopWhenBranches is not None:
             if len(sut.allBranches()) >= config.stopWhenBranches:
                 print("STOPPING TESTING DUE TO REACHING BRANCH COVERAGE TARGET")
                 break
@@ -2082,7 +2097,7 @@ def main():
                 j = -1
                 for test2 in failures:
                     j += 1
-                    if (j > i):
+                    if j > i:
                         print("COMPARING FAILURE", i, "AND FAILURE", j)
                         for k in range(0, max(len(test1), len(test2))):
                             if k >= len(test1):

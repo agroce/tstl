@@ -125,7 +125,7 @@ def main():
 
     if config.matchException:
         print("RUNNING TO OBTAIN FAILURE FOR EXCEPTION MATCHING...")
-        assert (sut.fails(t))
+        assert sut.fails(t)
         f = sut.failure()
         print("ERROR:", f)
         print("TRACEBACK:")

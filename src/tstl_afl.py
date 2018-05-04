@@ -52,7 +52,7 @@ def runTest():
                     saveFile = "aflfail." + \
                         str(os.getpid()) + "." + str(i) + ".test"
                 sut.saveTest(sut.test(), saveFile)
-            assert(ok)
+            assert ok
             if not noCheck:
                 checkResult = sut.check()
                 if (not noSave) and not checkResult:
@@ -64,7 +64,7 @@ def runTest():
                         saveFile = "aflfail." + \
                             str(os.getpid()) + "." + str(i) + ".test"
                     sut.saveTest(sut.test(), saveFile)
-                assert(checkResult)
+                assert checkResult
     if alwaysSave:
         i = 0
         saveFile = "afltest." + str(os.getpid()) + "." + str(i) + ".test"
