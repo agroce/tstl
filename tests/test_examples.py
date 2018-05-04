@@ -200,7 +200,7 @@ class TestExamples(TestCase):
                                                            ".freesmall.test",
                                                            "--verbose",
                                                            "True"],
-                                                           stdout=dnull)
+                                                          stdout=dnull)
                                 self.assertEqual(rr1, 0)
                                 if t == "onestep.tstl":
                                     with open(".freesmall.test", 'r') as ff:
