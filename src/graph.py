@@ -10,8 +10,9 @@ def breakByNumber(s):
     for c in range(0, len(s)):
         if curr == "":
             curr += s[c]
-        elif (s[c] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) == (curr[-1] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']):
-            curr += s[c]
+        elif ((s[c] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) ==
+              (curr[-1] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])):
+                curr += s[c]
         else:
             breaks.append(curr)
             curr = s[c]
@@ -74,29 +75,29 @@ def merge(s1, s2):
             v2 = intOrNone(b2[i])
             r1 = rangeOrNone(b1[i])
             r2 = rangeOrNone(b2[i])
-            if (v1 is not None):
-                if (v2 is not None):  # 2 values
+            if v1 is not None:
+                if v2 is not None:  # 2 values
                     if (min(v1, v2) + 1 == max(v1, v2)):
                         merged += "<[" + str(min(v1, v2)) + \
                             ".." + str(max(v1, v2)) + "]>"
                     else:
                         return None
-                elif (r2 is not None):  # value and range
+                elif r2 is not None:  # value and range
                     (low2, high2) = r2
                     if (v1 == (low2 - 1)) or (v1 == (high2 + 1)):
                         merged += "<[" + str(min(v1, low2)) + \
                             ".." + str(max(v1, high2)) + "]>"
                     else:
                         return None
-            elif (r1 is not None):
-                if (v2 is not None):  # range and value
+            elif r1 is not None:
+                if v2 is not None:  # range and value
                     (low1, high1) = r1
                     if (v2 == (low1 - 1)) or (v2 == (high1 + 1)):
                         merged += "<[" + str(min(v2, low1)) + \
                             ".." + str(max(v2, high1)) + "]>"
                     else:
                         return None
-                elif (r2 is not None):  # range and range
+                elif r2 is not None:  # range and range
                     (low1, high1) = r1
                     (low2, high2) = r2
                     if ((high1 + 1) == low2) or ((high2 + 1) == low1):
@@ -120,7 +121,7 @@ def collapse(strings):
         changed = False
         for s1 in cstrings:
             for s2 in cstrings:
-                if (s1 == s2):
+                if s1 == s2:
                     continue
                 m = merge(s1, s2)
                 if m is not None:
@@ -204,7 +205,7 @@ def main():
             random.shuffle(eqnexts)
             eqnexts = eqnexts[-(k - 1):]
             mid = len(eqnexts) / 2
-            if ((len(eqnexts) % 2) != 0):
+            if (len(eqnexts) % 2) != 0:
                 if midFlip:
                     mid = mid + 1
                 midFlip = not midFlip

@@ -1,10 +1,11 @@
 from __future__ import print_function
 
 import sys
-import afl
 import os
 import struct
 import random
+import afl
+
 
 # Appending current working directory to sys.path
 # So that user can run randomtester from the directory where sut.py is located

@@ -703,7 +703,7 @@ def main():
                 opaqueSet.append(cs[1])
             if (len(cs) > 3) and ("OPAQUEREF" in cs):
                 opaqueSet.append(cs[1] + "_REF")
-            if (":" in cs):
+            if ":" in cs:
                 tpos = cs.index(":")
                 poolType[cs[1]] = cs[tpos + 1]
             if "ABSTRACT" in cs:
@@ -834,7 +834,7 @@ def main():
         for (c, u) in propSet:
             uses = u
             found = c.find(p)
-            while (found != -1):
+            while found != -1:
                 use = c[found:c.find("]", found) + 1]
                 use = use.replace(p + " ", poolPrefix + p.replace("%", ""))
                 uses.append(use)
@@ -963,10 +963,10 @@ def main():
                 if eqPos == -1:
                     eqPos = 0
                 found = subC.find(p)
-                while (found != -1):
+                while found != -1:
                     use = subC[found:subC.find("]", found) + 1]
                     twiddle = (found > 0) and (subC[found - 1] == '~')
-                    if (found >= eqPos):
+                    if found >= eqPos:
                         if use not in earlylhs:
                             prhs.append((use, twiddle))
                         else:
@@ -986,7 +986,7 @@ def main():
                 g = g.replace(" ", "")
                 if g not in forVerbose:
                     forVerbose.append(g)
-                    if (not twiddle):
+                    if not twiddle:
                         changes.append(g.replace("[", "_used[") + "=True")
                 g += " is not None"
                 guardConds.append(g)
@@ -1000,7 +1000,7 @@ def main():
                 g = g.replace(" ", "")
                 if g not in forVerbose:
                     forVerbose.append(g)
-                if (not twiddle):
+                if not twiddle:
                     changes.append(g.replace("[", "_used[") + "=True")
             hlhs = []
             for assign in plhs:
@@ -1103,8 +1103,8 @@ def main():
         comparing = False
         for comp in compareSet:
             if re.match(".*" + comp + ".*", newC):
-                if (refC != newC):
-                    if (" = ") not in newC:
+                if refC != newC:
+                    if " = " not in newC:
                         newC = "result = " + newC
                         refC = "result_REF = " + refC
                     else:
@@ -1252,7 +1252,8 @@ def main():
             genCode.append(
                 baseIndent +
                 baseIndent +
-                "assert __check_res == True, \" check of (%s) for before and after values (%s) and (%s) failed\" % (\"" +
+                "assert __check_res == True, \" " +
+                "check of (%s) for before and after values (%s) and (%s) failed\" % (\"" +
                 expectCode +
                 "\", __before_res, __after_res)\n")
 
@@ -1262,7 +1263,8 @@ def main():
             genCode.append(
                 baseIndent +
                 baseIndent +
-                "if self.__verboseActions: print('RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
+                "if self.__verboseActions: " +
+                "print('RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
             if config.checkFailureDeterminism:
                 genCode.append(baseIndent + baseIndent +
                                "failedAgain = False\n")
@@ -1276,11 +1278,13 @@ def main():
                     baseIndent +
                     baseIndent +
                     baseIndent +
-                    "if self.__verboseActions: print('RAISED EXCEPTION:',type(exc2),exc2,'ON RETRY')\n")
+                    "if self.__verboseActions: print('RAISED EXCEPTION:'," +
+                    "type(exc2),exc2,'ON RETRY')\n")
                 genCode.append(
                     baseIndent +
                     baseIndent +
-                    "if self.__verboseActions and not failedAgain: print('DID NOT RAISE EXPECTED EXCEPTION ON RETRY')\n")
+                    "if self.__verboseActions and not failedAgain: " +
+                    "print('DID NOT RAISE EXPECTED EXCEPTION ON RETRY')\n")
                 genCode.append(
                     baseIndent +
                     baseIndent +
@@ -1297,7 +1301,8 @@ def main():
             genCode.append(
                 baseIndent +
                 baseIndent +
-                "if self.__verboseActions: print('RAISED WARNING EXCEPTION:',type(raised),raised)\n")
+                "if self.__verboseActions: " +
+                "print('RAISED WARNING EXCEPTION:',type(raised),raised)\n")
             genCode.append(baseIndent + baseIndent +
                            "self.__warning = raised\n")
 
@@ -1943,7 +1948,7 @@ def main():
                 p = porig
                 if len(ignoredExcepts) > 0:
                     okExcepts = okExcepts[:-1]
-            if (okExcepts != ""):
+            if okExcepts != "":
                 tryPrefix = "try: "
             else:
                 tryPrefix = ""
@@ -1969,7 +1974,8 @@ def main():
                         baseIndent +
                         baseIndent +
                         baseIndent +
-                        "if self.__verboseActions: print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
+                        "if self.__verboseActions: " +
+                        "print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
             else:
                 genCode.append(baseIndent + baseIndent +
                                tryPrefix + "assert " + replaceRefs(p))
@@ -1982,7 +1988,8 @@ def main():
                         baseIndent +
                         baseIndent +
                         baseIndent +
-                        "if self.__verboseActions: print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
+                        "if self.__verboseActions: " +
+                        "print('PROPERTY RAISED EXPECTED EXCEPTION:',type(raised),raised)\n")
 
         genCode.append(baseIndent + baseIndent + "# END CHECK CODE\n")
         genCode.append(baseIndent + "except KeyboardInterrupt as e:\n")

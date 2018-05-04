@@ -388,8 +388,10 @@ def randomEnabledPred(self, rgen, n, pred):
 
 def mutate(self, test, rgen, Pinsert=0.2):
     '''
-    Simple tool for mutating tests randomly.  Does not ensure validity of the new test, which may be functionally equivalent.
-    There are two types of mutation, replacement and insertion.  Pinsert gives probability of insert (default 0.2).
+    Simple tool for mutating tests randomly.  Does not ensure validity
+    of the new test, which may be functionally equivalent.  There are
+    two types of mutation, replacement and insertion.  Pinsert gives
+    probability of insert (default 0.2).
     '''
     newTest = list(test)
     loc = rgen.randrange(0, len(test))
@@ -840,9 +842,12 @@ def replay(
         returnCov=False,
         delay=None):
     '''
-    Replays a test, either resetting first or extending current test (default is to restart).  Can either stop or keep going
-    on failure, catch and notify about uncaught exceptions or throw them, and check or not check properties.  The returnCov setting
-    adds a sequential record of coverage by step as another element of a return tuple.
+    Replays a test, either resetting first or extending current test
+    (default is to restart).  Can either stop or keep going on
+    failure, catch and notify about uncaught exceptions or throw them,
+    and check or not check properties.  The returnCov setting adds a
+    sequential record of coverage by step as another element of a
+    return tuple.
     '''
     if not extend:
         self.restart()
@@ -1293,17 +1298,24 @@ def reduce(
         safeReduce=False,
         saveIntermediate=None):
     """
-    This function takes a test that has failed, and attempts to reduce it using a simplified version of Zeller's Delta-Debugging algorithm.
-    pruneGuards determines if disabled guards are automatically removed from reduced tests, keepLast determines if the last action must remain unchanged
-    (this is useful for keeping the fault detected from changing).
+    This function takes a test that has failed, and attempts to reduce
+    it using a simplified version of Zeller's Delta-Debugging
+    algorithm.  pruneGuards determines if disabled guards are
+    automatically removed from reduced tests, keepLast determines if
+    the last action must remain unchanged (this is useful for keeping
+    the fault detected from changing).
 
-    amplify changes behavior from "preserve (or find) pred(test) = True" to "increase the value of pred(test)"
+    amplify changes behavior from "preserve (or find) pred(test) =
+    True" to "increase the value of pred(test)"
 
-    tryFast means that instead of the binary search, reduce assumes the test is already close to 1-minimal (e.g., from normalization)
-    and skips right to the smallest granularity, searching for a close-by 1-minimal test.
+    tryFast means that instead of the binary search, reduce assumes
+    the test is already close to 1-minimal (e.g., from normalization)
+    and skips right to the smallest granularity, searching for a
+    close-by 1-minimal test.
 
-    testHandler is an optional function to pass in.  It can do things like check for new coverage from a candidate run, and collect
-    such tests for quick testing or GA-based exploration.
+    testHandler is an optional function to pass in.  It can do things
+    like check for new coverage from a candidate run, and collect such
+    tests for quick testing or GA-based exploration.
     """
     try:
         test_before_reduce(self)
@@ -2253,7 +2265,8 @@ def normalize(
         return self.__simplifyCache[stest]
     history = [stest]
 
-    # Turns off requirement that you can't initialize an unused variable, allowing reducer to take care of redundant assignments
+    # Turns off requirement that you can't initialize an unused variable,
+    # allowing reducer to take care of redundant assignments
     # self.relax()
 
     # Default speed is fast, if speed not recognized
@@ -2265,8 +2278,8 @@ def normalize(
         self.swapPoolStep,
         self.swapActionOrderStep,
         self.reduceLengthStep]
-    # simplifiers = [self.noReassignStep, self.replaceAllStep, self.replaceSingleStep, self.swapActionOrderStep,
-    #                self.reduceLengthStep]
+    # simplifiers = [self.noReassignStep, self.replaceAllStep, self.replaceSingleStep,
+    #                self.swapActionOrderStep, self.reduceLengthStep]
     # Default approach tries a reduce after any change
     reduceOnChange = True
     if speed == "SLOW":
@@ -2281,7 +2294,8 @@ def normalize(
         # Runs one attempt at length reduction before normal simplification,
         # without reduction step
         (changed, test) = self.reduceLengthStep(test, pred, pruneGuards,
-                                                keepLast, verbose, checkEnabled, distLimit, tryFast=tryFast)
+                                                keepLast, verbose, checkEnabled,
+                                                distLimit, tryFast=tryFast)
         if changed:
             stest = self.captureReplay(test)
             history.append(stest)
@@ -2301,11 +2315,13 @@ def normalize(
     elif speed == "VERYFAST":
         reduceOnChange = False
         if distLimit is None:
-            distLimit = 3  # maximum of 3 char change when replacing actions!  allows numeric switches, simple pool modifications, but very few method changes
+            distLimit = 3  # maximum of 3 char change when replacing actions!
+            # allows numeric switches, simple pool modifications, but very few method changes
     elif speed == "VERYFASTREDUCE":
         reduceOnChange = True
         if distLimit is None:
-            distLimit = 3  # maximum of 3 char change when replacing actions!  allows numeric switches, simple pool modifications, but very few method changes
+            distLimit = 3  # maximum of 3 char change when replacing actions!
+            # allows numeric switches, simple pool modifications, but very few method changes
 
     numChanges = 0
     changed = True

@@ -18,7 +18,8 @@ def main():
 
     if "--help" in sys.argv:
         print(
-            "Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover] [--verbose] [--running] [--afl] [--aflswarm]")
+              "Usage:  tstl_regress <test files> [--noCheck] [--html dir] [--noCover]",
+              "[--verbose] [--running] [--afl] [--aflswarm]")
         print("Options:")
         print(" --glob:         <test files> are glob expressions (used when too many files to use shell expansion)")
         print(" --noCheck:      do not run property checks")

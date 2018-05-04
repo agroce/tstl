@@ -455,8 +455,9 @@ def handle_failure(
         newCov=False,
         becauseBranchCov=False,
         becauseStatementCov=False):
-    global failCount, reduceTime, repeatCount, failures, quickCount, failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount, fulltest, allQuickTests
-    global allTheTests
+    global failCount, reduceTime, repeatCount, failures, quickCount
+    global failCloud, cloudFailures, allClouds, localizeSFail, localizeBFail, failFileCount
+    global fulltest, allQuickTests, allTheTests
     if config.postCover:
         allTheTests.append(list(test))
     test = list(test)
@@ -917,7 +918,8 @@ def tryExploit():
 
 
 def collectExploitable():
-    global fullPool, activePool, branchCoverageCount, statementCoverageCount, localizeSFail, localizeBFail, reducePool, hintValueCounts, poolCount
+    global fullPool, activePool, branchCoverageCount, statementCoverageCount
+    global localizeSFail, localizeBFail, reducePool, hintValueCounts, poolCount
 
     if config.useHints:
         # We are assuming hints are all normalized to the same scale!
@@ -945,9 +947,9 @@ def collectExploitable():
                 sut.saveTest(list(sut.test()), pname)
                 poolCount += 1
         else:
-            # We can't reduce right now, unless we want the annoyance of saving and restoring state, since
-            # we are in the middle of a test run, and we'd mess up quick test
-            # and coverage stats collection
+            # We can't reduce right now, unless we want the annoyance of saving
+            # and restoring state, since we are in the middle of a test run, and
+            # we'd mess up quick test and coverage stats collection
             if config.verbose or config.verboseExploit:
                 print("SAVING TEST FOR REDUCTION")
             reducePool.append((list(sut.test()), set(
@@ -955,13 +957,16 @@ def collectExploitable():
 
 
 def printStatus(elapsed, step=None):
-    global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage, testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
+    global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage
+    global testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
     print(sut.SUTName() + ":", "TEST #" + str(ntests), end=' ')
     if step is not None:
         print("STEP #" + str(step), end=' ')
-    print("(" + str(datetime.timedelta(seconds=elapsed)) + ")", (datetime.datetime.now()).ctime(), end=' ')
+    print("(" + str(datetime.timedelta(seconds=elapsed)) + ")",
+          (datetime.datetime.now()).ctime(), end=' ')
     if (not config.noCover) and (not config.postCover):
-        print("[", len(sut.allStatements()), "stmts", len(sut.allBranches()), "branches ]", end=' ')
+        print("[", len(sut.allStatements()), "stmts",
+              len(sut.allBranches()), "branches ]", end=' ')
         if testsWithNoNewCoverage > 0:
             print("(no cov+ for", testsWithNoNewCoverage, "tests)", end=' ')
     if config.exploit is not None:
@@ -969,7 +974,8 @@ def printStatus(elapsed, step=None):
     print(nops, "TOTAL ACTIONS (" + str(round(nops / elapsed, 2)) + "/s)", end=' ')
     print("(test " + str(round(thisOps / thisElapsed, 2)) + "/s)", end=' ')
     if (config.exploit is not None) and (totalExploits > 0):
-        print("[" + str(exploitsWithNewCoverage), "cov+ exploits /", str(totalExploits) + "]", end=' ')
+        print("[" + str(exploitsWithNewCoverage), "cov+ exploits /",
+              str(totalExploits) + "]", end=' ')
     if (not config.noCover) and (not config.postCover):
         print(testsWithNewCoverage, "cov+ tests")
     else:
@@ -978,10 +984,13 @@ def printStatus(elapsed, step=None):
 
 
 def main():
-    global failCount, sut, config, reduceTime, quickCount, repeatCount, failures, cloudFailures, R, opTime, checkTime
-    global guardTime, restartTime, nops, ntests, fulltest, currtest, failCloud, allClouds, thisOps, thisElapsed
+    global failCount, sut, config, reduceTime, quickCount, repeatCount, failures
+    global cloudFailures, R, opTime, checkTime
+    global guardTime, restartTime, nops, ntests, fulltest, currtest
+    global failCloud, allClouds, thisOps, thisElapsed
     global testsWithNewCoverage, exploitsWithNewCoverage, totalExploits, failFileCount
-    global fullPool, activePool, branchCoverageCount, statementCoverageCount, localizeSFail, localizeBFail, reducePool
+    global fullPool, activePool, branchCoverageCount, statementCoverageCount
+    global localizeSFail, localizeBFail, reducePool
     global poolCount, hintPool, hintValueCounts
     global allQuickTests
     global allTheTests
