@@ -194,11 +194,13 @@ class TestExamples(TestCase):
                                 if t == "onestep.tstl":
                                     with open(".freefail.test", 'r') as ff:
                                         self.assertEqual(len(ff.readlines()), 1)
-                                rr1 = subprocess.call(["tstl_reduce",
-                                                       ".freefail.full.test",
-                                                       ".freesmall.test",
-                                                       "--verbose",
-                                                       "True"])
+                                with open(os.devnull, 'w') as dnull:
+                                    rr1 = subprocess.call(["tstl_reduce",
+                                                           ".freefail.full.test",
+                                                           ".freesmall.test",
+                                                           "--verbose",
+                                                           "True"],
+                                                           stdout=dnull)
                                 self.assertEqual(rr1, 0)
                                 if t == "onestep.tstl":
                                     with open(".freesmall.test", 'r') as ff:
