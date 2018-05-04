@@ -1444,7 +1444,7 @@ def main():
             if config.timedProgress != -1:
                 thisInterval = int(elapsed / config.timedProgress)
                 if thisInterval > lastInterval:
-                    printStatus(elapsed, step=s)
+                    printStatus(elapsed, step=step)
                     lastInterval = thisInterval
                     sys.stdout.flush()
             if a is None:
