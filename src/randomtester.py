@@ -1615,15 +1615,13 @@ def main():
 
             if config.stopWhenBranches is not None:
                 if len(sut.allBranches()) >= config.stopWhenBranches:
-                    print(
-                          "STOPPING TEST DUE TO REACHING BRANCH COVERAGE TARGET,"
+                    print("STOPPING TEST DUE TO REACHING BRANCH COVERAGE TARGET,"
                           "TERMINATED AT LENGTH", len(sut.test()), "TIME",
                           time.time() - start)
                     break
             if config.stopWhenStatements is not None:
                 if len(sut.allStatements()) >= config.stopWhenStatements:
-                    print(
-                          "STOPPING TEST DUE TO REACHING STATEMENT COVERAGE TARGET,",
+                    print("STOPPING TEST DUE TO REACHING STATEMENT COVERAGE TARGET,",
                           "TERMINATED AT LENGTH", len(sut.test()), "TIME",
                           time.time() - start)
                     break

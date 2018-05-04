@@ -17,8 +17,7 @@ if "--help" not in sys.argv:
 
 def main():
     if "--help" in sys.argv:
-        print(
-              "Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noCheck]",
+        print("Usage:  tstl_aflcorpus <outputdir> <length> <time> [--noCheck]",
               "[--noReduce] [--noCover] [--swarm] [--skipFails]")
         print("Options:")
         print(" --noCheck:       do not check properties")

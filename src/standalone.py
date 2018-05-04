@@ -15,8 +15,7 @@ if "--help" not in sys.argv:
 def main():
 
     if "--help" in sys.argv:
-        print(
-              "Usage:  tstl_standalone <test file> <output Python file> [<sut file>]",
+        print("Usage:  tstl_standalone <test file> <output Python file> [<sut file>]",
               "[--noCheck] [--noRefs] [--regression] [--verbose]")
         print("  default for <sut file> is sut.py")
         print("Options:")
