@@ -155,6 +155,8 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
         ok = self.safely(a)
         if not ok:
             if stopFail:
+                if verbose:
+                    print("TEST FAILED!")
                 return False
             elif gatherFail is not None:
                 gatherFail.append(list(self.test()))

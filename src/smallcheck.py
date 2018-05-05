@@ -35,10 +35,17 @@ def parse_args():
                         type=str,
                         default="smallcheck." + str(os.getpid()) + ".test",
                         help="Filename to save failing test(s).")
+    parser.add_argument('-v',
+                        '--verbose',
+                        type=str,
+                        default=None,
+                        help="Verbosity level.")
     parser.add_argument('-M', '--multiple', action='store_true',
                         help="Allow multiple failures.")
     parser.add_argument('--noCheck', action='store_true',
                         help='Do not check properties.')
+    parser.add_argument('--reverse', action='store_true',
+                        help='Reverse order.')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -83,10 +90,13 @@ def main():
 
     start = time.time()
 
+    r = True
+
     try:
         r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
                                 stopFail=not config.multiple,
-                                gatherFail=failingTests, gatherCover=coveringTests, verbose=True)
+                                gatherFail=failingTests, gatherCover=coveringTests,
+                                verbose=config.verbose, reverse=config.reverse)
     except BaseException as e:
         print("INTERRUPTED BY", repr(e))
         incomplete = True
@@ -101,9 +111,8 @@ def main():
             print("SAVING COVERING TEST AS", fn)
             i += 1
             sut.saveTest(t, fn)
-        sys.exit(255)
 
-    if not r and not config.multiple:
+    if (not r) and (not config.multiple):
         print("STOPPING DUE TO FAILED TEST.")
         f = sut.failure()
         print("ERROR:", f)
