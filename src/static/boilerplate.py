@@ -150,13 +150,13 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
     state = self.state()
 
     for a in acts:
-        if verbose:
+        if verbose == "VERY":
             print(depth, a[0])
         ok = self.safely(a)
         if not ok:
             if stopFail:
                 return False
-            elif gatherFail:
+            elif gatherFail is not None:
                 gatherFail.append(list(self.test()))
         if checkProp:
             if not self.check():
@@ -167,7 +167,10 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
         if (len(self.newBranches()) > 0) or (len(self.newStatements()) > 0):
             if stopCover:
                 return False
-            elif gatherCover:
+            elif gatherCover is not None:
+                if verbose:
+                    print("COLLECTED TEST WITH NEW COVERAGE FROM ACTION",
+                          self.prettyName(a[0]))
                 gatherCover.append(list(self.test()))
         if depth > 1:
             r = self.exploreFromHere(depth - 1, checkProp, stopFail, stopCover,
