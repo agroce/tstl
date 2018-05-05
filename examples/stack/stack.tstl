@@ -13,3 +13,4 @@ not <stack,1>.isEmpty() -> <value> := <stack>.pop()
 not <stack,1>.isEmpty() -> <value> := <stack>.peek()
 <value> := <stack>.size
 str(<stack>)
+#print(len(<stack>),str(<stack,1>))
