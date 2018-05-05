@@ -666,7 +666,8 @@ def handle_failure(
                         anyNewCov = True
             if anyNewCov:
                 print(
-                    "** NEW COVERAGE DURING REDUCTION NOT PRESERVED, CLEARING COVERAGE AND REPLAYING QUICK TESTS **")
+                    "** NEW COVERAGE DURING REDUCTION NOT PRESERVED,",
+                    "CLEARING COVERAGE AND REPLAYING QUICK TESTS **")
                 print("BEFORE REPLAY, BRANCHES:", len(sut.allBranches()),
                       "STATEMENTS:", len(sut.allStatements()))
                 sut.resetCov()
@@ -758,7 +759,9 @@ def buildActivePool():
                     print("SAVING POOL TEST AS", pname)
                     sut.saveTest(r, pname)
                     poolCount += 1
-                # Have to make sure if we got some new coverage out of this it's in the coverage map
+                # Have to make sure if we got some new coverage out of this
+                # it's in the coverage map
+
                 # Also need to make sure quickTests know about it
                 # Some statistics may be inaccurate, though
                 newBranches = set([])
@@ -1194,7 +1197,8 @@ def main():
     if config.generateLOC is not None:
         if not config.noCover:
             print(
-                "ERROR: cannot use --generateLOC without --noCover, instrumentations interfere with each other")
+                "ERROR: cannot use --generateLOC without --noCover,",
+                "instrumentations interfere with each other")
             sys.exit(255)
         actLOCs = {}
 
@@ -1325,8 +1329,9 @@ def main():
 
         testFailed = False
 
-        if (config.exploit is not None) and (((time.time() - start) >= config.startExploit)
-                                             and (testsWithNoNewCoverage >= config.startExploitStall)):
+        if ((config.exploit is not None) and
+                (((time.time() - start) >= config.startExploit)
+                    and (testsWithNoNewCoverage >= config.startExploitStall))):
             if neverExploited:
                 print(
                     "** STARTING EXPLOITATION OF TESTS AT TIME",
@@ -2098,7 +2103,7 @@ def main():
                 print("TRACEBACK:")
                 traceback.print_tb(err[2], file=sys.stdout)
         i = -1
-        if config.compareFails:  # Comparison feature normally not useful, just for researching normalization
+        if config.compareFails:
             for test1 in failures:
                 i += 1
                 j = -1
@@ -2135,7 +2140,8 @@ def main():
                 print("** ACTION CLASS ", a, "NEVER EXECUTED! **")
 
         print(
-            "<ACTION> <COUNT> <AVERAGE RUNTIME> <NORMALIZED BY MAX> <NORMALIZED BY MIN> [<TOTAL PERCENT RUNTIME>]")
+            "<ACTION> <COUNT> <AVERAGE RUNTIME> <NORMALIZED BY MAX>",
+            "<NORMALIZED BY MIN> [<TOTAL PERCENT RUNTIME>]")
         averages = []
         for a in profileTime:
             if profileCount[a] != 0:
