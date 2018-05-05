@@ -138,19 +138,40 @@ def prettyPrintRemoved(self, test1, test2, columns=80):
 
 
 def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
-                    gatherFail=None, gatherCover=None, verbose=False, reverse=False):
+                    gatherFail=None, gatherCover=None, verbose=False, reverse=False,
+                    visited=None):
     """
     Does a DFS complete exploration.  Recursive, so limited depth, but deep runs
     unlikely to be useful, anyway.
     """
+    state = self.state()
+
+    if visited is not None:
+        if type(visited) == list:
+            if state[:-1] in visited:
+                if verbose == "BACKTRACK":
+                    print("BACKTRACKING DUE TO ALREADY VISITED STATE:",
+                          state[:-1])
+                return True
+            else:
+                visited.append(state[:-1])
+        elif type(visited) == dict:
+            rs = repr(state[:-1])
+            if rs in visited:
+                if verbose == "BACKTRACK":
+                    print("BACKTRACKING DUE TO ALREADY VISITED STATE",
+                          rs)
+                return True
+            else:
+                visited[rs] = True
+
     acts = self.enabled()
     if reverse:
         # More interesting actions tend to be later in order
         acts.reverse()
-    state = self.state()
 
     for a in acts:
-        if verbose == "VERY":
+        if verbose == "STEPS":
             print(depth, a[0])
         ok = self.safely(a)
         if not ok:
@@ -182,7 +203,8 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
                 gatherCover.append(list(self.test()))
         if depth > 1:
             r = self.exploreFromHere(depth - 1, checkProp, stopFail, stopCover,
-                                     gatherFail, gatherCover, verbose, reverse)
+                                     gatherFail, gatherCover, verbose, reverse,
+                                     visited)
             if not r:
                 return r
         self.backtrack(state)

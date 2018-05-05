@@ -46,6 +46,10 @@ def parse_args():
                         help='Do not check properties.')
     parser.add_argument('--reverse', action='store_true',
                         help='Reverse order.')
+    parser.add_argument('--visited', action='store_true',
+                        help='Keep track of visited states.')
+    parser.add_argument('--visitedList', action='store_true',
+                        help='Keep track of visited states using list.')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -86,6 +90,13 @@ def main():
             pass
         coveringTests = None
 
+    visited = None
+
+    if config.visited:
+        visited = {}
+    if config.visitedList:
+        visited = []
+
     start = time.time()
 
     r = True
@@ -94,7 +105,8 @@ def main():
         r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
                                 stopFail=not config.multiple,
                                 gatherFail=failingTests, gatherCover=coveringTests,
-                                verbose=config.verbose, reverse=config.reverse)
+                                verbose=config.verbose, reverse=config.reverse,
+                                visited=visited)
 
         print("FINISHED EXPLORATION TO DEPTH", config.depth,
               "IN", time.time() - start, "SECONDS")
@@ -109,12 +121,14 @@ def main():
                 recur -= 1
                 newNewCovered = []
                 for t in newCovered:
-                    print("EXPLORING FROM COVERING TEST...")
+                    print("EXPLORING FROM COVERING TEST:")
+                    sut.prettyPrintTest(t)
                     sut.replay(t)
                     r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
                                             stopFail=not config.multiple,
                                             gatherFail=failingTests, gatherCover=newNewCovered,
-                                            verbose=config.verbose, reverse=config.reverse)
+                                            verbose=config.verbose, reverse=config.reverse,
+                                            visited=visited)
                     if not r and not config.multiple:
                         recur = 0
                         break
