@@ -159,13 +159,16 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
                     print("TEST FAILED!")
                 return False
             elif gatherFail is not None:
+                print("NEW FAILING TEST OF LENGTH", len(self.test()))
                 gatherFail.append(list(self.test()))
         if checkProp:
             if not self.check():
                 if stopFail:
+                    if verbose:
+                        print("PROPERTY CHECK FAILED!")
                     return False
-                elif gatherFail:
-                    print("NEW FAILING TEST OF LENGTH", len(sut.test()))
+                elif gatherFail is not None:
+                    print("NEW FAILING TEST OF LENGTH", len(self.test()))
                     gatherFail.append(list(self.test()))
         if (len(self.newBranches()) > 0) or (len(self.newStatements()) > 0):
             if stopCover:

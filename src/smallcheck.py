@@ -97,12 +97,35 @@ def main():
                                 stopFail=not config.multiple,
                                 gatherFail=failingTests, gatherCover=coveringTests,
                                 verbose=config.verbose, reverse=config.reverse)
+
+        print("FINISHED EXPLORATION TO DEPTH", config.depth,
+              "IN", time.time() - start, "SECONDS")
+
+        if not config.noCover and (config.multiple or r):
+            recur = config.recursive
+            newCovered = list(coveringTests)
+            i = 0
+            while (recur > 0):
+                i += 1
+                print("STARTING RECURSIVE EXPLORATION RUN #" + str(i))
+                recur -= 1
+                newNewCovered = []
+                for t in newCovered:
+                    print("EXPLORING FROM COVERING TEST...")
+                    sut.replay(t)
+                    r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
+                                            stopFail=not config.multiple,
+                                            gatherFail=failingTests, gatherCover=newNewCovered,
+                                            verbose=config.verbose, reverse=config.reverse)
+                    if not r and not config.multiple:
+                        recur = 0
+                        break
+                coveringTests.extend(newNewCovered)
+                newCovered = newNewCovered
+
     except BaseException as e:
         print("INTERRUPTED BY", repr(e))
         incomplete = True
-
-    if not incomplete:
-        print("EXPLORED TO DEPTH", config.depth, "IN", time.time() - start, "SECONDS")
 
     if coveringTests is not None:
         i = 0
@@ -112,7 +135,7 @@ def main():
             i += 1
             sut.saveTest(t, fn)
 
-    if (not r) and (not config.multiple):
+    if not r and not config.multiple:
         print("STOPPING DUE TO FAILED TEST.")
         f = sut.failure()
         print("ERROR:", f)
