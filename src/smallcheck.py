@@ -128,9 +128,12 @@ def main():
         i = 0
         for t in coveringTests:
             fn = config.output.replace(".test", "." + str(i) + ".test")
-            print("SAVING COVERING TEST AS", fn)
+            if config.verbose:
+                print("SAVING COVERING TEST AS", fn)
             i += 1
             sut.saveTest(t, fn)
+        print("SAVED", len(coveringTests), "COVERING TESTS WITH PREFIX",
+              config.output.replace(".test", ""))
 
     if not r and not config.multiple:
         print("STOPPING DUE TO FAILED TEST.")
@@ -147,9 +150,12 @@ def main():
         i = 0
         for t in failingTests:
             fn = "fail." + config.output.replace(".test", "." + str(i) + ".test")
-            print("SAVING FAILED TEST AS", fn)
+            if config.verbose:
+                print("SAVING FAILED TEST AS", fn)
             i += 1
             sut.saveTest(t, fn)
+        print("SAVED", len(failingTests), "FAILING TESTS WITH PREFIX fail." +
+              config.output.replace(".test", ""))
         sys.exit(255)
 
     sys.exit(0)
