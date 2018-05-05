@@ -138,8 +138,14 @@ def prettyPrintRemoved(self, test1, test2, columns=80):
 
 
 def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
-                    gatherFail=None, gatherCover=None, verbose=False):
+                    gatherFail=None, gatherCover=None, verbose=False, reverse=True:
+    """
+    Does a DFS complete exploration.  Recursive, so limited depth, but deep runs
+    unlikely to be useful, anyway.
+    """
     acts = self.enabled()
+    if reverse:
+        acts.reverse() # More interesting actions tend to be later in order
     state = self.state()
 
     for a in acts:
@@ -157,9 +163,14 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
                     return False
                 elif gatherFail:
                     gatherFail.append(list(self.test()))
+        if (len(self.newBranches()) > 0) or (len(self.newStatements()) > 0):
+            if stopCover:
+                return False
+            elif gatherCover:
+                gatherCover.append(list(self.test()))
         if depth > 1:
             r = self.exploreFromHere(depth - 1, checkProp, stopFail, stopCover,
-                                     gatherFail, gatherCover, verbose)
+                                     gatherFail, gatherCover, verbose, reverse)
             if not r:
                 return r
         self.backtrack(state)
