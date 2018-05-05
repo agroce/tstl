@@ -145,7 +145,8 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
     """
     acts = self.enabled()
     if reverse:
-        acts.reverse() # More interesting actions tend to be later in order
+        # More interesting actions tend to be later in order
+        acts.reverse()
     state = self.state()
 
     for a in acts:
