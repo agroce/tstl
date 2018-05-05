@@ -5,8 +5,6 @@ import time
 import traceback
 import argparse
 import os
-import subprocess
-import random
 from collections import namedtuple
 
 # Appending current working directory to sys.path
@@ -81,9 +79,13 @@ def main():
             pass
         coveringTests = None
 
+    start = time.time()
+
     r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
                             stopFail=not config.multiple,
                             gatherFail=failingTests, gatherCover=coveringTests, verbose=True)
+
+    print("EXPLORED TO DEPTH", config.depth, "IN", time.time() - start, "SECONDS")
 
     if coveringTests is not None:
         i = 0
@@ -105,9 +107,9 @@ def main():
         sut.saveTest(sut.test(), "fail." + config.output)
         sys.exit(255)
 
-    if config.multiple and (len(gatherFail) > 0):
+    if config.multiple and (len(failingTests) > 0):
         i = 0
-        for t in gatherFail:
+        for t in failingTests:
             fn = "fail." + config.output.replace(".test", "." + str(i) + ".test")
             print("SAVING FAILED TEST AS", fn)
             i += 1
