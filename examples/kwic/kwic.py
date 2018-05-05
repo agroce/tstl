@@ -1,5 +1,5 @@
 def shift(line):
-    return [line[i:] + line[:i] for i in xrange(0,len(line))]
+    return [line[i:] + line[:i] for i in range(0,len(line))]
 
 def cleanWord(word):
     return filter (lambda c: c not in [".",",","?","!",":"], word.lower())
@@ -15,7 +15,7 @@ def splitBreaks(string, periodsToBreaks):
         lines = []
         lastChar1 = None
         lastChar2 = None
-        breakChars = map(chr, xrange(ord('a'),ord('z')+1))
+        breakChars = map(chr, range(ord('a'),ord('z')+1))
         for c in string:
             if (c == " ") and (lastChar1 == ".") and (lastChar2 in breakChars):
                 lines.append(line)
@@ -47,7 +47,7 @@ def kwic(string,ignoreWords=[], listPairs=False, periodsToBreaks=False):
                             pairs[(wc1,wc2)] += 1
                         else:
                             pairs[(wc1,wc2)] = 1
-    shiftedLines = [map(lambda x:(x,i), shift(splitLines[i])) for i in xrange(0,len(splitLines))]
+    shiftedLines = [map(lambda x:(x,i), shift(splitLines[i])) for i in range(0,len(splitLines))]
     flattenedLines = [l for subList in shiftedLines for l in subList]
     filteredLines = filter(lambda l: not ignorable(l[0][0], ignoreWords), flattenedLines)
     if not listPairs:
