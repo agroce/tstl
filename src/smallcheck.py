@@ -79,13 +79,20 @@ def main():
             pass
         coveringTests = None
 
+    incomplete = False
+
     start = time.time()
 
-    r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
-                            stopFail=not config.multiple,
-                            gatherFail=failingTests, gatherCover=coveringTests, verbose=True)
+    try:
+        r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
+                                stopFail=not config.multiple,
+                                gatherFail=failingTests, gatherCover=coveringTests, verbose=True)
+    except BaseException as e:
+        print("INTERRUPTED BY", repr(e))
+        incomplete = True
 
-    print("EXPLORED TO DEPTH", config.depth, "IN", time.time() - start, "SECONDS")
+    if not incomplete:
+        print("EXPLORED TO DEPTH", config.depth, "IN", time.time() - start, "SECONDS")
 
     if coveringTests is not None:
         i = 0
