@@ -86,8 +86,6 @@ def main():
             pass
         coveringTests = None
 
-    incomplete = False
-
     start = time.time()
 
     r = True
@@ -125,7 +123,6 @@ def main():
 
     except BaseException as e:
         print("INTERRUPTED BY", repr(e))
-        incomplete = True
 
     if coveringTests is not None:
         i = 0
