@@ -262,6 +262,7 @@ class TestExamples(TestCase):
                             "--recursive",
                             "1",
                             "--visitedList",
+                            "--reverse",
                             "--multiple"]
                         start = time.time()
                         with open(os.devnull, 'w') as dnull:
