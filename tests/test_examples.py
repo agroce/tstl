@@ -80,6 +80,8 @@ class TestExamples(TestCase):
         expectedTesting = []
         freeTestingFailures = []
         expectedFreeTesting = []
+        smallcheckFailures = []
+        expectedSmallcheck = []
 
         for f in os.listdir("."):
             if os.path.isdir(f):
@@ -209,6 +211,25 @@ class TestExamples(TestCase):
                                 rr2 = subprocess.call(["tstl_replay",
                                                        ".freesmall.test"])
                                 self.assertEqual(rr2, 255)
+                    scCmd = [
+                        "tstl_smallcheck",
+                        "--depth",
+                        "2",
+                        "--recursive",
+                        "1",
+                        "--multiple"]
+                    start = time.time()
+                    with open(os.devnull, 'w') as dnull:
+                        p = subprocess.Popen(scCmd)
+                    while (p.poll() is None) and ((time.time() - start) < 300):
+                        time.sleep(1)
+                    if p.poll() is None:
+                        p.terminate()
+                        print("TIMEOUT DURING SMALLCHECK!")
+                        timeoutFailures.append(f + "/" + t)
+                    else:
+                        r = p.returncode
+                        self.assertTrue(p in [0, 255])
                     os.remove("sut.py")
                     try:
                         os.remove("sut.pyc")
@@ -228,3 +249,4 @@ class TestExamples(TestCase):
         self.assertTrue(set(timeoutFailures).issubset(set(expectedTimeout)))
         self.assertTrue(set(testingFailures).issubset(set(expectedTesting)))
         self.assertTrue(set(freeTestingFailures).issubset(set(expectedFreeTesting)))
+        self.assertTrue(set(smallcheckFailures).issubset(set(expectedSmallcheck)))
