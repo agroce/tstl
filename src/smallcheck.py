@@ -135,8 +135,10 @@ def main():
                 coveringTests.extend(newNewCovered)
                 newCovered = newNewCovered
 
-    except BaseException as e:
-        print("INTERRUPTED BY", repr(e))
+    except KeyboardInterrupt:
+        print("INTERRUPTED BY USER")
+
+    print("TOTAL RUNTIME FOR SMALLCHECK:", time.time() - start)
 
     if coveringTests is not None:
         i = 0
