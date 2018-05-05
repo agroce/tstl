@@ -151,3 +151,5 @@ def main():
             i += 1
             sut.saveTest(t, fn)
         sys.exit(255)
+
+    sys.exit(0)
