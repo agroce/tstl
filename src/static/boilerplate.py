@@ -137,6 +137,35 @@ def prettyPrintRemoved(self, test1, test2, columns=80):
             j = i
 
 
+def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
+                    gatherFail=None, gatherCover=None, verbose=False):
+    acts = self.enabled()
+    state = self.state()
+
+    for a in acts:
+        if verbose:
+            print(depth, a[0])
+        ok = self.safely(a)
+        if not ok:
+            if stopFail:
+                return False
+            elif gatherFail:
+                gatherFail.append(list(self.test()))
+        if checkProp:
+            if not self.check():
+                if stopFail:
+                    return False
+                elif gatherFail:
+                    gatherFail.append(list(self.test()))
+        if depth > 1:
+            r = self.exploreFromHere(depth - 1, checkProp, stopFail, stopCover,
+                                     gatherFail, gatherCover, verbose)
+            if not r:
+                return r
+        self.backtrack(state)
+    return True
+
+
 def captureReplay(self, test):
     captured = ""
     for step in test:
