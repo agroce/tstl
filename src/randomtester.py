@@ -632,11 +632,16 @@ def handle_failure(
             x[0] for x in failures])) or (config.quickTests):
         outname = config.output
         if (outname is not None) and config.multiple and not newCov:
-            outname += ("." + str(failFileCount))
+            ons = outname.split(".test")
+            if len(ons) > 1:
+                onEnding = ".test"
+            else:
+                onEnding = ""
+            outname = ons[0] + "." + str(failFileCount) + onEnding
             failFileCount += 1
         if config.quickTests and newCov:
             allQuickTests.append(list(test))
-            outname = "quick" + str(quickCount) + ".test"
+            outname = "quick." + str(quickCount) + ".test"
             if config.sequencesFromTests is not None:
                 nseq = 0
                 for i in range(0, len(test)):
@@ -1111,8 +1116,8 @@ def main():
     if config.readQuick:
         print("REPLAYING QUICK TESTS")
         sqrtime = time.time()
-        for f in glob.glob("quick*.test"):
-            fn = int(f.split("quick")[1].split(".")[0])
+        for f in glob.glob("quick.*.test"):
+            fn = int(f.split("quick.")[1].split(".")[0])
             if fn >= quickCount:
                 quickCount = fn + 1
             t = sut.loadTest(f)
