@@ -525,7 +525,10 @@ run it with `--swarm`.  Because of the way the swarm format works, it
 is unfortunately currently not possible to extract a swarm format test
 from a standard TSTL test.
 
+TSTL's "SmallCheck"
+------------------
 
+`tstl_smallcheck` is a special-purpose test generator that uses a depth-first-search to exhaustively generate tests up to a provided depth limit.  Even with `--visited` to check for visited states, this will seldom finish if the depth is more than 4 to 10 (at the most) steps.  The tools outputs failures (multiple ones, optionally) and coverage-increasing tests.  One way to get deeper "exhaustive" testing is to use the `--recursive` option to explore from coverage increasing tests, repeatedly up to a limited number of times, using the same depth as the original run.
 
 TSTL and Hypothesis
 ------------------------
