@@ -304,7 +304,8 @@ def setEnumerateEnabled(self, bval):
 
 def randomEnabled(self, rgen, actFilter=None, enabledActs=None):
     """
-    Return a random enabled action, or None if no such action can be produced, based on a provided random generator
+    Return a random enabled action, or None if no such action can be
+    produced, based on a provided random generator.
     """
     if enabledActs is not None:
         acts = list(enabledActs)
@@ -405,8 +406,9 @@ def mutate(self, test, rgen, Pinsert=0.2):
 
 def crossover(self, test1, test2, rgen, twoPoint=False):
     '''
-    Simple code for performing crossover of two tests.  Just picks an order, then picks a point at which to stop first
-    test then start second.  twoPoint results in two point crossover.
+    Simple code for performing crossover of two tests.  Just picks an
+    order, then picks a point at which to stop first test then start
+    second.  twoPoint results in two point crossover.
     '''
     if rgen.randrange(2) == 0:
         t1 = test1
@@ -451,11 +453,14 @@ def makeTest(
         timeout=None,
         stopWhen=None):
     '''
-    Allows generation of fixed length tests using either a default generator (pure random testing), or using a simple
-    generator that only takes the current test step as input (generator) or a complex stateful generator (sgenerator).
-    An sgenerator must take as input both a state and an interface to the SUT (to query for coverage, etc.) and return
-    an (action, new state) tuple.  User can also control whether to stop on failure, whether to check properties, and
-    supply a timeout in seconds.
+    Allows generation of fixed length tests using either a default
+    generator (pure random testing), or using a simple generator that
+    only takes the current test step as input (generator) or a complex
+    stateful generator (sgenerator).  An sgenerator must take as input
+    both a state and an interface to the SUT (to query for coverage,
+    etc.) and return an (action, new state) tuple.  User can also
+    control whether to stop on failure, whether to check properties,
+    and supply a timeout in seconds.
 
     '''
 
@@ -626,8 +631,10 @@ def standardSwarm(
         classProb=None,
         noDependencies=False):
     """
-    Enables all actions, then sets a swarm configuration based on rgen, P = probability of enabling an action class,
-    file is a file (format action %%%% probability) giving probabilities for inclusion)
+    Enables all actions, then sets a swarm configuration based on
+    rgen, P = probability of enabling an action class, file is a file
+    (format action %%%% probability) giving probabilities for
+    inclusion)
     """
     self.enableAll()
     newEnabled = []
@@ -1146,9 +1153,10 @@ def stepNondeterministic(
         reportEqualFail=False,
         pools=None):
     """
-    Checks if a test behaves nondeterministically (in terms of all non-opaque pool values produced)
-    under an optional timing change.  Default is to run with no delay for an initial capture
-    of state, then run with a 1 second delay, and only run once.
+    Checks if a test behaves nondeterministically (in terms of all
+    non-opaque pool values produced) under an optional timing change.
+    Default is to run with no delay for an initial capture of state,
+    then run with a 1 second delay, and only run once.
     """
     trajectory = []
     self.restart()
@@ -2194,7 +2202,8 @@ def swapPools(self, test, p1, p2, after=0):
 
 def alphaConvert(self, test, verbose=False):
     """
-    This ONLY performs renaming of pools to lowest values possible; it CAN in theory cause worse normalization.
+    This ONLY performs renaming of pools to lowest values possible; it
+    CAN in theory cause worse normalization.
     """
     count = {}
     changed = True
