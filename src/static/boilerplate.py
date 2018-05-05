@@ -138,7 +138,7 @@ def prettyPrintRemoved(self, test1, test2, columns=80):
 
 
 def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
-                    gatherFail=None, gatherCover=None, verbose=False, reverse=True:
+                    gatherFail=None, gatherCover=None, verbose=False, reverse=True):
     """
     Does a DFS complete exploration.  Recursive, so limited depth, but deep runs
     unlikely to be useful, anyway.
