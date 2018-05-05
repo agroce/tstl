@@ -23,8 +23,6 @@ class TestExamples(TestCase):
 
         noTests = False
 
-        testSmallcheck = True
-
         skipTravis = [
             "redis",
             "simplejson",
@@ -56,10 +54,10 @@ class TestExamples(TestCase):
             "tstl",
             "turtle"]
 
-        problemsFree = [
-            "bidict",
-            "turtle",
-            "z3"]
+        problemsFree = []
+
+        testSmallcheck = True
+        noSmallcheck = ["biopython"]
 
         shouldFail = [
             "newxml.tstl",
@@ -213,7 +211,7 @@ class TestExamples(TestCase):
                                 rr2 = subprocess.call(["tstl_replay",
                                                        ".freesmall.test"])
                                 self.assertEqual(rr2, 255)
-                    if testSmallcheck:
+                    if testSmallcheck and not (t in noSmallcheck):
                         scCmd = [
                             "tstl_smallcheck",
                             "--depth",
