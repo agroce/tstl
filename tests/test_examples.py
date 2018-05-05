@@ -51,7 +51,8 @@ class TestExamples(TestCase):
             "stringh",
             "sympy",
             "tictactoe",
-            "tstl"]
+            "tstl",
+            "turtle"]
 
         problemsFree = [
             "bidict",
