@@ -60,7 +60,7 @@ class TestExamples(TestCase):
         noSmallcheck = [
             "bidict",
             "biopython",
-            "danluu",
+            "danluuexample",
             "tensorflow"]
 
         shouldFail = [
