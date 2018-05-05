@@ -232,7 +232,7 @@ class TestExamples(TestCase):
                             timeoutFailures.append(f + "/" + t)
                         else:
                             r = p.returncode
-                            self.assertTrue(p in [0, 255])
+                            self.assertTrue(r in [0, 255])
                     os.remove("sut.py")
                     try:
                         os.remove("sut.pyc")
