@@ -57,7 +57,11 @@ class TestExamples(TestCase):
         problemsFree = []
 
         testSmallcheck = True
-        noSmallcheck = ["biopython"]
+        noSmallcheck = [
+            "bidict",
+            "biopython",
+            "danluu",
+            "tensorflow"]
 
         shouldFail = [
             "newxml.tstl",
@@ -211,13 +215,53 @@ class TestExamples(TestCase):
                                 rr2 = subprocess.call(["tstl_replay",
                                                        ".freesmall.test"])
                                 self.assertEqual(rr2, 255)
-                    if testSmallcheck and not (t in noSmallcheck):
+                    if testSmallcheck and f not in noSmallcheck:
                         scCmd = [
                             "tstl_smallcheck",
                             "--depth",
                             "2",
                             "--recursive",
                             "1",
+                            "--multiple"]
+                        start = time.time()
+                        with open(os.devnull, 'w') as dnull:
+                            p = subprocess.Popen(scCmd)
+                        while (p.poll() is None) and ((time.time() - start) < 300):
+                            time.sleep(1)
+                        if p.poll() is None:
+                            p.terminate()
+                            print("TIMEOUT DURING SMALLCHECK!")
+                            timeoutFailures.append(f + "/" + t)
+                        else:
+                            r = p.returncode
+                            self.assertTrue(r in [0, 255])
+                        scCmd = [
+                            "tstl_smallcheck",
+                            "--depth",
+                            "2",
+                            "--recursive",
+                            "1",
+                            "--visited",
+                            "--multiple"]
+                        start = time.time()
+                        with open(os.devnull, 'w') as dnull:
+                            p = subprocess.Popen(scCmd)
+                        while (p.poll() is None) and ((time.time() - start) < 300):
+                            time.sleep(1)
+                        if p.poll() is None:
+                            p.terminate()
+                            print("TIMEOUT DURING SMALLCHECK!")
+                            timeoutFailures.append(f + "/" + t)
+                        else:
+                            r = p.returncode
+                            self.assertTrue(r in [0, 255])
+                        scCmd = [
+                            "tstl_smallcheck",
+                            "--depth",
+                            "2",
+                            "--recursive",
+                            "1",
+                            "--visitedList",
                             "--multiple"]
                         start = time.time()
                         with open(os.devnull, 'w') as dnull:
