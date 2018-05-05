@@ -138,7 +138,7 @@ def prettyPrintRemoved(self, test1, test2, columns=80):
 
 
 def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
-                    gatherFail=None, gatherCover=None, verbose=False, reverse=True):
+                    gatherFail=None, gatherCover=None, verbose=False, reverse=False):
     """
     Does a DFS complete exploration.  Recursive, so limited depth, but deep runs
     unlikely to be useful, anyway.
@@ -163,6 +163,7 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
                 if stopFail:
                     return False
                 elif gatherFail:
+                    print("NEW FAILING TEST OF LENGTH", len(sut.test()))
                     gatherFail.append(list(self.test()))
         if (len(self.newBranches()) > 0) or (len(self.newStatements()) > 0):
             if stopCover:

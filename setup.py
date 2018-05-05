@@ -21,6 +21,7 @@ setup(
     tstl_standalone = src.standalone:main
     tstl_replay = src.replay:main
     tstl_reduce = src.reduce:main
+    tstl_smallcheck = src.smallcheck:main
     tstl_generalize = src.generalize:main
     tstl_regress = src.runregressions:main
     tstl_markov = src.markov:main

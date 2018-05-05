@@ -38,7 +38,7 @@ def parse_args():
     parser.add_argument('--generalize', action='store_true',
                         help="Generalize tests.")
     parser.add_argument('-n', '--noCover', action='store_true',
-                        help="Don't produce a coverage report at the end.")
+                        help="Don't check code coverage.")
     parser.add_argument(
         '--postCover',
         action='store_true',
