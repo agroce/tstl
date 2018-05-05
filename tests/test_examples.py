@@ -62,6 +62,7 @@ class TestExamples(TestCase):
             "biopython",
             "danluuexample",
             "eval",
+            "rsa",
             "tensorflow"]
 
         shouldFail = [
