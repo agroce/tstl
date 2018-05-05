@@ -486,7 +486,7 @@ def handle_failure(
         bnew = sut.newCurrBranches()
         for b in bnew:
             print("NEW BRANCH", b)
-        sut.replay(test, catchUncaught=True, checkProp=(not config.noCheck))
+        sut.replay(test, catchUncaught=True, checkProp=not config.noCheck)
         sremove = []
         scov = sut.currStatements()
         for s in snew:
@@ -510,18 +510,18 @@ def handle_failure(
     if not config.full:
         if newCov:
             failProp = sut.coversAll(
-                snew, bnew, catchUncaught=True, checkProp=(not config.noCheck))
+                snew, bnew, catchUncaught=True, checkProp=not config.noCheck)
         elif becauseBranchCov:
             targetSplit = config.stopWhenHitBranch.split(":")
             bTarget = [(targetSplit[0], (int(targetSplit[1].split(
                 "-")[0]), int(targetSplit[1].split("-")[1])))]
             failProp = sut.coversBranches(
-                bTarget, catchUncaught=True, checkProp=(not config.noCheck))
+                bTarget, catchUncaught=True, checkProp=not config.noCheck)
         elif becauseStatementCov:
             targetSplit = config.stopWhenHitStatement.split(":")
             sTarget = [(targetSplit[0], int(targetSplit[1]))]
             failProp = sut.coversStatements(
-                sTarget, catchUncaught=True, checkProp=(not config.noCheck))
+                sTarget, catchUncaught=True, checkProp=not config.noCheck)
             assert failProp(test)
         else:
             if config.noExceptionMatch:
@@ -650,7 +650,7 @@ def handle_failure(
                             seq[j] + (outname + ":" + str(i + j),))
                     sequences.append(provenance)
                 print("ADDED", nseq, "NEW SEQUENCES")
-            sut.replay(test, checkProp=not(config.noCheck))
+            sut.replay(test, checkProp=not config.noCheck)
             anyNewCov = False
             for s in sut.allStatements():
                 if s not in beforeReduceS:
@@ -672,7 +672,7 @@ def handle_failure(
                       "STATEMENTS:", len(sut.allStatements()))
                 sut.resetCov()
                 for q in allQuickTests:
-                    sut.replay(q, checkProp=not(config.noCheck))
+                    sut.replay(q, checkProp=not config.noCheck)
                 print("AFTER REPLAY, BRANCHES:", len(sut.allBranches()),
                       "STATEMENTS:", len(sut.allStatements()))
 
@@ -743,14 +743,13 @@ def buildActivePool():
             for (t, bs, ss) in reducePool:
                 if config.verbose or config.verboseExploit:
                     print("REDUCING POOL TEST FROM", len(t), "STEPS...", end=' ')
-                r = sut.reduce(t, sut.coversAll(ss, bs, checkProp=not(
-                    config.noCheck)), verbose=False, tryFast=not config.ddmin)
+                r = sut.reduce(t, sut.coversAll(ss, bs, checkProp=not config.noCheck),
+                               verbose=False, tryFast=not config.ddmin)
                 if config.verbose or config.verboseExploit:
                     print("TO", len(r), "STEPS:")
                     sut.prettyPrintTest(r)
                     print()
-                sut.replay(r, checkProp=not(
-                    config.noCheck), catchUncaught=True)
+                sut.replay(r, checkProp=not config.noCheck, catchUncaught=True)
                 fullPool.append((r, set(sut.currBranches()),
                                  set(sut.currStatements())))
                 if config.savePool is not None:
@@ -891,7 +890,7 @@ def tryExploit():
                 currtest.write(a[0] + "\n")
                 currtest.flush()
         try:
-            ok = sut.replay(et, checkProp=not(config.noCheck),
+            ok = sut.replay(et, checkProp=not config.noCheck,
                             catchUncaught=config.uncaught)
             if (len(sut.newCurrBranches()) != 0) or (
                     len(sut.newCurrStatements()) != 0):
@@ -1058,7 +1057,7 @@ def main():
         startRead = time.time()
         for f in glob.glob(config.readPool + ".pool.*.test"):
             t = sut.loadTest(f)
-            sut.replay(t, checkProp=not(config.noCheck), catchUncaught=True)
+            sut.replay(t, checkProp=not config.noCheck, catchUncaught=True)
             fullPool.append((t, set(sut.currBranches()),
                              set(sut.currStatements())))
         poolCount = len(fullPool)
@@ -1118,7 +1117,7 @@ def main():
                 quickCount = fn + 1
             t = sut.loadTest(f)
             allQuickTests.append(t)
-            sut.replay(t, catchUncaught=True, checkProp=(not config.noCheck))
+            sut.replay(t, catchUncaught=True, checkProp=not config.noCheck)
             # quick tests are obviously good sources for exploitation
             if (config.exploit is not None) and (not config.noCoverageExploit):
                 for b in sut.currBranches():
@@ -1957,7 +1956,7 @@ def main():
         sut.startCoverage()
         for postt in allTheTests:
             try:
-                sut.replay(postt, checkProp=(not config.noCheck))
+                sut.replay(postt, checkProp=not config.noCheck)
             except BaseException:
                 pass
 

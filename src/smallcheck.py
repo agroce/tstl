@@ -123,7 +123,7 @@ def main():
                 for t in newCovered:
                     print("EXPLORING FROM COVERING TEST:")
                     sut.prettyPrintTest(t)
-                    sut.replay(t)
+                    sut.replay(t, catchUncaught=True, checkProp=not config.noCheck)
                     r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
                                             stopFail=not config.multiple,
                                             gatherFail=failingTests, gatherCover=newNewCovered,
