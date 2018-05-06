@@ -910,7 +910,8 @@ def tryExploit():
                         sut.saveTest(list(sut.test()), pname)
                         poolCount += 1
                 else:
-                    # We can't reduce right now, unless we want the annoyance of saving and restoring state, since
+                    # We can't reduce right now, unless we want the annoyance of
+                    # saving and restoring state, since
                     # we are in the middle of a test run, and we'd mess up
                     # quick test and coverage stats collection
                     if config.verbose or config.verboseExploit:
