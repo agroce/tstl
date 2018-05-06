@@ -758,7 +758,7 @@ def buildActivePool():
                 fullPool.append((r, set(sut.currBranches()),
                                  set(sut.currStatements())))
                 if config.savePool is not None:
-                    pname = config.savePool + ".pool." + \
+                    pname = config.savePool + "." + \
                         str(poolCount) + ".test"
                     print("SAVING POOL TEST AS", pname)
                     sut.saveTest(r, pname)
@@ -904,7 +904,7 @@ def tryExploit():
                     fullPool.append((list(sut.test()), set(
                         sut.currBranches()), set(sut.currStatements())))
                     if config.savePool is not None:
-                        pname = config.savePool + ".pool." + \
+                        pname = config.savePool + "." + \
                             str(poolCount) + ".test"
                         print("SAVING POOL TEST AS", pname)
                         sut.saveTest(list(sut.test()), pname)
@@ -950,7 +950,7 @@ def collectExploitable():
             fullPool.append((list(sut.test()), set(
                 sut.currBranches()), set(sut.currStatements())))
             if config.savePool is not None:
-                pname = config.savePool + ".pool." + str(poolCount) + ".test"
+                pname = config.savePool + "." + str(poolCount) + ".test"
                 print("SAVING POOL TEST AS", pname)
                 sut.saveTest(list(sut.test()), pname)
                 poolCount += 1
@@ -1061,7 +1061,7 @@ def main():
 
     if config.readPool is not None:
         startRead = time.time()
-        for f in glob.glob(config.readPool + ".pool.*.test"):
+        for f in glob.glob(config.readPool + ".*.test"):
             t = sut.loadTest(f)
             sut.replay(t, checkProp=not config.noCheck, catchUncaught=True)
             fullPool.append((t, set(sut.currBranches()),
