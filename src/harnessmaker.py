@@ -15,9 +15,6 @@ import os
 import re
 from collections import namedtuple, OrderedDict
 
-# For packaging harnessmaker to tstl package
-import pkg_resources
-
 # GLOBAL VARIABLES
 # These variables will be modified when needed
 
@@ -2011,18 +2008,17 @@ def main():
         outf.write(baseIndent + c.replace("True and (", "("))
 
     # REQUIRED FOR PACKAGING TSTL #
-    is_py3 = sys.version_info[0] > 2
-    with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    boilerplate_path = os.path.join(base_path, 'static', 'boilerplate.py')
+    with open(boilerplate_path) as boilerplate:
         for line in boilerplate:
-            if is_py3:
-                line = line.decode()
             outf.write(baseIndent + line)
 
     if not config.noCover:
-        with pkg_resources.resource_stream('src', 'static/boilerplate_cov.py') as boilerplate_cov:
+        boilerplate_path = os.path.join(
+            base_path, 'static', 'boilerplate_cov.py')
+        with open(boilerplate_path) as boilerplate_cov:
             for line in boilerplate_cov:
-                if is_py3:
-                    line = line.decode()
                 outf.write(baseIndent + line)
 
     outf.close()
