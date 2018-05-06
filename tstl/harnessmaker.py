@@ -2012,14 +2012,14 @@ def main():
 
     # REQUIRED FOR PACKAGING TSTL #
     is_py3 = sys.version_info[0] > 2
-    with pkg_resources.resource_stream('src', 'static/boilerplate.py') as boilerplate:
+    with pkg_resources.resource_stream('tstl', 'static/boilerplate.py') as boilerplate:
         for line in boilerplate:
             if is_py3:
                 line = line.decode()
             outf.write(baseIndent + line)
 
     if not config.noCover:
-        with pkg_resources.resource_stream('src', 'static/boilerplate_cov.py') as boilerplate_cov:
+        with pkg_resources.resource_stream('tstl', 'static/boilerplate_cov.py') as boilerplate_cov:
             for line in boilerplate_cov:
                 if is_py3:
                     line = line.decode()

@@ -24,10 +24,12 @@ install:
 env:
 - TRAVIS=TRUE CYTHON_VERSION= AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=TRUE
 script:
-- pyflakes src/*.py
+- pyflakes tstl/*.py
 - pyflakes tests/*.py
-- pycodestyle src/*.py --max-line-length 120 --statistics --ignore W503,W504,E704
-- pycodestyle src/static/*.py --max-line-length 120 --statistics --ignore W503,W504,E704
+- pycodestyle tstl/*.py --max-line-length 120 --statistics --ignore W503,W504,
+E704
+- pycodestyle tstl/static/*.py --max-line-length 120 --statistics --ignore
+W503,W504,E704
 - pycodestyle tests/*.py --max-line-length 120 --statistics
 - python setup.py install
 - nosetests --verbose
