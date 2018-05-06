@@ -2,7 +2,27 @@ TSTL: the Template Scripting Testing Language
 ===========================================
 
 TSTL is a domain-specific language (DSL) and set of tools to support automated generation of tests for software.  This
-implementation targets Python.  You define (in Python) a set of components used to build up a test, and any properties you want to hold for the tested system, and TSTL generates tests for your system.  TSTL supports test replay, test reduction, and code coverage analysis, and includes push-button support for some sophisticated test-generation methods.
+implementation targets Python.  You define (in Python) a set of
+components used to build up a test, and any properties you want to
+hold for the tested system, and TSTL generates tests for your system.
+TSTL supports test replay, test reduction, and code coverage analysis,
+and includes push-button support for some sophisticated
+test-generation methods.  In other words, TSTL is a _property-based
+testing_ tool.
+
+What is property based testing?  Property-based testing is testing that relies
+not on developers specifying results for specific inputs or call sequences, but on more
+general specification of behavior, combined with automatic generation of many
+tests to make sure that the general specification holds.  For more on
+property-based testing see:
+
+- https://fsharpforfunandprofit.com/posts/property-based-testing/
+
+- https://hypothesis.works/articles/what-is-property-based-testing/
+
+- https://github.com/trailofbits/deepstate (a tool mixing symbolic
+  analysis and fuzzing with property-based testing, for C and C++,
+  with design somewhat informed by TSTL)
 
 TSTL has been used to find and fix real faults in real code, including ESRI's ArcPy (http://desktop.arcgis.com/en/arcmap/latest/analyze/arcpy/what-is-arcpy-.htm), sortedcontainers (https://github.com/grantjenks/sorted_containers),
 gmpy2 (https://github.com/aleaxit/gmpy), sympy (http://www.sympy.org/en/index.html), pyfakefs (https://github.com/jmcgeheeiv/pyfakefs),
@@ -407,9 +427,9 @@ not require TSTL itself.  Without `--output` the test is still saved, but the na
 The final useful hint for getting started is that sometimes you may want to test something
 (for example, a library implemented in C) where failing tests crash the Python interpreter.  This is possible,
 but requires some effort.  First, run `tstl_rt` with the `--replayable` option.  This causes the generator to
-keep a file, currtest.test, in the directory you are running testing in: this file holds the current test.  If the random tester crashes, this will include the action that caused the crash.  In a few rare cases, the behavior of past tests is also relevant to a crash (reloading the module does not really reset state of the system -- e.g., interacting with hardware).  For these cases, use `--total` and look at the file fulltest.test, which contains ALL actions ever performed by the random tester.
+keep a file, `currtest.test`, in the directory you are running testing in: this file holds the current test.  If the random tester crashes, this will include the action that caused the crash.  In a few rare cases, the behavior of past tests is also relevant to a crash (reloading the module does not really reset state of the system -- e.g., interacting with hardware).  For these cases, use `--total` and look at the file `fulltest.test`, which contains ALL actions ever performed by the random tester.
 
-The currtest.test and fulltest.test files work just like normal TSTL files, and can be replayed with the replay utility or turned into standalone files.  However, for test reduction and normalization to work correctly, they must be reduced by passing the `--sandbox` argument to `tstl_reduce`.
+The `currtest.test` and `fulltest.test` files work just like normal TSTL files, and can be replayed with the replay utility or turned into standalone files.  However, for test reduction and normalization to work correctly, they must be reduced by passing the `--sandbox` argument to `tstl_reduce`.
 
 What about tests that fail by entering an infinite loop?  The same technique as is used for crashes works.  However, you need to run `tstl_rt` with a time limit (using ulimit if you are on UNIX-like systems, for example).  The `tstl_reduce` utility provides a `--timeout` argument to handle such tests, but this only works on systems supporting ulimit, for now.  In very rare cases, you might have a test execution lock up because, for example, the failure causes a read from standard input.  If you hit this, contact me.
 
@@ -528,7 +548,38 @@ from a standard TSTL test.
 TSTL's "SmallCheck"
 ------------------
 
-`tstl_smallcheck` is a special-purpose test generator that uses a depth-first-search to exhaustively generate tests up to a provided depth limit.  Even with `--visited` to check for visited states, this will seldom finish if the depth is more than 4 to 10 (at the most) steps.  The tools outputs failures (multiple ones, optionally) and coverage-increasing tests.  One way to get deeper "exhaustive" testing is to use the `--recursive` option to explore from coverage increasing tests, repeatedly up to a limited number of times, using the same depth as the original run.
+`tstl_smallcheck` is a special-purpose test generator that uses a
+depth-first-search to exhaustively generate tests up to a provided
+depth limit.  The tool outputs 
+coverage-increasing tests, and stops if it encounters a failure.   This will seldom finish if the depth is more than 3 to
+10 (at the most) steps, unless it hits a failure.  If you run out of
+patience, you can interrupt the process with CTRL-C and the tool will
+save the discovered tests.
+
+One way to get deeper "exhaustive" testing
+is to use the `--recursive` option to explore from coverage increasing
+tests, repeatedly up to a limited number of times, using the same
+depth as the original run (and a small initial depth).
+
+If you want to collect all failing tests, not just stop at the first one,
+you'll need to use the `--multiple` option.  Because of their small size and
+the presumed desire for exhaustive exploration (you used this tool,
+after all), this tool provides neither reduction nor normalization of
+covering tests or failures, to
+avoid any risk of slippage.
+
+In addition to `--recursive`, you can use `--visited` or `--visitedList` to avoid re-visiting
+already explored states during the DFS; however, this requires some
+care.  If the tool fails, or the tests don't seem valid/correct, you may want to recompile your harness with
+`--defaultReplay`, because state-based backtracking doesn't work.  In
+many cases, due to the high cost of state comparison in this setting,
+keeping track of visited states may not even be very helpful.
+
+Random testing using `tstl_rt` is probably almost always more
+effective than this approach, but `tstl_smallcheck` can provide
+guarantees that `tstl_rt` cannot, such as that no test with fewer than
+four steps can
+cause any failures.
 
 TSTL and Hypothesis
 ------------------------
@@ -617,7 +668,9 @@ Caveats
 -------
 
 Note that TSTL was originally written for Python 2.7, has mostly been developed/tested that way, and is not extremely well-tested yet with Python 3.0+.
-However, it should work ok, thanks to mrbean-bremen. 
+However, it should work ok, thanks to mrbean-bremen, and the Travis
+tests check that TSTL works fine on Python 3.6.  Earlier 3.0+ versions
+may have some "gotchas."
 
 Developer Info
 --------------
