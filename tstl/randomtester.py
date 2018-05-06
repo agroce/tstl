@@ -980,7 +980,8 @@ def printStatus(elapsed, step=None):
     if config.exploit is not None:
         print("[ POOLS: full", len(fullPool), "active", len(activePool), "]", end=' ')
     print(nops, "TOTAL ACTIONS (" + str(round(nops / elapsed, 2)) + "/s)", end=' ')
-    print("(test " + str(round(thisOps / thisElapsed, 2)) + "/s)", end=' ')
+    if thisElapsed > 0:
+        print("(test " + str(round(thisOps / thisElapsed, 2)) + "/s)", end=' ')
     if (config.exploit is not None) and (totalExploits > 0):
         print("[" + str(exploitsWithNewCoverage), "cov+ exploits /",
               str(totalExploits) + "]", end=' ')
