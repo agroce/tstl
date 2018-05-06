@@ -1,38 +1,37 @@
 #-*- coding:utf-8 -*-
 
-from setuptools import setup, find_packages
-import sys, os
+from setuptools import setup
 
 setup(
     name='tstl',
     version='1.2.21',
     description='Template scripting testing language (TSTL)',
     long_description=open('README.md').read(),
-    packages=['src',],
+    packages=['tstl',],
     include_package_data = True,
     package_data = {
-        'src': ['static/boilerplate.py', 'static/boilerplate_cov.py'],
+        'tstl': ['static/boilerplate.py', 'static/boilerplate_cov.py'],
     },
     license='MIT',
     entry_points="""
     [console_scripts]
-    tstl = src.harnessmaker:main
-    tstl_rt = src.randomtester:main
-    tstl_standalone = src.standalone:main
-    tstl_replay = src.replay:main
-    tstl_reduce = src.reduce:main
-    tstl_smallcheck = src.smallcheck:main
-    tstl_generalize = src.generalize:main
-    tstl_regress = src.runregressions:main
-    tstl_markov = src.markov:main
-    tstl_graph = src.graph:main
-    tstl_afl = src.tstl_afl:main
-    tstl_aflcorpus = src.makecorpus:main
-    tstl_toafl = src.tocorpus:main
-    tstl_fromafl = src.fromafl:main
-    tstl_triage = src.triage:main
-    tstl_afl_fuzz = src.tstl_afl_fuzz:main
-    tstl_calibrate = src.calibrate:main
+    tstl = tstl.harnessmaker:main
+    tstl_rt = tstl.randomtester:main
+    tstl_standalone = tstl.standalone:main
+    tstl_replay = tstl.replay:main
+    tstl_reduce = tstl.reduce:main
+    tstl_smallcheck = tstl.smallcheck:main
+    tstl_generalize = tstl.generalize:main
+    tstl_regress = tstl.runregressions:main
+    tstl_markov = tstl.markov:main
+    tstl_graph = tstl.graph:main
+    tstl_afl = tstl.tstl_afl:main
+    tstl_aflcorpus = tstl.makecorpus:main
+    tstl_toafl = tstl.tocorpus:main
+    tstl_fromafl = tstl.fromafl:main
+    tstl_triage = tstl.triage:main
+    tstl_afl_fuzz = tstl.tstl_afl_fuzz:main
+    tstl_calibrate = tstl.calibrate:main
     """,
     keywords='testing tstl',
     test_suite='nose.collector',

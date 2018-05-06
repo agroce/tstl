@@ -659,7 +659,7 @@ default, though if for some reason you need <> in your code (and to
 prepare for a future C++ version) this can be turned off and only % supported.
 
 Note that documentation above is preliminary.  The best way to get started, once you understand the basic tools (`tstl`, `tstl_rt`, `tstl_replay`, and `tstl_reduce`) is to examine the examples directory and try out real TSTL test
-harnesses.  For the brave, reading randomtester.py provides
+harnesses.  For the brave, reading tstl/randomtester.py provides
 considerable guidance in how to (efficiently) use TSTL in a generic
 testing tool, with TSTL providing an interface to the underlying
 application/library to be tested.
