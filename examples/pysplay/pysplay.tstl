@@ -1,0 +1,34 @@
+@import splay
+
+<@
+def smin(s):
+    try: return min(s)
+    except: return None
+
+def smax(s):
+    try: return max(s)
+    except: return None
+@>
+
+pool: <int> 4
+pool: <tree> 4 OPAQUE REF
+
+<int> := <[1..20]>
+<int> += 1
+
+<tree> := splay.SplayTree()
+
+<tree>.insert(<int>)
+{AttributeError, TypeError} <tree>.remove(<int>)
+<tree>.find(<int>) in [False, None]
+<tree>.findMin()
+<tree>.findMax()
+
+reference: splay.SplayTree ==> set
+reference: insert ==> add
+reference: remove ==> discard
+reference: METHOD(findMin) ==> CALL(smin)
+reference: METHOD(findMax) ==> CALL(smax)
+reference: find ==> __contains__
+
+compare: find
