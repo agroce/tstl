@@ -416,7 +416,7 @@ not require TSTL itself.  Without `--output` the test is still saved, but the na
     ~/tstl/examples/AVL$ tstl_replay failure_norm.test --verbose
     ...
     ~/tstl/examples/AVL$ tstl_standalone failure_norm.test failure.py
-    ~/tstl/examples/AVL$ python failure_small.py
+    ~/tstl/examples/AVL$ python failure.py
     Traceback (most recent call last):
       File "failure.py", line 98, in <module>
         check()
