@@ -19,7 +19,8 @@ class TestExamples(TestCase):
             os.chdir("../..")
 
     def test_examples(self):
-        if (os.getenv("TRAVIS") == "TRUE") and (os.getenv("TASK") != "EXAMPLES"):
+        if (os.getenv("TRAVIS") == "TRUE") and (
+                os.getenv("TASK") != "EXAMPLES"):
             return
 
         PY3 = sys.version_info[0] == 3
@@ -43,6 +44,7 @@ class TestExamples(TestCase):
             "AVL",
             "arcpy",
             "arrow",
+            "c",
             "datarray_inference",
             "dateutil",
             "gmpy2",
@@ -79,23 +81,18 @@ class TestExamples(TestCase):
         if PY3:
             justCompile.extend(skipPY3)
 
-        compileFailures = []
-        expectedCompile = []
-        bytecodeFailures = []
         expectedBytecode = ['arcpy/arcpy1.tstl', 'arcpy/arcpy5.tstl']
-        timeoutFailures = []
-        expectedTimeout = []
-        testingFailures = []
-        expectedTesting = []
-        freeTestingFailures = []
-        expectedFreeTesting = []
-        smallcheckFailures = []
-        expectedSmallcheck = []
 
         for f in os.listdir("."):
             if os.path.isdir(f):
                 os.chdir(f)
                 print("=" * 80)
+                if ((os.getenv("TRAVIS") == "TRUE") and
+                        (os.getenv("SUBTASK") != "JUSTCOMPILE") and (f in justCompile)):
+                    continue
+                if ((os.getenv("TRAVIS") == "TRUE") and
+                        (os.getenv("SUBTASK") == "SMALL") and (f in noSmallcheck)):
+                    continue
                 for t in glob.glob("*.tstl"):
                     print(f + "/" + t, end=":  ")
                     print("COMPILING", end="...")
@@ -104,12 +101,7 @@ class TestExamples(TestCase):
                     if "tensorflow" in f:
                         tstlCmd += ["--noReload"]
                     r = subprocess.call(tstlCmd)
-                    if r != 0:
-                        print("FAILED TO COMPILE!")
-                        compileFailures.append(f + "/" + t)
-                        print()
-                        os.remove("sut.py")
-                        continue
+                    self.assertEqual(r, 0)
                     if (os.getenv("TRAVIS") == "TRUE") and (f in skipTravis):
                         print("OK")
                         continue
@@ -122,16 +114,11 @@ class TestExamples(TestCase):
                     except py_compile.PyCompileError as e:
                         print("BYTECODE COMPILATION FAILED!")
                         print(e)
-                        bytecodeFailures.append(f + "/" + t)
-                        print()
-                        os.remove("sut.py")
+                        self.assertTrue((f + "/" + t) in expectedBytecode)
                         continue
-                    skipThis = False
-                    for jc in justCompile:
-                        if jc == f:
-                            skipThis = True
-                            break
-                    if noTests or skipThis or (f == "c"):
+                    if (noTests or (f in justCompile) or
+                        ((os.getenv("TRAVIS") == "TRUE") and
+                         (os.getenv("SUBTASK") == "JUSTCOMPILE"))):
                         print("OK!")
                         os.remove("sut.py")
                         try:
@@ -141,86 +128,77 @@ class TestExamples(TestCase):
                         continue
                     print("RUNNING", end="...")
                     sys.stdout.flush()
-                    rtCmd = [
-                        "tstl_rt",
-                        "--timeout",
-                        "16",
-                        "--timedProgress",
-                        "5",
-                        "--noCheck",
-                        "--uncaught",
-                        "--silentSUT"]
-                    start = time.time()
-                    p = subprocess.Popen(rtCmd)
-                    # Big timeout is for huge coverage dumps like sympy
-                    while (p.poll() is None) and ((time.time() - start) < 300):
-                        time.sleep(1)
-                    if p.poll() is None:
-                        p.terminate()
-                        print("TIMEOUT!")
-                        timeoutFailures.append(f + "/" + t)
-                    else:
-                        r = p.returncode
-                        if r != 0:
-                            print("FAILED DURING UNFAILABLE TESTING!")
-                            testingFailures.append(f + "/" + t)
-                        else:
-                            print("OK!")
-                    sys.stdout.flush()
-                    rtCmd = [
-                        "tstl_rt",
-                        "--timeout",
-                        "16",
-                        "--timedProgress",
-                        "5",
-                        "--noCover",
-                        "--output",
-                        ".freefail.test",
-                        "--keepLast",
-                        "--silentSUT"]
-                    start = time.time()
-                    if f not in problemsFree:
-                        with open(os.devnull, 'w') as dnull:
-                            p = subprocess.Popen(rtCmd, stdout=dnull)
-                    else:
+                    if (os.getenv("TRAVIS") != "TRUE") or (os.getenv("SUBTASK") == "NOBUGS"):
+                        rtCmd = [
+                            "tstl_rt",
+                            "--timeout",
+                            "16",
+                            "--timedProgress",
+                            "5",
+                            "--noCheck",
+                            "--uncaught",
+                            "--silentSUT"]
+                        start = time.time()
                         p = subprocess.Popen(rtCmd)
-                    # Big timeout is for huge coverage dumps like sympy
-                    while (p.poll() is None) and ((time.time() - start) < 300):
-                        time.sleep(1)
-                    if p.poll() is None:
-                        p.terminate()
-                        print("TIMEOUT DURING FREE TESTING!")
-                        timeoutFailures.append(f + "/" + t)
-                    else:
+                        # Big timeout is for huge coverage dumps like sympy
+                        while (
+                                p.poll() is None) and (
+                                (time.time() - start) < 300):
+                            time.sleep(1)
+                        self.assertEqual(p.poll(), None)
+                        r = p.returncode
+                        self.assertEqual(r, 0)
+                        print("OK!")
+                        sys.stdout.flush()
+                    if (os.getenv("TRAVIS") != "TRUE") or (os.getenv("SUBTASK") == "FREE"):
+                        rtCmd = [
+                            "tstl_rt",
+                            "--timeout",
+                            "16",
+                            "--timedProgress",
+                            "5",
+                            "--noCover",
+                            "--output",
+                            ".freefail.test",
+                            "--keepLast",
+                            "--silentSUT"]
+                        start = time.time()
+                        if f not in problemsFree:
+                            with open(os.devnull, 'w') as dnull:
+                                p = subprocess.Popen(rtCmd, stdout=dnull)
+                        else:
+                            p = subprocess.Popen(rtCmd)
+                        # Big timeout is for huge coverage dumps like sympy
+                        while (
+                                p.poll() is None) and (
+                                (time.time() - start) < 300):
+                            time.sleep(1)
+                        self.assertEqual(p.poll(), None)
                         r = p.returncode
                         if t in shouldFail:
-                            if r != 255:
-                                print("FAILURE TO FIND BUG DURING FREE TESTING!")
-                                freeTestingFailures.append(f + "/" + t)
-                        if r not in [0, 255]:
-                            print("FAILURE DURING FREE TESTING!")
-                            freeTestingFailures.append(f + "/" + t)
-                        else:
-                            if r == 255:
-                                rr0 = subprocess.call(["tstl_replay",
-                                                       ".freefail.test"])
-                                self.assertEqual(rr0, 255)
-                                if t == "onestep.tstl":
-                                    with open(".freefail.test", 'r') as ff:
-                                        self.assertEqual(len(ff.readlines()), 1)
-                                rr1 = subprocess.call(["tstl_reduce",
-                                                       ".freefail.full.test",
-                                                       ".freesmall.test",
-                                                       "--verbose",
-                                                       "True"])
-                                self.assertEqual(rr1, 0)
-                                if t == "onestep.tstl":
-                                    with open(".freesmall.test", 'r') as ff:
-                                        self.assertEqual(len(ff.readlines()), 1)
-                                rr2 = subprocess.call(["tstl_replay",
-                                                       ".freesmall.test"])
-                                self.assertEqual(rr2, 255)
-                    if testSmallcheck and f not in noSmallcheck:
+                            self.assertEqual(r, 255)
+                        self.assertTrue(r in [0, 255])
+                        if r == 255:
+                            rr0 = subprocess.call(["tstl_replay",
+                                                   ".freefail.test"])
+                            self.assertEqual(rr0, 255)
+                            if t == "onestep.tstl":
+                                with open(".freefail.test", 'r') as ff:
+                                    self.assertEqual(len(ff.readlines()), 1)
+                            rr1 = subprocess.call(["tstl_reduce",
+                                                   ".freefail.full.test",
+                                                   ".freesmall.test",
+                                                   "--verbose",
+                                                   "True"])
+                            self.assertEqual(rr1, 0)
+                            if t == "onestep.tstl":
+                                with open(".freesmall.test", 'r') as ff:
+                                    self.assertEqual(len(ff.readlines()), 1)
+                            rr2 = subprocess.call(["tstl_replay",
+                                                   ".freesmall.test"])
+                            self.assertEqual(rr2, 255)
+                    if (testSmallcheck and (f not in noSmallcheck) and
+                            ((os.getenv("TRAVIS") != "TRUE") or (os.getenv("SUBTASK") == "SMALL"))):
                         scCmd = [
                             "tstl_smallcheck",
                             "--depth",
@@ -231,15 +209,13 @@ class TestExamples(TestCase):
                         start = time.time()
                         with open(os.devnull, 'w') as dnull:
                             p = subprocess.Popen(scCmd)
-                        while (p.poll() is None) and ((time.time() - start) < 300):
+                        while (
+                                p.poll() is None) and (
+                                (time.time() - start) < 300):
                             time.sleep(1)
-                        if p.poll() is None:
-                            p.terminate()
-                            print("TIMEOUT DURING SMALLCHECK!")
-                            timeoutFailures.append(f + "/" + t)
-                        else:
-                            r = p.returncode
-                            self.assertTrue(r in [0, 255])
+                        self.assertEqual(p.poll(), None)
+                        r = p.returncode
+                        self.assertTrue(r in [0, 255])
                         scCmd = [
                             "tstl_smallcheck",
                             "--depth",
@@ -251,15 +227,13 @@ class TestExamples(TestCase):
                         start = time.time()
                         with open(os.devnull, 'w') as dnull:
                             p = subprocess.Popen(scCmd)
-                        while (p.poll() is None) and ((time.time() - start) < 300):
+                        while (
+                                p.poll() is None) and (
+                                (time.time() - start) < 300):
                             time.sleep(1)
-                        if p.poll() is None:
-                            p.terminate()
-                            print("TIMEOUT DURING SMALLCHECK!")
-                            timeoutFailures.append(f + "/" + t)
-                        else:
-                            r = p.returncode
-                            self.assertTrue(r in [0, 255])
+                        self.assertEqual(p.poll(), None)
+                        r = p.returncode
+                        self.assertTrue(r in [0, 255])
                         scCmd = [
                             "tstl_smallcheck",
                             "--depth",
@@ -272,15 +246,13 @@ class TestExamples(TestCase):
                         start = time.time()
                         with open(os.devnull, 'w') as dnull:
                             p = subprocess.Popen(scCmd)
-                        while (p.poll() is None) and ((time.time() - start) < 300):
+                        while (
+                                p.poll() is None) and (
+                                (time.time() - start) < 300):
                             time.sleep(1)
-                        if p.poll() is None:
-                            p.terminate()
-                            print("TIMEOUT DURING SMALLCHECK!")
-                            timeoutFailures.append(f + "/" + t)
-                        else:
-                            r = p.returncode
-                            self.assertTrue(r in [0, 255])
+                        self.assertEqual(p.poll(), None)
+                        r = p.returncode
+                        self.assertTrue(r in [0, 255])
                     os.remove("sut.py")
                     try:
                         os.remove("sut.pyc")
@@ -288,16 +260,3 @@ class TestExamples(TestCase):
                         pass
                 os.chdir("..")
                 sys.stdout.flush()
-
-        print("COMPILATION FAILURES:", compileFailures)
-        print("BYTECODE COMPILATION FAILURES:", bytecodeFailures)
-        print("TIMEOUTS:", timeoutFailures)
-        print("TESTING FAILURES:", testingFailures)
-        print("FREE TESTING FAILURES:", freeTestingFailures)
-        self.assertTrue(sorted(compileFailures) == sorted(expectedCompile))
-        # These aren't even running, so need subset
-        self.assertTrue(set(bytecodeFailures).issubset(set(expectedBytecode)))
-        self.assertTrue(set(timeoutFailures).issubset(set(expectedTimeout)))
-        self.assertTrue(set(testingFailures).issubset(set(expectedTesting)))
-        self.assertTrue(set(freeTestingFailures).issubset(set(expectedFreeTesting)))
-        self.assertTrue(set(smallcheckFailures).issubset(set(expectedSmallcheck)))
