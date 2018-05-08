@@ -182,6 +182,10 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
             elif gatherFail is not None:
                 if verbose:
                     print("NEW FAILING TEST OF LENGTH", len(self.test()))
+                    f = self.failure()
+                    print("FAILURE ON ACTION:", self.prettyName(a[0]))
+                    print("ERROR:", f)
+                    traceback.print_tb(f[2], file=sys.stdout)
                 gatherFail.append(list(self.test()))
         if checkProp:
             if not self.check():
@@ -192,6 +196,10 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
                 elif gatherFail is not None:
                     if verbose:
                         print("NEW FAILING TEST OF LENGTH", len(self.test()))
+                    f = self.failure()
+                    print("FAILED PROPERTY CHECK ON ACTION:", self.prettyName(a[0]))
+                    print("ERROR:", f)
+                    traceback.print_tb(f[2], file=sys.stdout)
                     gatherFail.append(list(self.test()))
         if (len(self.newBranches()) > 0) or (len(self.newStatements()) > 0):
             if stopCover:
