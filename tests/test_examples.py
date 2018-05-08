@@ -148,7 +148,7 @@ class TestExamples(TestCase):
                                 p.poll() is None) and (
                                 (time.time() - start) < 300):
                             time.sleep(1)
-                        self.assertEqual(p.poll(), None)
+                        self.assertNotEqual(p.poll(), None)
                         r = p.returncode
                         self.assertEqual(r, 0)
                         print("OK!")
@@ -176,7 +176,7 @@ class TestExamples(TestCase):
                                 p.poll() is None) and (
                                 (time.time() - start) < 300):
                             time.sleep(1)
-                        self.assertEqual(p.poll(), None)
+                        self.assertNotEqual(p.poll(), None)
                         r = p.returncode
                         if t in shouldFail:
                             self.assertEqual(r, 255)
@@ -216,7 +216,7 @@ class TestExamples(TestCase):
                                 p.poll() is None) and (
                                 (time.time() - start) < 300):
                             time.sleep(1)
-                        self.assertEqual(p.poll(), None)
+                        self.assertNotEqual(p.poll(), None)
                         r = p.returncode
                         self.assertTrue(r in [0, 255])
                         scCmd = [
@@ -234,7 +234,7 @@ class TestExamples(TestCase):
                                 p.poll() is None) and (
                                 (time.time() - start) < 300):
                             time.sleep(1)
-                        self.assertEqual(p.poll(), None)
+                        self.assertNotEqual(p.poll(), None)
                         r = p.returncode
                         self.assertTrue(r in [0, 255])
                         scCmd = [
@@ -253,7 +253,7 @@ class TestExamples(TestCase):
                                 p.poll() is None) and (
                                 (time.time() - start) < 300):
                             time.sleep(1)
-                        self.assertEqual(p.poll(), None)
+                        self.assertNotEqual(p.poll(), None)
                         r = p.returncode
                         self.assertTrue(r in [0, 255])
                     os.remove("sut.py")
