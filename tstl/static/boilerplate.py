@@ -200,6 +200,8 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
                 if verbose:
                     print("COLLECTED TEST WITH NEW COVERAGE FROM ACTION",
                           self.prettyName(a[0]))
+                    print("ADDED", len(self.newBranches()), "BRANCHES AND",
+                          len(self.newStatements()), "STATEMENTS")
                 gatherCover.append(list(self.test()))
         if depth > 1:
             r = self.exploreFromHere(depth - 1, checkProp, stopFail, stopCover,

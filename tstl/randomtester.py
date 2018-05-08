@@ -100,6 +100,11 @@ def parse_args():
         action='store_true',
         help="Produce quick tests for coverage (save a test all coverage targets).")
     parser.add_argument(
+        '--quickPrefix',
+        type=str,
+        default='quick',
+        help="Prefix to use for quick tests (default 'quick'.")
+    parser.add_argument(
         '--readQuick',
         action='store_true',
         help="Read existing quick tests (and add to them if producing quick tests).")
@@ -641,7 +646,7 @@ def handle_failure(
             failFileCount += 1
         if config.quickTests and newCov:
             allQuickTests.append(list(test))
-            outname = "quick." + str(quickCount) + ".test"
+            outname = config.quickPrefix + "." + str(quickCount) + ".test"
             if config.sequencesFromTests is not None:
                 nseq = 0
                 for i in range(0, len(test)):
@@ -1118,8 +1123,8 @@ def main():
     if config.readQuick:
         print("REPLAYING QUICK TESTS")
         sqrtime = time.time()
-        for f in glob.glob("quick.*.test"):
-            fn = int(f.split("quick.")[1].split(".")[0])
+        for f in glob.glob(config.quickPrefix + ".*.test"):
+            fn = int(f.split(config.quickPrefix + ".")[1].split(".")[0])
             if fn >= quickCount:
                 quickCount = fn + 1
             t = sut.loadTest(f)

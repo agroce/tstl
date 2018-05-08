@@ -5,6 +5,7 @@ import time
 import traceback
 import argparse
 import os
+import glob
 from collections import namedtuple
 
 # Appending current working directory to sys.path
@@ -50,6 +51,8 @@ def parse_args():
                         help='Keep track of visited states.')
     parser.add_argument('--visitedList', action='store_true',
                         help='Keep track of visited states using list.')
+    parser.add_argument('--fromTests', type=str, default=None,
+                        help="Glob expression for set of tests to explore from.")
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -99,41 +102,57 @@ def main():
 
     start = time.time()
 
-    r = True
+    if config.fromTests is not None:
+        loadedTests = []
+        for fn in glob.glob(config.fromTests):
+            t = sut.loadTest(fn)
+            # Replay it so that coverage won't look new!
+            sut.replay(t, catchUncaught=True, checkProp=not config.noCheck)
+            loadedTests.append((t, fn))
+    else:
+        loadedTests = [([], "")]
 
     try:
-        r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
-                                stopFail=not config.multiple,
-                                gatherFail=failingTests, gatherCover=coveringTests,
-                                verbose=config.verbose, reverse=config.reverse,
-                                visited=visited)
+        for (test, fn) in loadedTests:
+            if test != []:
+                print("EXPLORING FROM TEST", fn)
+                sut.prettyPrintTest(test)
+                sut.restart()
+                sut.replay(test, catchUncaught=True, checkProp=not config.noCheck)
 
-        print("FINISHED EXPLORATION TO DEPTH", config.depth,
-              "IN", time.time() - start, "SECONDS")
+            r = True  # in case we get interrupted
+            r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
+                                    stopFail=not config.multiple,
+                                    gatherFail=failingTests, gatherCover=coveringTests,
+                                    verbose=config.verbose, reverse=config.reverse,
+                                    visited=visited)
 
-        if not config.noCover and (config.multiple or r):
-            recur = config.recursive
-            newCovered = list(coveringTests)
-            i = 0
-            while (recur > 0):
-                i += 1
-                print("STARTING RECURSIVE EXPLORATION RUN #" + str(i))
-                recur -= 1
-                newNewCovered = []
-                for t in newCovered:
-                    print("EXPLORING FROM COVERING TEST:")
-                    sut.prettyPrintTest(t)
-                    sut.replay(t, catchUncaught=True, checkProp=not config.noCheck)
-                    r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
-                                            stopFail=not config.multiple,
-                                            gatherFail=failingTests, gatherCover=newNewCovered,
-                                            verbose=config.verbose, reverse=config.reverse,
-                                            visited=visited)
-                    if not r and not config.multiple:
-                        recur = 0
-                        break
-                coveringTests.extend(newNewCovered)
-                newCovered = newNewCovered
+            print("FINISHED EXPLORATION TO DEPTH", config.depth,
+                  "IN", time.time() - start, "SECONDS")
+
+            if not config.noCover and (config.multiple or r):
+                recur = config.recursive
+                newCovered = list(coveringTests)
+                i = 0
+                while (recur > 0):
+                    i += 1
+                    print("STARTING RECURSIVE EXPLORATION RUN #" + str(i))
+                    recur -= 1
+                    newNewCovered = []
+                    for t in newCovered:
+                        print("EXPLORING FROM COVERING TEST:")
+                        sut.prettyPrintTest(t)
+                        sut.replay(t, catchUncaught=True, checkProp=not config.noCheck)
+                        r = sut.exploreFromHere(config.depth, checkProp=not config.noCheck,
+                                                stopFail=not config.multiple,
+                                                gatherFail=failingTests, gatherCover=newNewCovered,
+                                                verbose=config.verbose, reverse=config.reverse,
+                                                visited=visited)
+                        if not r and not config.multiple:
+                            recur = 0
+                            break
+                    coveringTests.extend(newNewCovered)
+                    newCovered = newNewCovered
 
     except KeyboardInterrupt:
         print("INTERRUPTED BY USER")
