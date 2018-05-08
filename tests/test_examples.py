@@ -141,7 +141,7 @@ class TestExamples(TestCase):
                     rtCmd = [
                         "tstl_rt",
                         "--timeout",
-                        "20",
+                        "16",
                         "--timedProgress",
                         "5",
                         "--noCheck",
@@ -167,7 +167,7 @@ class TestExamples(TestCase):
                     rtCmd = [
                         "tstl_rt",
                         "--timeout",
-                        "15",
+                        "16",
                         "--timedProgress",
                         "5",
                         "--noCover",
