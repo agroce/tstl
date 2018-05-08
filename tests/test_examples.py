@@ -85,17 +85,17 @@ class TestExamples(TestCase):
 
         for f in os.listdir("."):
             if os.path.isdir(f):
-                os.chdir(f)
-                print("=" * 80)
                 if ((os.getenv("TRAVIS") == "TRUE") and
                         (os.getenv("SUBTASK") != "JUSTCOMPILE") and (f in justCompile)):
                     continue
                 if ((os.getenv("TRAVIS") == "TRUE") and
-                        (os.getenv("SUBTASK") == "JUSTCOMPILE") and (f not in justCompile)):
+                        (os.getenv("SUBTASK") == "JUSTCOMPILE") and (f not in justCompile))
                     continue
                 if ((os.getenv("TRAVIS") == "TRUE") and
                         (os.getenv("SUBTASK") == "SMALL") and (f in noSmallcheck)):
                     continue
+                os.chdir(f)
+                print("=" * 80)
                 for t in glob.glob("*.tstl"):
                     print(f + "/" + t, end=":  ")
                     print("COMPILING", end="...")
