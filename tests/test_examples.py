@@ -155,6 +155,7 @@ class TestExamples(TestCase):
                         print("OK!")
                         sys.stdout.flush()
                     if (os.getenv("TRAVIS") != "TRUE") or (os.getenv("SUBTASK") == "FREE"):
+                        self.assertTrue(False)
                         rtCmd = [
                             "tstl_rt",
                             "--timeout",
@@ -203,6 +204,7 @@ class TestExamples(TestCase):
                             self.assertEqual(rr2, 255)
                     if (testSmallcheck and (f not in noSmallcheck) and
                             ((os.getenv("TRAVIS") != "TRUE") or (os.getenv("SUBTASK") == "SMALL"))):
+                        self.assertTrue(False)
                         scCmd = [
                             "tstl_smallcheck",
                             "--depth",
