@@ -134,7 +134,7 @@ def main():
                 recur = config.recursive
                 newCovered = list(coveringTests)
                 i = 0
-                while (recur > 0):
+                while (recur > 0) and (len(newCovered) > 0):
                     i += 1
                     print("STARTING RECURSIVE EXPLORATION RUN #" + str(i))
                     recur -= 1
