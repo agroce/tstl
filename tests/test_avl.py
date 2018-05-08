@@ -79,7 +79,7 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_rt",
                              "--multiple",
                              "--timeout",
-                             "60",
+                             "20",
                              "--output",
                              ".avltest.test"],
                             stdout=dnull)
@@ -88,7 +88,7 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl_rt",
                              "--multiple",
                              "--timeout",
-                             "60",
+                             "20",
                              "--noCover",
                              "--normalize",
                              "--output",
@@ -103,7 +103,7 @@ class TestAVL(TestCase):
         self.assertEqual(r, 255)
 
         r = subprocess.call(
-            ["tstl_rt", "--timeout", "60",
+            ["tstl_rt", "--timeout", "20",
              "--noCover",
              "--generateLOC", ".avltest.loc",
              "--uncaught", "--noCheck"],
@@ -111,7 +111,7 @@ class TestAVL(TestCase):
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_rt", "--timeout", "60",
+            ["tstl_rt", "--timeout", "20",
              "--biasLOC", ".avltest.loc",
              "--multiple", "--output", ".avltest.test"],
             stdout=dnull)
@@ -123,20 +123,20 @@ class TestAVL(TestCase):
         r = subprocess.call(["tstl", "avlnew.tstl"], stdout=dnull)
         self.assertEqual(r, 0)
 
-        r = subprocess.call(["tstl_rt", "--timeout", "30"], stdout=dnull)
+        r = subprocess.call(["tstl_rt", "--timeout", "20"], stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_rt", "--timeout", "30", "--noCover"], stdout=dnull)
+            ["tstl_rt", "--timeout", "20", "--noCover"], stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_rt", "--timeout", "30", "--swarm"], stdout=dnull)
+            ["tstl_rt", "--timeout", "20", "--swarm"], stdout=dnull)
         self.assertEqual(r, 0)
 
         r = subprocess.call(["tstl_rt",
                              "--timeout",
-                             "30",
+                             "20",
                              "--exploit",
                              "0.8",
                              "--Pmutate",

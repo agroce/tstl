@@ -19,7 +19,7 @@ class TestAFL(TestCase):
         self.assertEqual(r, 0)
 
         r = subprocess.call(
-            ["tstl_afl_fuzz", "--corpusBudget", "15", "--timeout", "60", "--quiet", "--persist"],
+            ["tstl_afl_fuzz", "--corpusBudget", "15", "--timeout", "45", "--quiet", "--persist"],
             stdout=dnull)
         self.assertEqual(r, 0)
 
@@ -29,7 +29,7 @@ class TestAFL(TestCase):
             os.remove(f)
 
         r = subprocess.call(
-            ["tstl_afl_fuzz", "--corpusBudget", "0", "--timeout", "45", "--quiet"])
+            ["tstl_afl_fuzz", "--corpusBudget", "0", "--timeout", "30", "--quiet"])
         self.assertEqual(r, 0)
 
         self.assertTrue(glob.glob("aflfail.*") != [])
@@ -40,7 +40,8 @@ class TestAFL(TestCase):
             os.remove(f)
 
         r = subprocess.call(
-            ["tstl_afl_fuzz", "--corpusBudget", "15", "--timeout", "60", "--quiet", "--swarm"])
+            ["tstl_afl_fuzz", "--corpusBudget", "15", "--timeout", "30", "--quiet", "--swarm"],
+            stdout=dnull)
         self.assertEqual(r, 0)
 
         self.assertTrue(glob.glob("aflfail.*") != [])
