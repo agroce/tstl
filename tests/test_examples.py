@@ -132,6 +132,7 @@ class TestExamples(TestCase):
                     print("RUNNING", end="...")
                     sys.stdout.flush()
                     if (os.getenv("TRAVIS") != "TRUE") or (os.getenv("SUBTASK") == "NOBUGS"):
+                        self.assertTrue(False)
                         rtCmd = [
                             "tstl_rt",
                             "--timeout",
