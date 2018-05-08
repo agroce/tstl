@@ -13,6 +13,9 @@ class TestHypothesisHeap(TestCase):
         os.chdir("../..")
 
     def test_hypothesis_heap(self):
+        if (os.getenv("TRAVIS") == "TRUE") and (os.getenv("TASK") != "HYPOTHESIS"):
+            return
+
         dnull = open(os.devnull, 'w')
 
         r = subprocess.call(["tstl", "heaps.tstl"], stdout=dnull)

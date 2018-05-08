@@ -13,6 +13,9 @@ class TestAVL(TestCase):
         os.chdir("../..")
 
     def test_AVL(self):
+        if (os.getenv("TRAVIS") == "TRUE") and (os.getenv("TASK") != "AVL"):
+            return
+
         dnull = open(os.devnull, 'w')
 
         r = subprocess.call(["tstl", "avlbuggy.tstl"], stdout=dnull)

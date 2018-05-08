@@ -19,6 +19,9 @@ class TestExamples(TestCase):
             os.chdir("../..")
 
     def test_examples(self):
+        if (os.getenv("TRAVIS") == "TRUE") and (os.getenv("TASK") != "EXAMPLES"):
+            return
+
         PY3 = sys.version_info[0] == 3
 
         noTests = False
