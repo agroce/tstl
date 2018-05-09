@@ -499,7 +499,7 @@ want to really hammer your SSD (don't even think about doing this on
 an actual hard drive).
 
 You should also try the `--persist` option to `tstl_afl_fuzz`, which
-in will often improve fuzzing speed by a large margin, and
+will often improve fuzzing speed by a large margin, and
 dramatically improve AFL results (since throughput is so critical); however, 
 this is somewhat less well-tested than the non-persistent mode.  With
 more testing, this will likely become the default setting, so you may
