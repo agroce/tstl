@@ -31,7 +31,7 @@ Python itself (https://bugs.python.org/issue27870), the Solidity compiler (https
 Installation
 ------------
 
-You can grab a recent tstl most easily using pip.  `pip install tstl` should work fine.  If you want something even more recent you can:
+You can grab a recent tstl most easily using pip.  `pip install tstl` should work fine.  If you want something even more recent you can do:
 
     git clone https://github.com/agroce/tstl.git
     cd tstl
