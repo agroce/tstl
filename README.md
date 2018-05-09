@@ -456,6 +456,8 @@ Adding `--reducePool` sometimes also improves the performance of this method.
 
 You can tune the exploit and mutate parameters to see if they improve results.  You can even combine lines-of-code bias with the `exploit` approach and/or swarm testing.  Sometimes testing benefits from having all three!  Unfortunately, using `--exploit` does mean you can't get away with `--noCover` to avoid the overhead of computing code coverage.
 
+To get a set of very fast "regression tests" you can run `tstl_rt` for a long time in a good configuration with the `--quickTests` option, and generate a set of very short tests with high code coverage.
+
 Fault Localization
 -----
 
@@ -579,7 +581,7 @@ Random testing using `tstl_rt` is probably almost always more
 effective than this approach, but `tstl_smallcheck` can provide
 guarantees that `tstl_rt` cannot, such as that no test with fewer than
 four steps can
-cause any failures.
+cause any failures.  Starting a smallcheck from existing quick tests using the `--fromTests` option is one way to add extra confidence in your testing.
 
 TSTL and Hypothesis
 ------------------------
