@@ -1703,11 +1703,10 @@ def main():
             testsWithNoNewCoverage += 1
 
         stopDueToSaturation = False
-        if config.stopSaturated:
-            if ntests == 1:
-                # You can't always count the first test, due to weird module initialization issues
-                # At worst this makes saturation take longer
-                continue
+        if config.stopSaturated and ntests > 1:
+            # You can't always count the first test, due to weird module initialization issues
+            # At worst this makes saturation take longer
+
             session = ntests % config.sessions
             sessionBranches[session].update(set(sut.currBranches()))
             sessionStatements[session].update(set(sut.currStatements()))
@@ -1720,18 +1719,18 @@ def main():
                     print("NEW SESSION COUNTS FOR STATEMENT SATURATION:", sessionCountsS)
                 if sessionCountsB != lastSessionCountsB:
                     print("NEW SESSION COUNTS FOR BRANCH SATURATION:", sessionCountsB)
-            if (sessionCountsB[0] == sessionCountsB[-1]) and (sessionCountsS[0] == sessionCountsS[-1]):
-                allEqual = True
-                for session1 in range(0, config.sessions):
-                    for session2 in range(session1 + 1, config.sessions):
-                        if sessionBranches[session1] != sessionBranches[session2]:
-                            allEqual = False
-                            break
-                        if sessionStatements[session1] != sessionStatements[session2]:
-                            allEqual = False
-                            break
-                if allEqual:
-                    stopDueToSaturation = True
+                if (sessionCountsB[0] == sessionCountsB[-1]) and (sessionCountsS[0] == sessionCountsS[-1]):
+                    allEqual = True
+                    for session1 in range(0, config.sessions):
+                        for session2 in range(session1 + 1, config.sessions):
+                            if sessionBranches[session1] != sessionBranches[session2]:
+                                allEqual = False
+                                break
+                            if sessionStatements[session1] != sessionStatements[session2]:
+                                allEqual = False
+                                break
+                    if allEqual:
+                        stopDueToSaturation = True
 
         if (config.checkDeterminism or config.checkProcessDeterminism) and not testFailed:
             # grab the test before quick tests or something else disturbs it
