@@ -307,6 +307,12 @@ def parse_args():
         action='store_true',
         help="Use multiple 'sessions' to estimate saturation and stop when saturated.")
     parser.add_argument(
+        '--sessions',
+        type=int,
+        default=4,
+        help="Number of sessions to use for estimating coverage saturation (default 4).  " +
+        "More sessions means less chance of missing coverage/faults.")
+    parser.add_argument(
         '--stopWhenBranches',
         type=int,
         default=None,
@@ -1220,12 +1226,11 @@ def main():
         fulltest = open("fulltest.test", 'w')
 
     if config.stopSaturated:
-        NUM_SESSIONS = 4
         bestSymDiffB = -1
         bestSymDiffS = -1
         sessionBranches = {}
         sessionStatements = {}
-        for session in range(0, NUM_SESSIONS):
+        for session in range(0, config.sessions):
             sessionBranches[session] = set([])
             sessionStatements[session] = set([])
 
@@ -1958,15 +1963,15 @@ def main():
                 break
 
         if config.stopSaturated:
-            session = ntests % NUM_SESSIONS
+            session = ntests % config.sessions
             sessionBranches[session].update(set(sut.currBranches()))
             sessionStatements[session].update(set(sut.currStatements()))
             largestSymDiffB = 0
             largestSymDiffS = 0
-            for session1 in range(0, NUM_SESSIONS):
+            for session1 in range(0, config.sessions):
                 s1B = sessionBranches[session1]
                 s1S = sessionStatements[session1]
-                for session2 in range(0, NUM_SESSIONS):
+                for session2 in range(0, config.sessions):
                     symDiffB = len(s1B.symmetric_difference(sessionBranches[session2]))
                     if symDiffB > largestSymDiffB:
                         largestSymDiffB = symDiffB
