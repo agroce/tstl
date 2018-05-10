@@ -301,8 +301,11 @@ def parse_args():
                         help="Silence SUT actions (no output).")
     parser.add_argument('--throughput', action='store_true',
                         help='Measure action throughput.')
-    parser.add_argument('--profile', action='store_true',
-                        help="Profile actions.")
+    parser.add_argument('--profile', action='store_true', help="Profile actions.")
+    parser.add_argument(
+        '--stopSaturated',
+        action='store_true',
+        help="Use multiple 'sessions' to estimate saturation and stop when saturated.")
     parser.add_argument(
         '--stopWhenBranches',
         type=int,
@@ -1216,6 +1219,16 @@ def main():
     if config.total:
         fulltest = open("fulltest.test", 'w')
 
+    if config.stopSaturated:
+        NUM_SESSIONS = 4
+        bestSymDiffB = -1
+        bestSymDiffS = -1
+        sessionBranches = {}
+        sessionStatements = {}
+        for session in range(0, NUM_SESSIONS):
+            sessionBranches[session] = set([])
+            sessionStatements[session] = set([])
+
     if config.localize:
         localizeSFail = {}
         localizeSPass = {}
@@ -1943,6 +1956,33 @@ def main():
                     break
             if nondeterministic:
                 break
+
+        if config.stopSaturated:
+            session = ntests % NUM_SESSIONS
+            sessionBranches[session].update(set(sut.currBranches()))
+            sessionStatements[session].update(set(sut.currStatements()))
+            largestSymDiffB = 0
+            largestSymDiffS = 0
+            for session1 in range(0, NUM_SESSIONS):
+                s1B = sessionBranches[session1]
+                s1S = sessionStatements[session1]
+                for session2 in range(0, NUM_SESSIONS):
+                    symDiffB = len(s1B.symmetric_difference(sessionBranches[session2]))
+                    if symDiffB > largestSymDiffB:
+                        largestSymDiffB = symDiffB
+                    symDiffS = len(s1S.symmetric_difference(sessionStatements[session2]))
+                    if symDiffS > largestSymDiffS:
+                        largestSymDiffS = symDiffS
+            if (largestSymDiffB == 0) and (largestSymDiffS == 0):
+                print("STOPPING DUE TO ESTIMATED COVERAGE SATURATION")
+                break
+            else:
+                if (bestSymDiffS == -1) or (largestSymDiffS < bestSymDiffS):
+                    bestSymDiffS = largestSymDiffS
+                    print("NEW BEST DISTANCE FROM STATEMENT SATURATION:", bestSymDiffS)
+                if (bestSymDiffB == -1) or (largestSymDiffB < bestSymDiffB):
+                    bestSymDiffB = largestSymDiffB
+                    print("NEW BEST DISTANCE FROM BRANCH SATURATION:", bestSymDiffB)
 
         if config.stopWhenNoCoverage is not None:
             if testsWithNoNewCoverage >= config.stopWhenNoCoverage:
