@@ -476,6 +476,7 @@ def handle_failure(
         allTheTests.append(list(test))
     test = list(test)
     sys.stdout.flush()
+    failedDuringQuick = False
     if (not newCov) and (not becauseBranchCov) and (not becauseStatementCov):
         failCount += 1
         print(msg)
@@ -670,7 +671,14 @@ def handle_failure(
                     sequences.append(provenance)
                 print("ADDED", nseq, "NEW SEQUENCES")
 
-            sut.replay(test, checkProp=not config.noCheck)
+            try:
+                sut.replay(test, checkProp=not config.noCheck, catchUncaught=True)
+            except KeyboardInterrupt as e:
+                raise e
+            except BaseException:
+                failedDuringQuick = True
+            if failedDuringQuick:
+                failedTest = list(test)
 
             anyNewCov = False
             for s in sut.allStatements():
@@ -752,6 +760,9 @@ def handle_failure(
                     allClouds[c] = True
             print("FAILURE IS NEW, STORING; NOW",
                   len(failures), "DISTINCT FAILURES")
+    if failedDuringQuick:
+        sut.replay(failedTest, checkProp=not config.noCheck, catchUncaught=True)
+        handle_failure(failedTest, "FAILURE DURING QUICK TESTING", False)
 
 
 def buildActivePool():
@@ -1376,7 +1387,7 @@ def main():
                 totalExploits += 1
             if not exploitOk:
                 testFailed = True
-                sut.replay(sut.test(), checkProp=not config.noCheck)
+                sut.replay(sut.test(), checkProp=not config.noCheck, catchUncaught=True)
                 handle_failure(sut.test(), "FAILURE DURING MUTATION", False)
                 if not config.multiple:
                     print("STOPPING TESTING DUE TO FAILED TEST")
