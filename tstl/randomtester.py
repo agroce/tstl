@@ -1226,10 +1226,8 @@ def main():
         fulltest = open("fulltest.test", 'w')
 
     if config.stopSaturated:
-        bestSymDiffB = -1
-        bestSymDiffS = -1
-        largestSymDiffB = -1
-        largestSymDiffS = -1
+        sessionCountsB = []
+        sessionCountsS = []
         sessionBranches = {}
         sessionStatements = {}
         for session in range(0, config.sessions):
@@ -1965,41 +1963,35 @@ def main():
                 break
 
         if config.stopSaturated:
+            if ntests == 1:
+                # You can't always count the first test, due to weird module initialization issues
+                # At worst this makes saturation take longer
+                continue
             session = ntests % config.sessions
             sessionBranches[session].update(set(sut.currBranches()))
             sessionStatements[session].update(set(sut.currStatements()))
-            lastLargestSymDiffB = largestSymDiffB
-            lastLargestSymDiffS = largestSymDiffS
-            largestSymDiffB = 0
-            largestSymDiffS = 0
-            # Skip analysis if not enough tests yet, meaningless results
-            if ntests > config.sessions:
+            lastSessionCountsS = sessionCountsS
+            sessionCountsS = sorted(map(len, sessionStatements.values()))
+            lastSessionCountsB = sessionCountsB
+            sessionCountsB = sorted(map(len, sessionBranches.values()))
+            if ntests > (config.sessions + 1):
+                if sessionCountsS != lastSessionCountsS:
+                    print("NEW SESSION COUNTS FOR STATEMENT SATURATION:", sessionCountsS)
+                if sessionCountsB != lastSessionCountsB:
+                    print("NEW SESSION COUNTS FOR BRANCH SATURATION:", sessionCountsB)
+            if (sessionCountsB[0] == sessionCountsB[-1]) and (sessionCountsS[0] == sessionCountsS[-1]):
+                allEqual = True
                 for session1 in range(0, config.sessions):
-                    s1B = sessionBranches[session1]
-                    s1S = sessionStatements[session1]
-                    for session2 in range(0, config.sessions):
-                        symDiffB = len(s1B.symmetric_difference(sessionBranches[session2]))
-                        if symDiffB > largestSymDiffB:
-                            largestSymDiffB = symDiffB
-                        symDiffS = len(s1S.symmetric_difference(sessionStatements[session2]))
-                        if symDiffS > largestSymDiffS:
-                            largestSymDiffS = symDiffS
-                if (largestSymDiffB == 0) and (largestSymDiffS == 0):
+                    for session2 in range(session1 + 1, config.sessions):
+                        if sessionBranches[session1] != sessionBranches[session2]:
+                            allEqual = False
+                            break
+                        if sessionStatements[session1] != sessionStatements[session2]:
+                            allEqual = False
+                            break
+                if allEqual:
                     print("STOPPING DUE TO ESTIMATED COVERAGE SATURATION")
                     break
-                else:
-                    if (bestSymDiffS == -1) or (largestSymDiffS < bestSymDiffS):
-                        bestSymDiffS = largestSymDiffS
-                        print("NEW BEST DISTANCE FROM STATEMENT SATURATION:", bestSymDiffS)
-                    elif largestSymDiffS != lastLargestSymDiffS:
-                        print("CHANGE IN STATEMENT SATURATION DISTANCE; NOW:", largestSymDiffS,
-                              "-- BEST EVER =", bestSymDiffS)
-                    if (bestSymDiffB == -1) or (largestSymDiffB < bestSymDiffB):
-                        bestSymDiffB = largestSymDiffB
-                        print("NEW BEST DISTANCE FROM BRANCH SATURATION:", bestSymDiffB)
-                    elif largestSymDiffB != lastLargestSymDiffB:
-                        print("CHANGE IN BRANCH SATURATION DISTANCE; NOW", largestSymDiffB,
-                              "-- BEST EVER =", bestSymDiffB)
 
         if config.stopWhenNoCoverage is not None:
             if testsWithNoNewCoverage >= config.stopWhenNoCoverage:
