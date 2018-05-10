@@ -1228,6 +1228,8 @@ def main():
     if config.stopSaturated:
         bestSymDiffB = -1
         bestSymDiffS = -1
+        largestSymDiffB = -1
+        largestSymDiffS = -1
         sessionBranches = {}
         sessionStatements = {}
         for session in range(0, config.sessions):
@@ -1966,28 +1968,38 @@ def main():
             session = ntests % config.sessions
             sessionBranches[session].update(set(sut.currBranches()))
             sessionStatements[session].update(set(sut.currStatements()))
+            lastLargestSymDiffB = largestSymDiffB
+            lastLargestSymDiffS = largestSymDiffS
             largestSymDiffB = 0
             largestSymDiffS = 0
-            for session1 in range(0, config.sessions):
-                s1B = sessionBranches[session1]
-                s1S = sessionStatements[session1]
-                for session2 in range(0, config.sessions):
-                    symDiffB = len(s1B.symmetric_difference(sessionBranches[session2]))
-                    if symDiffB > largestSymDiffB:
-                        largestSymDiffB = symDiffB
-                    symDiffS = len(s1S.symmetric_difference(sessionStatements[session2]))
-                    if symDiffS > largestSymDiffS:
-                        largestSymDiffS = symDiffS
-            if (largestSymDiffB == 0) and (largestSymDiffS == 0):
-                print("STOPPING DUE TO ESTIMATED COVERAGE SATURATION")
-                break
-            else:
-                if (bestSymDiffS == -1) or (largestSymDiffS < bestSymDiffS):
-                    bestSymDiffS = largestSymDiffS
-                    print("NEW BEST DISTANCE FROM STATEMENT SATURATION:", bestSymDiffS)
-                if (bestSymDiffB == -1) or (largestSymDiffB < bestSymDiffB):
-                    bestSymDiffB = largestSymDiffB
-                    print("NEW BEST DISTANCE FROM BRANCH SATURATION:", bestSymDiffB)
+            # Skip analysis if not enough tests yet, meaningless results
+            if ntests > config.sessions:
+                for session1 in range(0, config.sessions):
+                    s1B = sessionBranches[session1]
+                    s1S = sessionStatements[session1]
+                    for session2 in range(0, config.sessions):
+                        symDiffB = len(s1B.symmetric_difference(sessionBranches[session2]))
+                        if symDiffB > largestSymDiffB:
+                            largestSymDiffB = symDiffB
+                        symDiffS = len(s1S.symmetric_difference(sessionStatements[session2]))
+                        if symDiffS > largestSymDiffS:
+                            largestSymDiffS = symDiffS
+                if (largestSymDiffB == 0) and (largestSymDiffS == 0):
+                    print("STOPPING DUE TO ESTIMATED COVERAGE SATURATION")
+                    break
+                else:
+                    if (bestSymDiffS == -1) or (largestSymDiffS < bestSymDiffS):
+                        bestSymDiffS = largestSymDiffS
+                        print("NEW BEST DISTANCE FROM STATEMENT SATURATION:", bestSymDiffS)
+                    elif largestSymDiffS != lastLargestSymDiffS:
+                        print("CHANGE IN STATEMENT SATURATION DISTANCE; NOW:", largestSymDiffS,
+                              "-- BEST EVER =", bestSymDiffS)
+                    if (bestSymDiffB == -1) or (largestSymDiffB < bestSymDiffB):
+                        bestSymDiffB = largestSymDiffB
+                        print("NEW BEST DISTANCE FROM BRANCH SATURATION:", bestSymDiffB)
+                    elif largestSymDiffB != lastLargestSymDiffB:
+                        print("CHANGE IN BRANCH SATURATION DISTANCE; NOW", largestSymDiffB,
+                              "-- BEST EVER =", bestSymDiffB)
 
         if config.stopWhenNoCoverage is not None:
             if testsWithNoNewCoverage >= config.stopWhenNoCoverage:
