@@ -669,7 +669,7 @@ def handle_failure(
                             seq[j] + (outname + ":" + str(i + j),))
                     sequences.append(provenance)
                 print("ADDED", nseq, "NEW SEQUENCES")
-            sut.replay(test, checkProp=not config.noCheck)
+            sut.replay(test, checkProp=not config.noCheck, catchUncaught=True)
             anyNewCov = False
             for s in sut.allStatements():
                 if s not in beforeReduceS:
