@@ -1700,6 +1700,37 @@ def main():
         else:
             testsWithNoNewCoverage += 1
 
+        stopDueToSaturation = False
+        if config.stopSaturated:
+            if ntests == 1:
+                # You can't always count the first test, due to weird module initialization issues
+                # At worst this makes saturation take longer
+                continue
+            session = ntests % config.sessions
+            sessionBranches[session].update(set(sut.currBranches()))
+            sessionStatements[session].update(set(sut.currStatements()))
+            lastSessionCountsS = sessionCountsS
+            sessionCountsS = sorted(map(len, sessionStatements.values()))
+            lastSessionCountsB = sessionCountsB
+            sessionCountsB = sorted(map(len, sessionBranches.values()))
+            if ntests > (config.sessions + 1):
+                if sessionCountsS != lastSessionCountsS:
+                    print("NEW SESSION COUNTS FOR STATEMENT SATURATION:", sessionCountsS)
+                if sessionCountsB != lastSessionCountsB:
+                    print("NEW SESSION COUNTS FOR BRANCH SATURATION:", sessionCountsB)
+            if (sessionCountsB[0] == sessionCountsB[-1]) and (sessionCountsS[0] == sessionCountsS[-1]):
+                allEqual = True
+                for session1 in range(0, config.sessions):
+                    for session2 in range(session1 + 1, config.sessions):
+                        if sessionBranches[session1] != sessionBranches[session2]:
+                            allEqual = False
+                            break
+                        if sessionStatements[session1] != sessionStatements[session2]:
+                            allEqual = False
+                            break
+                if allEqual:
+                    stopDueToSaturation = True
+
         if (config.checkDeterminism or config.checkProcessDeterminism) and not testFailed:
             # grab the test before quick tests or something else disturbs it
             replayTest = list(sut.test())
@@ -1962,36 +1993,9 @@ def main():
             if nondeterministic:
                 break
 
-        if config.stopSaturated:
-            if ntests == 1:
-                # You can't always count the first test, due to weird module initialization issues
-                # At worst this makes saturation take longer
-                continue
-            session = ntests % config.sessions
-            sessionBranches[session].update(set(sut.currBranches()))
-            sessionStatements[session].update(set(sut.currStatements()))
-            lastSessionCountsS = sessionCountsS
-            sessionCountsS = sorted(map(len, sessionStatements.values()))
-            lastSessionCountsB = sessionCountsB
-            sessionCountsB = sorted(map(len, sessionBranches.values()))
-            if ntests > (config.sessions + 1):
-                if sessionCountsS != lastSessionCountsS:
-                    print("NEW SESSION COUNTS FOR STATEMENT SATURATION:", sessionCountsS)
-                if sessionCountsB != lastSessionCountsB:
-                    print("NEW SESSION COUNTS FOR BRANCH SATURATION:", sessionCountsB)
-            if (sessionCountsB[0] == sessionCountsB[-1]) and (sessionCountsS[0] == sessionCountsS[-1]):
-                allEqual = True
-                for session1 in range(0, config.sessions):
-                    for session2 in range(session1 + 1, config.sessions):
-                        if sessionBranches[session1] != sessionBranches[session2]:
-                            allEqual = False
-                            break
-                        if sessionStatements[session1] != sessionStatements[session2]:
-                            allEqual = False
-                            break
-                if allEqual:
-                    print("STOPPING DUE TO ESTIMATED COVERAGE SATURATION")
-                    break
+        if stopDueToSaturation:
+            print("STOPPING DUE TO ESTIMATED COVERAGE SATURATION")
+            break
 
         if config.stopWhenNoCoverage is not None:
             if testsWithNoNewCoverage >= config.stopWhenNoCoverage:
