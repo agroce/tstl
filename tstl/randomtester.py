@@ -669,7 +669,9 @@ def handle_failure(
                             seq[j] + (outname + ":" + str(i + j),))
                     sequences.append(provenance)
                 print("ADDED", nseq, "NEW SEQUENCES")
-            sut.replay(test, checkProp=not config.noCheck, catchUncaught=True)
+
+            sut.replay(test, checkProp=not config.noCheck)
+
             anyNewCov = False
             for s in sut.allStatements():
                 if s not in beforeReduceS:
@@ -691,7 +693,7 @@ def handle_failure(
                       "STATEMENTS:", len(sut.allStatements()))
                 sut.resetCov()
                 for q in allQuickTests:
-                    sut.replay(q, checkProp=not config.noCheck)
+                    sut.replay(q, checkProp=not config.noCheck, catchUncaught=True)
                 print("AFTER REPLAY, BRANCHES:", len(sut.allBranches()),
                       "STATEMENTS:", len(sut.allStatements()))
 

@@ -25,6 +25,12 @@ class TestAVL(TestCase):
             ["tstl_rt", "--noCover", "--output", ".avltest.test", "--silentSUT"])
         self.assertEqual(r, 255)
 
+        r = subprocess.call(
+            ["tstl_rt", "--noCover", "--output", ".avltest.test", "--silentSUT", "--multiple",
+             "--quickTests", "--timeout", "45"])
+        self.assertEqual(r, 255)
+        self.assertNotEqual(len(glob.glob("quick.*.test")), 0)
+
         r = subprocess.call(["tstl_replay", ".avltest.test"], stdout=dnull)
         self.assertEqual(r, 255)
 
