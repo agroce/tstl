@@ -2009,14 +2009,14 @@ def main():
 
     # REQUIRED FOR PACKAGING TSTL #
     base_path = os.path.dirname(os.path.abspath(__file__))
-    boilerplate_path = os.path.join(base_path, 'static', 'boilerplate.py')
+    boilerplate_path = os.path.join(base_path, 'static', 'boilerplate')
     with open(boilerplate_path) as boilerplate:
         for line in boilerplate:
             outf.write(baseIndent + line)
 
     if not config.noCover:
         boilerplate_path = os.path.join(
-            base_path, 'static', 'boilerplate_cov.py')
+            base_path, 'static', 'boilerplate_cov')
         with open(boilerplate_path) as boilerplate_cov:
             for line in boilerplate_cov:
                 outf.write(baseIndent + line)

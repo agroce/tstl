@@ -10,7 +10,7 @@ setup(
     packages=['tstl',],
     include_package_data = True,
     package_data = {
-        'tstl': ['static/boilerplate.py', 'static/boilerplate_cov.py'],
+        'tstl': ['static/boilerplate', 'static/boilerplate_cov'],
     },
     license='MIT',
     entry_points="""

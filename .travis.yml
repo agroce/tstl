@@ -33,7 +33,7 @@ script:
 - pyflakes tstl/*.py
 - pyflakes tests/*.py
 - pycodestyle tstl/*.py --max-line-length 120 --statistics
-- pycodestyle tstl/static/*.py --max-line-length 120 --statistics
+- pycodestyle tstl/static/boilerplate* --max-line-length 120 --statistics
 - pycodestyle tests/*.py --max-line-length 120 --statistics
 - python setup.py install
 - nosetests --verbose
