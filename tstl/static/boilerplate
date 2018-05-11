@@ -217,7 +217,12 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
                                      visited)
             if not r:
                 return r
-        self.backtrack(state)
+        try:
+            self.backtrack(state)
+        except KeyboardInterrupt as e:
+            raise e
+        except BaseException:
+            print("WARNING: FAILURE IN INITIAL EXPLORATION PATH")
     return True
 
 
