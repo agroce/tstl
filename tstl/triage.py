@@ -24,6 +24,8 @@ def parse_args():
                         help='Do not check properties.')
     parser.add_argument('--showTests', action='store_true',
                         help='Show the tests.')
+    parser.add_argument('--abstractStrings', action='store_true',
+                        help='Abstract away strings in exceptions.')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -45,6 +47,21 @@ def make_config(pargs, parser):
 
 def noDigits(str):
     return "".join(filter(lambda x: not x.isdigit(), str))
+
+
+def noStrings(str):
+    noStrStr = ""
+    inQuote = False
+    for c in str:
+        if inQuote:
+            if c == "'":
+                noStrStr += c
+                inQuote = False
+        else:
+            noStrStr += c
+            if c == "'":
+                inQuote = True
+    return noStrStr
 
 
 def main():
@@ -82,6 +99,8 @@ def main():
             e = e[:e.find("<traceback object at 0x")] + ")"
             line = t[-1][0]
             sig = (noDigits(e), noDigits(line))
+            if config.abstractStrings:
+                sig = (noStrings(sig[0]), sig[1])
             if (sig not in signatures):
                 signatures[sig] = (fn, t, sut.failure(),
                                    sut.prettyName(t[-1][0]), 1)
