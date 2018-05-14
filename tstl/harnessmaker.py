@@ -1458,7 +1458,8 @@ def main():
                     baseIndent + "assert (raised == self.refRaised)\n")
             elif config.forceRefExceptionMatch:
                 genCode.append(
-                    baseIndent + "assert (type(raised) == type(refRaised))\n")
+                    baseIndent + "assert type(raised) == type(refRaised), " +
+                    "\" (%s) == (%s) \" % (type(raised), type(refRaised))\n")
             if comparing:
                 if (not config.forceRefExceptionMatch) and not (
                         config.forceStrongRefExceptionMatch):
