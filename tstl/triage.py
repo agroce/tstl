@@ -62,17 +62,22 @@ def main():
 
     signatures = {}
 
+    numTests = 0.0
+    numInvalid = 0
+    numPassing = 0
     for fn in glob.glob(config.testglob):
         try:
             t = sut.loadTest(fn)
         except BaseException:
             print("INVALID TEST CASE:", fn)
+            numInvalid += 1
             continue
         if not config.noCheck:
             fails = sut.failsAny(t)
         else:
             fails = sut.fails(t)
         if fails:
+            numTests += 1
             e = repr(sut.failure())
             e = e[:e.find("<traceback object at 0x")] + ")"
             line = t[-1][0]
@@ -86,6 +91,8 @@ def main():
             else:
                 (sfn, st, sf, sp, count) = signatures[sig]
                 signatures[sig] = (sfn, st, sf, sp, count + 1)
+        else:
+            numPassing += 1
 
     for sig in sorted(
             signatures.keys(),
@@ -94,8 +101,17 @@ def main():
         print("=" * 80)
         print("TEST:", signatures[sig][0], "LENGTH:", len(signatures[sig][1]))
         print("OPERATION:", signatures[sig][3])
+        print("EXCEPTION:", repr(signatures[sig][2]))
         print("FAILURE:")
         traceback.print_tb(signatures[sig][2][2], file=sys.stdout)
-        print("COUNT:", signatures[sig][4])
+        print("COUNT:", signatures[sig][4],
+              "(" + str(round(signatures[sig][4]/numTests, 2) * 100) + "%)")
         if config.showTests:
             sut.prettyPrintTest(signatures[sig][1])
+    print()
+    print("*" * 80)
+    print(int(numTests), "TOTAL FAILING TESTS")
+    if numInvalid > 0:
+        print(numInvalid, "TOTAL INVALID TESTS")
+    if numPassing > 0:
+        print(numPassing, "TOTAL PASSING TESTS")
