@@ -83,6 +83,9 @@ def main():
             elif (len(t) < len(signatures[sig][1])):
                 signatures[sig] = (fn, t, sut.failure(), sut.prettyName(
                     t[-1][0]), signatures[sig][4] + 1)
+            else:
+                (sfn, st, sf, sp, count) = signatures[sig]
+                signatures[sig] = (sfn, st, sf, sp, count + 1)
 
     for sig in sorted(
             signatures.keys(),
