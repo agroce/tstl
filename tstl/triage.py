@@ -97,7 +97,10 @@ def main():
             numTests += 1
             e = repr(sut.failure())
             e = e[:e.find("<traceback object at 0x")] + ")"
-            line = t[-1][0]
+            line = sut.test()[-1][0]
+            tline = t[-1][0]
+            if line != tline:
+                print("TEST", fn, "FAILS BEFORE END OF TEST")
             sig = (noDigits(e), noDigits(line))
             if config.abstractStrings:
                 sig = (noStrings(sig[0]), sig[1])
