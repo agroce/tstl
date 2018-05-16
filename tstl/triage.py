@@ -26,6 +26,8 @@ def parse_args():
                         help='Show the tests.')
     parser.add_argument('--abstractStrings', action='store_true',
                         help='Abstract away strings in exceptions.')
+    parser.add_argument('--ignoreContaining', type=str, default=None,
+                        help='Ignore tests with provided string in an action.')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -89,6 +91,10 @@ def main():
             print("INVALID TEST CASE:", fn)
             numInvalid += 1
             continue
+        if config.ignoreContaining is not None:
+            for s in t:
+                if config.ignoreContaining in s[0]:
+                    continue
         if not config.noCheck:
             fails = sut.failsAny(t)
         else:
