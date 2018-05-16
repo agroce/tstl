@@ -92,9 +92,13 @@ def main():
             numInvalid += 1
             continue
         if config.ignoreContaining is not None:
+            foundString = False
             for s in t:
                 if config.ignoreContaining in s[0]:
-                    continue
+                    foundString = True
+                    break
+            if foundString:
+                continue
         if not config.noCheck:
             fails = sut.failsAny(t)
         else:
