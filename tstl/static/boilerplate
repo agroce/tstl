@@ -2297,31 +2297,39 @@ def alphaConvert(self, test, verbose=False):
     count = {}
     changed = True
     while changed:
+        if verbose:
+            print("RESTARTING")
         changed = False
         for p in self.__pools:
             count[p] = 0
+        i = -1
         for s in test:
+            i += 1
             if "=" not in s[0]:
                 continue
             lhs = s[0].split(" = ")[0]
             lhsp = self.poolUses(lhs)
+            if verbose:
+                print("EXAMINING:", s[0], lhsp, count)
             for (p, n) in lhsp:
                 basep = p.split("[")[0]
+                if verbose:
+                    print((p, n), "BASE", basep, count[basep])
                 if count[basep] < int(n):
                     p1new = p
                     p2new = p.replace(n, str(count[basep]))
                     if verbose:
                         print("REPLACING", p1new, "WITH", p2new)
-                    newTest = [x[0].replace(p1new, "!!P1NEW!!") for x in test]
+                    newTest = [x[0].replace(p1new, "!!P1NEW!!") for x in test[i:]]
                     newTest = [x.replace(p2new, p1new) for x in newTest]
                     newTest = [x.replace("!!P1NEW!!", p2new) for x in newTest]
                     newTest = [self.__names[x] for x in newTest]
-                    test = newTest
+                    test = test[:i] + newTest
                     # self.prettyPrintTest(test)
                     count[basep] += 1
                     changed = True
                     break
-                else:
+                elif int(n) >= count[basep]:
                     count[basep] += 1
             if changed:
                 break
