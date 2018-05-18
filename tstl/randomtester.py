@@ -156,6 +156,11 @@ def parse_args():
         action="store_true",
         help="When using swarm testing, compute coverage triggers and suppressors")
     parser.add_argument(
+        '--saveSwarmCoverage',
+        type=str,
+        default=None,
+        help="Save data on swarm configs and coverage to file.")
+    parser.add_argument(
         '--highLowSwarm',
         type=float,
         default=None,
@@ -1254,6 +1259,9 @@ def main():
         localizeBPass = {}
         testsPassed = 0
 
+    if config.saveSwarmCoverage is not None:
+        swarmf = open(config.saveSwarmCoverage, 'w')
+
     if config.computeFeatureStats:
         featureStatsB = {}
         featureStatsS = {}
@@ -1713,6 +1721,18 @@ def main():
         else:
             testsWithNoNewCoverage += 1
 
+        if config.saveSwarmCoverage is not None:
+            swarmf.write("CONFIG:\n")
+            for sclass in sut.swarmConfig():
+                swarmf.write("::::" + sclass + "\n")
+            swarmf.write("BRANCHES:\n")
+            for sbranch in sut.currBranches():
+                swarmf.write("::::" + repr(sbranch) + "\n")
+            swarmf.write("STATEMENTS:\n")
+            for sstmt in sut.currStatements():
+                swarmf.write("::::" + repr(sstmt) + "\n")
+            swarmf.flush()
+
         stopDueToSaturation = False
         if config.stopSaturated and ntests > 1:
             # You can't always count the first test, due to weird module initialization issues
@@ -2028,6 +2048,9 @@ def main():
 
     if config.total:
         fulltest.close()
+
+    if config.saveSwarmCoverage is not None:
+        swarmf.close()
 
     if config.postCover:
         sut.startCoverage()
