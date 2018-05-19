@@ -4,7 +4,6 @@ import sys
 import argparse
 import os
 from collections import namedtuple
-from math import sqrt
 from statsmodels.stats.proportion import proportion_confint
 
 # Appending current working directory to sys.path
@@ -128,7 +127,7 @@ def main():
         for t in hitT:
             if ac in t[0]:
                 hits += 1
-        hrate = float(hits) / len(hitT)
+
         low, high = proportion_confint(hits, len(hitT), method='wilson', alpha=1 - config.confidence)
 
         if low > rate:
