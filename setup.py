@@ -24,6 +24,7 @@ setup(
     tstl_generalize = tstl.generalize:main
     tstl_regress = tstl.runregressions:main
     tstl_markov = tstl.markov:main
+    tstl_directedswarm = tstl.directedswarm:main
     tstl_graph = tstl.graph:main
     tstl_afl = tstl.tstl_afl:main
     tstl_aflcorpus = tstl.makecorpus:main

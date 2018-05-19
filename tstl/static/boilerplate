@@ -701,6 +701,12 @@ def codeLOCProbs(self, baseline=0.2, codeLOCs=None):
     return P
 
 
+def writeProbFile(self, file, classProb):
+    with open(file, 'w') as f:
+        for ac in classProb:
+            f.write(ac + " %%%% " + str(classProb[ac]) + "\n")
+
+
 def readProbFile(self, file, returnList=False):
     classProb = {}
     with open(file) as f:

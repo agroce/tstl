@@ -290,6 +290,11 @@ def parse_args():
         action='store_true',
         help="Produce internal coverage report at the end.")
     parser.add_argument(
+        '--fullCoverage',
+        type=str,
+        default=None,
+        help="File to save a complete coverage report to.")
+    parser.add_argument(
         '--coverFile',
         type=str,
         default="coverage.out",
@@ -1083,7 +1088,7 @@ def main():
     hintPool = []
     hintValueCounts = {}
 
-    if config.quickAnalysis or (config.exploit is not None):
+    if config.quickAnalysis or config.fullCoverage or (config.exploit is not None):
         branchCoverageCount = {}
         statementCoverageCount = {}
 
@@ -1828,7 +1833,7 @@ def main():
                     else:
                         featureStatsS[s][1][act] += 1
 
-        if (config.exploit is not None) and (not config.quickAnalysis):
+        if ((config.exploit is not None) or (config.fullCoverage is not None)) and (not config.quickAnalysis):
             for b in sut.currBranches():
                 if b not in branchCoverageCount:
                     branchCoverageCount[b] = 1
@@ -2095,6 +2100,13 @@ def main():
                 fstatsf.write(act + " %%%% " +
                               str(featureStatsS[s][1][act]) + "\n")
         fstatsf.close()
+
+    if config.fullCoverage is not None:
+        with open(config.fullCoverage, 'w') as cf:
+            for b in sorted(branchCoverageCount.keys(), key=lambda x: branchCoverageCount[x]):
+                cf.write(str(branchCoverageCount[b]) + " " + repr(b) + "\n")
+            for s in sorted(statementCoverageCount.keys(), key=lambda x: statementCoverageCount[x]):
+                cf.write(str(statementCoverageCount[s]) + " " + repr(s) + "\n")
 
     if config.quickAnalysis:
         quickcf.close()
