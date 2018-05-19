@@ -138,7 +138,7 @@ def main():
         print("TEST:", signatures[sig][0], "LENGTH:", len(signatures[sig][1]))
         print("OPERATION:", signatures[sig][3])
         if config.actionClasses:
-            print ("ACTION CLASSES:", set(map(lambda x: sut.prettyName(x[0]), signatures[sig][1])))
+            print("ACTION CLASSES:", set(map(lambda x: sut.prettyName(x[0]), signatures[sig][1])))
         print("EXCEPTION:", repr(signatures[sig][2]))
         print("FAILURE:")
         traceback.print_tb(signatures[sig][2][2], file=sys.stdout)
