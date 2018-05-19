@@ -570,9 +570,14 @@ def makeTest(
             if stopWhen():
                 return (list(self.test()), noFailure)
         if sgenerator is None:
-            ok = self.safely(genF(i))
+            action = genF(i)
+            if action is None:
+                return (list(self.test()), "DEADLOCK")
+            ok = self.safely(action)
         else:
             (action, state) = sgenerator(state, self)
+            if action is None:
+                return (list(self.test()), "DEADLOCK")
             ok = self.safely(action)
         if not ok:
             noFailure = False
