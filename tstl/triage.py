@@ -28,6 +28,8 @@ def parse_args():
                         help='Abstract away strings in exceptions.')
     parser.add_argument('--ignoreContaining', type=str, default=None,
                         help='Ignore tests with provided string in an action.')
+    parser.add_argument('--actionClasses', action='store_true',
+                        help='Use set of action classes in test as part of signature.')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -114,6 +116,8 @@ def main():
             sig = (noDigits(e), noDigits(line))
             if config.abstractStrings:
                 sig = (noStrings(sig[0]), sig[1])
+            if config.actionClasses:
+                sig += (repr(set(map(sut.actionClass, t))), )
             if (sig not in signatures):
                 signatures[sig] = (fn, t, sut.failure(),
                                    sut.prettyName(t[-1][0]), 1)
@@ -133,6 +137,8 @@ def main():
         print("=" * 80)
         print("TEST:", signatures[sig][0], "LENGTH:", len(signatures[sig][1]))
         print("OPERATION:", signatures[sig][3])
+        if config.actionClasses:
+            print ("ACTION CLASSES:", set(map(lambda x: sut.prettyName(x[0]), signatures[sig][1])))
         print("EXCEPTION:", repr(signatures[sig][2]))
         print("FAILURE:")
         traceback.print_tb(signatures[sig][2][2], file=sys.stdout)
