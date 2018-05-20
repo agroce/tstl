@@ -477,6 +477,52 @@ results, in our experience.  In fact, a five minute run will suffice
 for good localization, often, if five minutes is sufficient to find
 your bug a few times.  Note that results are much worse if you have more than one bug!
 
+A Swarm-Based Workflow
+-----------
+One way to use swarm testing effectively is to apply _directed swarm
+testing_, an approach where data on how swarm interacts with code
+coverage is used to boost coverage of rarely covered statements and
+branches.
+
+To do this, run your initial testing using `tstl_rt` (for an hour or more) with the options:
+
+- `--swarm`
+- `--saveSwarmCoverage <filename1>`
+- `--fullCoverage <filename2>`
+
+This will test your program, and produce two files of interest.
+`<filename2>` will contain a simple text file with branches and
+statements covered, ranked by the number of times they were covered.
+This is basically a simplified version of the kind of output you may
+be familiar with from `gcov` or other tools.  You can look at this
+file, and identify interesting looking, but rarely-covered, code.
+
+Then, take the identifier (the full string, including parenthesis) of
+the interesting code and use the `tstl_directedswarm` tool like this:
+
+`tstl_directedswarm <filename1> "<coverage target>" <probFile>`
+
+(`<filename1>` is the file you produced in the original run of swarm
+testing.)  This will try to figure out which actions help ("trigger")
+and hinder ("suppress") coverage of
+the target code, and produce a file (`probFile`) with probabilities for use in more
+focused swarm testing.    If the tool doesn't identify any triggers or
+suppressors, try running again with the `--confidence` option and a
+number less than 0.95; the lower the confidence required, the more
+likely you are to find triggers and suppressors, but the less likely
+they are to be meaningful -- you can try slowly lowering until you get
+some results.  Then run testing again, like this:
+
+`tstl_rt --swarm --swarmProbs <probFile>`
+
+You should usually be able to cover the rarely-covered code well this
+way.  Since covering rarely covered code often
+uncovers interesting new never-seen-before code, you may want to
+repeat this process once you've explored the rarely-covered code from
+your intial run.  You can, of course, store swarm
+coverage and full coverage stats for the focused runs of TSTL, and keep exploring.
+
+
 TSTL and the American Fuzzy Lop (AFL) Fuzzer
 ---------
 
