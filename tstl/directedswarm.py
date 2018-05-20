@@ -118,7 +118,7 @@ def main():
 
     hitT = []
     for t in tests:
-        if target in t[1]:
+        if (target in t[1]) or (target in t[2]):
             hitT.append(t)
 
     for ac in sut.actionClasses():
