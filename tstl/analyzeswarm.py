@@ -19,12 +19,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('swarmData', metavar='filename', type=str, default=None,
                         help='Swarm coverage data to use.')
-    parser.add_argument('target', metavar='str', type=str, default=None,
-                        help='Coverage target.')
-    parser.add_argument('probFile', metavar='filename', type=str, default=None,
-                        help='File for output probabilities.')
-    parser.add_argument('--mode', type=str, default='halfswarm',
-                        help='Mode: halfswarm/no-suppressors/triggersonly (default halfswarm).')
+    parser.add_argument('prefix', metavar='filename', type=str, default=None,
+                        help='Prefix for output files.')
     parser.add_argument('--confidence', type=float, default=0.95,
                         help='Confidence level to use (default 0.95 = 95%).')
 
@@ -59,14 +55,13 @@ def main():
     except BaseException:
         pass
 
-    target = eval(config.target)
-
     tests = []
 
     mode = "CONFIG"
     entryClasses = []
     entryBranches = []
     entryStatements = []
+    print("READING DATA...")
     for line in open(config.swarmData):
         if "::::" in line:
             if mode == "CONFIG":
@@ -89,7 +84,7 @@ def main():
             mode = "BRANCHES"
         elif "STATEMENTS:" in line:
             mode = "STATEMENTS"
-
+    print("DONE")
     count = {}
 
     for t in tests:
@@ -113,55 +108,45 @@ def main():
                 acCount += 1
         rates[ac] = acCount / float(len(tests))
 
-    triggers = []
-    suppressors = []
+    eqClasses = {}
 
-    hitT = []
-    for t in tests:
-        if (target in t[1]) or (target in t[2]):
-            hitT.append(t)
+    for target in (branches + statements):
 
-    for ac in sut.actionClasses():
-        if rates[ac] == 1.0:
-            # Neither a suppressor nor trigger if present in every test!
-            continue
-        rate = rates[ac]
-        hits = 0
-        for t in hitT:
-            if ac in t[0]:
-                hits += 1
+        triggers = []
+        suppressors = []
 
-        low, high = proportion_confint(hits, len(hitT), method='wilson', alpha=1 - config.confidence)
+        hitT = []
+        for t in tests:
+            if (target in t[1]) or (target in t[2]):
+                hitT.append(t)
 
-        if low > rate:
-            triggers.append(ac)
-        if high < rate:
-            suppressors.append(ac)
+        for ac in sut.actionClasses():
+            if rates[ac] == 1.0:
+                # Neither a suppressor nor trigger if present in every test!
+                continue
+            rate = rates[ac]
+            hits = 0
+            for t in hitT:
+                if ac in t[0]:
+                    hits += 1
 
-    print("=" * 80)
-    sratio = float(count[target]) / len(tests)
-    print(target, count[target], "HITS", sratio, "RATIO")
-    print("TRIGGERS:")
-    for tr in triggers:
-        print(tr, rates[tr])
-    print()
-    print("SUPPRESSORS:")
-    for sp in suppressors:
-        print(sp, rates[sp])
-    print()
+            low, high = proportion_confint(hits, len(hitT), method='wilson', alpha=1 - config.confidence)
 
-    cp = {}
-    for ac in sut.actionClasses():
-        if ac in triggers:
-            cp[ac] = 1.0
-        elif ac in suppressors:
-            cp[ac] = 0.0
+            if low > rate:
+                triggers.append(ac)
+            if high < rate:
+                suppressors.append(ac)
+
+        signature = (tuple(sorted(triggers)), tuple(sorted(suppressors)))
+        data = (target, count[target])
+        if signature not in eqClasses:
+            eqClasses[signature] = (triggers, suppressors, [data])
         else:
-            if config.mode == "halfswarm":
-                cp[ac] = 0.5
-            elif config.mode == "triggers-only":
-                cp[ac] = 0.0
-            else:
-                cp[ac] = 1.0
+            eqClasses[signature][2].append(data)
 
-    sut.writeProbFile(config.probFile, cp)
+    for c in sorted(eqClasses.keys(), lambda x: min(map(lambda y: y[1], eqClasses[x][2]))):
+        print("="*80)
+        print("TARGETS:", map(lambda x: x[0], eqClasses[c]))
+        print("MINIMUM FREQUENCY:", map(lambda x: min(map(lambda y: y[1], eqClasses[x][2]))))
+        print("TRIGGERS:", eqClasses[c][0])
+        print("SUPPRESSORS:", eqClasses[c][1])
