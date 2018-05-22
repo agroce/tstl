@@ -23,6 +23,8 @@ def parse_args():
                         help='Prefix for output files.')
     parser.add_argument('--confidence', type=float, default=0.95,
                         help='Confidence level to use (default 0.95 = 95%).')
+    parser.add_argument('--cutoff', type=float, default=1.0,
+                        help='Frequency at which to start ignoring targets (default = 1.0).')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -55,27 +57,54 @@ def main():
     except BaseException:
         pass
 
-    tests = []
+    numTests = 0
 
     mode = "CONFIG"
     entryClasses = []
     entryBranches = []
     entryStatements = []
+
+    count = {}
+    branches = set([])
+    statements = set([])
+
+    hits = {}
+
     print("READING DATA...")
     for line in open(config.swarmData):
         if "::::" in line:
             if mode == "CONFIG":
                 ac = line.split("::::")[1][:-1]
                 entryClasses.append(ac)
+                if ac in count:
+                    count[ac] += 1
+                else:
+                    count[ac] = 1
             elif mode == "BRANCHES":
                 b = eval(line.split("::::")[1][:-1])
                 entryBranches.append(b)
+                if b in count:
+                    count[b] += 1
+                else:
+                    count[b] = 1
+                    hits[b] = []
+                branches.add(b)
             elif mode == "STATEMENTS":
                 s = eval(line.split("::::")[1][:-1])
                 entryStatements.append(s)
+                if s in count:
+                    count[s] += 1
+                else:
+                    count[s] = 1
+                    hits[s] = []
+                statements.add(s)
         elif "CONFIG:" in line:
             if entryClasses != []:
-                tests.append((entryClasses, entryBranches, entryStatements))
+                numTests += 1
+                for b in entryBranches:
+                    hits[b].append(entryClasses)
+                for s in entryStatements:
+                    hits[s].append(entryClasses)
                 entryClasses = []
                 entryBranches = []
                 entryStatements = []
@@ -84,47 +113,35 @@ def main():
             mode = "BRANCHES"
         elif "STATEMENTS:" in line:
             mode = "STATEMENTS"
+    numTests += 1
+    for b in entryBranches:
+        hits[b].append(entryClasses)
+    for s in entryStatements:
+        hits[s].append(entryClasses)
     print("DONE")
-    count = {}
-
-    for t in tests:
-        _, branches, statements = t
-        for branch in branches:
-            if branch not in count:
-                count[branch] = 1
-            else:
-                count[branch] += 1
-        for stmt in statements:
-            if stmt not in count:
-                count[stmt] = 1
-            else:
-                count[stmt] += 1
-
-    rates = {}
-    for ac in sut.actionClasses():
-        acCount = 0
-        for t in tests:
-            if ac in t[0]:
-                acCount += 1
-        rates[ac] = acCount / float(len(tests))
 
     eqClasses = {}
 
-    for target in (branches + statements):
+    targets = branches.union(statements)
+    print("ANALYZING", len(targets), "TARGETS")
+
+    analyzed = 0
+    for target in targets:
+
+        if float(count[target])/numTests >= config.cutoff:
+            analyzed += 1
+            continue
 
         triggers = []
         suppressors = []
 
-        hitT = []
-        for t in tests:
-            if (target in t[1]) or (target in t[2]):
-                hitT.append(t)
+        hitT = hits[target]
 
         for ac in sut.actionClasses():
-            if rates[ac] == 1.0:
+            rate = float(count[ac]) / numTests
+            if rate == 1.0:
                 # Neither a suppressor nor trigger if present in every test!
                 continue
-            rate = rates[ac]
             hits = 0
             for t in hitT:
                 if ac in t[0]:
@@ -139,14 +156,24 @@ def main():
 
         signature = (tuple(sorted(triggers)), tuple(sorted(suppressors)))
         data = (target, count[target])
+        analyzed += 1
         if signature not in eqClasses:
+            print("NEW EQUIVALENCE CLASS AFTER ANALYZING", analyzed, "TARGETS")
+            print("NOW", len(eqClasses), "EQUIVALENCE CLASSES")
+            print("TRIGGERS:", triggers)
+            print("SUPPRESSORS:", suppressors)
+            print("TARGET:", target)
+            print("FREQUENCY:", count[target])
             eqClasses[signature] = (triggers, suppressors, [data])
         else:
             eqClasses[signature][2].append(data)
 
     for c in sorted(eqClasses.keys(), lambda x: min(map(lambda y: y[1], eqClasses[x][2]))):
+        triggers, suppressors, targets = eqClasses[c]
+        if (triggers == []) and (suppressors == []):
+            continue  # Ignore the no-data class
         print("=" * 80)
-        print("TARGETS:", map(lambda x: x[0], eqClasses[c]))
-        print("MINIMUM FREQUENCY:", map(lambda x: min(map(lambda y: y[1], eqClasses[x][2]))))
-        print("TRIGGERS:", eqClasses[c][0])
-        print("SUPPRESSORS:", eqClasses[c][1])
+        print("# TARGETS:", len(targets))
+        print("MINIMUM FREQUENCY:", min(map(lambda x: x[1], targets)))
+        print("TRIGGERS:", triggers)
+        print("SUPPRESSORS:", suppressors)
