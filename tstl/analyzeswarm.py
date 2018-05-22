@@ -145,7 +145,7 @@ def main():
             eqClasses[signature][2].append(data)
 
     for c in sorted(eqClasses.keys(), lambda x: min(map(lambda y: y[1], eqClasses[x][2]))):
-        print("="*80)
+        print("=" * 80)
         print("TARGETS:", map(lambda x: x[0], eqClasses[c]))
         print("MINIMUM FREQUENCY:", map(lambda x: min(map(lambda y: y[1], eqClasses[x][2]))))
         print("TRIGGERS:", eqClasses[c][0])
