@@ -743,12 +743,12 @@ def standardSwarm(
         classProb = self.readProbFile(file)
 
     for c in self.__actionClasses:
-        if c not in classProb:
-            classProb[c] = P  # Use default for missing probabilites
         if classProb is None:
             if (c in self.__essentialClasses) or (rgen.random() < P):
                 newEnabled.append(c)
         else:
+            if c not in classProb:
+                classProb[c] = P
             if rgen.random() < classProb[c]:
                 newEnabled.append(c)
     if newEnabled == []:
