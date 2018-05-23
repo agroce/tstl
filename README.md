@@ -520,7 +520,22 @@ way.  Since covering rarely covered code often
 uncovers interesting new never-seen-before code, you may want to
 repeat this process once you've explored the rarely-covered code from
 your intial run.  You can, of course, store swarm
-coverage and full coverage stats for the focused runs of TSTL, and keep exploring.
+coverage and full coverage stats for the focused runs of TSTL, and
+keep exploring.
+
+A more systematic way to go about directed swarm testing is to try:
+
+`tstl_analyzeswarm <filename1> <prefix> --cutoff 0.5`
+
+to generate triggers and suppressors for ALL coverage targets hit
+during a run, grouped into equivalence classes (targets with the same
+set of triggers and suppressors) and ranked by the least-hit target in
+each equivalence class.  Just iterating through the generated
+probability files for the classes for the rarest targets is a good way
+to go about directed swarm testing.  The `0.5` above can be any
+cutoff, above which targets hit by at least that fraction of tests are
+considered well-tested and ignored.  Setting this as low as `0.01` can
+work well, for initial runs producing a large number of tests.
 
 
 TSTL and the American Fuzzy Lop (AFL) Fuzzer
