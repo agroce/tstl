@@ -25,6 +25,8 @@ def parse_args():
                         help='Confidence level to use (default 0.95 = 95%).')
     parser.add_argument('--cutoff', type=float, default=1.0,
                         help='Frequency at which to start ignoring targets (default = 1.0).')
+    parser.add_argument('--minHits', type=int, default=0,
+                        help='Minimum number of hits before analyzing a target (default = 0).')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
@@ -139,6 +141,9 @@ def main():
         suppressors = []
 
         hitT = hits[target]
+        if len(hitT) < config.minHits:
+            analyzed += 1
+            continue
 
         for ac in sut.actionClasses():
             rate = float(count[ac]) / numTests
