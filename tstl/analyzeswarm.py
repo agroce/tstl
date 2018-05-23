@@ -126,6 +126,7 @@ def main():
     print("ANALYZING", len(targets), "TARGETS")
 
     analyzed = 0
+
     for target in targets:
 
         if float(count[target])/numTests >= config.cutoff:
@@ -142,12 +143,12 @@ def main():
             if rate == 1.0:
                 # Neither a suppressor nor trigger if present in every test!
                 continue
-            hits = 0
+            chits = 0
             for t in hitT:
                 if ac in t[0]:
-                    hits += 1
+                    chits += 1
 
-            low, high = proportion_confint(hits, len(hitT), method='wilson', alpha=1 - config.confidence)
+            low, high = proportion_confint(chits, len(hitT), method='wilson', alpha=1 - config.confidence)
 
             if low > rate:
                 triggers.append(ac)
