@@ -52,6 +52,8 @@ def main():
 
     sut = SUT.sut()
 
+    verbose = False
+
     try:
         sut.stopCoverage()
     except BaseException:
@@ -159,17 +161,18 @@ def main():
         data = (target, count[target])
         analyzed += 1
         if signature not in eqClasses:
-            print("NEW EQUIVALENCE CLASS AFTER ANALYZING", analyzed, "TARGETS")
-            print("NOW", len(eqClasses), "EQUIVALENCE CLASSES")
-            print("TRIGGERS:", triggers)
-            print("SUPPRESSORS:", suppressors)
-            print("TARGET:", target)
-            print("FREQUENCY:", count[target])
+            if verbose:
+                print("NEW EQUIVALENCE CLASS AFTER ANALYZING", analyzed, "TARGETS")
+                print("NOW", len(eqClasses), "EQUIVALENCE CLASSES")
+                print("TRIGGERS:", triggers)
+                print("SUPPRESSORS:", suppressors)
+                print("TARGET:", target)
+                print("FREQUENCY:", count[target])
             eqClasses[signature] = (triggers, suppressors, [data])
         else:
             eqClasses[signature][2].append(data)
 
-    for c in sorted(eqClasses.keys(), lambda x: min(map(lambda y: y[1], eqClasses[x][2]))):
+    for c in sorted(eqClasses.keys(), key=lambda x: min(map(lambda y: y[1], eqClasses[x][2]))):
         triggers, suppressors, targets = eqClasses[c]
         if (triggers == []) and (suppressors == []):
             continue  # Ignore the no-data class
