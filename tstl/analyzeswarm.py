@@ -147,7 +147,7 @@ def main():
                 continue
             chits = 0
             for t in hitT:
-                if ac in t[0]:
+                if ac in t:
                     chits += 1
 
             low, high = proportion_confint(chits, len(hitT), method='wilson', alpha=1 - config.confidence)
@@ -172,12 +172,29 @@ def main():
         else:
             eqClasses[signature][2].append(data)
 
-    for c in sorted(eqClasses.keys(), key=lambda x: min(map(lambda y: y[1], eqClasses[x][2]))):
-        triggers, suppressors, targets = eqClasses[c]
-        if (triggers == []) and (suppressors == []):
-            continue  # Ignore the no-data class
-        print("=" * 80)
-        print("# TARGETS:", len(targets))
-        print("MINIMUM FREQUENCY:", min(map(lambda x: x[1], targets)))
-        print("TRIGGERS:", triggers)
-        print("SUPPRESSORS:", suppressors)
+    pcount = 0
+    with open(config.prefix + ".classes", 'w') as cfile:
+        for c in sorted(eqClasses.keys(), key=lambda x: min(map(lambda y: y[1], eqClasses[x][2]))):
+            triggers, suppressors, targets = eqClasses[c]
+            if (triggers == []) and (suppressors == []):
+                continue  # Ignore the no-data class
+            print("=" * 80)
+            print("# TARGETS:", len(targets))
+            print("MINIMUM FREQUENCY:", min(map(lambda x: x[1], targets)))
+            print("TRIGGERS:", triggers)
+            print("SUPPRESSORS:", suppressors)
+            cfile.write("TRIGGERS:\n")
+            cp = {}
+            for t in triggers:
+                cfile.write(t + "\n")
+                cp[t] = 1.0
+            cfile.write("SUPPRESSORS:\n")
+            for s in suppressors:
+                cfile.write(s + "\n")
+                cp[s] = 0.0
+            cfile.write("TARGETS:\n")
+            for t in targets:
+                cfile.write(repr(t[0]) + " :::: " + str(t[1]) + "\n")
+            cfile.write("FILE: " + config.prefix + "." + str(pcount) + ".prob\n")
+            sut.writeProbFile(config.prefix + "." + str(pcount) + ".prob", cp)
+            pcount += 1
