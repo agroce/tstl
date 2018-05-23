@@ -530,7 +530,11 @@ A more systematic way to go about directed swarm testing is to try:
 to generate triggers and suppressors for ALL coverage targets hit
 during a run, grouped into equivalence classes (targets with the same
 set of triggers and suppressors) and ranked by the least-hit target in
-each equivalence class.  Just iterating through the generated
+each equivalence class.  The output will be stored in files beginning
+with `<prefix>`:  a set of files named `<prefix>.N.probs` that can
+used with `--swarmProbs`, and a single `.class` file, with all the targets,
+triggers, suppressors, and minimum frequencies for classes, plus
+pointers to the related probability files.  Just iterating through the generated
 probability files for the classes for the rarest targets is a good way
 to go about directed swarm testing.  The `0.5` above can be any
 cutoff, above which targets hit by at least that fraction of tests are
