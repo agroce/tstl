@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument('--abstractStrings', action='store_true',
                         help='Abstract away strings in exceptions.')
     parser.add_argument('--ignoreContaining', type=str, default=None,
-                        help='Ignore tests with provided string in an action.')
+                        help='Ignore tests with provided string(s) in an action (separate strings with ";;").')
     parser.add_argument('--actionClasses', action='store_true',
                         help='Use set of action classes in test as part of signature.')
 
@@ -74,6 +74,9 @@ def main():
     config = make_config(parsed_args, parser)
     print(('Triaging using config={}'.format(config)))
 
+    if config.ignoreContaining is not None:
+        ignoredStrings = config.ignoreContaining.split(";;")
+
     sut = SUT.sut()
 
     try:
@@ -96,8 +99,11 @@ def main():
         if config.ignoreContaining is not None:
             foundString = False
             for s in t:
-                if config.ignoreContaining in s[0]:
-                    foundString = True
+                for istr in ignoredStrings:
+                    if istr in s[0]:
+                        foundString = True
+                        break
+                if foundString:
                     break
             if foundString:
                 continue
