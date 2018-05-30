@@ -33,6 +33,7 @@ setup(
     tstl_toafl = tstl.tocorpus:main
     tstl_fromafl = tstl.fromafl:main
     tstl_triage = tstl.triage:main
+    tstl_fpf = tstl.fpf:main
     tstl_afl_fuzz = tstl.tstl_afl_fuzz:main
     tstl_calibrate = tstl.calibrate:main
     """,
