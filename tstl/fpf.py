@@ -25,6 +25,10 @@ def parse_args():
                         help='Do not check properties.')
     parser.add_argument('--showTests', action='store_true',
                         help='Show the tests.')
+    parser.add_argument('--useFailures', action='store_true',
+                        help='Use the failure output to help distinguish bugs.')
+    parser.add_argument('--abstractStrings', action='store_true',
+                        help='Abstract away strings in exceptions.')
     parser.add_argument('--ignoreContaining', type=str, default=None,
                         help='Ignore tests with provided string(s) in an action (separate strings with ";;").')
 
@@ -98,6 +102,9 @@ def main():
 
     failingTests = {}
 
+    if config.useFailures:
+        sigs = {}
+
     for fn in glob.glob(config.testglob):
         try:
             t = sut.loadTest(fn)
@@ -122,9 +129,33 @@ def main():
             fails = sut.fails(t)
         if fails:
             ft = list(sut.test())
-            failingTests[fn] = (ft, vector(ft, sut), sut.failure())
+            v = vector(ft, sut)
+            if config.useFailures:
+                e = repr(sut.failure())
+                e = e[:e.find("<traceback object at 0x")] + ")"
+                sig = noDigits(e)
+                if config.abstractStrings:
+                    sig = noStrings(sig)
+                if sig in sigs:
+                    sigs[sig].append(fn)
+                else:
+                    sigs[sig] = [fn]
+
+            failingTests[fn] = (ft, v, sut.failure())
         else:
             numPassing += 1
+
+    if config.useFailures:
+        sk = sorted(sigs.keys())
+        for fn in failingTests:
+            vsig = []
+            for sig in sk:
+                if fn in sigs[sig]:
+                    vsig.append(1.0)
+                else:
+                    vsig.append(0.0)
+            _, v, _ = failingTests[fn]
+            v.extend(vsig)
 
     distances = {}
     for fn in failingTests:
