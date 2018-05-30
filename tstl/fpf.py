@@ -25,6 +25,8 @@ def parse_args():
                         help='Do not check properties.')
     parser.add_argument('--showTests', action='store_true',
                         help='Show the tests.')
+    parser.add_argument('--ignoreLast', action='store_true',
+                        help='Do not use last action in computing ranking.')
     parser.add_argument('--useFailures', action='store_true',
                         help='Use the failure output to help distinguish bugs.')
     parser.add_argument('--abstractStrings', action='store_true',
@@ -140,6 +142,14 @@ def main():
                     sigs[sig].append(fn)
                 else:
                     sigs[sig] = [fn]
+            if not config.ignoreLast:
+                vlast = []
+                for ac in sorted(sut.actionClasses()):
+                    if sut.actionClass(ft[-1]) == ac:
+                        vlast.append(1.0)
+                    else:
+                        vlast.append(0.0)
+                v.extend(vlast)
 
             failingTests[fn] = (ft, v, sut.failure())
         else:
