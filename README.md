@@ -698,8 +698,8 @@ handle even sets of tests that go beyond the shell expansion limit.
 We assume that you won't need to handle that many tests in regression,
 but for triage, who knows?  Another tool, `tstl_fpf` takes similar
 arguments to `tstl_triage` but instead of clustering tests into groups
-that are likely the same bug, it ranks all tests, such that highly
-unusual tests are high in the ranking, using the
+that are likely the same bug, it ranks all tests, such that very
+different tests are high in the ranking, using the
 "furthest-point-first" (FPF) method proposed by
 Chen et. al in PLDI 2013.
 
