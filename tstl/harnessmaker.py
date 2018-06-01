@@ -383,6 +383,8 @@ def genInitialization():
     genCode.append(baseIndent + "self.__warning = None\n")
     genCode.append(baseIndent + "self.__raised = None\n")
     genCode.append(baseIndent + "self.__refRaised = None\n")
+    genCode.append(baseIndent + "self.__poolsNone = set([])\n")
+    genCode.append(baseIndent + "self.__poolsUsed = set([])\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%", "") + " = {}"
@@ -393,6 +395,16 @@ def genInitialization():
         for x in range(0, poolSet[p]):
             s = baseIndent
             s += poolPrefix + p.replace("%", "") + "[" + str(x) + "] = None"
+            genCode.append(s + "\n")
+            s = baseIndent
+            s += "self.__poolsNone.add('''"
+            s += poolPrefix + p.replace("%", "") + "[" + str(x) + "]"
+            s += "''')"
+            genCode.append(s + "\n")
+            s = baseIndent
+            s += "self.__poolsUsed.add('''"
+            s += poolPrefix + p.replace("%", "") + "[" + str(x) + "]"
+            s += "''')"
             genCode.append(s + "\n")
             s = baseIndent
             s += poolPrefix + p.replace("%", "") + \
@@ -993,6 +1005,7 @@ def main():
                     forVerbose.append(g)
                     if not twiddle:
                         changes.append(g.replace("[", "_used[") + "=True")
+                        changes.append("self.__poolsUsed.add('''" + g.replace("[", "_used[") + "''')")
                 g += " is not None"
                 guardConds.append(g)
             for (used, twiddle) in drhs:
@@ -1007,6 +1020,7 @@ def main():
                     forVerbose.append(g)
                 if not twiddle:
                     changes.append(g.replace("[", "_used[") + "=True")
+                    changes.append("self.__poolsUsed.add('''" + g.replace("[", "_used[") + "''')")
             hlhs = []
             for assign in plhs:
                 if assign in hlhs:
@@ -1028,6 +1042,8 @@ def main():
                     " is None) or (self.__relaxUsedRestriction))"
                 guardConds.append(gguard)
                 changes.append(g + "=False")
+                changes.append("self.__poolsNone.discard('''" + g + "''')")
+                changes.append("self.__poolsUsed.discard('''" + g + "''')")
 
         newC = newC.replace(":=", "=")
         newC = newC.replace("~" + poolPrefix, poolPrefix)
@@ -1651,6 +1667,7 @@ def main():
     genCode.append(baseIndent + "self.__safeSafelyMode = False\n")
     genCode.append(baseIndent + "self.__simplifyCache = {}\n")
     genCode.append(baseIndent + "self.__useCould = False\n")
+    genCode.append(baseIndent + "self.__fastPoolStates = True\n")
     genCode.append(baseIndent + "self.__pools = []\n")
     genCode.append(baseIndent + "self.__poolUsers = {}\n")
     genCode.append(baseIndent + "self.__poolInitializers = {}\n")
@@ -1699,7 +1716,7 @@ def main():
     genCode.append(
         baseIndent + "self.__actions_assume_backup = list(self.__actions)\n")
 
-    genCode.append("def poolStates(self):\n")
+    genCode.append("def slowPoolStates(self):\n")
     genCode.append(baseIndent + "nonePools = []\n")
     genCode.append(baseIndent + "notUsedPools = []\n")
     for p in poolSet:

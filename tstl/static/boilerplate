@@ -226,8 +226,19 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
     return True
 
 
+def getPoolStates(self):
+    if self.__fastPoolStates:
+        return (self.__poolsNone, self.__poolsUsed)
+    else:
+        return self.slowPoolStates()
+
+
 def setUseDependencies(self, value):
     self.__useCould = value
+
+
+def setFastPoolStates(self, value):
+    self.__fastPoolStates = value
 
 
 def captureReplay(self, test):
@@ -257,7 +268,7 @@ def enabled(self):
 
 def couldBeEnabled(self):
     couldBe = set(map(lambda x: x[0], self.__actions))
-    pNone, pNotUsed = self.poolStates()
+    pNone, pNotUsed = self.getPoolStates()
     for p in pNone:
         if p in self.__poolUsers:
             for a in self.__poolUsers[p]:
