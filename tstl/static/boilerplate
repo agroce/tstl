@@ -226,6 +226,10 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
     return True
 
 
+def setUseDependencies(self, value):
+    self.__useCould = value
+
+
 def captureReplay(self, test):
     captured = ""
     for step in test:
@@ -245,7 +249,27 @@ def enabled(self):
     """
     Returns all enabled action objects.
     """
-    return [s_g_a1 for s_g_a1 in self.__actions if s_g_a1[1]()]
+    if self.__useCould:
+        return [s_g_a1 for s_g_a1 in self.couldBeEnabled() if s_g_a1[1]()]
+    else:
+        return [s_g_a1 for s_g_a1 in self.__actions if s_g_a1[1]()]
+
+
+def couldBeEnabled(self):
+    couldBe = set(map(lambda x: x[0], self.__actions))
+    pNone, pNotUsed = self.poolStates()
+    for p in pNone:
+        if p in self.__poolUsers:
+            for a in self.__poolUsers[p]:
+                couldBe.discard(a)
+    if self.__relaxUsedRestriction:
+        return map(lambda x: self.__names[x], couldBe)
+    for p in pNotUsed:
+        if p in self.__poolInitializers:
+            for a in self.__poolInitializers[p]:
+                if p not in pNone:
+                    couldBe.discard(a)
+    return map(lambda x: self.__names[x], couldBe)
 
 
 def highLowSwarm(self, rgen, P=0.5, file=None, highProb=0.9):
@@ -398,6 +422,8 @@ def randomEnabled(self, rgen, actFilter=None, enabledActs=None):
     """
     if enabledActs is not None:
         acts = list(enabledActs)
+    elif self.__useCould:
+        acts = self.couldBeEnabled()
     else:
         acts = self.__actions
     if filter is not None:

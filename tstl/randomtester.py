@@ -132,6 +132,10 @@ def parse_args():
         action='store_true',
         help="Use standard binary-search-like ddmin instead of greedy single-step method.")
     parser.add_argument(
+        '--useDependencies',
+        action='store_true',
+        help="Use dependencies to prune list of enabled actions.")
+    parser.add_argument(
         '--enumerateEnabled',
         action='store_true',
         help="Instead of guessing enabled actions, enumerate them;" +
@@ -1121,6 +1125,9 @@ def main():
             sut.setEnumerateEnabled(True)
         except BaseException:
             pass
+
+    if config.useDependencies:
+        sut.setUseDependencies(True)
 
     if config.noEnumerateEnabled:
         try:

@@ -909,6 +909,10 @@ def main():
 
     warnedAbout = []
 
+    usedBy = {}
+    initBy = {}
+    nameMap = {}
+
     for corig in code:
         act = genAct()
         guard = genGuard()
@@ -981,6 +985,10 @@ def main():
                 g = g.replace("%", "")
                 g = poolPrefix + g
                 g = g.replace(" ", "")
+                if g not in usedBy:
+                    usedBy[g] = [act]
+                else:
+                    usedBy[g].append(act)
                 if g not in forVerbose:
                     forVerbose.append(g)
                     if not twiddle:
@@ -1008,6 +1016,10 @@ def main():
                 g = g.replace("%", "")
                 g = poolPrefix + g
                 g = g.replace(" ", "")
+                if g not in initBy:
+                    initBy[g] = [act]
+                else:
+                    initBy[g].append(act)
                 gval = g
                 if gval not in forVerbose:
                     forVerbose.append(gval)
@@ -1496,50 +1508,51 @@ def main():
             newC = newC[:-1] + " " + newC[-1]
 
         allNames[newC[:-1]] = newCguard
+        nameMap[act] = newC[:-1]
 
-        d = "self.__actions.append(("
+        d = "\n" + baseIndent + baseIndent + "self.__actions.append(("
         d += "'''" + newC[:-1] + " ''',"
         d += "self." + guard + ","
-        d += "self." + act + "))\n"
+        d += "self." + act + "))"
         actDefs.append(d)
         d = "self.__names[" + "'''" + newC[:-1] + " '''] = ("
         d += "'''" + newC[:-1] + " ''',"
         d += "self." + guard + ","
-        d += "self." + act + ")\n"
+        d += "self." + act + ")"
         actDefs.append(d)
         d = "self.__actionClass[" + "'''" + newC[:-1] + \
-            " '''] = '''" + originalCode[corig] + " '''\n"
+            " '''] = '''" + originalCode[corig] + " '''"
         actDefs.append(d)
         nind += 1
         d = "self.__orderings[" + "'''" + \
-            newC[:-1] + " '''] = " + str(nind) + "\n"
+            newC[:-1] + " '''] = " + str(nind)
         actDefs.append(d)
         d = "self.__okExcepts[" + "'''" + newC[:-1] + \
-            " '''] = '''" + okExcepts + "'''\n"
+            " '''] = '''" + okExcepts + "'''"
         actDefs.append(d)
 
         if refC != newC:
-            d = "self.__refCode[" + "'''" + newC[:-1] + " '''] = []\n"
+            d = "self.__refCode[" + "'''" + newC[:-1] + " '''] = []"
             actDefs.append(d)
             d = "self.__refCode[" + "'''" + newC[:-1] + \
-                " '''].append('''" + refC[:-1] + " ''')\n"
+                " '''].append('''" + refC[:-1] + " ''')"
             actDefs.append(d)
             if comparing:
                 d = "self.__refCode[" + "'''" + newC[:-1] + \
-                    " '''].append(\"assert result == result_REF, \\\" (%s) == (%s) \\\" % (result, result_REF)\\n\")\n"
+                    " '''].append(\"assert result == result_REF, \\\" (%s) == (%s) \\\" % (result, result_REF)\\n\")"
                 actDefs.append(d)
 
         if postCode:
             d = "self.__propCode[" + "'''" + newC[:-1] + \
-                " '''] = \"\"\"" + postCode + " \"\"\"\n"
+                " '''] = \"\"\"" + postCode + " \"\"\""
             actDefs.append(d)
 
         if preSet != []:
-            d = "self.__preCode[" + "'''" + newC[:-1] + " '''] = []\n"
+            d = "self.__preCode[" + "'''" + newC[:-1] + " '''] = []"
             actDefs.append(d)
             for p in preSet:
                 d = "self.__preCode[" + "'''" + newC[:-1] + \
-                    " '''].append(r\"" + p[:-1] + "\")\n"
+                    " '''].append(r\"" + p[:-1] + "\")"
                 actDefs.append(d)
 
     # ------------------------------------------ #
@@ -1637,11 +1650,15 @@ def main():
     genCode.append(baseIndent + "self.__noReassigns = False\n")
     genCode.append(baseIndent + "self.__safeSafelyMode = False\n")
     genCode.append(baseIndent + "self.__simplifyCache = {}\n")
+    genCode.append(baseIndent + "self.__useCould = False\n")
     genCode.append(baseIndent + "self.__pools = []\n")
+    genCode.append(baseIndent + "self.__poolUsers = {}\n")
+    genCode.append(baseIndent + "self.__poolInitializers = {}\n")
     genCode.append(baseIndent + "self.__psize = {}\n")
     genCode.append(baseIndent + "self.__consts = []\n")
     genCode.append(baseIndent + "self.__opaque = []\n")
     genCode.append(baseIndent + "self.__abstraction = {}\n")
+
     for p in poolSet:
         s = baseIndent
         s += 'self.__psize["' + p.replace("%", "") + '"] = ' + str(poolSet[p])
@@ -1665,12 +1682,37 @@ def main():
                 p.replace("%", "") + '"] = "' + absSet[p] + '"'
             genCode.append(s + "\n")
 
+    for u in usedBy:
+        genCode.append(baseIndent + "self.__poolUsers['''" + u + "'''] = set([])\n")
+        for ub in usedBy[u]:
+            genCode.append(baseIndent + "self.__poolUsers['''" + u + "'''].add('''" + nameMap[ub] + " ''')\n")
+
+    for u in initBy:
+        genCode.append(baseIndent + "self.__poolInitializers['''" + u + "'''] = set([])\n")
+        for ub in initBy[u]:
+            genCode.append(baseIndent + "self.__poolInitializers['''" + u + "'''].add('''" + nameMap[ub] + " ''')\n")
+
     for d in actDefs:
         genCode.append(baseIndent + d + "\n")
     genCode.append(
         baseIndent + "self.__actions_backup = list(self.__actions)\n")
     genCode.append(
         baseIndent + "self.__actions_assume_backup = list(self.__actions)\n")
+
+    genCode.append("def poolStates(self):\n")
+    genCode.append(baseIndent + "nonePools = []\n")
+    genCode.append(baseIndent + "notUsedPools = []\n")
+    for p in poolSet:
+        for x in range(0, poolSet[p]):
+            s = baseIndent
+            pv = poolPrefix + p.replace("%", "") + "[" + str(x) + "]"
+            s += "if " + pv + " is None: nonePools.append('''" + pv + "''')"
+            genCode.append(s + "\n")
+            s = baseIndent
+            pv1 = poolPrefix + p.replace("%", "") + "_used[" + str(x) + "]"
+            s += "if not " + pv1 + ": notUsedPools.append('''" + pv + "''')"
+            genCode.append(s + "\n")
+    genCode.append(baseIndent + "return (nonePools, notUsedPools)\n")
 
     genCode.append("def restart(self):\n")
     if assumeSet != []:
