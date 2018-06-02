@@ -1611,7 +1611,7 @@ def main():
         genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
         genCode.append(baseIndent + "self.__oldCovData = None\n")
-    genCode.append(baseIndent + "self.__useCould = False\n")
+    genCode.append(baseIndent + "self.__useCould = True\n")
     genCode.append(baseIndent + "self.__actionCould = True\n")
     genCode.append(baseIndent + "self.verboseActionCould = False\n")
     genInitialization(usedBy, initBy, nameMap)

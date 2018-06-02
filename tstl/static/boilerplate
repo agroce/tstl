@@ -275,11 +275,13 @@ def couldBeEnabled(self):
     couldBe = set(map(lambda x: x[0], self.__actions))
     if self.__actionCould:
         if self.verboseActionCould:
-            pass
-            # print("NONE:", self.__disabledByNone)
-            # print("USED:", self.__disabledByUsed)
+            print("couldBe:", len(couldBe))
+            print("NONE:", len(self.__disabledByNone))
+            print("USED:", len(self.__disabledByUsed))
         couldBe -= self.__disabledByNone
         couldBe -= self.__disabledByUsed
+        if self.verboseActionCould:
+            print("couldBe:", len(couldBe))
     else:
         pNone, pNotUsed = self.getPoolStates()
         for p in pNone:
@@ -313,7 +315,11 @@ def noLongerNone(self, pool):
             for a in self.__poolUsers[pool]:
                 if self.verboseActionCould:
                     print("ENABLING", a, "DUE TO ASSIGNING TO POOL", pool)
+                    print("IN DISABLED BY USED POOL?", a in self.__disabledByUsed)
+                    print("OLD LENGTH", len(self.__disabledByNone))
                 self.__disabledByNone.discard(a)
+                if self.verboseActionCould:
+                    print("NEW LENGTH", len(self.__disabledByNone))
     else:
         self.__poolsNone.discard(pool)
 
