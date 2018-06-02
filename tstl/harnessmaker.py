@@ -373,7 +373,7 @@ def prettyName(pools, name):
     return newName
 
 
-def genInitialization():
+def genInitialization(usedBy, initBy, nameMap):
     """
     Generate initialization from configuration, poolSet
     """
@@ -385,6 +385,8 @@ def genInitialization():
     genCode.append(baseIndent + "self.__refRaised = None\n")
     genCode.append(baseIndent + "self.__poolsNone = set([])\n")
     genCode.append(baseIndent + "self.__poolsUsed = set([])\n")
+    genCode.append(baseIndent + "self.__disabledByNone = set([])\n")
+    genCode.append(baseIndent + "self.__disabledByUsed = set([])\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%", "") + " = {}"
@@ -397,12 +399,8 @@ def genInitialization():
             s += poolPrefix + p.replace("%", "") + "[" + str(x) + "] = None"
             genCode.append(s + "\n")
             s = baseIndent
-            s += "self.__poolsNone.add('''"
-            s += poolPrefix + p.replace("%", "") + "[" + str(x) + "]"
-            s += "''')"
-            genCode.append(s + "\n")
             s = baseIndent
-            s += "self.__poolsUsed.add('''"
+            s += "self.nowUsed('''"
             s += poolPrefix + p.replace("%", "") + "[" + str(x) + "]"
             s += "''')"
             genCode.append(s + "\n")
@@ -422,6 +420,7 @@ def genInitialization():
     if firstInit:
         genCode.append("# END INITIALIZATION CODE\n")
         firstInit = False
+    genCode.append(baseIndent + "if self.__useCould: self.computeInitialEnabled()\n")
     if (not config.noCover) and config.coverInit:
         genCode.append(
             baseIndent + "if self.__collectCov: self.__cov.stop()\n")
@@ -1005,7 +1004,7 @@ def main():
                     forVerbose.append(g)
                     if not twiddle:
                         changes.append(g.replace("[", "_used[") + "=True")
-                        changes.append("self.__poolsUsed.add('''" + g.replace("[", "_used[") + "''')")
+                        changes.append("self.nowUsed('''" + g.replace("[", "_[") + "''')")
                 g += " is not None"
                 guardConds.append(g)
             for (used, twiddle) in drhs:
@@ -1020,7 +1019,7 @@ def main():
                     forVerbose.append(g)
                 if not twiddle:
                     changes.append(g.replace("[", "_used[") + "=True")
-                    changes.append("self.__poolsUsed.add('''" + g.replace("[", "_used[") + "''')")
+                    changes.append("self.nowUsed('''" + g.replace("[", "_[") + "''')")
             hlhs = []
             for assign in plhs:
                 if assign in hlhs:
@@ -1037,13 +1036,13 @@ def main():
                 gval = g
                 if gval not in forVerbose:
                     forVerbose.append(gval)
+                changes.append("self.noLongerNone('''" + g + "''')")
+                changes.append("self.noLongerUsed('''" + g + "''')")
                 g = g.replace("[", "_used[")
                 gguard = "((" + g + ") or (" + gval + \
                     " is None) or (self.__relaxUsedRestriction))"
                 guardConds.append(gguard)
                 changes.append(g + "=False")
-                changes.append("self.__poolsNone.discard('''" + g + "''')")
-                changes.append("self.__poolsUsed.discard('''" + g + "''')")
 
         newC = newC.replace(":=", "=")
         newC = newC.replace("~" + poolPrefix, poolPrefix)
@@ -1618,7 +1617,8 @@ def main():
         genCode.append(baseIndent + "self.__newCurrBranches = set()\n")
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
         genCode.append(baseIndent + "self.__oldCovData = None\n")
-    genInitialization()
+    genCode.append(baseIndent + "self.__useCould = False\n")
+    genInitialization(usedBy, initBy, nameMap)
     genCode.append(baseIndent + 'self.__SUTName = """' + config.tstl.split(".tstl")[0] + '"""\n')
     genCode.append(baseIndent + "self.__actions = []\n")
     genCode.append(baseIndent + "self.__names = {}\n")
@@ -1666,7 +1666,6 @@ def main():
     genCode.append(baseIndent + "self.__noReassigns = False\n")
     genCode.append(baseIndent + "self.__safeSafelyMode = False\n")
     genCode.append(baseIndent + "self.__simplifyCache = {}\n")
-    genCode.append(baseIndent + "self.__useCould = False\n")
     genCode.append(baseIndent + "self.__fastPoolStates = True\n")
     genCode.append(baseIndent + "self.__pools = []\n")
     genCode.append(baseIndent + "self.__poolUsers = {}\n")
@@ -1785,7 +1784,7 @@ def main():
             baseIndent + "if self.__collectCov: self.__cov.stop()\n")
         genCode.append(
             baseIndent + "if self.__collectCov: self.__updateCov()\n")
-    genInitialization()
+    genInitialization(usedBy, initBy, nameMap)
     genCode.append(baseIndent + "try:\n")
     genCode.append(baseIndent + baseIndent + "test_after_restart(self)\n")
     genCode.append(baseIndent + "except:\n")

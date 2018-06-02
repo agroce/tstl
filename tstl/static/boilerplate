@@ -283,6 +283,27 @@ def couldBeEnabled(self):
     return map(lambda x: self.__names[x], couldBe)
 
 
+def nowUsed(self, pool):
+    self.__poolsUsed.add(pool)
+
+
+def noLongerNone(self, pool):
+    self.__poolsNone.discard(pool)
+
+
+def noLongerUsed(self, pool):
+    self.__poolsUsed.discard(pool)
+
+
+def computeInitialEnabled(self):
+    pNone, pNotUsed = self.slowPoolStates()
+    for p in pNone:
+        self.__poolsNone.add(p)
+        if p in self.__poolUsers:
+            for a in self.__poolUsers[p]:
+                self.__disabledByNone.add(a)
+
+
 def highLowSwarm(self, rgen, P=0.5, file=None, highProb=0.9):
     high = []
 
