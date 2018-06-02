@@ -227,7 +227,7 @@ def exploreFromHere(self, depth, checkProp=True, stopFail=True, stopCover=False,
 
 
 def getPoolStates(self):
-    if self.__fastPoolStates:
+    if self.__useCould and not self.__actionCould:
         return (self.__poolsNone, self.__poolsUsed)
     else:
         return self.slowPoolStates()
@@ -235,6 +235,10 @@ def getPoolStates(self):
 
 def setUseDependencies(self, value):
     self.__useCould = value
+
+
+def setActionApproximation(self, value):
+    self.__actionCould = value
 
 
 def setFastPoolStates(self, value):
@@ -261,44 +265,79 @@ def enabled(self):
     Returns all enabled action objects.
     """
     if self.__useCould:
-        return [s_g_a1 for s_g_a1 in self.couldBeEnabled() if s_g_a1[1]()]
+        acts = self.couldBeEnabled()
     else:
-        return [s_g_a1 for s_g_a1 in self.__actions if s_g_a1[1]()]
+        acts = self.__actions
+    return [s_g_a1 for s_g_a1 in acts if s_g_a1[1]()]
 
 
 def couldBeEnabled(self):
     couldBe = set(map(lambda x: x[0], self.__actions))
-    pNone, pNotUsed = self.getPoolStates()
-    for p in pNone:
-        if p in self.__poolUsers:
-            for a in self.__poolUsers[p]:
-                couldBe.discard(a)
-    if self.__relaxUsedRestriction:
-        return map(lambda x: self.__names[x], couldBe)
-    for p in pNotUsed:
-        if p in self.__poolInitializers:
-            for a in self.__poolInitializers[p]:
-                if p not in pNone:
+    if self.__actionCould:
+        if self.verboseActionCould:
+            pass
+            # print("NONE:", self.__disabledByNone)
+            # print("USED:", self.__disabledByUsed)
+        couldBe -= self.__disabledByNone
+        couldBe -= self.__disabledByUsed
+    else:
+        pNone, pNotUsed = self.getPoolStates()
+        for p in pNone:
+            if p in self.__poolUsers:
+                for a in self.__poolUsers[p]:
                     couldBe.discard(a)
+        if self.__relaxUsedRestriction:
+            return map(lambda x: self.__names[x], couldBe)
+        for p in pNotUsed:
+            if p in self.__poolInitializers:
+                for a in self.__poolInitializers[p]:
+                    if p not in pNone:
+                        couldBe.discard(a)
     return map(lambda x: self.__names[x], couldBe)
 
 
 def nowUsed(self, pool):
-    self.__poolsUsed.add(pool)
+    if self.__actionCould:
+        if pool in self.__poolInitializers:
+            for a in self.__poolInitializers[pool]:
+                if self.verboseActionCould:
+                    print("ENABLING", a, "DUE TO NOW USED POOL", pool)
+                self.__disabledByUsed.discard(a)
+    else:
+        self.__poolsUsed.add(pool)
 
 
 def noLongerNone(self, pool):
-    self.__poolsNone.discard(pool)
+    if self.__actionCould:
+        if pool in self.__poolUsers:
+            for a in self.__poolUsers[pool]:
+                if self.verboseActionCould:
+                    print("ENABLING", a, "DUE TO ASSIGNING TO POOL", pool)
+                self.__disabledByNone.discard(a)
+    else:
+        self.__poolsNone.discard(pool)
 
 
 def noLongerUsed(self, pool):
-    self.__poolsUsed.discard(pool)
+    if self.__actionCould:
+        if pool in self.__poolInitializers:
+            for a in self.__poolInitializers[pool]:
+                if self.verboseActionCould:
+                    print("DISABLING", a, "DUE TO NO LONGER USED POOL", pool)
+                self.__disabledByUsed.add(a)
+    else:
+        self.__poolsUsed.discard(pool)
 
 
 def computeInitialEnabled(self):
     pNone, pNotUsed = self.slowPoolStates()
     for p in pNone:
-        self.__poolsNone.add(p)
+        if self.__actionCould:
+            if p in self.__poolUsers:
+                for a in self.__poolUsers[p]:
+                    self.__disabledByNone.add(a)
+        else:
+            self.__poolsNone.add(p)
 
 
 def highLowSwarm(self, rgen, P=0.5, file=None, highProb=0.9):

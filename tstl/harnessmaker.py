@@ -385,6 +385,8 @@ def genInitialization(usedBy, initBy, nameMap):
     genCode.append(baseIndent + "self.__refRaised = None\n")
     genCode.append(baseIndent + "self.__poolsNone = set([])\n")
     genCode.append(baseIndent + "self.__poolsUsed = set([])\n")
+    genCode.append(baseIndent + "self.__disabledByNone = set([])\n")
+    genCode.append(baseIndent + "self.__disabledByUsed = set([])\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%", "") + " = {}"
@@ -395,12 +397,6 @@ def genInitialization(usedBy, initBy, nameMap):
         for x in range(0, poolSet[p]):
             s = baseIndent
             s += poolPrefix + p.replace("%", "") + "[" + str(x) + "] = None"
-            genCode.append(s + "\n")
-            s = baseIndent
-            s = baseIndent
-            s += "self.nowUsed('''"
-            s += poolPrefix + p.replace("%", "") + "[" + str(x) + "]"
-            s += "''')"
             genCode.append(s + "\n")
             s = baseIndent
             s += poolPrefix + p.replace("%", "") + \
@@ -1002,7 +998,7 @@ def main():
                     forVerbose.append(g)
                     if not twiddle:
                         changes.append(g.replace("[", "_used[") + "=True")
-                        changes.append("self.nowUsed('''" + g.replace("[", "_[") + "''')")
+                        changes.append("self.nowUsed('''" + g + "''')")
                 g += " is not None"
                 guardConds.append(g)
             for (used, twiddle) in drhs:
@@ -1017,7 +1013,7 @@ def main():
                     forVerbose.append(g)
                 if not twiddle:
                     changes.append(g.replace("[", "_used[") + "=True")
-                    changes.append("self.nowUsed('''" + g.replace("[", "_[") + "''')")
+                    changes.append("self.nowUsed('''" + g + "''')")
             hlhs = []
             for assign in plhs:
                 if assign in hlhs:
@@ -1616,6 +1612,8 @@ def main():
         genCode.append(baseIndent + "self.__newCurrStatements = set()\n")
         genCode.append(baseIndent + "self.__oldCovData = None\n")
     genCode.append(baseIndent + "self.__useCould = False\n")
+    genCode.append(baseIndent + "self.__actionCould = True\n")
+    genCode.append(baseIndent + "self.verboseActionCould = False\n")
     genInitialization(usedBy, initBy, nameMap)
     genCode.append(baseIndent + 'self.__SUTName = """' + config.tstl.split(".tstl")[0] + '"""\n')
     genCode.append(baseIndent + "self.__actions = []\n")
