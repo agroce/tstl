@@ -385,8 +385,6 @@ def genInitialization(usedBy, initBy, nameMap):
     genCode.append(baseIndent + "self.__refRaised = None\n")
     genCode.append(baseIndent + "self.__poolsNone = set([])\n")
     genCode.append(baseIndent + "self.__poolsUsed = set([])\n")
-    genCode.append(baseIndent + "self.__disabledByNone = set([])\n")
-    genCode.append(baseIndent + "self.__disabledByUsed = set([])\n")
     for p in poolSet:
         s = baseIndent
         s += poolPrefix + p.replace("%", "") + " = {}"
