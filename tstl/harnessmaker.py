@@ -414,7 +414,6 @@ def genInitialization(usedBy, initBy, nameMap):
     if firstInit:
         genCode.append("# END INITIALIZATION CODE\n")
         firstInit = False
-    genCode.append(baseIndent + "if self.__useCould: self.computeInitialEnabled()\n")
     if (not config.noCover) and config.coverInit:
         genCode.append(
             baseIndent + "if self.__collectCov: self.__cov.stop()\n")
@@ -1704,6 +1703,8 @@ def main():
         for ub in initBy[u]:
             genCode.append(baseIndent + "self.__poolInitializers['''" + u + "'''].add('''" + nameMap[ub] + " ''')\n")
 
+    genCode.append(baseIndent + "if self.__useCould: self.computeInitialEnabled()\n")
+
     for d in actDefs:
         genCode.append(baseIndent + d + "\n")
     genCode.append(
@@ -1781,6 +1782,7 @@ def main():
         genCode.append(
             baseIndent + "if self.__collectCov: self.__updateCov()\n")
     genInitialization(usedBy, initBy, nameMap)
+    genCode.append(baseIndent + "if self.__useCould: self.computeInitialEnabled()\n")
     genCode.append(baseIndent + "try:\n")
     genCode.append(baseIndent + baseIndent + "test_after_restart(self)\n")
     genCode.append(baseIndent + "except:\n")
