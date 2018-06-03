@@ -1029,8 +1029,8 @@ def main():
                 gval = g
                 if gval not in forVerbose:
                     forVerbose.append(gval)
-                changes.append("self.noLongerNone('''" + g + "''')")
-                changes.append("self.noLongerUsed('''" + g + "''')")
+                changes.append("if " + g + " is not None: self.noLongerNone('''" + g + "''')")
+                changes.append("if " + g + " is not None: self.noLongerUsed('''" + g + "''')")
                 g = g.replace("[", "_used[")
                 gguard = "((" + g + ") or (" + gval + \
                     " is None) or (self.__relaxUsedRestriction))"
