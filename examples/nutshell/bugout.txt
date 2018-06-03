@@ -1,0 +1,507 @@
+nutshell
+RUN 0
+RUN 1
+RUN 2
+Reduced test length to 55
+Guard pruning reduced test length to 48
+Reduced test length to 47
+Guard pruning reduced test length to 46
+Reduced test length to 45
+Guard pruning reduced test length to 44
+Reduced test length to 43
+Guard pruning reduced test length to 34
+Reduced test length to 33
+Reduced test length to 32
+Guard pruning reduced test length to 28
+Reduced test length to 27
+Reduced test length to 26
+Reduced test length to 25
+Guard pruning reduced test length to 21
+Reduced test length to 20
+Guard pruning reduced test length to 17
+Reduced test length to 16
+Reduced test length to 15
+Reduced test length to 14
+Reduced test length to 13
+Reduced test length to 12
+Reduced test length to 11
+Guard pruning reduced test length to 10
+Reduced test length to 9
+Reduced test length to 8
+Reduced test length to 7
+int5 = 0                                                                 # STEP 0
+int4 = int(math.pow(2,int5))                                             # STEP 1
+int4 *= 3                                                                # STEP 2
+int9 = int(math.pow(2,int4))                                             # STEP 3
+int0 = int(math.pow(2,int9))                                             # STEP 4
+int8 = int(math.pow(2,int0))                                             # STEP 5
+int6 = int(math.pow(2,int8))                                             # STEP 6
+ACTION: int5 = 0 
+ENABLING self.p_int[2] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 130
+NEW LENGTH 129
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 129
+NEW LENGTH 128
+ENABLING self.p_int[5] -= 3  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 128
+NEW LENGTH 127
+ENABLING self.p_int[5] += 4  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 127
+NEW LENGTH 126
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 126
+NEW LENGTH 125
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 125
+NEW LENGTH 124
+ENABLING self.p_int[7] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 124
+NEW LENGTH 123
+ENABLING self.p_int[6] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 123
+NEW LENGTH 122
+ENABLING self.p_int[5] *= 3  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 122
+NEW LENGTH 121
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 121
+NEW LENGTH 120
+ENABLING self.p_int[1] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 120
+NEW LENGTH 119
+ENABLING self.p_int[3] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 119
+NEW LENGTH 118
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[5]))  DUE TO ASSIGNING TO POOL self.p_int[5]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 118
+NEW LENGTH 117
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[4]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[5]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[3]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[6]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[8]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[9]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[2]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = 0  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[7]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[0]))  DUE TO NO LONGER USED POOL self.p_int[5]
+DISABLING self.p_int[5] = int(math.pow(2,self.p_int[1]))  DUE TO NO LONGER USED POOL self.p_int[5]
+ACTION: int4 = int(math.pow(2,int5)) 
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[4]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[5]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[3]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[6]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[8]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[9]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[2]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = 0  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[7]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[0]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[1]))  DUE TO NOW USED POOL self.p_int[5]
+ENABLING self.p_int[3] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 117
+NEW LENGTH 116
+ENABLING self.p_int[4] *= 3  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 116
+NEW LENGTH 115
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 115
+NEW LENGTH 114
+ENABLING self.p_int[2] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 114
+NEW LENGTH 113
+ENABLING self.p_int[4] += 4  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 113
+NEW LENGTH 112
+ENABLING self.p_int[6] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 112
+NEW LENGTH 111
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 111
+NEW LENGTH 110
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 110
+NEW LENGTH 109
+ENABLING self.p_int[1] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 109
+NEW LENGTH 108
+ENABLING self.p_int[4] -= 3  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 108
+NEW LENGTH 107
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 107
+NEW LENGTH 106
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 106
+NEW LENGTH 105
+ENABLING self.p_int[7] = int(math.pow(2,self.p_int[4]))  DUE TO ASSIGNING TO POOL self.p_int[4]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 105
+NEW LENGTH 104
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[5]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[0]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[7]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[6]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = 0  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[3]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[2]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[9]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[4]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[1]))  DUE TO NO LONGER USED POOL self.p_int[4]
+DISABLING self.p_int[4] = int(math.pow(2,self.p_int[8]))  DUE TO NO LONGER USED POOL self.p_int[4]
+ACTION: int4 *= 3 
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[5]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[0]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[7]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[6]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = 0  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[3]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[2]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[9]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[4]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[1]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[8]))  DUE TO NOW USED POOL self.p_int[4]
+ACTION: int9 = int(math.pow(2,int4)) 
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[5]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[0]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[7]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[6]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = 0  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[3]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[2]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[9]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[4]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[1]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[8]))  DUE TO NOW USED POOL self.p_int[4]
+ENABLING self.p_int[2] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 104
+NEW LENGTH 103
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 103
+NEW LENGTH 102
+ENABLING self.p_int[9] -= 3  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 102
+NEW LENGTH 101
+ENABLING self.p_int[6] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 101
+NEW LENGTH 100
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 100
+NEW LENGTH 99
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 99
+NEW LENGTH 98
+ENABLING self.p_int[7] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 98
+NEW LENGTH 97
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 97
+NEW LENGTH 96
+ENABLING self.p_int[9] += 4  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 96
+NEW LENGTH 95
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 95
+NEW LENGTH 94
+ENABLING self.p_int[9] *= 3  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 94
+NEW LENGTH 93
+ENABLING self.p_int[1] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 93
+NEW LENGTH 92
+ENABLING self.p_int[3] = int(math.pow(2,self.p_int[9]))  DUE TO ASSIGNING TO POOL self.p_int[9]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 92
+NEW LENGTH 91
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[7]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[8]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[9]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[2]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = 0  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[6]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[3]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[4]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[5]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[0]))  DUE TO NO LONGER USED POOL self.p_int[9]
+DISABLING self.p_int[9] = int(math.pow(2,self.p_int[1]))  DUE TO NO LONGER USED POOL self.p_int[9]
+ACTION: int0 = int(math.pow(2,int9)) 
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[7]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[8]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[9]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[2]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = 0  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[6]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[3]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[4]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[5]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[0]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[1]))  DUE TO NOW USED POOL self.p_int[9]
+ENABLING self.p_int[6] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 91
+NEW LENGTH 90
+ENABLING self.p_int[7] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 90
+NEW LENGTH 89
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 89
+NEW LENGTH 88
+ENABLING self.p_int[1] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 88
+NEW LENGTH 87
+ENABLING self.p_int[0] += 4  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 87
+NEW LENGTH 86
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 86
+NEW LENGTH 85
+ENABLING self.p_int[0] *= 3  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 85
+NEW LENGTH 84
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 84
+NEW LENGTH 83
+ENABLING self.p_int[0] -= 3  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 83
+NEW LENGTH 82
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 82
+NEW LENGTH 81
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 81
+NEW LENGTH 80
+ENABLING self.p_int[2] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 80
+NEW LENGTH 79
+ENABLING self.p_int[3] = int(math.pow(2,self.p_int[0]))  DUE TO ASSIGNING TO POOL self.p_int[0]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 79
+NEW LENGTH 78
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[0]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[5]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = 0  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[1]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[8]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[4]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[3]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[2]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[9]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[7]))  DUE TO NO LONGER USED POOL self.p_int[0]
+DISABLING self.p_int[0] = int(math.pow(2,self.p_int[6]))  DUE TO NO LONGER USED POOL self.p_int[0]
+ACTION: int8 = int(math.pow(2,int0)) 
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[0]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[5]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = 0  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[1]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[8]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[4]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[3]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[2]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[9]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[7]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[6]))  DUE TO NOW USED POOL self.p_int[0]
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 78
+NEW LENGTH 77
+ENABLING self.p_int[2] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 77
+NEW LENGTH 76
+ENABLING self.p_int[8] *= 3  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 76
+NEW LENGTH 75
+ENABLING self.p_int[8] -= 3  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 75
+NEW LENGTH 74
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 74
+NEW LENGTH 73
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 73
+NEW LENGTH 72
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 72
+NEW LENGTH 71
+ENABLING self.p_int[3] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 71
+NEW LENGTH 70
+ENABLING self.p_int[6] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 70
+NEW LENGTH 69
+ENABLING self.p_int[7] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 69
+NEW LENGTH 68
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 68
+NEW LENGTH 67
+ENABLING self.p_int[1] = int(math.pow(2,self.p_int[8]))  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 67
+NEW LENGTH 66
+ENABLING self.p_int[8] += 4  DUE TO ASSIGNING TO POOL self.p_int[8]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 66
+NEW LENGTH 65
+DISABLING self.p_int[8] = 0  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[1]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[4]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[3]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[2]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[8]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[7]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[6]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[9]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[0]))  DUE TO NO LONGER USED POOL self.p_int[8]
+DISABLING self.p_int[8] = int(math.pow(2,self.p_int[5]))  DUE TO NO LONGER USED POOL self.p_int[8]
+ACTION: int6 = int(math.pow(2,int8)) 
+ENABLING self.p_int[8] = 0  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[1]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[4]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[3]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[2]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[8]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[7]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[6]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[9]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[0]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[5]))  DUE TO NOW USED POOL self.p_int[8]
+ENABLING self.p_int[6] *= 3  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 65
+NEW LENGTH 64
+ENABLING self.p_int[2] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 64
+NEW LENGTH 63
+ENABLING self.p_int[3] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 63
+NEW LENGTH 62
+ENABLING self.p_int[4] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 62
+NEW LENGTH 61
+ENABLING self.p_int[9] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 61
+NEW LENGTH 60
+ENABLING self.p_int[6] -= 3  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 60
+NEW LENGTH 59
+ENABLING self.p_int[5] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 59
+NEW LENGTH 58
+ENABLING self.p_int[6] += 4  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 58
+NEW LENGTH 57
+ENABLING self.p_int[1] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 57
+NEW LENGTH 56
+ENABLING self.p_int[7] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 56
+NEW LENGTH 55
+ENABLING self.p_int[8] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 55
+NEW LENGTH 54
+ENABLING self.p_int[0] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 54
+NEW LENGTH 53
+ENABLING self.p_int[6] = int(math.pow(2,self.p_int[6]))  DUE TO ASSIGNING TO POOL self.p_int[6]
+IN DISABLED BY USED POOL? False
+OLD LENGTH 53
+NEW LENGTH 52
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[1]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[0]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[9]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[8]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[5]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[4]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[2]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[7]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[3]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = int(math.pow(2,self.p_int[6]))  DUE TO NO LONGER USED POOL self.p_int[6]
+DISABLING self.p_int[6] = 0  DUE TO NO LONGER USED POOL self.p_int[6]
+couldBe: 140
+NONE: 52
+USED: 11
+couldBe: 81
+MISSING ACTION: self.p_int[6] = 0 
+DETAILS: ('self.p_int[6] = 0 ', <bound method sut.guard6 of <sut.sut object at 0x102e18e90>>, <bound method sut.act6 of <sut.sut object at 0x102e18e90>>)
+ALSO MISSING: self.p_int[6] = 0 
+ALSO MISSING: self.p_int[6] = int(math.pow(2,self.p_int[0])) 
+ALSO MISSING: self.p_int[6] = int(math.pow(2,self.p_int[4])) 
+ALSO MISSING: self.p_int[6] = int(math.pow(2,self.p_int[5])) 
+ALSO MISSING: self.p_int[6] = int(math.pow(2,self.p_int[8])) 
+ALSO MISSING: self.p_int[6] = int(math.pow(2,self.p_int[9])) 
+75 VS 69
+0 OVERAPPROXIMATIONS OUT OF 69
+Traceback (most recent call last):
+  File "testapprox.py", line 68, in <module>
+    assert(False)
+AssertionError
