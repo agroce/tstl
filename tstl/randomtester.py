@@ -316,6 +316,8 @@ def parse_args():
     parser.add_argument('--throughput', action='store_true',
                         help='Measure action throughput.')
     parser.add_argument('--profile', action='store_true', help="Profile actions.")
+    parser.add_argument('--profileProbs', action='store_true',
+                        help="Use action profile to prefer less-taken actions.")
     parser.add_argument(
         '--stopSaturated',
         action='store_true',
@@ -1198,12 +1200,18 @@ def main():
     if config.logging is not None:
         sut.setLog(config.logging)
 
-    if config.profile:
+    if config.profile or config.profileProbs:
         profileTime = {}
         profileCount = {}
         for a in sut.actionClasses():
             profileTime[a] = 0.0
             profileCount[a] = 0
+
+    if config.profileProbs:
+        classP = []
+        cP = 1.0 / len(sut.actionClasses())
+        for c in sut.actionClasses():
+            classP.append((cP, c))
 
     if config.markov is not None:
         mprobs = {}
@@ -1484,7 +1492,7 @@ def main():
             else:
                 if (config.markov is None) or (R.random() > config.markovP):
                     if (config.highLowSwarm is None) and (config.probs is None) and (
-                            not config.LOCProbs) and (not config.equalProbs):
+                            not config.LOCProbs) and (not config.equalProbs) and (not config.profileProbs):
                         a = sut.randomEnabled(R)
                     else:
                         a = sut.randomEnabledClassProbs(R, classP)
@@ -1562,9 +1570,19 @@ def main():
             thisOpTime = time.time() - startOp
             nops += 1
             thisOps += 1
-            if config.profile:
+            if config.profile or config.profileProbs:
                 profileTime[sut.actionClass(a)] += thisOpTime
                 profileCount[sut.actionClass(a)] += 1
+            if config.profileProbs:
+                classP = []
+                mostTaken = max(profileCount.values()) + 1
+                runningP = 0.0
+                for c in sut.actionClasses():
+                    runningP += (mostTaken - profileCount[c])
+                    classP.append((mostTaken - profileCount[c], c))
+                classP = map(lambda x: (x[0] / runningP, x[1]), classP)
+                print("CLASS P:", classP)
+
             opTime += thisOpTime
             if sut.warning() is not None:
                 print("SUT WARNING:", sut.warning())
