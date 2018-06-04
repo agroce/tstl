@@ -1581,7 +1581,6 @@ def main():
                     runningP += (mostTaken - profileCount[c])
                     classP.append((mostTaken - profileCount[c], c))
                 classP = map(lambda x: (x[0] / runningP, x[1]), classP)
-                print("CLASS P:", classP)
 
             opTime += thisOpTime
             if sut.warning() is not None:
