@@ -446,7 +446,32 @@ Then you use that generated file to guide testing:
 
 `tstl_rt --biasLOC sut.loc`
 
-It's also a good idea, for faster testing (since the power of random testing is partly in generating huge numbers of tests every minute), to turn off code coverage collection with `--noCover`.  This isn't so great if you are looking to see if your tests cover your code well, but for pedal-to-the-metal bug-hunting, it is often the way to go.
+It's also a good idea, for faster testing (since the power of random
+testing is partly in generating huge numbers of tests every minute),
+to turn off code coverage collection with `--noCover`.  This isn't so
+great if you are looking to see if your tests cover your code well,
+but for pedal-to-the-metal bug-hunting, it is often the way to go.
+
+There are other things that can improve testing.  The `--profileProbs`
+option gathers information on how often each action in the TSTL
+harness has been taking during testing, and biases random action
+choice towards actions that have been taken fewer times.  This slows
+down test generation substantially in most cases, but for many
+programs (especially complex ones) it also dramatically improves code
+coverage and fault detection, by exploring hard-to-hit actions, and
+spending less time generating input data vs. running the SUT.
+
+For some programs, the structure of the harness file slows down test
+generation, and the `--useDependencies` can improve test throughput by
+a factor of 2-10x.  However, for most programs this option slows down
+test generation by roughly a factor of two.
+
+Because the utility of these options varies so widely, it is best to
+simply try them out.  For `--profileProbs` you should see a large
+increase in code coverage if it is effective for your testing problem
+(probably accompanied by a large drop in the number of tests generated),
+and for `--useDependencies` you should see a large increase in the
+number of tests/test operations performed.
 
 You can also try a "genetic algorithms" approach guided by coverage, that exploits "high coverage" tests:
 
@@ -456,7 +481,13 @@ Adding `--reducePool` sometimes also improves the performance of this method.
 
 You can tune the exploit and mutate parameters to see if they improve results.  You can even combine lines-of-code bias with the `exploit` approach and/or swarm testing.  Sometimes testing benefits from having all three!  Unfortunately, using `--exploit` does mean you can't get away with `--noCover` to avoid the overhead of computing code coverage.
 
-To get a set of very fast "regression tests" you can run `tstl_rt` for a long time in a good configuration with the `--quickTests` option, and generate a set of very short tests with high code coverage.
+We're working on a way to get TSTL to perform experiments
+automatically and advise you of the best configuration for testing a
+given harness.
+
+To get a set of very fast "regression tests" you can run `tstl_rt` for
+a long time in a good configuration with the `--quickTests` option,
+and generate a set of very short tests with high code coverage.
 
 Fault Localization
 -----
