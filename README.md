@@ -454,12 +454,17 @@ but for pedal-to-the-metal bug-hunting, it is often the way to go.
 
 There are other things that can improve testing.  The `--profileProbs`
 option gathers information on how often each action in the TSTL
-harness has been taking during testing, and biases random action
+harness has been taken during testing, and linearly biases random action
 choice towards actions that have been taken fewer times.  This slows
 down test generation substantially in most cases, but for many
 programs (especially complex ones) it also dramatically improves code
 coverage and fault detection, by exploring hard-to-hit actions, and
-spending less time generating input data vs. running the SUT.
+spending less time generating input data vs. running the SUT.  In
+these cases the loss in test throughput produced by attempts to take
+likely-disabled actions is much more than compensated
+for by an improvement in test quality.  Because both rely on setting
+action probabilities, `--profileProbs` and `--biasLOC` are
+unfortunately not compatible.
 
 For some programs, the structure of the harness file slows down test
 generation, and the `--useDependencies` can improve test throughput by
@@ -479,7 +484,9 @@ You can also try a "genetic algorithms" approach guided by coverage, that exploi
 
 Adding `--reducePool` sometimes also improves the performance of this method.
 
-You can tune the exploit and mutate parameters to see if they improve results.  You can even combine lines-of-code bias with the `exploit` approach and/or swarm testing.  Sometimes testing benefits from having all three!  Unfortunately, using `--exploit` does mean you can't get away with `--noCover` to avoid the overhead of computing code coverage.
+You can tune the exploit and mutate parameters to see if they improve
+results.  You can even combine lines-of-code bias or profile-based
+probabilities with the `exploit` approach and/or swarm testing.  Unfortunately, using `--exploit` does mean you can't get away with `--noCover` to avoid the overhead of computing code coverage.
 
 We're working on a way to get TSTL to perform experiments
 automatically and advise you of the best configuration for testing a
