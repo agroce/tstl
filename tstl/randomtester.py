@@ -171,6 +171,8 @@ def parse_args():
         help="Apply high/low probability swarm testing with high portion of action being P.")
     parser.add_argument('--swarmProbs', type=str, default=None,
                         help="File with probabilities for any kind of swarm.")
+    parser.add_argument('--swarmFromTest', type=str, default=None,
+                        help="File with test on which to base 0/1 swarm probabilities.")
     parser.add_argument(
         '--swarmSwitch',
         type=int,
@@ -1289,6 +1291,15 @@ def main():
 
     if config.swarmProbs is not None:
         swarmClassProbs = sut.readProbFile(config.swarmProbs)
+    elif config.swarmFromTest is not None:
+        t = sut.loadTest(config.swarmFromTest)
+        ac = set(map(sut.actionClass, t))
+        classP = []
+        for c in sut.actionClasses():
+            if c in ac:
+                classP.append((1.0, c))
+            else:
+                classP.append((0.0, c))
     else:
         swarmClassProbs = None
 
