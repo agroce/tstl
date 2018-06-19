@@ -1294,12 +1294,12 @@ def main():
     elif config.swarmFromTest is not None:
         t = sut.loadTest(config.swarmFromTest)
         ac = set(map(sut.actionClass, t))
-        classP = []
+        swarmClassProbs = {}
         for c in sut.actionClasses():
             if c in ac:
-                classP.append((1.0, c))
+                swarmClassProbs[c] = 1.0
             else:
-                classP.append((0.0, c))
+                swarmClassProbs[c] = 0.0
     else:
         swarmClassProbs = None
 
