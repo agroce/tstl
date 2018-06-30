@@ -59,6 +59,10 @@ def parse_args():
     parser.add_argument('--skipFails', action='store_true',
                         help='Skip over failed tests during corpus generation')
     parser.add_argument(
+        '--persist',
+        action='store_true',
+        help='Use persistent mode')
+    parser.add_argument(
         '--thorough',
         action='store_true',
         help='Include afl deterministic steps (slows things down A LOT)')
@@ -66,10 +70,6 @@ def parse_args():
         '--instrumentAll',
         action='store_true',
         help='Instrument TSTL harness as well (usually not a good idea)')
-    parser.add_argument(
-        '--persist',
-        action='store_true',
-        help='Use persistent mode (experimental and not recommended')
 
     parsed_args = parser.parse_args(sys.argv[1:])
     return (parsed_args, parser)
