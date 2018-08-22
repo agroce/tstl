@@ -18,7 +18,7 @@ def runTest(contract, optimize, verbose=False):
     client.reset_evm()
     a0 = sorted(client.get_accounts())[0]
     try:
-        bin = compile_source(contract,optimize=optimize).values()[0]['bin']
+        bin = list(compile_source(contract,optimize=optimize).values())[0]['bin']
     except SolcError as e:
         if "Compiler error: Stack too deep" in str(e):
             return ("STACK TOO DEEP", None, None)
