@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='tstl',
-    version='1.2.25',
+    version='1.2.26',
     description='Template scripting testing language (TSTL)',
     long_description_content_type="text/markdown",    
     long_description=open('README.md').read(),
@@ -47,7 +47,7 @@ setup(
       "Programming Language :: Python :: 3",
       ],
     install_requires=[
-      'coverage',
+      'coverage==4.5.1',
     ],
     url='https://github.com/agroce/tstl',
 )
