@@ -531,7 +531,7 @@ action probabilities, `--profileProbs` and `--biasLOC` are
 unfortunately not compatible.
 
 For some programs, the structure of the harness file slows down test
-generation, and the `--useDependencies` can improve test throughput by
+generation, and the `--useDependencies` option can improve test throughput by
 a factor of 2-10x.  However, for most programs this option slows down
 test generation by roughly a factor of two.
 
