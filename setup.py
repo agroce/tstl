@@ -47,7 +47,7 @@ setup(
       "Programming Language :: Python :: 3",
       ],
     install_requires=[
-      'coverage==4.5.1',
+      'coverage==4.5.2',
     ],
     url='https://github.com/agroce/tstl',
 )
