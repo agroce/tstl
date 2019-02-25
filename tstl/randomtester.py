@@ -582,7 +582,10 @@ def handle_failure(
             sut.saveTest(test, config.output.replace(".test", ".reduced.test"))
         print("Reduced test has", len(test), "steps")
         if not failProp(test):
-            print("REDUCED TEST DOES NOT FAIL:")
+            if newCov:
+                print("REDUCED TEST DOES NOT PRESERVE COVERAGE:")
+            else:
+                print("REDUCED TEST DOES NOT FAIL:")
             sut.prettyPrintTest(test)
             assert False
         print("REDUCED IN", time.time() - startReduce, "SECONDS")
