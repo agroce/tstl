@@ -11,8 +11,8 @@ def breakByNumber(s):
         if curr == "":
             curr += s[c]
         elif ((s[c] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) ==
-              (curr[-1] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])):
-                curr += s[c]
+                (curr[-1] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])):
+            curr += s[c]
         else:
             breaks.append(curr)
             curr = s[c]
