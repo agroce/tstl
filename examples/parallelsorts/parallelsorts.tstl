@@ -1,0 +1,18 @@
+@import mergesort
+@import swapsort
+
+pool: <val> 10
+pool: <data> 10
+pool: <sorted> 10
+
+<val> := <[-10..10]>
+
+<data> := []
+<data>.append((<val>,<val>))
+len(<data,1>) < len(<data,2>) -> <data>.extend(<data>)
+
+<sorted> := mergesort.merge_sort_parallel(<data>)
+<sorted> := swapsort.swap_sort_parallel(<data>)
+print(<sorted>)
+
+property: swapsort.is_sorted(<sorted>)
