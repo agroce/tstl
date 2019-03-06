@@ -52,6 +52,7 @@ class TestExamples(TestCase):
             "maze",
             "numpy",
             "osquery",
+            "parallelsorts",
             "pyfakefs",
             "stringh",
             "sympy",
@@ -67,7 +68,6 @@ class TestExamples(TestCase):
             "biopython",
             "danluuexample",
             "eval",
-            "parallelsorts",
             "rsa",
             "tensorflow"]
 
