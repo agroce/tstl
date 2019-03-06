@@ -67,6 +67,7 @@ class TestExamples(TestCase):
             "biopython",
             "danluuexample",
             "eval",
+            "parallelsorts",
             "rsa",
             "tensorflow"]
 
