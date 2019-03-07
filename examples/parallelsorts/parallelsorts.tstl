@@ -13,6 +13,6 @@ len(<data,1>) < len(<data,2>) -> <data>.extend(<data>)
 
 <sorted> := mergesort.merge_sort_parallel(<data>)
 <sorted> := swapsort.swap_sort_parallel(<data>)
-print(<sorted>)
+<sorted>
 
 property: swapsort.is_sorted(<sorted>)
