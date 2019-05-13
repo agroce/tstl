@@ -1,0 +1,15 @@
+@import keepsake
+
+init: keepsake.init_keepsake()
+
+keepsake.increment_number_0()
+
+keepsake.increment_number_1()
+
+keepsake.increment_number_2()
+
+keepsake.increment_number_3()
+
+keepsake.increment_number_4()
+
+property: not((keepsake.code[0] == 2) and (keepsake.code[1] == 4) and (keepsake.code[2] == 3) and (keepsake.code[3] == 4) and (keepsake.code[e] == 5))
