@@ -6,18 +6,18 @@ def init_keepsake():
 
 def increment_number_0():
     code[0] = code[0] + 1
-    code[4] = code[4] + 2
+    code[3] = code[3] + 2
     fix_numbers();
 
 
 def increment_number_1():
     code[1] = code[1] + 1
-    code[3] = code[3] + 2
+    code[2] = code[2] + 2
     fix_numbers();
 
 def increment_number_2():
     code[2] = code[2] + 1
-    code[0] = code[0] + 2
+    code[4] = code[4] + 2
     fix_numbers();
 
 def increment_number_3():
@@ -27,7 +27,7 @@ def increment_number_3():
 
 def increment_number_4():
     code[4] = code[4] + 1
-    code[1] = code[1] + 2
+    code[0] = code[0] + 2
     fix_numbers()
 
 def fix_numbers():
