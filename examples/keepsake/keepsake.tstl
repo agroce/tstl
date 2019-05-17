@@ -1,14 +1,16 @@
 # This example shows how normalization can "accidentally" really help reduce things.  It can't easily find the
-# ultra-short 6 step version of this, but it reduces the ddmin fixpoint by about half, typically.
+# ultra-short 11 step version of this, but it reduces the ddmin fixpoint by about half, typically.
 
 @import keepsake
 
 init: keepsake.init_keepsake()
 
-keepsake.increment_number_0()
 keepsake.increment_number_1()
 keepsake.increment_number_2()
 keepsake.increment_number_3()
 keepsake.increment_number_4()
+keepsake.increment_number_5()
+
+hint: 1000 - (abs(keepsake.code[0] - 2) + abs(keepsake.code[1] - 4) + abs(keepsake.code[2] - 3) + abs(keepsake.code[3] - 4) + abs(keepsake.code[4] - 5))
 
 property: not((keepsake.code[0] == 2) and (keepsake.code[1] == 4) and (keepsake.code[2] == 3) and (keepsake.code[3] == 4) and (keepsake.code[4] == 5))
