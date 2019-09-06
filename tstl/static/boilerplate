@@ -1173,8 +1173,11 @@ def fails(self, test, verbose=False, failure=None):
     except BaseException:
         if verbose:
             print("Got exception during replay!")
-        if (failure is None) or ((self.__failure[0] == failure[0]) and (
-                repr(self.__failure[1]) == repr(failure[1]))):
+        if failure is None:
+            return True
+        if ((self.__failure is not None) and
+                ((self.__failure[0] == failure[0]) and
+                    (repr(self.__failure[1]) == repr(failure[1])))):
             return True
         else:
             return False
