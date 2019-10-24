@@ -1,5 +1,13 @@
 @import vyhelper
 
+<@
+def statementsTooLong(s1,s2):
+    return len(s1) + len(s2) > 1024
+
+def exprTooLong(expr1,expr2):
+    return len(expr1) + len(expr2) > 256
+@>
+
 pool: <btype> 5
 pool: <var> 5
 pool: <func> 5
@@ -60,9 +68,10 @@ pool: <contract> 1
 
 <expr> := <bvar>
 <expr> := "(" + <expr> + ")"
-<expr> := <expr> + " + " + <expr>
-<expr> := <expr> + " - " + <expr>
-<expr> := <expr> + " * " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " + " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " - " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " * " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " / " + <expr>
 <expr> := <const>
 <expr> := "block.timestamp"
 <expr> := "msg.sender"
@@ -76,7 +85,7 @@ pool: <contract> 1
 <fstmt> := "    " + <bvar> + " = " + <expr> + chr(10)
 <fstmt> := "    selfdestruct(" + <expr> + ")" + chr(10)
 <fstmt> := "    clear(" + <bvar> + ")" + chr(10)
-<fstmt> := "    send(" + <expr> + ", " + <expr> + ")" + chr(10)
+not exprTooLong(<expr,1>,<expr,2>) -> <fstmt> := "    send(" + <expr> + ", " + <expr> + ")" + chr(10)
 <fstmt> := "    if " + <expr> + ":" + chr(10) + vyhelper.indent4(<fbody>)
 <fstmt> := "    for " + <var> + " in range(" + <expr> + "):" + chr(10) + vyhelper.indent4(<fbody>)
 <fstmt> := "    break" + chr(10)
