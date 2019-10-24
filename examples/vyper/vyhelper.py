@@ -12,9 +12,13 @@ def run(c, loud=False):
     with open("vrun.out", 'r') as vout:
         r = vout.read()
         if ("Fatal" in r) or ("CompilerPanic" in r):
-            print(c)
-            print(r)
-            assert False
+            # ignore known bug
+            if "Number of times repeated must be a constant nonzero positive integer" not in r:
+                print(c)
+                print(r)
+                assert False
+            else:
+                print("IGNORING KNOWN LOOP RANGE BUG")
         if loud:
             print(r)
 

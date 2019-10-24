@@ -16,6 +16,8 @@ pool: <bvar> 4
 
 pool: <payable> 2
 
+pool: <fret> 2
+
 pool: <funcdecl> 4
 pool: <funcdecls> 4
 
@@ -60,6 +62,7 @@ pool: <contract> 3
 <expr> := "sha256(" + <expr> + ")"
 
 <fstmt> := "    assert " + <expr> + chr(10)
+<fstmt> := "    return " + <expr> + chr(10)
 <fstmt> := "    " + <bvar> + " = " + <expr> + chr(10)
 <fstmt> := "    selfdestruct(" + <expr> + ")" + chr(10)
 <fstmt> := "    clear(" + <bvar> + ")" + chr(10)
@@ -75,7 +78,10 @@ pool: <contract> 3
 <payable> := ""
 <payable> := "@payable" + chr(10)
 
-<funcdecl> := <["@public" + chr(10), "@private" + chr(10)]> + <payable> + "def " + <func> + "():" + chr(10) + <fbody>
+<fret> := ""
+<fret> := " -" + "> " + <btype>
+
+<funcdecl> := <["@public" + chr(10), "@private" + chr(10)]> + <payable> + "def " + <func> + "()" + <fret> +":" + chr(10) + <fbody>
 
 <vardecls> := <vardecl>
 <vardecls> := <vardecls> + <vardecl>
