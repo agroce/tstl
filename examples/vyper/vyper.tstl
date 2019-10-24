@@ -1,27 +1,30 @@
 @import vyhelper
 
-pool: <btype> 4
-pool: <var> 4
-pool: <func> 4
-pool: <expr> 4
-pool: <const> 4
+pool: <btype> 5
+pool: <var> 5
+pool: <func> 5
+pool: <expr> 5
+pool: <const> 5
 
-pool: <vardecl> 4
-pool: <vardecls> 4
+pool: <vardecl> 5
+pool: <vardecls> 5
 
-pool: <fstmt> 4
-pool: <fbody> 4
+pool: <fstmt> 5
+pool: <fbody> 5
 
-pool: <bvar> 4
+pool: <bvar> 5
 
 pool: <payable> 2
 
 pool: <fret> 2
 
-pool: <funcdecl> 4
-pool: <funcdecls> 4
+pool: <ftypes> 5
+pool: <fargs> 5
 
-pool: <contract> 3
+pool: <funcdecl> 5
+pool: <funcdecls> 5
+
+pool: <contract> 1
 
 <btype> := "address"
 <btype> := "timestamp"
@@ -49,6 +52,12 @@ pool: <contract> 3
 <const> := "MAX_UINT256"
 <const> := "ZERO_WEI"
 
+<ftypes> := ""
+<ftypes> := <var> + ": " + <btype>
+
+<fargs> := ""
+<fargs> := <expr>
+
 <expr> := <bvar>
 <expr> := "(" + <expr> + ")"
 <expr> := <expr> + " + " + <expr>
@@ -60,6 +69,7 @@ pool: <contract> 3
 <expr> := "msg.value"
 <expr> := "keccak256(" + <expr> + ")"
 <expr> := "sha256(" + <expr> + ")"
+<expr> := <func> + "(" + <fargs> + ")"
 
 <fstmt> := "    assert " + <expr> + chr(10)
 <fstmt> := "    return " + <expr> + chr(10)
@@ -81,7 +91,7 @@ pool: <contract> 3
 <fret> := ""
 <fret> := " -" + "> " + <btype>
 
-<funcdecl> := <["@public" + chr(10), "@private" + chr(10)]> + <payable> + "def " + <func> + "()" + <fret> +":" + chr(10) + <fbody>
+<funcdecl> := <["@public" + chr(10), "@private" + chr(10)]> + <payable> + "def " + <func> + "(" + <ftypes> + ")" + <fret> +":" + chr(10) + <fbody>
 
 <vardecls> := <vardecl>
 <vardecls> := <vardecls> + <vardecl>
@@ -89,6 +99,6 @@ pool: <contract> 3
 <funcdecls> := <funcdecl>
 <funcdecls> := <funcdecls> + <funcdecl>
 
-<contract> := <vardecls> + <funcdecls>
+<contract> := <vardecls> + <funcdecls> #ESSENTIAL
 
-vyhelper.run(<contract>) #ESSENTIAL
+property: vyhelper.run(<contract>)
