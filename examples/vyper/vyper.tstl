@@ -1,0 +1,88 @@
+@import vyhelper
+
+pool: <btype> 4
+pool: <var> 4
+pool: <func> 4
+pool: <expr> 4
+pool: <const> 4
+
+pool: <vardecl> 4
+pool: <vardecls> 4
+
+pool: <fstmt> 4
+pool: <fbody> 4
+
+pool: <bvar> 4
+
+pool: <payable> 2
+
+pool: <funcdecl> 4
+pool: <funcdecls> 4
+
+pool: <contract> 3
+
+<btype> := "address"
+<btype> := "timestamp"
+<btype> := "wei_value"
+<btype> := "bool"
+<btype> := "timedelta"
+<btype> := "int128"
+<btype> := "uint256"
+<btype> := "decimal"
+
+<var> := "v" + str(<[0..10]>)
+<func> := "f" + str(<[0..10]>)
+
+<vardecl> := <var> + ": " + <btype> + chr(10)
+
+<bvar> := <var>
+<bvar> := "self." + <var>
+
+<const> := str(<[-10..10]>)
+<const> := "ZERO_ADDRESS"
+<const> := "MAX_INT128"
+<const> := "MIN_INT128"
+<const> := "MAX_DECIMAL"
+<const> := "MIN_DECIMAL"
+<const> := "MAX_UINT256"
+<const> := "ZERO_WEI"
+
+<expr> := <bvar>
+<expr> := "(" + <expr> + ")"
+<expr> := <expr> + " + " + <expr>
+<expr> := <expr> + " - " + <expr>
+<expr> := <expr> + " * " + <expr>
+<expr> := <const>
+<expr> := "block.timestamp"
+<expr> := "msg.sender"
+<expr> := "msg.value"
+<expr> := "keccak256(" + <expr> + ")"
+<expr> := "sha256(" + <expr> + ")"
+
+<fstmt> := "    assert " + <expr> + chr(10)
+<fstmt> := "    " + <bvar> + " = " + <expr> + chr(10)
+<fstmt> := "    selfdestruct(" + <expr> + ")" + chr(10)
+<fstmt> := "    clear(" + <bvar> + ")" + chr(10)
+<fstmt> := "    send(" + <expr> + ", " + <expr> + ")" + chr(10)
+<fstmt> := "    if " + <expr> + ":" + chr(10) + vyhelper.indent4(<fbody>)
+<fstmt> := "    for " + <var> + " in range(" + <expr> + "):" + chr(10) + vyhelper.indent4(<fbody>)
+<fstmt> := "    break" + chr(10)
+<fstmt> := "    continue" + chr(10)
+
+<fbody> := <fstmt>
+<fbody> := <fbody> + <fstmt>
+
+<payable> := ""
+<payable> := "@payable" + chr(10)
+
+<funcdecl> := <["@public" + chr(10), "@private" + chr(10)]> + <payable> + "def " + <func> + "():" + chr(10) + <fbody>
+
+<vardecls> := <vardecl>
+<vardecls> := <vardecls> + <vardecl>
+
+<funcdecls> := <funcdecl>
+<funcdecls> := <funcdecls> + <funcdecl>
+
+<contract> := <vardecls> + <funcdecls>
+
+vyhelper.run(<contract>)
