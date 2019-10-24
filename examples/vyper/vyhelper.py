@@ -10,11 +10,13 @@ def run(c, loud=False):
     with open("vrun.out", 'w') as vout:
         subprocess.call(["vyper", "vfile.vy"], stdout=vout, stderr=vout)
     with open("vrun.out", 'r') as vout:
-        for line in vout:
-            if loud:
-                print(line)
-            assert("Fatal" not in line)
-            assert("CompilerPanic" not in line)
+        r = vout.read()
+        if ("Fatal" in r) or ("CompilerPanic" in r):
+            print(c)
+            print(r)
+            assert False
+        if loud:
+            print(r)
 
 def indent4(code):
     c = code.split("\n")

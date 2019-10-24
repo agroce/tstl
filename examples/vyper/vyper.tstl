@@ -85,4 +85,4 @@ pool: <contract> 3
 
 <contract> := <vardecls> + <funcdecls>
 
-vyhelper.run(<contract>)
+vyhelper.run(<contract>) #ESSENTIAL
