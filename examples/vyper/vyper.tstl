@@ -22,8 +22,6 @@ pool: <fbody> 5
 
 pool: <bvar> 5
 
-pool: <payable> 2
-
 pool: <fret> 2
 
 pool: <ftypes> 5
@@ -31,8 +29,6 @@ pool: <fargs> 5
 
 pool: <funcdecl> 5
 pool: <funcdecls> 5
-
-pool: <contract> 1
 
 <btype> := "address"
 <btype> := "timestamp"
@@ -43,13 +39,13 @@ pool: <contract> 1
 <btype> := "uint256"
 <btype> := "decimal"
 
-<var> := "v" + str(<[0..10]>)
-<func> := "f" + str(<[0..10]>)
+<var> := "v" + str(<[0..9]>)
+<func> := "f" + str(<[0..9]>)
 
-<vardecl> := <var> + ": " + <btype> + chr(10)
+<vardecl> := vyhelper.declareVar(<var> + ": " + <btype> + chr(10))
 
-<bvar> := <var>
-<bvar> := "self." + <var>
+vyhelper.declared(<var,1>) -> <bvar> := <var>
+vyhelper.declared(<var,1>) -> <bvar> := "self." + <var>
 
 <const> := str(<[-10..10]>)
 <const> := "ZERO_ADDRESS"
@@ -94,20 +90,15 @@ not exprTooLong(<expr,1>,<expr,2>) -> <fstmt> := "    send(" + <expr> + ", " + <
 <fbody> := <fstmt>
 <fbody> := <fbody> + <fstmt>
 
-<payable> := ""
-<payable> := "@payable" + chr(10)
-
 <fret> := ""
 <fret> := " -" + "> " + <btype>
 
-<funcdecl> := <["@public" + chr(10), "@private" + chr(10)]> + <payable> + "def " + <func> + "(" + <ftypes> + ")" + <fret> +":" + chr(10) + <fbody>
+<funcdecl> := <["@public" + chr(10), "@public" + chr(10) + "@payable" + chr(10), "@private" + chr(10)]> + "def " + <func> + "(" + <ftypes> + ")" + <fret> +":" + chr(10) + <fbody>
 
 <vardecls> := <vardecl>
-<vardecls> := <vardecls> + <vardecl>
+vyhelper.vid(<vardecl,1>) not in <vardecls,2> -> <vardecls> := <vardecls> + <vardecl>
 
 <funcdecls> := <funcdecl>
-<funcdecls> := <funcdecls> + <funcdecl>
+vyhelper.fid(<funcdecl,1>) not in <funcdecls,2> -> <funcdecls> := <funcdecls> + <funcdecl>
 
-<contract> := <vardecls> + <funcdecls> #ESSENTIAL
-
-property: vyhelper.run(<contract>)
+property: vyhelper.run(<vardecls> + <funcdecls>)

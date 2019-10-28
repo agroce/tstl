@@ -3,6 +3,23 @@ import subprocess
 
 seen={}
 
+declaredVars = set([])
+
+def fid(functionDef):
+    start = functionDef.find("def ")
+    end = functionDef.find("(")
+    return functionDef[start+4:end]
+
+def vid(varDef):
+    return varDef[:varDef.find(":")]
+
+def declareVar(varDef):
+    declaredVars.add(vid(varDef))
+    return varDef
+
+def declared(var):
+    return var in declaredVars
+
 def run(c, loud=False):
     if c in seen:
         return seen[c]
