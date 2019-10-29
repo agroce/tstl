@@ -108,6 +108,7 @@ not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " >= " + <expr>
 <expr> := <expr> + ".balance"
 <expr> := <expr> + ".codesize"
 <expr> := <expr> + ".is_contract"
+<expr> := "convert(" + <expr> + ", " + <btype> + ")"
 
 <fstmt> := "    assert " + <expr> + chr(10)
 <fstmt> := "    return " + <expr> + chr(10)

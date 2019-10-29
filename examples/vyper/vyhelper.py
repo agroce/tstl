@@ -50,7 +50,10 @@ def run(c, loud=False):
                 if "ception" in l:
                     if l.split()[0] not in seenExcept:
                         seenExcept.add(l.split()[0])
+                        print("="*80)
+                        print(c)
                         print(l)
+                        print("="*80)
         if loud:
             print(r)
     seen[c] = True
