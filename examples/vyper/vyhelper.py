@@ -2,6 +2,7 @@ from __future__ import print_function
 import subprocess
 
 seen={}
+seenExcept = set([])
 
 declaredVars = set([])
 
@@ -44,6 +45,12 @@ def run(c, loud=False):
         elif "Error" not in r:
             print(c)
             print(r)
+        else:
+            for l in r.split("\n"):
+                if "ception" in l:
+                    if l.split()[0] not in seenExcept:
+                        seenExcept.add(l.split()[0])
+                        print(l)
         if loud:
             print(r)
     seen[c] = True

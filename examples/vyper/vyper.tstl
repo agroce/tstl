@@ -10,6 +10,8 @@ def exprTooLong(expr1,expr2):
 
 pool: <btype> 5
 pool: <var> 5
+pool: <lvar> 5
+pool: <avar> 5
 pool: <func> 5
 pool: <expr> 5
 pool: <const> 5
@@ -17,10 +19,15 @@ pool: <const> 5
 pool: <vardecl> 5
 pool: <vardecls> 5
 
+pool: <lvardecl> 5
+pool: <lvardecls> 5
+
 pool: <fstmt> 5
 pool: <fbody> 5
 
 pool: <bvar> 5
+
+pool: <lvar> 5
 
 pool: <fret> 2
 
@@ -40,11 +47,15 @@ pool: <funcdecls> 5
 <btype> := "decimal"
 
 <var> := "v" + str(<[0..9]>)
+<lvar> := "lv" + str(<[0..9]>)
+<avar> := "av" + str(<[0..9]>)
+
 <func> := "f" + str(<[0..9]>)
 
 <vardecl> := vyhelper.declareVar(<var> + ": " + <btype> + chr(10))
 
-vyhelper.declared(<var,1>) -> <bvar> := <var>
+vyhelper.declared(<lvar,1>) -> <bvar> := <lvar>
+vyhelper.declared(<avar,1>) -> <bvar> := <avar>
 vyhelper.declared(<var,1>) -> <bvar> := "self." + <var>
 
 <const> := str(<[-10..10]>)
@@ -57,7 +68,7 @@ vyhelper.declared(<var,1>) -> <bvar> := "self." + <var>
 <const> := "ZERO_WEI"
 
 <ftypes> := ""
-<ftypes> := <var> + ": " + <btype>
+<ftypes> := vyhelper.declareVar(<avar> + ": " + <btype>)
 
 <fargs> := ""
 <fargs> := <expr>
@@ -115,10 +126,15 @@ not exprTooLong(<expr,1>,<expr,2>) -> <fstmt> := "    send(" + <expr> + ", " + <
 <fret> := ""
 <fret> := " -" + "> " + <btype>
 
-<funcdecl> := <["@public" + chr(10), "@public" + chr(10) + "@payable" + chr(10), "@private" + chr(10)]> + "def " + <func> + "(" + <ftypes> + ")" + <fret> +":" + chr(10) + <fbody>
+<funcdecl> := <["@public" + chr(10), "@public" + chr(10) + "@payable" + chr(10), "@private" + chr(10)]> + "def " + <func> + "(" + <ftypes> + ")" + <fret> +":" + chr(10) + <lvardecls> + <fbody>
 
 <vardecls> := <vardecl>
 vyhelper.vid(<vardecl,1>) not in <vardecls,2> -> <vardecls> := <vardecls> + <vardecl>
+
+<lvardecl> := "    " + vyhelper.declareVar(<lvar> + ": " + <btype> + " = " + <expr> + chr(10))
+
+<lvardecls> := <lvardecl>
+vyhelper.vid(<lvardecl,1>) not in <lvardecls,2> -> <lvardecls> := <lvardecls> + <lvardecl>
 
 <funcdecls> := <funcdecl>
 vyhelper.fid(<funcdecl,1>) not in <funcdecls,2> -> <funcdecls> := <funcdecls> + <funcdecl>
