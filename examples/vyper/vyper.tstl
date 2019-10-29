@@ -64,17 +64,39 @@ vyhelper.declared(<var,1>) -> <bvar> := "self." + <var>
 
 <expr> := <bvar>
 <expr> := "(" + <expr> + ")"
+<expr> := "not " + <expr>
+<expr> := "-" + <expr>
 not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " + " + <expr>
 not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " - " + <expr>
 not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " * " + <expr>
 not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " / " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " ** " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " % " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "min(" + <expr> + ", " + <expr> + ")"
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "max(" + <expr> + ", " + <expr> + ")"
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "bitwise_and(" + <expr> + ", " + <expr> + ")"
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "bitwise_or(" + <expr> + ", " + <expr> + ")"
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := "bitwise_xor(" + <expr> + ", " + <expr> + ")"
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " == " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " != " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " and " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " or " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " < " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " <= " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " > " + <expr>
+not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " >= " + <expr>
 <expr> := <const>
 <expr> := "block.timestamp"
 <expr> := "msg.sender"
 <expr> := "msg.value"
+<expr> := "floor(" + <expr> + ")"
+<expr> := "ceil(" + <expr> + ")"
 <expr> := "keccak256(" + <expr> + ")"
 <expr> := "sha256(" + <expr> + ")"
 <expr> := <func> + "(" + <fargs> + ")"
+<expr> := <expr> + ".balance"
+<expr> := <expr> + ".codesize"
+<expr> := <expr> + ".is_contract"
 
 <fstmt> := "    assert " + <expr> + chr(10)
 <fstmt> := "    return " + <expr> + chr(10)
