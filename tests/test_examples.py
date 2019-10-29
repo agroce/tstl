@@ -31,6 +31,7 @@ class TestExamples(TestCase):
             "redis",
             "simplejson",
             "solc",
+            "vyper",
             "sortedcontainers",
             "pystan"]
 
