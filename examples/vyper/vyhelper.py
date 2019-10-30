@@ -30,6 +30,7 @@ def handle(e, c):
         seenExcept.add(type(e))
         print(c)
         print(e)
+
 def run(c, loud=False):
     if c in seen:
         return seen[c]
@@ -51,6 +52,8 @@ def run(c, loud=False):
     except vyper.exceptions.ParserException as e:
         handle(e, c)
     except SyntaxError as e:
+        handle(e, c)
+    except ZeroDivisionError as e:
         handle(e, c)
     seen[c] = True
     return True
