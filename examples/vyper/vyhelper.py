@@ -1,5 +1,7 @@
 from __future__ import print_function
-import subprocess
+import re
+import sys
+import vyper.cli.vyper_compile
 
 seen={}
 seenExcept = set([])
@@ -21,6 +23,13 @@ def declareVar(varDef):
 def declared(var):
     return var in declaredVars
 
+def handle(e, c):
+    if (type(e)) in seenExcept:
+        return
+    else:
+        seenExcept.add(type(e))
+        print(c)
+        print(e)
 def run(c, loud=False):
     if c in seen:
         return seen[c]
@@ -29,33 +38,20 @@ def run(c, loud=False):
         print(c)
     with open("vfile.vy", 'w') as vf:
         vf.write(c)
-    with open("vrun.out", 'w') as vout:
-        subprocess.call(["vyper", "vfile.vy"], stdout=vout, stderr=vout)
-    with open("vrun.out", 'r') as vout:
-        r = vout.read()
-        if ("Fatal" in r) or ("CompilerPanic" in r):
-            # ignore known bug
-            if "Number of times repeated must be a constant nonzero positive integer" not in r:
-                print(c)
-                print(r)
-                seen[c] = False
-                return False
-            else:
-                print("IGNORING KNOWN LOOP RANGE BUG")
-        elif "Error" not in r:
-            print(c)
-            print(r)
-        else:
-            for l in r.split("\n"):
-                if "ception" in l:
-                    if l.split()[0] not in seenExcept:
-                        seenExcept.add(l.split()[0])
-                        print("="*80)
-                        print(c)
-                        print(l)
-                        print("="*80)
-        if loud:
-            print(r)
+    try:
+        vyper.cli.vyper_compile.compile_files(["vfile.vy"], ["bytecode", "abi", "ast", "bytecode_runtime"])
+    except vyper.exceptions.StructureException as e:
+        handle(e, c)
+    except vyper.exceptions.NonPayableViolationException as e:
+        handle(e, c)
+    except vyper.exceptions.InvalidLiteralException as e:
+        handle(e, c)
+    except vyper.exceptions.TypeMismatchException as e:
+        handle(e, c)
+    except vyper.exceptions.ParserException as e:
+        handle(e, c)
+    except SyntaxError as e:
+        handle(e, c)
     seen[c] = True
     return True
 
