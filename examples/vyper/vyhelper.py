@@ -8,6 +8,10 @@ seenExcept = set([])
 
 declaredVars = set([])
 
+known = ["Not an integer type: {typ}",
+         "Invalid break",
+         "KeyError('self')"]
+
 def fid(functionDef):
     start = functionDef.find("def ")
     end = functionDef.find("(")
@@ -55,6 +59,13 @@ def run(c, loud=False):
         handle(e, c)
     except ZeroDivisionError as e:
         handle(e, c)
+    except Exception as e:
+        if repr(e) in known:
+            pass
+        else:
+            print("FAILED WITH", e)
+            print(c)
+            raise e
     seen[c] = True
     return True
 
