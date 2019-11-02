@@ -123,6 +123,8 @@ def parse_args():
                         help='Random seed (default = None).')
     parser.add_argument('--verbose', type=str, default=None,
                         help='Level of verbosity for reduction.')
+    parser.add_argument('--speed', type=str, default="FAST",
+                        help='Speed/depth of normalization.')
     parser.add_argument('--sandbox', action='store_true',
                         help="Use sandbox reduction.")
     parser.add_argument('--quietSandbox', action='store_true',
@@ -239,6 +241,9 @@ def main():
         print("EXECUTING TEST TO OBTAIN COVERAGE FOR CAUSE REDUCTION...")
         sut.replay(r, checkProp=not config.noCheck,
                    catchUncaught=config.uncaught)
+        # Replay it twice, due to odd coverage on startup sometimes
+        sut.replay(r, checkProp=not config.noCheck,
+                   catchUncaught=config.uncaught)
         b = set(sut.currBranches())
         s = set(sut.currStatements())
         print("PRESERVING", len(b), "BRANCHES AND", len(s), "STATEMENTS")
@@ -340,7 +345,8 @@ def main():
                 verbose=config.verbose,
                 keepLast=config.keepLast,
                 pruneGuards=not config.noPruneGuards,
-                tryFast=not config.ddmin)
+                tryFast=not config.ddmin,
+                speed=config.speed)
         else:
             newrs = []
             for r in rs:
