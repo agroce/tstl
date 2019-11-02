@@ -94,6 +94,10 @@ def parse_args():
         action='store_true',
         help="Do not prune based on guards (useful in determinism checks)")
     parser.add_argument(
+        '--noCheckEnabled',
+        action='store_true',
+        help="Do not check enabled actions in normalization")
+    parser.add_argument(
         '--uncaught',
         action='store_true',
         help='Allow uncaught exceptions in actions (for coverage-based reduction).')
@@ -344,6 +348,7 @@ def main():
                 pred,
                 verbose=config.verbose,
                 keepLast=config.keepLast,
+                checkEnabled=not config.noCheckEnabled,
                 pruneGuards=not config.noPruneGuards,
                 tryFast=not config.ddmin,
                 speed=config.speed)
