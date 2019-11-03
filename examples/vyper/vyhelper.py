@@ -1,6 +1,7 @@
 from __future__ import print_function
 import re
 import sys
+import os
 import vyper.cli.vyper_compile
 
 seen={}
@@ -8,9 +9,11 @@ seenExcept = set([])
 
 declaredVars = set([])
 
-known = ["Not an integer type: {typ}",
-         "Invalid break",
-         "KeyError('self')"]
+known = ["Exception('Not an integer type: {typ}')",
+         "Exception('Invalid break')",
+         "KeyError('self')",
+         """ValueError("Unsupported format type 'ast'")""",
+         """TypeError("'<=' not supported between instances of 'int' and 'str'")"""]
 
 def fid(functionDef):
     start = functionDef.find("def ")
@@ -27,45 +30,51 @@ def declareVar(varDef):
 def declared(var):
     return var in declaredVars
 
-def handle(e, c):
-    if (type(e)) in seenExcept:
-        return
-    else:
-        seenExcept.add(type(e))
-        print(c)
-        print(e)
+compileCount = 0
+HOW_OFTEN = 10
 
-def run(c, loud=False):
+def run(c, loud=False, silent=True):
+    global compileCount
+
     if c in seen:
         return seen[c]
     if loud:
         print("RUNNING:")
         print(c)
+    elif (not silent) and ((compileCount % HOW_OFTEN) == 0):
+        print("COMPILE #" + str(compileCount))
+        print(c)
+    compileCount += 1
+
     with open("vfile.vy", 'w') as vf:
         vf.write(c)
-    try:
-        vyper.cli.vyper_compile.compile_files(["vfile.vy"], ["bytecode", "abi", "ast", "bytecode_runtime"])
-    except vyper.exceptions.StructureException as e:
-        handle(e, c)
-    except vyper.exceptions.NonPayableViolationException as e:
-        handle(e, c)
-    except vyper.exceptions.InvalidLiteralException as e:
-        handle(e, c)
-    except vyper.exceptions.TypeMismatchException as e:
-        handle(e, c)
-    except vyper.exceptions.ParserException as e:
-        handle(e, c)
-    except SyntaxError as e:
-        handle(e, c)
-    except ZeroDivisionError as e:
-        handle(e, c)
-    except Exception as e:
-        if repr(e) in known:
-            pass
-        else:
-            print("FAILED WITH", e)
-            print(c)
-            raise e
+    with open(os.devnull, 'w') as dnull:
+        oldstdout = sys.stdout
+        oldstderr = sys.stderr
+        sys.stdout = dnull
+        sys.stderr = dnull
+        raised = None
+        try:
+            vyper.cli.vyper_compile.compile_files(["vfile.vy"], ["bytecode", "abi", "ast", "bytecode_runtime"])
+        except vyper.exceptions.ParserException:
+            raised = None # just ignore these!
+        except SyntaxError:
+            raised = None # just ignore these!
+        except ZeroDivisionError:
+            raised = None # just ignore these!
+        except Exception as e:
+            raised = repr(e)
+        finally:
+            sys.stdout = oldstdout
+            sys.stderr = oldstderr
+    if (raised is not None) and (raised not in known):
+        print("="*80)
+        print("COMPILING:")
+        print(c)
+        print("RAISED:", raised)
+        print("="*80)
+        seen[c] = False
+        return False
     seen[c] = True
     return True
 
