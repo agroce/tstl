@@ -346,7 +346,7 @@ def computeInitialEnabled(self):
             self.__poolsNone.add(p)
 
 
-def highLowSwarm(self, rgen, P=0.5, file=None, highProb=0.9):
+def highLowSwarm(self, rgen, P=0.5, file=None, highProb=0.9, noDependencies=False, forceParent=True):
     high = []
 
     if file is not None:
@@ -366,9 +366,32 @@ def highLowSwarm(self, rgen, P=0.5, file=None, highProb=0.9):
                 high.append(c)
     if high == []:
         high.append(rgen.choice(self.__actionClasses))
+
     changed = True
+    if noDependencies:
+        changed = False
+
     while changed:
         changed = False
+
+        if forceParent:
+            forcedAdd = []
+            for c in newEnabled:
+                allParents = []
+                for pp in self.__actionClasses:
+                    for dl in self.dependencies(pp):
+                        if c in dl:
+                            allParents.append(pp)
+                            break
+                if allParents == []:
+                    continue
+                anyParents = [x for x in newEnabled if x in allParents] + \
+                            [x for x in forcedAdd if x in allParents]
+                if anyParents == []:
+                    addC = rgen.choice(allParents)
+                    forcedAdd.append(addC)
+                    changed = True
+            newEnabled.extend(forcedAdd)
 
         forcedAdd = []
         for c in high:
@@ -830,8 +853,7 @@ def standardSwarm(
         file=None,
         classProb=None,
         noDependencies=False,
-        forceParent=True,
-        ):
+        forceParent=True):
     """
     Enables all actions, then sets a swarm configuration based on
     rgen, P = probability of enabling an action class, file is a file

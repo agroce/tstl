@@ -397,6 +397,11 @@ def parse_args():
         help="[EXPERIMENTAL] This forces swarm to not use dependencies. " +
         "Not so much experimental as just a bad idea.")
     parser.add_argument(
+        '--noSwarmForceParent',
+        action='store_true',
+        help="Removes condition forcing swarm generation to include at least one" +
+        " parent (dependent-on action) from each included actiion.")
+    parser.add_argument(
         '--genDepth',
         type=int,
         default=None,
@@ -1384,13 +1389,15 @@ def main():
 
         if config.swarm:
             sut.standardSwarm(R, classProb=swarmClassProbs, P=config.swarmP,
-                              noDependencies=config.noSwarmDependencies)
+                              noDependencies=config.noSwarmDependencies,
+                              forceParent=not config.noSwarmForceParent)
             if config.progress:
                 print("CONFIG:", (sut.swarmConfig()))
 
         if config.highLowSwarm is not None:
             classP = sut.highLowSwarm(
-                R, file=config.swarmProbs, highProb=config.highLowSwarm)
+                R, file=config.swarmProbs, highProb=config.highLowSwarm,
+                noDependencies=config.noSwarmDependencies, forceParent=not config.noSwarmForceParent)
 
         if config.swarmSwitch is not None:
             lastSwitch = 0
