@@ -385,8 +385,8 @@ def highLowSwarm(self, rgen, P=0.5, file=None, highProb=0.9, noDependencies=Fals
                             break
                 if allParents == []:
                     continue
-                anyParents = [x for x in newEnabled if x in allParents] + \
-                            [x for x in forcedAdd if x in allParents]
+                anyParents = [x for x in newEnabled if x in allParents]
+                anyParents.extend([x for x in forcedAdd if x in allParents])
                 if anyParents == []:
                     addC = rgen.choice(allParents)
                     forcedAdd.append(addC)
@@ -896,8 +896,8 @@ def standardSwarm(
                             break
                 if allParents == []:
                     continue
-                anyParents = [x for x in newEnabled if x in allParents] + \
-                            [x for x in forcedAdd if x in allParents]
+                anyParents = [x for x in newEnabled if x in allParents]
+                anyParents.extend([x for x in forcedAdd if x in allParents])
                 if anyParents == []:
                     addC = rgen.choice(allParents)
                     forcedAdd.append(addC)
