@@ -1465,12 +1465,15 @@ def main():
                         R,
                         file=config.swarmProbs,
                         P=config.swarmP,
-                        noDependencies=config.noSwarmDependencies)
+                        noDependencies=config.noSwarmDependencies,
+                        forceParent=not config.noSwarmForceParent)
                     if config.progress:
                         print("NEW CONFIG:", (sut.swarmConfig()))
                 else:
                     classP = sut.highLowSwarm(
-                        R, file=config.swarmProbs, highProb=config.highLowSwarm)
+                        R, file=config.swarmProbs, highProb=config.highLowSwarm,
+                        noDependencies=config.noSwarmDependencies,
+                        forceParent=not config.noSwarmForceParent)
 
             if (config.swarmLength is not None) and (
                     ((step + 1) % config.swarmLength) == 0):
@@ -1479,12 +1482,15 @@ def main():
                         R,
                         file=config.swarmProbs,
                         P=config.swarmP,
-                        noDependencies=config.noSwarmDependencies)
+                        noDependencies=config.noSwarmDependencies,
+                        forceParent=not config.noSwarmForceParent)
                     if config.progress:
                         print("NEW CONFIG:", (sut.swarmConfig()))
                 else:
                     classP = sut.highLowSwarm(
-                        R, file=config.swarmProbs, highProb=config.highLowSwarm)
+                        R, file=config.swarmProbs, highProb=config.highLowSwarm,
+                        noDependencies=config.noSwarmDependencies,
+                        forceParent=not config.noSwarmForceParent)
 
             startGuard = time.time()
             tryStutter = (a is not None) and (a[1]()) and (
