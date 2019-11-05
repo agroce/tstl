@@ -1,0 +1,20 @@
+pool: <a> 1
+pool: <b> 1
+pool: <c> 1
+pool: <d> 1
+pool: <e> 1
+pool: <f> 1
+
+<a> := "A"
+<a> := <b>
+<b> := "B"
+<b> := <c>
+<c> := "C"
+<c> := <d>
+<d> := "D"
+<d> := <e>
+<e> := "E"
+<e> := <f>
+<f> := "F"
+
+print("CHOICE:", <a>)

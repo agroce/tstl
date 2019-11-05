@@ -50,6 +50,7 @@ class TestExamples(TestCase):
             "dateutil",
             "gmpy2",
             "hypothesis_heaps",
+            "lopsided_grammar",
             "maze",
             "numpy",
             "osquery",
