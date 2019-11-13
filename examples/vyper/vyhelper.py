@@ -46,7 +46,9 @@ def run(c, loud=False, silent=True):
         print(c)
     compileCount += 1
 
-    with open("vfile.vy", 'w') as vf:
+    vname =  "vfile." + str(os.getpid()) + ".vy"
+
+    with open(vname, 'w') as vf:
         vf.write(c)
     with open(os.devnull, 'w') as dnull:
         oldstdout = sys.stdout
@@ -55,7 +57,9 @@ def run(c, loud=False, silent=True):
         sys.stderr = dnull
         raised = None
         try:
-            vyper.cli.vyper_compile.compile_files(["vfile.vy"], ["bytecode", "abi", "ast", "bytecode_runtime"])
+            vyper.cli.vyper_compile.compile_files(
+                [vname],
+                ["bytecode", "abi", "ast", "bytecode_runtime"])
         except vyper.exceptions.ParserException:
             raised = None # just ignore these!
         except SyntaxError:

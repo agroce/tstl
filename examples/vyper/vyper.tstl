@@ -178,3 +178,6 @@ vyhelper.vid(<lvardecl,1>) not in <lvardecls,2> -> <lvardecls> := <lvardecls> + 
 vyhelper.fid(<funcdecl,1>) not in <funcdecls,2> -> <funcdecls> := <funcdecls> + <funcdecl>
 
 property: vyhelper.run(<cdecls> + <vardecls> + <funcdecls>)
+property: vyhelper.run(<vardecls> + <funcdecls>)
+property: vyhelper.run(<cdecls> + <funcdecls>)
+property: vyhelper.run(<funcdecls>)
