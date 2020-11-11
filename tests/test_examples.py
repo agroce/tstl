@@ -45,6 +45,7 @@ class TestExamples(TestCase):
             "AVL",
             "arcpy",
             "arrow",
+            "biopython",
             "c",
             "datarray_inference",
             "dateutil",
