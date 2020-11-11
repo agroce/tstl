@@ -2,7 +2,7 @@
 @from bidict import ValueDuplicationError
 @from bidict import KeyDuplicationError
 @from bidict import KeyAndValueDuplicationError
-@from bidict import RAISE, OVERWRITE, IGNORE
+@from bidict import RAISE, DROP_OLD, DROP_NEW
 
 pool: <bidict> 5
 pool: <value> 5
@@ -35,8 +35,8 @@ pool: <mode> 3
 <value> := <tuple>
 
 <mode> := RAISE
-<mode> := IGNORE
-<mode> := OVERWRITE
+<mode> := DROP_NEW
+<mode> := DROP_OLD
 
 <bidict> := bidict.bidict()
 <bidict> := bidict.loosebidict()
@@ -51,8 +51,8 @@ pool: <mode> 3
 
 
 
-{ValueDuplicationError,KeyDuplicationError,KeyAndValueDuplicationError} <bidict>.put(<value>,<value>,on_dup_key=<mode>,on_dup_val=<mode>,on_dup_kv=<mode>)
-{ValueDuplicationError,KeyDuplicationError,KeyAndValueDuplicationError} <bidict>.putall(<updates>,on_dup_key=<mode>,on_dup_val=<mode>,on_dup_kv=<mode>)
+{ValueDuplicationError,KeyDuplicationError,KeyAndValueDuplicationError} <bidict>.put(<value>,<value>,on_dup=<mode>,val=<mode>,kv=<mode>)
+{ValueDuplicationError,KeyDuplicationError,KeyAndValueDuplicationError} <bidict>.putall(<updates>,on_dup=<mode>,val=<mode>,kv=<mode>)
 
 {ValueDuplicationError} <bidict>.inv [<value>] = <value> # UNSAFE
 <value,2> not in <bidict,1> -> <bidict>.inv [<value>] = <value>
