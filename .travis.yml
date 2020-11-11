@@ -32,9 +32,9 @@ env:
 script:
 - pyflakes tstl/*.py
 - pyflakes tests/*.py
-- pycodestyle tstl/*.py --max-line-length 120 --statistics --ignore=E741,E226,W504
-- pycodestyle tstl/static/boilerplate* --max-line-length 120 --statistics --ignore=E741,E226,W504
-- pycodestyle tests/*.py --max-line-length 120 --statistics --ignore=E741,E226,W504
+- pycodestyle tstl/*.py --max-line-length 120 --statistics --ignore=E741,E226,W504,E704,W503
+- pycodestyle tstl/static/boilerplate* --max-line-length 120 --statistics --ignore=E741,E226,W504,E704,W503
+- pycodestyle tests/*.py --max-line-length 120 --statistics --ignore=E741,E226,W504,E704,W503
 - python setup.py install
 - nosetests --verbose
 
