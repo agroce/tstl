@@ -28,6 +28,7 @@ class TestExamples(TestCase):
         noTests = False
 
         skipTravis = [
+            "biopython",
             "redis",
             "simplejson",
             "solc",
@@ -45,7 +46,6 @@ class TestExamples(TestCase):
             "AVL",
             "arcpy",
             "arrow",
-            "biopython",
             "c",
             "datarray_inference",
             "dateutil",
@@ -69,7 +69,6 @@ class TestExamples(TestCase):
         testSmallcheck = True
         noSmallcheck = [
             "bidict",
-            "biopython",
             "danluuexample",
             "eval",
             "rsa",
