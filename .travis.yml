@@ -3,8 +3,6 @@ dist: trusty
 sudo: false
 python:
 - "3.6"
-- "3.7"
-- "3.8"
 before_install:
 - if [[ $TRAVIS_PYTHON_VERSION = 3.2 ]]; then true ${CYTHON_VERSION:=0.26.1}; fi
 - cython_suffix=${CYTHON_VERSION:+==$CYTHON_VERSION}
