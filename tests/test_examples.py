@@ -59,6 +59,7 @@ class TestExamples(TestCase):
             "pyfakefs",
             "stringh",
             "sympy",
+            "tensorflow",
             "tictactoe",
             "tstl",
             "turtle"]
