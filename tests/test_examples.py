@@ -29,6 +29,7 @@ class TestExamples(TestCase):
 
         skipTravis = [
             "biopython",
+            "bidict",
             "redis",
             "simplejson",
             "solc",
@@ -68,7 +69,6 @@ class TestExamples(TestCase):
 
         testSmallcheck = True
         noSmallcheck = [
-            "bidict",
             "danluuexample",
             "eval",
             "rsa",
