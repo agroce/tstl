@@ -792,7 +792,7 @@ def handle_failure(
 
 
 def buildActivePool():
-    global activePool, reducePool, fullPool, poolCount
+    global activePool, reducePool, fullPool, poolCount, dnull, oldStdout, oldStderr
 
     activePool = []
 
@@ -801,13 +801,25 @@ def buildActivePool():
             for (t, bs, ss) in reducePool:
                 if config.verbose or config.verboseExploit:
                     print("REDUCING POOL TEST FROM", len(t), "STEPS...", end=' ')
+                if config.silentSUT:
+                    sys.stdout = dnull
+                    sys.stderr = dnull
                 r = sut.reduce(t, sut.coversAll(ss, bs, checkProp=not config.noCheck),
                                verbose=False, tryFast=not config.ddmin)
+                if config.silentSUT:
+                    sys.stdout = oldStdout
+                    sys.stderr = oldStderr
                 if config.verbose or config.verboseExploit:
                     print("TO", len(r), "STEPS:")
                     sut.prettyPrintTest(r)
                     print()
+                if config.silentSUT:
+                    sys.stdout = dnull
+                    sys.stderr = dnull
                 sut.replay(r, checkProp=not config.noCheck, catchUncaught=True)
+                if config.silentSUT:
+                    sys.stdout = oldStdout
+                    sys.stderr = oldStderr
                 fullPool.append((r, set(sut.currBranches()),
                                  set(sut.currStatements())))
                 if config.savePool is not None:
@@ -914,7 +926,7 @@ def buildActivePool():
 
 
 def tryExploit():
-    global fulltest, currtest, fullPool, reducePool, poolCount
+    global fulltest, currtest, fullPool, reducePool, poolCount, oldStdout, oldStderr, dnull
     ok = True
     wasExploit = False
     if R.random() < config.exploit:
@@ -948,8 +960,14 @@ def tryExploit():
                 currtest.write(a[0] + "\n")
                 currtest.flush()
         try:
+            if config.silentSUT:
+                sys.stdout = dnull
+                sys.stderr = dnull
             ok = sut.replay(et, checkProp=not config.noCheck,
                             catchUncaught=config.uncaught)
+            if config.silentSUT:
+                sys.stdout = oldStdout
+                sys.stderr = oldStderr
             if (len(sut.newCurrBranches()) != 0) or (
                     len(sut.newCurrStatements()) != 0):
                 print("COVERAGE INCREASE DURING MUTATION")
@@ -1060,6 +1078,7 @@ def main():
     global testsWithNoNewCoverage
     global stepsWithNoNewCoverage
     global sequences
+    global dnull, oldStdout, oldStderr
 
     dnull = open(os.devnull, 'w')
     oldStdout = sys.stdout
