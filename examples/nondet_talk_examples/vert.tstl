@@ -1,0 +1,23 @@
+@import random
+
+<@
+cache = {}
+
+def divide(a, b):
+    if (a, b) in cache:
+        return cache[(a,b)]
+    if a == 0:
+        cache[(a,b)] = 0
+    r = a/b
+    cache[(a,b)] = r
+    return r
+@>
+
+init: random.seed(0); cache = {}
+
+pool: <int> 5
+
+<int> := <[-10..10]>
+
+{ZeroDivisionError} print(<int>, <int>, divide(<int,1>,<int,2>))
+

@@ -1,0 +1,23 @@
+@import random
+
+<@
+
+def f(xs):
+    if len(xs) == 0:
+        return 0
+    if len(xs) < 5:
+       return xs[0]
+    if len(xs) > 7:
+       return xs[-1]
+    return random.choice(xs)
+@>
+
+pool: <int> 5
+pool: <list> 5
+pool: <fval> 5
+
+<int> := <[0..3]>
+<list> := []
+<list>.append(<int>)
+<fval> := f(<list>)
+print(<fval>)

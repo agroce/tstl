@@ -1,0 +1,17 @@
+@import random
+
+<@
+def h(xs):
+    if len(xs) == 0:
+        return True
+    return random.randrange(0,len(xs)) + xs[0] < 10
+@>
+
+pool: <int> 5
+pool: <list> 5
+
+<int> := <[0..5]>
+<list> := []
+<list>.append(<int>)
+assert h(<list>)
+
