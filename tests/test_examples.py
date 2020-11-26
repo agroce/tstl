@@ -54,6 +54,7 @@ class TestExamples(TestCase):
             "hypothesis_heaps",
             "lopsided_grammar",
             "maze",
+            "nondet_talk_examples",
             "numpy",
             "osquery",
             "parallelsorts",
