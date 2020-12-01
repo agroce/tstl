@@ -5,6 +5,8 @@ import sys
 
 sut = sut.sut()
 
+sut.stopCoverage()
+
 R = random.Random()
 
 seen = []
