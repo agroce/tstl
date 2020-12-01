@@ -1,4 +1,4 @@
-from __future_ import print_function
+from __future__ import print_function
 import sut
 import random
 import sys
