@@ -1626,7 +1626,7 @@ def main():
                 for c in sut.actionClasses():
                     runningP += (mostTaken - profileCount[c])
                     classP.append((mostTaken - profileCount[c], c))
-                classP = map(lambda x: (x[0] / runningP, x[1]), classP)
+                classP = list(map(lambda x: (x[0] / runningP, x[1]), classP))
 
             opTime += thisOpTime
             if sut.warning() is not None:

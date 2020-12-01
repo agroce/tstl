@@ -131,7 +131,7 @@ def main():
     else:
         readTest = sut.loadTest(
             file, afl=True, swarm=("--aflswarm" in sys.argv))
-        theTest = map(lambda x: x[0] + "\n", readTest)
+        theTest = list(map(lambda x: x[0] + "\n", readTest))
     for line in theTest:
         name = line[:-1]
         if name == "<<RESTART>>":
