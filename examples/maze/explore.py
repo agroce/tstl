@@ -1,3 +1,4 @@
+from __future_ import print_function
 import sut
 import random
 import sys
@@ -25,8 +26,8 @@ while True:
     act = sut.randomEnabled(R)
     ok = sut.safely(act)
     if not ok:
-        print "DONE!"
-        print seen
+        print("DONE!")
+        print(seen)
         sut.prettyPrintTest(sut.test())
         sys.exit(0)
     new = sut.state()[:-1]
@@ -37,5 +38,5 @@ while True:
         bored = 0
         seen.append(new)
         i += 1
-        print i,len(seen),sut.prettyName(act[0])
+        print(i,len(seen),sut.prettyName(act[0]))
         
