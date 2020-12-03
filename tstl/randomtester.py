@@ -92,6 +92,8 @@ def parse_args():
     parser.add_argument('--profile', action='store_true', help="Profile actions.")
     parser.add_argument('--profileProbs', action='store_true',
                         help="Use action profile to prefer less-taken actions.")
+    parser.add_argument('--trackStates', action='store_true',
+                        help="Keep track of actual states.")
     parser.add_argument(
         '--stopSaturated',
         action='store_true',
@@ -915,6 +917,9 @@ def buildActivePool():
     if config.useHints:
         activePool.extend([x[0] for x in hintPool[-config.exploitBestHint:]])
 
+    if config.trackStates:
+        activePool.extend(statePool)
+
     if config.verbose or config.verboseExploit:
         print('FULL POOL SIZE', len(fullPool) + len(hintPool),
               'ACTIVE POOL SIZE', len(activePool))
@@ -1000,6 +1005,7 @@ def tryExploit():
 def collectExploitable():
     global fullPool, activePool, branchCoverageCount, statementCoverageCount
     global localizeSFail, localizeBFail, reducePool, hintValueCounts, poolCount
+    global lastWasNewState
 
     if config.useHints:
         # We are assuming hints are all normalized to the same scale!
@@ -1012,6 +1018,11 @@ def collectExploitable():
             hintValueCounts[hval] += 1
         else:
             hintValueCounts[hval] = 1
+
+    if config.trackStates:
+        if lastWasNewState:
+            print("COLLECTING DUE TO NEW STATE")
+            statePool.append(list(sut.test()))
 
     if (not config.noCoverageExploit) and (
             (len(sut.newBranches()) != 0) or (len(sut.newStatements()) != 0)):
@@ -1039,6 +1050,7 @@ def collectExploitable():
 def printStatus(elapsed, step=None):
     global sut, nops, activePool, fullPool, testsWithNoNewCoverage, stepsWithNoNewCoverage
     global testsWithNewCoverage, exploitsWithNewCoverage, totalExploits
+    global allSeenStates, testsWithNoNewStates, testsWithNewStates
     print(sut.SUTName() + ":", "TEST #" + str(ntests), end=' ')
     if step is not None:
         print("STEP #" + str(step), end=' ')
@@ -1049,6 +1061,10 @@ def printStatus(elapsed, step=None):
               len(sut.allBranches()), "branches ]", end=' ')
         if testsWithNoNewCoverage > 0:
             print("(no cov+ for", testsWithNoNewCoverage, "tests)", end=' ')
+    if config.trackStates:
+        print("[", len(allSeenStates), "states ]", end=' ')
+        if testsWithNoNewStates > 0:
+            print("(no states+ for", testsWithNoNewStates, "tests)", end=' ')
     if config.exploit is not None:
         print("[ POOLS: full", len(fullPool), "active", len(activePool), "]", end=' ')
     print(nops, "TOTAL ACTIONS (" + str(round(nops / elapsed, 2)) + "/s)", end=' ')
@@ -1080,6 +1096,7 @@ def main():
     global stepsWithNoNewCoverage
     global sequences
     global dnull, oldStdout, oldStderr
+    global allSeenStates, testsWithNoNewStates, testsWithNewStates, statePool, lastWasNewState
 
     dnull = open(os.devnull, 'w')
     oldStdout = sys.stdout
@@ -1394,6 +1411,12 @@ def main():
     neverExploited = True
     totalExploits = 0
 
+    if config.trackStates:
+        allSeenStates = [sut.state()[:-1]]
+        testsWithNoNewStates = 0
+        testsWithNewStates = 0
+        statePool = []
+
     while (config.maxTests == -1) or (ntests < config.maxTests):
 
         if config.checkDeterminism:
@@ -1465,6 +1488,8 @@ def main():
                     continue
 
         anyNewCoverage = False
+        if config.trackStates:
+            anyNewStates = False
 
         currentSequence = None
 
@@ -1476,6 +1501,7 @@ def main():
         thisOps = 0
 
         for step in range(0, config.depth):
+            lastWasNewState = False
             if config.verbose:
                 print("GENERATING STEP", step, end=' ')
                 sys.stdout.flush()
@@ -1600,9 +1626,18 @@ def main():
                 sys.stdout = dnull
                 sys.stderr = dnull
             stepOk = sut.safely(a)
+
             if config.silentSUT:
                 sys.stdout = oldStdout
                 sys.stderr = oldStderr
+
+            if config.trackStates:
+                thisS = sut.state()[:-1]
+                if thisS not in allSeenStates:
+                    print("NEW STATE:", thisS)
+                    allSeenStates.append(thisS)
+                    anyNewStates = True
+                    lastWasNewState = True
 
             if config.checkDeterminism:
                 trajectory.append(sut.trajectoryItem())
@@ -1796,6 +1831,12 @@ def main():
                 exploitsWithNewCoverage += 1
         else:
             testsWithNoNewCoverage += 1
+
+        if config.trackStates:
+            if anyNewStates:
+                testsWithNewStates += 1
+            else:
+                testsWithNoNewStates += 1
 
         if config.saveSwarmCoverage is not None:
             swarmf.write("CONFIG:\n")
