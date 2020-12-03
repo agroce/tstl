@@ -23,22 +23,86 @@ if "--help" not in sys.argv:
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--timeout', type=int, default=3600,
-                        help='Timeout in seconds (3600 default).')
     parser.add_argument('-s', '--seed', type=int, default=None,
                         help='Random seed (default = None).')
+    parser.add_argument('-t', '--timeout', type=int, default=3600,
+                        help='Timeout in seconds (3600 default).')
+    parser.add_argument('-m', '--maxTests', type=int, default=-1,
+                        help='Maximum #tests to run (-1 = infinite default).')
     parser.add_argument('-d', '--depth', type=int, default=100,
                         help='Maximum search depth (100 default).')
-    parser.add_argument('-w', '--swarm', action='store_true',
-                        help="Turn on standard swarm testing.")
+    parser.add_argument('-o',
+                        '--output',
+                        type=str,
+                        default="failure." + str(os.getpid()) + ".test",
+                        help="Filename to save failing test(s).  Defaults to process-ID based scheme.")
+    parser.add_argument('-M', '--multiple', action='store_true',
+                        help="Allow multiple failures.")
     parser.add_argument('-r', '--running', action='store_true',
                         help="Produce running branch coverage report.")
+    parser.add_argument(
+        '-q',
+        '--quickTests',
+        action='store_true',
+        help="Produce quick tests for coverage (save a test hitting each found coverage target).")
+    parser.add_argument('-n', '--noCover', action='store_true',
+                        help="Don't check code coverage (often speeds testing considerably).")
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help="Run in verbose mode.")
+    parser.add_argument('--silentFail', action='store_true',
+                        help="Don't make failure replays verbose.")
+    parser.add_argument('--silentSUT', action='store_true',
+                        help="Silence SUT actions (no output).")
     parser.add_argument('--normalize', action='store_true',
                         help="Normalize/simplify after reduction.")
     parser.add_argument('--generalize', action='store_true',
                         help="Generalize tests.")
-    parser.add_argument('-n', '--noCover', action='store_true',
-                        help="Don't check code coverage.")
+    parser.add_argument('-w', '--swarm', action='store_true',
+                        help="Turn on standard swarm testing.")
+    parser.add_argument(
+        '--generateLOC',
+        type=str,
+        default=None,
+        help="Generate LOC data file to bias testing by LOC estimates for actions." +
+        "Parameter is the filename.")
+    parser.add_argument(
+        '--biasLOC',
+        type=str,
+        default=None,
+        help="Read LOC data file to bias testing by LOC estimates for actions. " +
+        "Uses files produced by --generateLOC. " +
+        "Any file of the same structure (action class / LOC count pairs, with ' %%%% '" +
+        "separating) will work, however.")
+    parser.add_argument('-x', '--exploit', type=float, default=None,
+                        help="Probability to exploit stored coverage tests (use a GA to generate tests).")
+    parser.add_argument(
+        "--reducePool",
+        action='store_true',
+        help="Reduce tests by their new coverage before adding to exploitation pool.")
+    parser.add_argument(
+        '--Pmutate',
+        type=float,
+        default=0.0,
+        help="Probability to mutate exploited tests (default = 0.0 -- no mutation 'GA').")
+    parser.add_argument(
+        '--Pcrossover',
+        type=float,
+        default=0.2,
+        help="Probability to try crossover when mutating exploited tests (default = 0.2).")
+    parser.add_argument('--profile', action='store_true', help="Profile actions.")
+    parser.add_argument('--profileProbs', action='store_true',
+                        help="Use action profile to prefer less-taken actions.")
+    parser.add_argument(
+        '--stopSaturated',
+        action='store_true',
+        help="Use multiple 'sessions' to estimate saturation and stop when saturated.")
+    parser.add_argument(
+        '--sessions',
+        type=int,
+        default=4,
+        help="Number of sessions to use for estimating coverage saturation (default 4).  " +
+        "More sessions means less chance of missing coverage/faults." +
+        "\n\nNOTE: options after this one are generally less commonly used in testing.")
     parser.add_argument(
         '--postCover',
         action='store_true',
@@ -49,15 +113,6 @@ def parse_args():
         type=str,
         default=None,
         help="Write HTML report (directory to write to, None/no html report by default).")
-    parser.add_argument('-m', '--maxTests', type=int, default=-1,
-                        help='Maximum #tests to run (-1 = infinite default).')
-    parser.add_argument('-o',
-                        '--output',
-                        type=str,
-                        default="failure." + str(os.getpid()) + ".test",
-                        help="Filename to save failing test(s).")
-    parser.add_argument('-M', '--multiple', action='store_true',
-                        help="Allow multiple failures.")
     parser.add_argument(
         '--replayable',
         action='store_true',
@@ -94,11 +149,6 @@ def parse_args():
         type=float,
         default=0,
         help='Delay when checking process nondeterminism (default 0).')
-    parser.add_argument(
-        '-q',
-        '--quickTests',
-        action='store_true',
-        help="Produce quick tests for coverage (save a test all coverage targets).")
     parser.add_argument(
         '--quickPrefix',
         type=str,
@@ -193,20 +243,6 @@ def parse_args():
         action='store_true',
         help="Force all action classes to have equal probabilities.")
     parser.add_argument(
-        '--generateLOC',
-        type=str,
-        default=None,
-        help="Generate LOC data file to bias testing by LOC estimates for actions." +
-        "Parameter is the filename.")
-    parser.add_argument(
-        '--biasLOC',
-        type=str,
-        default=None,
-        help="Read LOC data file to bias testing by LOC estimates for actions. " +
-        "Uses files produced by --generateLOC. " +
-        "Any file of the same structure (action class / LOC count pairs, with ' %%%% '" +
-        "separating) will work, however.")
-    parser.add_argument(
         '--LOCBaseline',
         type=float,
         default=0.2,
@@ -239,8 +275,6 @@ def parse_args():
         "directory for --sequencesFromTests (default 3).")
     parser.add_argument('--useQuickSequences', action='store_true',
                         help="New quick tests add sequences.")
-    parser.add_argument('-x', '--exploit', type=float, default=None,
-                        help="Probability to exploit stored coverage tests.")
     parser.add_argument('--savePool', type=str, default=None,
                         help="Save pool generated during exploitation.")
     parser.add_argument('--readPool', type=str, default=None,
@@ -260,24 +294,10 @@ def parse_args():
     parser.add_argument("--verboseExploit", action='store_true',
                         help="Exploitation is verbose (info on pool, etc.).")
     parser.add_argument(
-        "--reducePool",
-        action='store_true',
-        help="Reduce tests by their new coverage before adding to exploitation pool.")
-    parser.add_argument(
         '--exploitCeiling',
         type=float,
         default=0.5,
         help="Max ratio to mean coverage count for exploitation.")
-    parser.add_argument(
-        '--Pmutate',
-        type=float,
-        default=0.0,
-        help="Probability to mutate exploited tests (default = 0.0 -- no mutation).")
-    parser.add_argument(
-        '--Pcrossover',
-        type=float,
-        default=0.2,
-        help="Probability to try crossover when mutating exploited tests (default = 0.2).")
     parser.add_argument(
         "--useHints",
         action='store_true',
@@ -309,27 +329,8 @@ def parse_args():
         '--noExceptionMatch',
         action='store_true',
         help="Do not force exceptions in reduced / normalized failures to match.")
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help="Run in verbose mode.")
-    parser.add_argument('--silentFail', action='store_true',
-                        help="Don't make failure replays verbose.")
-    parser.add_argument('--silentSUT', action='store_true',
-                        help="Silence SUT actions (no output).")
     parser.add_argument('--throughput', action='store_true',
                         help='Measure action throughput.')
-    parser.add_argument('--profile', action='store_true', help="Profile actions.")
-    parser.add_argument('--profileProbs', action='store_true',
-                        help="Use action profile to prefer less-taken actions.")
-    parser.add_argument(
-        '--stopSaturated',
-        action='store_true',
-        help="Use multiple 'sessions' to estimate saturation and stop when saturated.")
-    parser.add_argument(
-        '--sessions',
-        type=int,
-        default=4,
-        help="Number of sessions to use for estimating coverage saturation (default 4).  " +
-        "More sessions means less chance of missing coverage/faults.")
     parser.add_argument(
         '--stopWhenBranches',
         type=int,
