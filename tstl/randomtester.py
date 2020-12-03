@@ -471,6 +471,16 @@ def make_config(pargs, parser):
     return nt_config
 
 
+def noUsedState(state):
+    newS = []
+    pos = 0
+    for si in state:
+        if pos % 2 == 0:
+            newS.append(si)
+        pos += 1
+    return newS
+
+
 def traceLOC(frame, event, arg):
     global lastLOCs, lastFuncs
     if event != "call":
@@ -1419,7 +1429,7 @@ def main():
         if config.trackUsed:
             thisS = [sut.state()[:-1]]
         else:
-            thisS = [sut.state()[:-2]]
+            thisS = [noUsedState(sut.state()[:-1])]
         allSeenStates = [thisS]
         testsWithNoNewStates = 0
         testsWithNewStates = 0
@@ -1643,7 +1653,7 @@ def main():
                 if config.trackUsed:
                     thisS = sut.state()[:-1]
                 else:
-                    thisS = sut.state()[:-2]
+                    thisS = noUsedState(sut.state()[:-1])
                 if thisS not in allSeenStates:
                     print("NEW STATE:", thisS)
                     allSeenStates.append(thisS)
