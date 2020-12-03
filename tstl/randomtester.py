@@ -93,7 +93,7 @@ def parse_args():
     parser.add_argument('--profileProbs', action='store_true',
                         help="Use action profile to prefer less-taken actions.")
     parser.add_argument('--trackStates', action='store_true',
-                        help="Keep track of actual states.")
+                        help="Keep track of actual states, including as a reason for exploiting in GA.")
     parser.add_argument(
         '--stopSaturated',
         action='store_true',
@@ -196,6 +196,10 @@ def parse_args():
         '--noEnumerateEnabled',
         action='store_true',
         help="Turn off enumeration of enabled actions in SUTs compiled with that default.")
+    parser.add_argument(
+        '--trackUsed',
+        action='store_true',
+        help="When tracking state, also keep track of whether pool values are used.")
     parser.add_argument(
         '-k',
         '--keepLast',
@@ -1412,7 +1416,11 @@ def main():
     totalExploits = 0
 
     if config.trackStates:
-        allSeenStates = [sut.state()[:-1]]
+        if config.trackUsed:
+            thisS = [sut.state()[:-1]]
+        else:
+            thisS = [sut.state()[:-2]]
+        allSeenStates = [thisS]
         testsWithNoNewStates = 0
         testsWithNewStates = 0
         statePool = []
@@ -1632,7 +1640,10 @@ def main():
                 sys.stderr = oldStderr
 
             if config.trackStates:
-                thisS = sut.state()[:-1]
+                if config.trackUsed:
+                    thisS = sut.state()[:-1]
+                else:
+                    thisS = sut.state()[:-2]
                 if thisS not in allSeenStates:
                     print("NEW STATE:", thisS)
                     allSeenStates.append(thisS)
