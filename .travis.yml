@@ -18,7 +18,6 @@ install:
 - pip install bintrees
 - pip install rsa
 - pip install sympy
-- pip install tensorflow
 - pip install z3
 env:
 - TASK=EXAMPLES SUBTASK=JUSTCOMPILE TRAVIS=TRUE CYTHON_VERSION= AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=TRUE
