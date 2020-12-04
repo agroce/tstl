@@ -35,6 +35,7 @@ class TestExamples(TestCase):
             "solc",
             "vyper",
             "sortedcontainers",
+            "tensorflow",
             "pystan"]
 
         skipPY3 = [
@@ -61,7 +62,6 @@ class TestExamples(TestCase):
             "pyfakefs",
             "stringh",
             "sympy",
-            "tensorflow",
             "tictactoe",
             "tstl",
             "turtle"]
