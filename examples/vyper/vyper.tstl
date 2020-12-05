@@ -8,14 +8,21 @@ def exprTooLong(expr1,expr2):
     return len(expr1) + len(expr2) > 256
 @>
 
+pool: <size> 5
+
 pool: <btype> 5
 pool: <var> 5
 pool: <lvar> 5
 pool: <avar> 5
 pool: <cvar> 5
 pool: <func> 5
-pool: <expr> 5
+
+pool: <stvr> 5
+
+pool: <decpart> 5
 pool: <const> 5
+
+pool: <expr> 5
 
 pool: <decorators> 2
 
@@ -41,14 +48,23 @@ pool: <fargs> 5
 pool: <funcdecl> 5
 pool: <funcdecls> 5
 
+<size> := str(<[1..10]>)
+
 <btype> := "address"
-<btype> := "timestamp"
-<btype> := "wei_value"
 <btype> := "bool"
-<btype> := "timedelta"
 <btype> := "int128"
+<btype> := "int128(wei)"
 <btype> := "uint256"
+<btype> := "uint256(wei)"
 <btype> := "decimal"
+<btype> := "bytes32"
+
+<btype> := "Bytes[" + <size> + "]"
+<btype> := "String[" + <size> + "]"
+
+<btype> := <btype> + "[" + <size> + "]"
+
+<btype> := "HashMap[" + <btype> + ", " + <btype> + "]"
 
 <var> := "v" + str(<[0..9]>)
 <lvar> := "lv" + str(<[0..9]>)
@@ -70,6 +86,10 @@ vyhelper.declared(<cvar,1>) -> <bvar> := <cvar>
 vyhelper.declared(<lvar,1>) -> <bvar> := <lvar>
 vyhelper.declared(<avar,1>) -> <bvar> := <avar>
 
+<decpart> := str(<[0..9]>)
+<decpart> += str(<[0..9]>)
+
+<const> := str(<[-10..10]>) + "." + <decpart>
 <const> := str(<[-10..10]>)
 <const> := "ZERO_ADDRESS"
 <const> := "MAX_INT128"
@@ -90,6 +110,9 @@ vyhelper.declared(<avar,1>) -> <bvar> := <avar>
 <fargs> := ""
 <fargs> := <expr>
 
+<stvr> := <["", "alpha", "beta", "gamma"]>
+
+<expr> := '"' + <stvr> + '"'
 <expr> := <bvar>
 <expr> := "(" + <expr> + ")"
 <expr> := "not " + <expr>
@@ -134,6 +157,7 @@ not exprTooLong(<expr,2>,<expr,3>) -> <expr> := <expr> + " >= " + <expr>
 <expr> := <expr> + ".codesize"
 <expr> := <expr> + ".is_contract"
 <expr> := "convert(" + <expr> + ", " + <btype> + ")"
+<expr> := <expr> + "[" + str(<[0..12]>) + "]"
 
 <fstmt> := "    assert " + <expr> + chr(10)
 <fstmt> := "    assert_modifiable " + <expr> + chr(10)

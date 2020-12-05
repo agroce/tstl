@@ -5,15 +5,10 @@ import os
 import vyper.cli.vyper_compile
 
 seen={}
-seenExcept = set([])
 
 declaredVars = set([])
 
-known = ["Exception('Not an integer type: {typ}')",
-         "Exception('Invalid break')",
-         "KeyError('self')",
-         """ValueError("Unsupported format type 'ast'")""",
-         """TypeError("'<=' not supported between instances of 'int' and 'str'")"""]
+known = []
 
 def fid(functionDef):
     start = functionDef.find("def ")
@@ -56,16 +51,15 @@ def run(c, loud=False, silent=True):
         sys.stdout = dnull
         sys.stderr = dnull
         raised = None
+        printRaised = None
         try:
             vyper.cli.vyper_compile.compile_files(
                 [vname],
                 ["bytecode", "abi", "ast", "bytecode_runtime"])
-        except vyper.exceptions.ParserException:
-            raised = None # just ignore these!
-        except SyntaxError:
-            raised = None # just ignore these!
-        except ZeroDivisionError:
-            raised = None # just ignore these!
+        except vyper.exceptions.CompilerPanic as e:
+            raised = repr(e)
+        except (vyper.exceptions.VyperException):
+            raised = None
         except Exception as e:
             raised = repr(e)
         finally:
