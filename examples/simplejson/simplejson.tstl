@@ -12,7 +12,7 @@ def klimitequal(o1,o2,k=0,klimit=MAXDEPTH):
     if type(o1) == list:
         if len(o1) != len(o2):
             return False
-        for i in xrange(0,len(o1)):
+        for i in range(0,len(o1)):
             if i > k:
                 return True
             if not klimitequal(o1[i],o2[i],k+1):
