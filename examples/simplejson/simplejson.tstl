@@ -50,7 +50,7 @@ def stringifyNans(s):
         else:
             return s
     if type(s) == list:
-        return map(stringifyNans, s)
+        return list(map(stringifyNans, s))
     if type(s) == dict:
         return {k: stringifyNans(v) for k, v in s.items()}
     return s
