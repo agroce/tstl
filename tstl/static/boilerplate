@@ -1102,7 +1102,7 @@ def replay(
     return tuple.
     '''
     if not extend:
-        self.restart()
+        self.restat()
     if returnCov:
         allS = set([])
         allB = set([])
