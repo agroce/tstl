@@ -199,12 +199,12 @@ def main():
             act = random.choice(nexta)
             aname = t.prettyName(act[0])
             nexts = [t.prettyName(a[0]) for a in nexta]
-            eqnexts = nexts
+            eqnexts = list(nexts)
             eqnexts = collapse(eqnexts)
             eqnexts = [x for x in eqnexts if x != aname]
             random.shuffle(eqnexts)
             eqnexts = eqnexts[-(k - 1):]
-            mid = len(eqnexts) / 2
+            mid = int(len(eqnexts) / 2)
             if (len(eqnexts) % 2) != 0:
                 if midFlip:
                     mid = mid + 1
