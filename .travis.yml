@@ -15,7 +15,6 @@ install:
 - pip install pycodestyle
 - pip install python-afl
 - pip install bintrees
-- pip install rsa
 - pip install sympy
 - pip install z3
 env:
