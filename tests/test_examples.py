@@ -35,6 +35,7 @@ class TestExamples(TestCase):
             "simplejson",
             "solc",
             "vyper",
+            "newsortedcontainers",
             "sortedcontainers",
             "tensorflow",
             "pystan",
