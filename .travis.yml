@@ -14,7 +14,6 @@ install:
 - pip install pyflakes
 - pip install pycodestyle
 - pip install python-afl
-- pip install bidict
 - pip install bintrees
 - pip install rsa
 - pip install sympy

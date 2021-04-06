@@ -908,14 +908,18 @@ def buildActivePool():
                 print(si, ci)
         for (t, bs, ss) in fullPool:
             added = False
-            for b in bs:
-                if b not in branchCoverageCount:
-                    # covered during a failure or reduction
-                    branchCoverageCount[b] = 1
-                if branchCoverageCount[b] <= bThreshold:
-                    activePool.append(t)
-                    added = True
-                    break
+            if config.noCover:
+                added = True
+                activePool.append(t)
+            else:
+                for b in bs:
+                    if b not in branchCoverageCount:
+                        # covered during a failure or reduction
+                        branchCoverageCount[b] = 1
+                    if branchCoverageCount[b] <= bThreshold:
+                        activePool.append(t)
+                        added = True
+                        break
             if not added:
                 for s in ss:
                     if s not in statementCoverageCount:
@@ -988,8 +992,9 @@ def tryExploit():
             if config.silentSUT:
                 sys.stdout = oldStdout
                 sys.stderr = oldStderr
-            if (len(sut.newCurrBranches()) != 0) or (
-                    len(sut.newCurrStatements()) != 0):
+            if ((not config.noCover) and (not config.noCoverageExploit) and
+                    ((len(sut.newCurrBranches()) != 0) or
+                     (len(sut.newCurrStatements()) != 0))):
                 print("COVERAGE INCREASE DURING MUTATION")
                 if not config.reducePool:
                     fullPool.append((list(sut.test()), set(
@@ -1038,7 +1043,7 @@ def collectExploitable():
             print("COLLECTING DUE TO NEW STATE")
             statePool.append(list(sut.test()))
 
-    if (not config.noCoverageExploit) and (
+    if (not config.noCoverageExploit) and (not config.noCover) and (
             (len(sut.newBranches()) != 0) or (len(sut.newStatements()) != 0)):
         if config.verbose or config.verboseExploit:
             print("COLLECTING DUE TO NEW COVERAGE:", len(
