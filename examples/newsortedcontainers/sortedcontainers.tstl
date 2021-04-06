@@ -1,0 +1,116 @@
+@import sortedcontainers
+
+pool: <int> 5
+pool: <list> 5
+
+pool: <sortedlist> 5
+pool: <sortedset> 5
+
+pool: <iterator> 5
+
+<int> := <[-10..10]>
+~<int> *= 10
+~<int> += 1
+~<int> -= 1
+
+<list> := []
+~<list>.append(<int>)
+
+<sortedlist> := sortedcontainers.SortedList()
+<sortedlist> := sortedcontainers.SortedList(<list>)
+<sortedlist> := sortedcontainers.SortedList(<sortedlist>)
+<sortedlist> := sortedcontainers.SortedList(<sortedset>)
+{IndexError} <sortedlist> := sortedcontainers.SortedList(<iterator>)
+
+<int> in <sortedlist>
+
+<sortedlist>.add(<int>)
+
+<sortedlist>.update(<list>)
+<sortedlist>.update(<sortedlist>)
+<sortedlist>.update(<sortedset>)
+
+<sortedlist>.clear()
+<sortedlist>.discard(<int>)
+{ValueError} <sortedlist>.remove(<int>)
+{IndexError} <sortedlist>.pop()
+{IndexError} <sortedlist>.pop(<int>)
+
+<sortedlist>.bisect_left(<int>)
+<sortedlist>.bisect_right(<int>)
+{ValueError} <sortedlist>.index(<int>)
+<sortedlist>.count(<int>)
+
+len(<sortedlist>)
+
+<iterator> := <sortedlist>.islice(start = <int>, stop = <int>, reverse = <[True, False]>)
+<iterator> := <sortedlist>.islice(stop = <int>, reverse = <[True, False]>)
+<iterator> := <sortedlist>.islice(start = <int>, reverse = <[True, False]>)
+<iterator> := <sortedlist>.islice(reverse = <[True, False]>)
+<iterator> := <sortedlist>.irange(minimum = <int>, maximum = <int>, inclusive = ( <[True, False]> , <[True, False]> ), reverse = <[True, False]>)
+<iterator> := <sortedlist>.irange(maximum = <int>, inclusive = ( <[True, False]> , <[True, False]> ), reverse = <[True, False]>)
+<iterator> := <sortedlist>.irange(minimum = <int>, inclusive = ( <[True, False]> , <[True, False]> ), reverse = <[True, False]>)
+<iterator> := <sortedlist>.irange(inclusive = ( <[True, False]> , <[True, False]> ), reverse = <[True, False]>)
+
+<sortedset> := sortedcontainers.SortedSet()
+<sortedset> := sortedcontainers.SortedSet(<list>)
+<sortedset> := sortedcontainers.SortedSet(<sortedlist>)
+<sortedset> := sortedcontainers.SortedSet(<sortedset>)
+{IndexError} <sortedset> := sortedcontainers.SortedSet(<iterator>)
+
+<int> in <sortedset>
+
+<sortedset>.add(<int>)
+
+<sortedset>.update(<list>)
+<sortedset>.update(<sortedlist>)
+<sortedset>.update(<sortedset>)
+
+<sortedset>.clear()
+{KeyError} <sortedset>.remove(<int>)
+{IndexError} <sortedset>.pop()
+{IndexError} <sortedset>.pop(<int>)
+
+<sortedset>.bisect_left(<int>)
+<sortedset>.bisect_right(<int>)
+{ValueError} <sortedset>.index(<int>)
+<sortedset>.count(<int>)
+
+<sortedset>.difference(<list>)
+<sortedset>.difference(<sortedlist>)
+<sortedset>.difference(<sortedset>)
+
+<sortedset>.difference_update(<list>)
+<sortedset>.difference_update(<sortedlist>)
+<sortedset>.difference_update(<sortedset>)
+
+<sortedset>.intersection(<list>)
+<sortedset>.intersection(<sortedlist>)
+<sortedset>.intersection(<sortedset>)
+
+<sortedset>.intersection_update(<list>)
+<sortedset>.intersection_update(<sortedlist>)
+<sortedset>.intersection_update(<sortedset>)
+
+<sortedset>.symmetric_difference(<list>)
+<sortedset>.symmetric_difference(<sortedlist>)
+<sortedset>.symmetric_difference(<sortedset>)
+
+<sortedset>.symmetric_difference_update(<list>)
+<sortedset>.symmetric_difference_update(<sortedlist>)
+<sortedset>.symmetric_difference_update(<sortedset>)
+
+<sortedset>.union(<list>)
+<sortedset>.union(<sortedlist>)
+<sortedset>.union(<sortedset>)
+
+len(<sortedset>)
+
+<iterator> := <sortedset>.islice(start = <int>, stop = <int>, reverse = <[True, False]>)
+<iterator> := <sortedset>.islice(stop = <int>, reverse = <[True, False]>)
+<iterator> := <sortedset>.islice(start = <int>, reverse = <[True, False]>)
+<iterator> := <sortedset>.islice(reverse = <[True, False]>)
+<iterator> := <sortedset>.irange(minimum = <int>, maximum = <int>, inclusive = ( <[True, False]> , <[True, False]> ), reverse = <[True, False]>)
+<iterator> := <sortedset>.irange(maximum = <int>, inclusive = ( <[True, False]> , <[True, False]> ), reverse = <[True, False]>)
+<iterator> := <sortedset>.irange(minimum = <int>, inclusive = ( <[True, False]> , <[True, False]> ), reverse = <[True, False]>)
+<iterator> := <sortedset>.irange(inclusive = ( <[True, False]> , <[True, False]> ), reverse = <[True, False]>)
