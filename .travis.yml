@@ -15,8 +15,6 @@ install:
 - pip install pycodestyle
 - pip install python-afl
 - pip install bintrees
-- pip install sympy
-- pip install z3
 env:
 - TASK=EXAMPLES SUBTASK=JUSTCOMPILE TRAVIS=TRUE CYTHON_VERSION= AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=TRUE
 - TASK=EXAMPLES SUBTASK=NOBUGS TRAVIS=TRUE CYTHON_VERSION= AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=TRUE
