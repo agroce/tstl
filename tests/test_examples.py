@@ -31,12 +31,14 @@ class TestExamples(TestCase):
             "biopython",
             "bidict",
             "redis",
+            "rsa",
             "simplejson",
             "solc",
             "vyper",
             "sortedcontainers",
             "tensorflow",
-            "pystan"]
+            "pystan",
+            "z3"]
 
         skipPY3 = [
             "XML",
