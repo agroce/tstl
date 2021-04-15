@@ -26,7 +26,7 @@ property-based testing see:
 
 TSTL has been used to find and fix real faults in real code, including ESRI's ArcPy (http://desktop.arcgis.com/en/arcmap/latest/analyze/arcpy/what-is-arcpy-.htm), sortedcontainers (https://github.com/grantjenks/sorted_containers),
 gmpy2 (https://github.com/aleaxit/gmpy), sympy (http://www.sympy.org/en/index.html), pyfakefs (https://github.com/jmcgeheeiv/pyfakefs),
-Python itself (https://bugs.python.org/issue27870), the Solidity compiler (https://github.com/ethereum/solidity), a Solidity static analysis tool, the Vyper compiler (e.g. https://github.com/ethereum/vyper/issues/1658), and even OS X.
+Python itself (https://bugs.python.org/issue27870), the Solidity compiler (https://github.com/ethereum/solidity), a Solidity static analysis tool (https://github.com/crytic/slither), the Vyper compiler (e.g. https://github.com/ethereum/vyper/issues/1658), and even OS X.
 
 Installation
 ------------
