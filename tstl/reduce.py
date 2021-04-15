@@ -236,7 +236,7 @@ def main():
     if not config.sandbox:
         pred = (lambda x: sut.failsCheck(x, failure=f))
         if config.noCheck:
-            pred = (lambda x: sut.fails(x, failure=f))
+            pred = (lambda x: sut.failsCheck(x, failure=f))
     else:
         pred = sandboxReplay
 
@@ -368,7 +368,7 @@ def main():
                 if not config.sandbox:
                     pred = (lambda x: sut.failsCheck(x, failure=f))
                     if not config.noCheck:
-                        pred = (lambda x: sut.fails(x, failure=f))
+                        pred = (lambda x: sut.failsCheck(x, failure=f))
                 else:
                     pred = sandboxReplay
 
