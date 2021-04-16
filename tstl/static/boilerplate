@@ -1187,6 +1187,15 @@ def replayUntil(
     return None
 
 
+def eqFail(self, f1, f2):
+    if (f1[0] != f2[0]) or (repr(f1[1]) != repr(f2[1])):
+        return False
+    if f1[0] != AssertionError:
+        return True
+    # For assertions, require equal line nos.
+    return (f1[2].tb_lineno == f2[2].tb_lineno) and ((f1[2].tb_frame.f_code.co_filename) == (f2[2].tb_frame.f_code.co_filename))
+
+
 def failsCheck(self, test, verbose=False, failure=None):
     try:
         r = self.replay(test, catchUncaught=True,
@@ -1194,15 +1203,13 @@ def failsCheck(self, test, verbose=False, failure=None):
     except KeyboardInterrupt as e:
         raise e
     except BaseException:
-        if (failure is None) or ((self.__failure[0] == failure[0]) and (
-                repr(self.__failure[1]) == repr(failure[1]))):
+        if (failure is None) or self.eqFail(self.__failure, failure):
             return True
         else:
             return False
     if r is True:
         return False
-    if (failure is None) or ((self.__failure[0] == failure[0]) and (
-            repr(self.__failure[1]) == repr(failure[1]))):
+    if (failure is None) or self.eqFail(self.__failure, failure):
         return True
     else:
         return False
@@ -1218,16 +1225,13 @@ def fails(self, test, verbose=False, failure=None):
             print("Got exception during replay!")
         if failure is None:
             return True
-        if ((self.__failure is not None) and
-                ((self.__failure[0] == failure[0]) and
-                    (repr(self.__failure[1]) == repr(failure[1])))):
+        if (self.__failure is not None) and self.eqFail(self.__failure, failure):
             return True
         else:
             return False
     if r is True:
         return False
-    if (failure is None) or ((self.__failure[0] == failure[0]) and (
-            repr(self.__failure[1]) == repr(failure[1]))):
+    if (failure is None) or self.eqFail(self.__failure, failure):
         return True
     else:
         return False
