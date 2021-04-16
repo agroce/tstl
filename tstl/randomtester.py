@@ -1719,7 +1719,7 @@ def main():
                     if (len(set(sut.newCurrBranches())) > 0) or (
                             len(set(sut.newCurrStatements())) > 0):
                         anyNewCoverage = True
-                handle_failure(sut.test(), "UNCAUGHT EXCEPTION", False)
+                handle_failure(sut.test(), "UNCAUGHT EXCEPTION", True)
                 if not config.multiple:
                     print("STOPPING TESTING DUE TO FAILED TEST")
                 break
