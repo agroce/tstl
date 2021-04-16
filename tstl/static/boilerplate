@@ -1193,7 +1193,8 @@ def eqFail(self, f1, f2):
     if f1[0] != AssertionError:
         return True
     # For assertions, require equal line nos.
-    return (f1[2].tb_lineno == f2[2].tb_lineno) and ((f1[2].tb_frame.f_code.co_filename) == (f2[2].tb_frame.f_code.co_filename))
+    return ((f1[2].tb_lineno == f2[2].tb_lineno) and
+            ((f1[2].tb_frame.f_code.co_filename) == (f2[2].tb_frame.f_code.co_filename)))
 
 
 def failsCheck(self, test, verbose=False, failure=None):
