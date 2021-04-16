@@ -520,6 +520,10 @@ def handle_failure(
     if (not newCov) and (not becauseBranchCov) and (not becauseStatementCov):
         failCount += 1
         print(msg)
+        if checkFail:
+            assert sut.failsCheck(test)
+        else:
+            assert sut.fails(test)
         f = sut.failure()
         print("ERROR:", f)
         print("TRACEBACK:")
@@ -633,6 +637,17 @@ def handle_failure(
         if config.normalize:
             startSimplify = time.time()
             print("NORMALIZING...")
+            if not failProp(test):
+                print("ALPHA CONVERSION CHANGED FAILURE SIGNATURE FOR ASSERTION, CORRECTING...")
+                if checkFail:
+                    assert sut.failsCheck(test)
+                else:
+                    assert sut.fails(test)
+                f = sut.failure()
+                if checkFail:
+                    def failProp(x): return sut.failsCheck(x, failure=f)
+                else:
+                    def failProp(x): return sut.fails(x, failure=f)
             test = sut.normalize(
                 test,
                 failProp,

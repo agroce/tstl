@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='tstl',
-    version='1.2.37',
+    version='1.2.38',
     description='Template scripting testing language (TSTL)',
     long_description_content_type="text/markdown",    
     long_description=open('README.md').read(),
