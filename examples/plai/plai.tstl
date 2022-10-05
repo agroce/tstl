@@ -1,0 +1,43 @@
+@import plai
+
+pool: <expr> 10
+
+pool: <fd> 5
+
+pool: <fds> 5
+
+pool: <int> 3
+
+pool: <id> 3
+
+pool: <fid> 3
+
+<int> := str(<[-10..10]>)
+
+<id> := "'x"
+<id> := "'y"
+
+<fid> := "'f"
+<fid> := "'g"
+
+<fd> := "(fdC " + <fid> + " " + <id> + " " + <expr> + ")"
+
+<fds> := ""
+<fds> := <fd>
+plai.func(<fd,1>) not in <fds,2> -> <fds> := <fd> + " " + <fds>
+
+<expr> := "(numC " + <int> + ")"
+
+<expr> := "(idC " + <id> + ")"
+
+#<fd> := "(fdC 'f 'x (appC 'g (idC 'x)))"
+#<fd> := "(fdC 'g 'y (idC 'x))"
+#<expr> := "(appC 'f (numC 0))"
+
+#len(<expr,2>) < 50 -> <expr> := "(plusC " + <expr> + " " + <expr> + ")"
+#len(<expr,2>) < 50 -> <expr> := "(multC " + <expr> + " " + <expr> + ")"
+#len(<expr,2>) < 50 -> <expr> := "(ifC " + <expr> + " " + <expr> + " " + <expr> + ")"
+
+<expr> := "(appC " + <fid> + " " + <expr> + ")"
+
+assert(plai.test(<expr>, <fds>))
