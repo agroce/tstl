@@ -504,7 +504,9 @@ Hints for Better Testing
 
 Sometimes just doing `tstl_rt` or even `tstl_rt --swarm` isn't enough.  There are other options for improving testing.  A particularly powerful one in many cases is using the size of functions in terms of lines-of-code to guide testing.  To do this, you first let TSTL determine the sizes:
 
-`tstl_rt --generateLOC sut.loc --timeout 120`
+`tstl_rt --generateLOC sut.loc --timeout 120 --noCover`
+
+(the `--noCover` is needed because LOC uses instrumentation that interacts badly with coverage instrumentation).
 
 Then you use that generated file to guide testing:
 
