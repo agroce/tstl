@@ -1,0 +1,39 @@
+@import sys
+@sys.path.insert(0, "path/to/bitcoincore/functionaltest")
+@from test_framework.test_shell import TestShell
+@from test_framework.p2p import P2PDataStore
+@from test_framework.messages import (MAX_PROTOCOL_MESSAGE_LENGTH, ser_string)
+
+<@
+class msg_unrecognized:
+    """Nonsensical message. Modeled after similar types in test_framework.messages."""
+
+    msgtype = b'badmsg\x01'
+
+    def __init__(self, *, str_data):
+        self.str_data = str_data.encode() if not isinstance(str_data, bytes) else str_data
+
+    def serialize(self):
+        return ser_string(self.str_data)
+
+    def __repr__(self):
+        return "{}(data={})".format(self.msgtype, self.str_data)
+@>
+
+@VALID_DATA_LIMIT = MAX_PROTOCOL_MESSAGE_LENGTH - 5
+@msg_at_size = msg_unrecognized(str_data="b" * VALID_DATA_LIMIT)
+
+init: TestShell().setup(num_nodes=1, setup_clean_chain=True)
+finally: TestShell().shutdown()
+pool: <connection> 100
+pool: <node> 1
+pool: <int> 5
+
+<int> := <[80..200]>
+<node> := TestShell().nodes[0]
+<connection> := <node>.add_p2p_connection(P2PDataStore())
+
+for _ in range(<int>): conn = <connection>; conn.send_message(msg_at_size); conn.sync_with_ping(timeout=400)
+<connection>.sync_with_ping(timeout=2)
+
+property: <connection>.is_connected
