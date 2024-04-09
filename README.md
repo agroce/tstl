@@ -435,6 +435,30 @@ What about tests that fail by entering an infinite loop?  The same technique as 
 
 Finally, how do you integrate TSTL testing with more conventional approaches, e.g., pytest?  The file `test_tstl_regressions.py` in the examples directory shows one way.  If you add all your TSTL tests of interest to a `tstl_tests` directory under the directory where `sut.py` lives, you can make pytest run all your TSTL tests.  Perhaps more interestingly, this file also wraps a simple caller that forces 60 seconds of random testing to be executed by pytest, as a sanity check.  You can tweak the configuration of the random testing easily -- often, adding "--swarm" is a good idea.
 
+Differential Testing and References
+-----
+
+The most important thing missing from the simplified version of the AVL harness above is the use of TSTL's powerful *differential testing* capabilities.
+
+When a TSTL pool is defined as a "ref" pool, as in the full avlnew.tstl version, that means the pool will actually have *two* versions.  The first works just like a normal TSTL pool.  The second pool is a "copy" of the original pool, that is created by running the same Python code as the original version, with one key difference: some of the code will be automatically modified so that the "copy" can use a different underlying implementation.  In the avlnew.tstl file, the code necessary for using a reference is quite small:
+
+```
+pool: <avl> 3 OPAQUE REF
+
+reference: avl.AVLTree ==> set
+reference: insert ==> add
+reference: delete ==> discard
+reference: find ==> __contains__
+
+reference: METHOD(inorder) ==> CALL(items)
+reference: METHOD(display) ==> CALL(print)
+
+compare: find
+compare: inorder
+```
+
+The pool is marked as a "REF" pool (TSTL is not case sensitive for such designations).  The actual introduction of differential testing is accomplished largely by the "reference:" parts of the harness.  The first of these changes the call to the AVLTree constructor to a call to Python's built-in set implementation.  The next three change the methods for AVLTrees to the appropriate methods for sets.  The ones using METHOD and CALL transform methods of AVLTree into calls to functions on sets.  Finally the two "compare:" lines tell TSTL that the return values for the actions find and inorder and their reference equivalents should be compared for equality, and failure should result if the results don't match.
+
 TSTL and Mutation Testing
 -----
 Using the
